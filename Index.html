@@ -1,0 +1,332 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChronosTerrae | Evolutionary Cartography</title>
+    
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            /* Tema Claro (Base) */
+            --bg-color: #e6dabd;
+            --ui-bg: rgba(230, 218, 189, 0.85);
+            --text-color: #3e2723;
+            --accent: #8b5a2b;
+            --font-main: 'Georgia', serif;
+            --map-filter: sepia(0.5) contrast(1.1) brightness(0.9);
+        }
+
+        body.modern-era {
+            --bg-color: #d4e6f1;
+            --ui-bg: rgba(255, 255, 255, 0.9);
+            --text-color: #1a252f;
+            --accent: #2980b9;
+            --font-main: system-ui, sans-serif;
+            --map-filter: saturate(1.2) contrast(1.05);
+        }
+
+        /* Variables Modo Oscuro Global */
+        body.dark-mode {
+            --bg-color: #121212;
+            --ui-bg: rgba(18, 18, 18, 0.85);
+            --text-color: #e0e0e0;
+            --accent: #bb86fc;
+            --map-filter: contrast(1.2) brightness(0.8);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            font-family: var(--font-main);
+            color: var(--text-color);
+            overflow: hidden;
+            transition: all 0.8s ease;
+        }
+
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; transition: filter 0.8s ease; }
+        
+        .glass-panel {
+            background: var(--ui-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.8s ease;
+        }
+
+        /* Panel Superior: Controles del Sistema */
+        #system-controls {
+            position: absolute; top: 20px; right: 20px; z-index: 10;
+            display: flex; gap: 10px;
+        }
+
+        .sys-btn {
+            background: var(--ui-bg); color: var(--text-color);
+            border: 1px solid var(--accent); border-radius: 4px;
+            padding: 8px 12px; cursor: pointer; font-family: sans-serif;
+            font-weight: bold; backdrop-filter: blur(4px);
+            transition: transform 0.2s ease;
+        }
+        .sys-btn:active { transform: scale(0.95); }
+
+        /* Controles Inferiores */
+        #timeline-control {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 85%; max-width: 900px; padding: 15px 25px; z-index: 10;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; }
+        #year-display { font-size: 24px; font-weight: bold; min-width: 200px; }
+        
+        #timeline {
+            width: 100%; appearance: none; height: 6px;
+            background: var(--text-color); opacity: 0.6; border-radius: 3px; outline: none;
+        }
+        #timeline::-webkit-slider-thumb {
+            appearance: none; width: 20px; height: 20px;
+            background: var(--accent); border-radius: 50%; cursor: pointer;
+        }
+
+        /* Brújula SVG Dinámica */
+        #compass {
+            position: absolute; top: 20px; left: 20px; z-index: 10;
+            width: 80px; height: 80px; transition: transform 1.2s ease-in-out;
+            pointer-events: none;
+        }
+
+        /* Info Panel */
+        #info-panel {
+            position: absolute; top: 70px; right: 20px; width: 300px;
+            padding: 20px; z-index: 10; display: none;
+        }
+
+        .kofi-btn {
+            background-color: #29abe0; color: white; padding: 8px 15px;
+            text-decoration: none; border-radius: 4px; font-weight: bold; font-family: sans-serif;
+            font-size: 14px; display: inline-flex; align-items: center; border: none;
+        }
+        .kofi-btn img { height: 16px; margin-right: 8px; }
+    </style>
+</head>
+<body class="ancient-era">
+
+    <div id="map"></div>
+
+    <div id="compass">
+        <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+            <path d="M50 5 L60 50 L50 95 L40 50 Z" fill="currentColor" opacity="0.8"/>
+            <text x="43" y="24" fill="var(--bg-color)" font-weight="bold" font-family="sans-serif">N</text>
+        </svg>
+    </div>
+
+    <!-- Controles de Configuración -->
+    <div id="system-controls">
+        <button class="sys-btn" id="btn-lang">EN / ES</button>
+        <button class="sys-btn" id="btn-theme">🌙 / ☀️</button>
+    </div>
+
+    <div id="info-panel" class="glass-panel">
+        <h2 id="entity-title" style="margin-top: 0; color: var(--accent);">--</h2>
+        <div id="entity-data">--</div>
+    </div>
+
+    <div id="timeline-control" class="glass-panel">
+        <div class="top-bar">
+            <div id="year-display">Year: -250,000,000</div>
+            <a href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" class="kofi-btn" id="ui-donate">
+                <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-fi"> Support Project
+            </a>
+        </div>
+        <input type="range" id="timeline" min="0" max="2" value="0" step="1">
+    </div>
+
+    <script>
+        // Diccionario de Interfaz
+        const i18n = {
+            en: {
+                donate: "Support Project",
+                yearPrefix: "Year",
+                clickPrompt: "Click a region on the map."
+            },
+            es: {
+                donate: "Financiar Proyecto",
+                yearPrefix: "Año",
+                clickPrompt: "Haz clic en una región en el mapa."
+            }
+        };
+
+        // Base de Datos Semilla con Traducciones (Mock del Agente)
+        const mockDatabase = {
+            0: {
+                yearStr: { es: "-250,000,000 (Pérmico)", en: "-250,000,000 (Permian)" },
+                theme: 'ancient-era',
+                data: {
+                    type: "FeatureCollection",
+                    features: [{
+                        type: "Feature",
+                        properties: { 
+                            name: { es: "Supercontinente Pangea", en: "Pangaea Supercontinent" }, 
+                            desc: { es: "Masa de tierra única antes de la deriva continental. Flora dominada por helechos.", en: "Single landmass before continental drift. Flora dominated by giant ferns." } 
+                        },
+                        geometry: { type: "Polygon", coordinates: [[[-40, -40], [40, -40], [60, 20], [10, 60], [-50, 40], [-40, -40]]] }
+                    }]
+                }
+            },
+            1: {
+                yearStr: { es: "117 d.C.", en: "117 AD" },
+                theme: 'ancient-era',
+                data: {
+                    type: "FeatureCollection",
+                    features: [{
+                        type: "Feature",
+                        properties: { 
+                            name: { es: "Imperio Romano", en: "Roman Empire" }, 
+                            desc: { es: "Gobernante: Trajano. Población est.: 50-90 millones.", en: "Ruler: Trajan. Est. population: 50-90 million." } 
+                        },
+                        geometry: { type: "Polygon", coordinates: [[[-9, 38], [35, 31], [40, 41], [0, 52], [-9, 38]]] }
+                    }]
+                }
+            },
+            2: {
+                yearStr: { es: "1945 d.C.", en: "1945 AD" },
+                theme: 'modern-era',
+                data: {
+                    type: "FeatureCollection",
+                    features: [{
+                        type: "Feature",
+                        properties: { 
+                            name: { es: "República Francesa", en: "French Republic" }, 
+                            desc: { es: "Inicio de la reconstrucción europea tras la guerra.", en: "Start of European post-war reconstruction." } 
+                        },
+                        geometry: { type: "Polygon", coordinates: [[[-4, 43], [7, 43], [8, 49], [-4, 49], [-4, 43]]] }
+                    }]
+                }
+            }
+        };
+
+        let currentLang = 'en'; // Inglés por defecto para tráfico internacional
+        let isDarkMode = false;
+        let activePolygonProps = null;
+
+        const mapStyles = {
+            light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+            dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
+        };
+
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: mapStyles.light,
+            center: [10, 30], zoom: 2
+        });
+
+        const purifyMapStyle = () => {
+            const style = map.getStyle();
+            style.layers = style.layers.filter(layer => 
+                !layer.id.includes('admin') && !layer.id.includes('place') && !layer.id.includes('boundary')
+            );
+            map.setStyle(style);
+        };
+
+        const renderChronosLayer = () => {
+            const currentIndex = document.getElementById('timeline').value;
+            if (!map.getSource('chronos-source')) {
+                map.addSource('chronos-source', { type: 'geojson', data: mockDatabase[currentIndex].data });
+                map.addLayer({
+                    id: 'chronos-fill', type: 'fill', source: 'chronos-source',
+                    paint: { 'fill-color': 'var(--accent)', 'fill-opacity': 0.3 }
+                });
+                map.addLayer({
+                    id: 'chronos-line', type: 'line', source: 'chronos-source',
+                    paint: { 'line-color': 'var(--accent)', 'line-width': 2 }
+                });
+            } else {
+                map.getSource('chronos-source').setData(mockDatabase[currentIndex].data);
+            }
+        };
+
+        map.on('style.load', () => {
+            purifyMapStyle();
+            map.once('styledata', () => {
+                renderChronosLayer();
+                document.getElementById('map').style.filter = getComputedStyle(document.body).getPropertyValue('--map-filter');
+            });
+        });
+
+        map.on('click', 'chronos-fill', (e) => {
+            activePolygonProps = e.features[0].properties;
+            updateInfoPanel();
+            document.getElementById('info-panel').style.display = 'block';
+        });
+
+        const updateUIStrings = () => {
+            document.documentElement.lang = currentLang;
+            document.getElementById('ui-donate').innerHTML = `<img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-fi"> ${i18n[currentLang].donate}`;
+            
+            const index = document.getElementById('timeline').value;
+            const currentEra = mockDatabase[index];
+            document.getElementById('year-display').innerText = `${i18n[currentLang].yearPrefix}: ${currentEra.yearStr[currentLang]}`;
+            
+            if (activePolygonProps) {
+                updateInfoPanel();
+            } else {
+                document.getElementById('entity-data').innerText = i18n[currentLang].clickPrompt;
+            }
+        };
+
+        const updateInfoPanel = () => {
+            if (!activePolygonProps) return;
+            try {
+                // Parseo en caso de que MapLibre devuelva strings en lugar de objetos (comportamiento de capas vectoriales)
+                const nameObj = typeof activePolygonProps.name === 'string' ? JSON.parse(activePolygonProps.name) : activePolygonProps.name;
+                const descObj = typeof activePolygonProps.desc === 'string' ? JSON.parse(activePolygonProps.desc) : activePolygonProps.desc;
+                
+                document.getElementById('entity-title').innerText = nameObj[currentLang];
+                document.getElementById('entity-data').innerHTML = `<strong>Data:</strong> ${descObj[currentLang]}`;
+            } catch (err) {
+                // Fallback seguro
+                document.getElementById('entity-title').innerText = "Entity";
+            }
+        };
+
+        // Controladores de Eventos
+        document.getElementById('timeline').addEventListener('input', (e) => {
+            const index = e.target.value;
+            const currentEra = mockDatabase[index];
+            
+            document.body.className = isDarkMode ? `${currentEra.theme} dark-mode` : currentEra.theme;
+            document.getElementById('compass').style.transform = `rotate(${index * 45}deg)`;
+            document.getElementById('info-panel').style.display = 'none';
+            activePolygonProps = null;
+            
+            renderChronosLayer();
+            updateUIStrings();
+            document.getElementById('map').style.filter = getComputedStyle(document.body).getPropertyValue('--map-filter');
+        });
+
+        document.getElementById('btn-lang').addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'es' : 'en';
+            updateUIStrings();
+        });
+
+        document.getElementById('btn-theme').addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            const index = document.getElementById('timeline').value;
+            const currentEra = mockDatabase[index];
+            
+            document.body.className = isDarkMode ? `${currentEra.theme} dark-mode` : currentEra.theme;
+            
+            // Recarga del mapa base estricto
+            map.setStyle(isDarkMode ? mapStyles.dark : mapStyles.light);
+        });
+
+        // Inicialización
+        updateUIStrings();
+    </script>
+</body>
+</html>
