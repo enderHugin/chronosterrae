@@ -126,6 +126,10 @@
     </div>
 
     <!-- Controles de Configuración -->
+    <div id="search-container" style="position: absolute; top: 20px; left: 120px; z-index: 10;">
+        <input type="text" id="universal-search" placeholder="Búsqueda espacio-temporal..." style="padding: 8px 15px; width: 280px; border-radius: 4px; border: 1px solid var(--accent); background: var(--ui-bg); color: var(--text-color); font-family: var(--font-main); font-weight: bold; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); outline: none; transition: all 0.3s ease;">
+    </div>
+
     <div id="system-controls">
         <button class="sys-btn" id="btn-lang">EN / ES</button>
         <button class="sys-btn" id="btn-theme">🌙 / ☀️</button>
@@ -223,6 +227,7 @@
             container: 'map',
             style: mapStyles.light,
             center: [10, 30], zoom: 2
+            projection: { type: 'globe' }
         });
 
         const purifyMapStyle = () => {
