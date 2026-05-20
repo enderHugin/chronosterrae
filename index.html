@@ -332,8 +332,89 @@
             map.setStyle(isDarkMode ? mapStyles.dark : mapStyles.light);
         });
 
+        let liveData = null;
+
+        async function loadLiveAnomalies() {
+            try {
+                const response = await fetch('./latest_harvest.json');
+                if (response.ok) {
+                    liveData = await response.json();
+                    console.log('[SYS] Telemetría viva asociada al enjambre cargada.');
+                }
+            } catch (err) {
+                console.warn('[SYS] Ausencia de datos de ingesta cruda automáticos.');
+            }
+        }
+
+        document.getElementById('universal-search').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = e.target.value.toLowerCase().trim();
+                if (!query) return;
+
+                let found = false;
+                
+                for (const key in mockDatabase) {
+                    const era = mockDatabase[key];
+                    const feature = era.data.features.find(f => 
+                        f.properties.name[currentLang].toLowerCase().includes(query) ||
+                        f.properties.desc[currentLang].toLowerCase().includes(query)
+                    );
+                    if (feature) {
+                        document.getElementById('timeline').value = key;
+                        document.getElementById('timeline').dispatchEvent(new Event('input'));
+                        const coords = feature.geometry.coordinates[0][0];
+                        map.flyTo({ center: coords, zoom: 4 });
+                        activePolygonProps = feature.properties;
+                        updateInfoPanel();
+                        document.getElementById('info-panel').style.display = 'block';
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found && liveData && liveData.features) {
+                    const feature = liveData.features.find(f => 
+                        f.properties.name.toLowerCase().includes(query)
+                    );
+                    if (feature) {
+                        const coords = feature.geometry.coordinates;
+                        map.flyTo({ center: coords, zoom: 6 });
+                        
+                        if (map.getSource('search-source')) {
+                            map.getSource('search-source').setData(feature);
+                        } else {
+                            map.addSource('search-source', { type: 'geojson', data: feature });
+                            map.addLayer({
+                                id: 'search-point', type: 'circle', source: 'search-source',
+                                paint: { 
+                                    'circle-radius': 10, 
+                                    'circle-color': '#ff3333', 
+                                    'circle-stroke-width': 2, 
+                                    'circle-stroke-color': '#ffffff' 
+                                }
+                            });
+                        }
+                        
+                        document.getElementById('entity-title').innerText = feature.properties.name;
+                        document.getElementById('entity-data').innerHTML = `
+                            <strong>Tier:</strong> ${feature.properties.tier}<br>
+                            <strong>Timestamp:</strong> ${feature.properties.timestamp}<br>
+                            <strong>Source:</strong> <a href="https://wikidata.org/wiki/${feature.properties.source.split(':')[1]}" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:bold;">${feature.properties.source}</a>
+                        `;
+                        document.getElementById('info-panel').style.display = 'block';
+                        found = true;
+                    }
+                }
+
+                if (!found) {
+                    alert(currentLang === 'es' ? 'Ninguna anomalía detectada en esas coordenadas temporales.' : 'No anomalies detected within those temporal coordinates.');
+                }
+            }
+        });
+
         // Inicialización
         updateUIStrings();
+        loadLiveAnomalies();
     </script>
 </body>
 </html>
