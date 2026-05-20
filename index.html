@@ -227,15 +227,19 @@
             container: 'map',
             style: mapStyles.light,
             center: [10, 30], zoom: 2,
-            projection: { type: 'globe' }
+            renderWorldCopies: false
         });
 
         const purifyMapStyle = () => {
             const style = map.getStyle();
-            style.layers = style.layers.filter(layer => 
-                !layer.id.includes('admin') && !layer.id.includes('place') && !layer.id.includes('boundary')
-            );
-            map.setStyle(style);
+            if (!style || !style.layers) return;
+            style.layers.forEach(layer => {
+                if (layer.id.includes('admin') || layer.id.includes('place') || layer.id.includes('boundary')) {
+                    if (map.getLayer(layer.id)) {
+                        map.setLayoutProperty(layer.id, 'visibility', 'none');
+                    }
+                }
+            });
         };
 
         const renderChronosLayer = () => {
@@ -257,10 +261,8 @@
 
         map.on('style.load', () => {
             purifyMapStyle();
-            map.once('styledata', () => {
-                renderChronosLayer();
-                document.getElementById('map').style.filter = getComputedStyle(document.body).getPropertyValue('--map-filter');
-            });
+            renderChronosLayer();
+            document.getElementById('map').style.filter = getComputedStyle(document.body).getPropertyValue('--map-filter');
         });
 
         map.on('click', 'chronos-fill', (e) => {
