@@ -1,0 +1,38 @@
+name: AI Harvester Swarm
+
+on:
+  # Disparador automático: Ejecuta a las 03:00 AM (UTC) todos los días
+  schedule:
+    - cron: '0 3 * * *'
+  # Disparador manual: Te permite pulsar un botón para forzar la recolección
+  workflow_dispatch: 
+
+# Permisos necesarios para que el bot pueda escribir en tu repositorio
+permissions:
+  contents: write
+
+jobs:
+  ingest-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Clonar repositorio fundacional
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar entorno Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 📡 Ejecutar Sismógrafo (AI Harvester)
+        # Ejecuta el script y guarda la salida JSON en un archivo de recolección
+        run: node scripts/harvester.js > latest_harvest.json
+
+      - name: 💾 Inyectar CRDT y Confirmar Cambios
+        run: |
+          git config --global user.name "ChronosTerrae-Swarm"
+          git config --global user.email "bot@chronosterrae.local"
+          git add latest_harvest.json
+          # Solo hace commit si el agente encontró anomalías reales
+          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 [CRDT] Ingesta automatizada de anomalías temporales"
+          git push
