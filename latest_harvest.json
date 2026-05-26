@@ -1,1 +1,104 @@
-[SYS] Interceptando telemetría de atención para: 2026/05/24
+[SYS] Interceptando telemetría de atención para: 2026/05/25
+[SYS] Procesando 50 nodos semánticos...
+[+] Vector anclado: Q139899727 | Coord: -81.85153,41.32641 | Tiempo: Indeterminado
+[+] Vector anclado: Diocese of Monterey in California | Coord: -121.9,36.6 | Tiempo: Indeterminado
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: Garden Grove chemical leak | Coord: -117.999805555,33.783611111 | Tiempo: 2026-05-21T00:00:00Z
+[+] Vector anclado: Pentecost | Coord: 35.229369,31.771817 | Tiempo: Indeterminado
+
+[SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "harvest_date": "2026-05-26T06:54:15.770Z",
+    "node_origin": "ChronosTerrae_Local_Alpha",
+    "total_anomalies_detected": 5
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Q139899727",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q139899727",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.85153,
+          41.32641
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Diocese of Monterey in California",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q872544",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9,
+          36.6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Neatsville",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q6984524",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.125555555,
+          37.197222222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Garden Grove chemical leak",
+        "timestamp": "2026-05-21T00:00:00Z",
+        "source": "Wikidata:Q139905783",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -117.999805555,
+          33.783611111
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pentecost",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q39864",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.229369,
+          31.771817
+        ]
+      }
+    }
+  ]
+}
