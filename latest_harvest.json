@@ -1,34 +1,18 @@
-[SYS] Interceptando telemetría de atención para: 2026/05/27
+[SYS] Interceptando telemetría de atención para: 2026/05/28
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Q139899727 | Coord: -81.85153,41.32641 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: Pulaski County High School | Coord: -84.6033,37.1063 | Tiempo: Indeterminado
+[+] Vector anclado: Q139899727 | Coord: -81.85153,41.32641 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-05-28T07:02:43.318Z",
+    "harvest_date": "2026-05-29T07:01:02.097Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 2
+    "total_anomalies_detected": 3
   },
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Q139899727",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q139899727",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -81.85153,
-          41.32641
-        ]
-      }
-    },
     {
       "type": "Feature",
       "properties": {
@@ -43,6 +27,40 @@
         "coordinates": [
           -85.125555555,
           37.197222222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pulaski County High School",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q7259199",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.6033,
+          37.1063
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Q139899727",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q139899727",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.85153,
+          41.32641
         ]
       }
     }
