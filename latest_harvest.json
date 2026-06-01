@@ -1,51 +1,33 @@
-[SYS] Interceptando telemetría de atención para: 2026/05/30
+[SYS] Interceptando telemetría de atención para: 2026/05/31
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Puskás Aréna | Coord: 19.097929,47.503035 | Tiempo: Indeterminado
-[+] Vector anclado: Swakoppoort Dam | Coord: 16.527,-22.212 | Tiempo: Indeterminado
+[+] Vector anclado: Beaufort Castle | Coord: 35.532148,33.324715 | Tiempo: Indeterminado
 [+] Vector anclado: Q139899727 | Coord: -81.85153,41.32641 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Akon City | Coord: -16.889861111,14.274055555 | Tiempo: Indeterminado
+[+] Vector anclado: Florida's Turnpike | Coord: -81.0846,27.9653 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-05-31T07:04:26.741Z",
+    "harvest_date": "2026-06-01T08:43:06.635Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 5
+    "total_anomalies_detected": 4
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "Puskás Aréna",
+        "name": "Beaufort Castle",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q39069592",
+        "source": "Wikidata:Q476801",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          19.097929,
-          47.503035
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Swakoppoort Dam",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q2371960",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          16.527,
-          -22.212
+          35.532148,
+          33.324715
         ]
       }
     },
@@ -86,17 +68,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Akon City",
+        "name": "Florida's Turnpike",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q105702255",
+        "source": "Wikidata:Q200775",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -16.889861111,
-          14.274055555
+          -81.0846,
+          27.9653
         ]
       }
     }
