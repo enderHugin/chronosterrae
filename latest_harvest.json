@@ -1,35 +1,16 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/02
+[SYS] Interceptando telemetría de atención para: 2026/06/03
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Šenturška Gora | Coord: 14.545,46.258333 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Q139899727 | Coord: -81.85153,41.32641 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-03T08:26:18.098Z",
+    "harvest_date": "2026-06-04T07:58:15.592Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 3
+    "total_anomalies_detected": 1
   },
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Šenturška Gora",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q3438042",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          14.545,
-          46.258333
-        ]
-      }
-    },
     {
       "type": "Feature",
       "properties": {
@@ -44,23 +25,6 @@
         "coordinates": [
           -85.125555555,
           37.197222222
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Q139899727",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q139899727",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -81.85153,
-          41.32641
         ]
       }
     }
