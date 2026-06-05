@@ -1,4 +1,4 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/03
+[SYS] Interceptando telemetría de atención para: 2026/06/04
 [SYS] Procesando 50 nodos semánticos...
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 
@@ -6,7 +6,7 @@
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-04T07:58:15.592Z",
+    "harvest_date": "2026-06-05T07:15:42.360Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
     "total_anomalies_detected": 1
   },
