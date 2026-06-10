@@ -1,34 +1,17 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/08
+[SYS] Interceptando telemetría de atención para: 2026/06/09
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Ford Creek Patrol Cabin | Coord: -114.360955555,48.874372222 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: USS Liberty incident | Coord: 33.38,31.39 | Tiempo: 1967-06-08T00:00:00Z
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-09T06:56:20.433Z",
+    "harvest_date": "2026-06-10T07:15:38.451Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
     "total_anomalies_detected": 2
   },
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Ford Creek Patrol Cabin",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q5467698",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -114.360955555,
-          48.874372222
-        ]
-      }
-    },
     {
       "type": "Feature",
       "properties": {
@@ -43,6 +26,23 @@
         "coordinates": [
           -85.125555555,
           37.197222222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "USS Liberty incident",
+        "timestamp": "1967-06-08T00:00:00Z",
+        "source": "Wikidata:Q2157450",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.38,
+          31.39
         ]
       }
     }
