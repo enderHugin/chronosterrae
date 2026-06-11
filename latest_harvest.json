@@ -1,17 +1,52 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/09
+[SYS] Interceptando telemetría de atención para: 2026/06/10
 [SYS] Procesando 50 nodos semánticos...
+[+] Vector anclado: killing of Austin Metcalf | Coord: -96.823765,33.157913 | Tiempo: 2025-04-02T00:00:00Z
+[+] Vector anclado: St James's Hall | Coord: -0.136667,51.5094 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: USS Liberty incident | Coord: 33.38,31.39 | Tiempo: 1967-06-08T00:00:00Z
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-10T07:15:38.451Z",
+    "harvest_date": "2026-06-11T08:11:15.926Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 2
+    "total_anomalies_detected": 3
   },
   "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "killing of Austin Metcalf",
+        "timestamp": "2025-04-02T00:00:00Z",
+        "source": "Wikidata:Q134099839",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -96.823765,
+          33.157913
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "St James's Hall",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q4416300",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.136667,
+          51.5094
+        ]
+      }
+    },
     {
       "type": "Feature",
       "properties": {
@@ -26,23 +61,6 @@
         "coordinates": [
           -85.125555555,
           37.197222222
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "USS Liberty incident",
-        "timestamp": "1967-06-08T00:00:00Z",
-        "source": "Wikidata:Q2157450",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          33.38,
-          31.39
         ]
       }
     }
