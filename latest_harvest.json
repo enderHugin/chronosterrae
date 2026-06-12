@@ -1,22 +1,40 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/10
+[SYS] Interceptando telemetría de atención para: 2026/06/11
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: killing of Austin Metcalf | Coord: -96.823765,33.157913 | Tiempo: 2025-04-02T00:00:00Z
-[+] Vector anclado: St James's Hall | Coord: -0.136667,51.5094 | Tiempo: Indeterminado
+[+] Vector anclado: Banorte Stadium | Coord: -99.150555555,19.303055555 | Tiempo: Indeterminado
+[+] Vector anclado: murder of Austin Metcalf | Coord: -96.823765,33.157913 | Tiempo: 2025-04-02T00:00:00Z
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: Basilica and Expiatory Church of the Holy Family | Coord: 2.17433,41.40369 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-11T08:11:15.926Z",
+    "harvest_date": "2026-06-12T07:59:11.073Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 3
+    "total_anomalies_detected": 4
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "killing of Austin Metcalf",
+        "name": "Banorte Stadium",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q320454",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -99.150555555,
+          19.303055555
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "murder of Austin Metcalf",
         "timestamp": "2025-04-02T00:00:00Z",
         "source": "Wikidata:Q134099839",
         "tier": "Ingesta Cruda (Tier 2)",
@@ -27,23 +45,6 @@
         "coordinates": [
           -96.823765,
           33.157913
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "St James's Hall",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q4416300",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -0.136667,
-          51.5094
         ]
       }
     },
@@ -61,6 +62,23 @@
         "coordinates": [
           -85.125555555,
           37.197222222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Basilica and Expiatory Church of the Holy Family",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q48435",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.17433,
+          41.40369
         ]
       }
     }
