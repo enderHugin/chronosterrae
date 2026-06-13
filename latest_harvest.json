@@ -1,33 +1,51 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/11
+[SYS] Interceptando telemetría de atención para: 2026/06/12
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Banorte Stadium | Coord: -99.150555555,19.303055555 | Tiempo: Indeterminado
+[+] Vector anclado: Bosnia and Herzegovina | Coord: 18,44 | Tiempo: Indeterminado
+[+] Vector anclado: Czech Republic | Coord: 15,50 | Tiempo: Indeterminado
 [+] Vector anclado: murder of Austin Metcalf | Coord: -96.823765,33.157913 | Tiempo: 2025-04-02T00:00:00Z
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Basilica and Expiatory Church of the Holy Family | Coord: 2.17433,41.40369 | Tiempo: Indeterminado
+[+] Vector anclado: BMO Field | Coord: -79.418611,43.632778 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-12T07:59:11.073Z",
+    "harvest_date": "2026-06-13T07:04:03.720Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 4
+    "total_anomalies_detected": 5
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "Banorte Stadium",
+        "name": "Bosnia and Herzegovina",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q320454",
+        "source": "Wikidata:Q225",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -99.150555555,
-          19.303055555
+          18,
+          44
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Czech Republic",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q213",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15,
+          50
         ]
       }
     },
@@ -68,17 +86,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Basilica and Expiatory Church of the Holy Family",
+        "name": "BMO Field",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q48435",
+        "source": "Wikidata:Q796351",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          2.17433,
-          41.40369
+          -79.418611,
+          43.632778
         ]
       }
     }
