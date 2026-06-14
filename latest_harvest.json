@@ -1,51 +1,67 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/12
+[SYS] Interceptando telemetría de atención para: 2026/06/13
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Bosnia and Herzegovina | Coord: 18,44 | Tiempo: Indeterminado
-[+] Vector anclado: Czech Republic | Coord: 15,50 | Tiempo: Indeterminado
+[+] Vector anclado: Geeta and Sanjay Chopra kidnapping case | Coord: 77.2147465,28.6803473 | Tiempo: 1978-08-26T00:00:00Z
+[+] Vector anclado: Curaçao | Coord: -69,12.2 | Tiempo: Indeterminado
+[+] Vector anclado: Paraguay | Coord: -58,-23.5 | Tiempo: Indeterminado
 [+] Vector anclado: murder of Austin Metcalf | Coord: -96.823765,33.157913 | Tiempo: 2025-04-02T00:00:00Z
-[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: BMO Field | Coord: -79.418611,43.632778 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-13T07:04:03.720Z",
+    "harvest_date": "2026-06-14T07:53:57.253Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 5
+    "total_anomalies_detected": 4
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "Bosnia and Herzegovina",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q225",
+        "name": "Geeta and Sanjay Chopra kidnapping case",
+        "timestamp": "1978-08-26T00:00:00Z",
+        "source": "Wikidata:Q4162688",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          18,
-          44
+          77.2147465,
+          28.6803473
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "Czech Republic",
+        "name": "Curaçao",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q213",
+        "source": "Wikidata:Q25279",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          15,
-          50
+          -69,
+          12.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Paraguay",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q733",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -58,
+          -23.5
         ]
       }
     },
@@ -63,40 +79,6 @@
         "coordinates": [
           -96.823765,
           33.157913
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Neatsville",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q6984524",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -85.125555555,
-          37.197222222
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "BMO Field",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q796351",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -79.418611,
-          43.632778
         ]
       }
     }
