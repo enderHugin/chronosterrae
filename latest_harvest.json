@@ -1,17 +1,19 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/15
+[SYS] Interceptando telemetría de atención para: 2026/06/16
 [SYS] Procesando 50 nodos semánticos...
 [+] Vector anclado: Cape Verde | Coord: -23.7,15.3 | Tiempo: Indeterminado
-[+] Vector anclado: Curaçao | Coord: -69,12.2 | Tiempo: Indeterminado
+[+] Vector anclado: Senegal | Coord: -14.283333,14.366667 | Tiempo: Indeterminado
 [+] Vector anclado: Geeta and Sanjay Chopra kidnapping case | Coord: 77.2147465,28.6803473 | Tiempo: 1978-08-26T00:00:00Z
-[+] Vector anclado: Ivory Coast | Coord: -6,8 | Tiempo: Indeterminado
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: Curaçao | Coord: -69,12.2 | Tiempo: Indeterminado
+[+] Vector anclado: Kolho | Coord: 24.51666667,62.13333333 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-16T08:52:51.525Z",
+    "harvest_date": "2026-06-17T08:34:21.019Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 4
+    "total_anomalies_detected": 6
   },
   "features": [
     {
@@ -34,17 +36,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Curaçao",
+        "name": "Senegal",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q25279",
+        "source": "Wikidata:Q1041",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -69,
-          12.2
+          -14.283333,
+          14.366667
         ]
       }
     },
@@ -68,17 +70,51 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Ivory Coast",
+        "name": "Neatsville",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q1008",
+        "source": "Wikidata:Q6984524",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -6,
-          8
+          -85.125555555,
+          37.197222222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Curaçao",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q25279",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -69,
+          12.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Kolho",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q11872198",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.51666667,
+          62.13333333
         ]
       }
     }
