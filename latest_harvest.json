@@ -1,38 +1,18 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/18
+[SYS] Interceptando telemetría de atención para: 2026/06/19
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Uzbekistan | Coord: 66,41 | Tiempo: Indeterminado
 [+] Vector anclado: Geeta and Sanjay Chopra kidnapping case | Coord: 77.2147465,28.6803473 | Tiempo: 1978-08-26T00:00:00Z
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Bosnia and Herzegovina | Coord: 18,44 | Tiempo: Indeterminado
-[+] Vector anclado: Czech Republic | Coord: 15,50 | Tiempo: Indeterminado
-[+] Vector anclado: Cape Verde | Coord: -23.7,15.3 | Tiempo: Indeterminado
+[+] Vector anclado: Barack Obama Presidential Center | Coord: -87.585555555,41.7825 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-19T08:38:23.153Z",
+    "harvest_date": "2026-06-20T07:06:37.590Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 6
+    "total_anomalies_detected": 3
   },
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Uzbekistan",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q265",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          66,
-          41
-        ]
-      }
-    },
     {
       "type": "Feature",
       "properties": {
@@ -70,51 +50,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Bosnia and Herzegovina",
+        "name": "Barack Obama Presidential Center",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q225",
+        "source": "Wikidata:Q15975388",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          18,
-          44
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Czech Republic",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q213",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          15,
-          50
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Cape Verde",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q1011",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -23.7,
-          15.3
+          -87.585555555,
+          41.7825
         ]
       }
     }
