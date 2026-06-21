@@ -1,18 +1,35 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/19
+[SYS] Interceptando telemetría de atención para: 2026/06/20
 [SYS] Procesando 50 nodos semánticos...
+[+] Vector anclado: Ivory Coast | Coord: -6,8 | Tiempo: Indeterminado
 [+] Vector anclado: Geeta and Sanjay Chopra kidnapping case | Coord: 77.2147465,28.6803473 | Tiempo: 1978-08-26T00:00:00Z
-[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Barack Obama Presidential Center | Coord: -87.585555555,41.7825 | Tiempo: Indeterminado
+[+] Vector anclado: Curaçao | Coord: -69,12.2 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-20T07:06:37.590Z",
+    "harvest_date": "2026-06-21T08:07:15.506Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
     "total_anomalies_detected": 3
   },
   "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ivory Coast",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q1008",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6,
+          8
+        ]
+      }
+    },
     {
       "type": "Feature",
       "properties": {
@@ -33,34 +50,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Neatsville",
+        "name": "Curaçao",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q6984524",
+        "source": "Wikidata:Q25279",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -85.125555555,
-          37.197222222
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Barack Obama Presidential Center",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q15975388",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -87.585555555,
-          41.7825
+          -69,
+          12.2
         ]
       }
     }
