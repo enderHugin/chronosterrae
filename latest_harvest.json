@@ -1,32 +1,50 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/20
+[SYS] Interceptando telemetría de atención para: 2026/06/21
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Ivory Coast | Coord: -6,8 | Tiempo: Indeterminado
-[+] Vector anclado: Geeta and Sanjay Chopra kidnapping case | Coord: 77.2147465,28.6803473 | Tiempo: 1978-08-26T00:00:00Z
+[+] Vector anclado: Cape Verde | Coord: -23.7,15.3 | Tiempo: Indeterminado
 [+] Vector anclado: Curaçao | Coord: -69,12.2 | Tiempo: Indeterminado
+[+] Vector anclado: Geeta and Sanjay Chopra kidnapping case | Coord: 77.2147465,28.6803473 | Tiempo: 1978-08-26T00:00:00Z
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-21T08:07:15.506Z",
+    "harvest_date": "2026-06-22T09:18:25.063Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 3
+    "total_anomalies_detected": 4
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "Ivory Coast",
+        "name": "Cape Verde",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q1008",
+        "source": "Wikidata:Q1011",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -6,
-          8
+          -23.7,
+          15.3
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Curaçao",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q25279",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -69,
+          12.2
         ]
       }
     },
@@ -50,17 +68,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Curaçao",
+        "name": "Neatsville",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q25279",
+        "source": "Wikidata:Q6984524",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -69,
-          12.2
+          -85.125555555,
+          37.197222222
         ]
       }
     }
