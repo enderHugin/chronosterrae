@@ -1,54 +1,17 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/23
+[SYS] Interceptando telemetría de atención para: 2026/06/24
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Uzbekistan | Coord: 66,41 | Tiempo: Indeterminado
-[+] Vector anclado: Ghana | Coord: -1.0232,7.9465 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Sidirokastro | Coord: 23.388333333,41.233611111 | Tiempo: Indeterminado
-[+] Vector anclado: Cape Verde | Coord: -23.7,15.3 | Tiempo: Indeterminado
+[+] Vector anclado: Democratic Republic of the Congo | Coord: 23.656111111,-2.88 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-24T06:55:02.451Z",
+    "harvest_date": "2026-06-25T06:54:39.694Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 5
+    "total_anomalies_detected": 2
   },
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Uzbekistan",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q265",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          66,
-          41
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Ghana",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q117",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -1.0232,
-          7.9465
-        ]
-      }
-    },
     {
       "type": "Feature",
       "properties": {
@@ -69,34 +32,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Sidirokastro",
+        "name": "Democratic Republic of the Congo",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q1018794",
+        "source": "Wikidata:Q974",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          23.388333333,
-          41.233611111
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Cape Verde",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q1011",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -23.7,
-          15.3
+          23.656111111,
+          -2.88
         ]
       }
     }
