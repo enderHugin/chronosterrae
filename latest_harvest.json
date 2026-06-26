@@ -1,17 +1,72 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/24
+[SYS] Interceptando telemetría de atención para: 2026/06/25
 [SYS] Procesando 50 nodos semánticos...
+[+] Vector anclado: 2026 Venezuela earthquakes | Coord: -68.4,10.5 | Tiempo: 2026-06-24T00:00:00Z
+[+] Vector anclado: Czech Republic | Coord: 15,50 | Tiempo: Indeterminado
+[+] Vector anclado: Curaçao | Coord: -69,12.2 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Democratic Republic of the Congo | Coord: 23.656111111,-2.88 | Tiempo: Indeterminado
+[+] Vector anclado: Venezuela | Coord: -67,8 | Tiempo: Indeterminado
+[+] Vector anclado: Ecuador | Coord: -78,-1 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-25T06:54:39.694Z",
+    "harvest_date": "2026-06-26T07:02:58.848Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 2
+    "total_anomalies_detected": 6
   },
   "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "2026 Venezuela earthquakes",
+        "timestamp": "2026-06-24T00:00:00Z",
+        "source": "Wikidata:Q140352499",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -68.4,
+          10.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Czech Republic",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q213",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15,
+          50
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Curaçao",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q25279",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -69,
+          12.2
+        ]
+      }
+    },
     {
       "type": "Feature",
       "properties": {
@@ -32,17 +87,34 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Democratic Republic of the Congo",
+        "name": "Venezuela",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q974",
+        "source": "Wikidata:Q717",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          23.656111111,
-          -2.88
+          -67,
+          8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ecuador",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q736",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78,
+          -1
         ]
       }
     }
