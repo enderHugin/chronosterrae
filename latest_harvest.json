@@ -1,14 +1,14 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/26
+[SYS] Interceptando telemetría de atención para: 2026/06/27
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: 2026 Venezuela earthquakes | Coord: -68.4,10.5 | Tiempo: 2026-06-24T00:00:00Z
-[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 [+] Vector anclado: Cape Verde | Coord: -23.7,15.3 | Tiempo: Indeterminado
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: 2026 Venezuela earthquakes | Coord: -68.4,10.5 | Tiempo: 2026-06-24T00:00:00Z
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-27T06:34:36.575Z",
+    "harvest_date": "2026-06-28T07:08:08.532Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
     "total_anomalies_detected": 3
   },
@@ -16,17 +16,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "2026 Venezuela earthquakes",
-        "timestamp": "2026-06-24T00:00:00Z",
-        "source": "Wikidata:Q140352499",
+        "name": "Cape Verde",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q1011",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -68.4,
-          10.5
+          -23.7,
+          15.3
         ]
       }
     },
@@ -50,17 +50,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Cape Verde",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q1011",
+        "name": "2026 Venezuela earthquakes",
+        "timestamp": "2026-06-24T00:00:00Z",
+        "source": "Wikidata:Q140352499",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -23.7,
-          15.3
+          -68.4,
+          10.5
         ]
       }
     }
