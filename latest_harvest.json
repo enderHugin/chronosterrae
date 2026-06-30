@@ -1,50 +1,32 @@
-[SYS] Interceptando telemetría de atención para: 2026/06/28
+[SYS] Interceptando telemetría de atención para: 2026/06/29
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Cape Verde | Coord: -23.7,15.3 | Tiempo: Indeterminado
-[+] Vector anclado: 2026 Venezuela earthquakes | Coord: -68.4,10.5 | Tiempo: 2026-06-24T00:00:00Z
+[+] Vector anclado: Paraguay | Coord: -58,-23.5 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Democratic Republic of the Congo | Coord: 23.656111111,-2.88 | Tiempo: Indeterminado
+[+] Vector anclado: 2026 Venezuela earthquakes | Coord: -68.4,10.5 | Tiempo: 2026-06-24T00:00:00Z
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-06-29T08:22:56.055Z",
+    "harvest_date": "2026-06-30T07:01:46.699Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 4
+    "total_anomalies_detected": 3
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "Cape Verde",
+        "name": "Paraguay",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q1011",
+        "source": "Wikidata:Q733",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -23.7,
-          15.3
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "2026 Venezuela earthquakes",
-        "timestamp": "2026-06-24T00:00:00Z",
-        "source": "Wikidata:Q140352499",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -68.4,
-          10.5
+          -58,
+          -23.5
         ]
       }
     },
@@ -68,17 +50,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Democratic Republic of the Congo",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q974",
+        "name": "2026 Venezuela earthquakes",
+        "timestamp": "2026-06-24T00:00:00Z",
+        "source": "Wikidata:Q140352499",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          23.656111111,
-          -2.88
+          -68.4,
+          10.5
         ]
       }
     }
