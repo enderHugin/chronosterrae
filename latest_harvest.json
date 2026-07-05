@@ -1,15 +1,19 @@
-[SYS] Interceptando telemetría de atención para: 2026/07/03
+[SYS] Interceptando telemetría de atención para: 2026/07/04
 [SYS] Procesando 50 nodos semánticos...
 [+] Vector anclado: Cape Verde | Coord: -23.7,15.3 | Tiempo: Indeterminado
+[+] Vector anclado: Morocco | Coord: -6,32 | Tiempo: Indeterminado
+[+] Vector anclado: Paraguay | Coord: -58,-23.5 | Tiempo: Indeterminado
+[+] Vector anclado: Mount Rushmore | Coord: -103.459166666,43.878888888 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: United States Declaration of Independence | Coord: -75.15,39.9489 | Tiempo: 1776-07-04T00:00:00Z
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-07-04T06:27:49.547Z",
+    "harvest_date": "2026-07-05T06:48:21.334Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 2
+    "total_anomalies_detected": 6
   },
   "features": [
     {
@@ -32,6 +36,57 @@
     {
       "type": "Feature",
       "properties": {
+        "name": "Morocco",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q1028",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6,
+          32
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Paraguay",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q733",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -58,
+          -23.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Mount Rushmore",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q83497",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.459166666,
+          43.878888888
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "name": "Neatsville",
         "timestamp": "Indeterminado",
         "source": "Wikidata:Q6984524",
@@ -43,6 +98,23 @@
         "coordinates": [
           -85.125555555,
           37.197222222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "United States Declaration of Independence",
+        "timestamp": "1776-07-04T00:00:00Z",
+        "source": "Wikidata:Q127912",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.15,
+          39.9489
         ]
       }
     }
