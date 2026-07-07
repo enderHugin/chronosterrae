@@ -1,35 +1,18 @@
-[SYS] Interceptando telemetría de atención para: 2026/07/05
+[SYS] Interceptando telemetría de atención para: 2026/07/06
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Cape Verde | Coord: -23.7,15.3 | Tiempo: Indeterminado
 [+] Vector anclado: Estadio Azteca | Coord: -99.150555555,19.303055555 | Tiempo: Indeterminado
-[+] Vector anclado: Abu Ghraib torture and prisoner abuse | Coord: 44.065,33.2925 | Tiempo: 2004-04-01T00:00:00Z
+[+] Vector anclado: Cape Verde | Coord: -23.7,15.3 | Tiempo: Indeterminado
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-07-06T07:20:44.142Z",
+    "harvest_date": "2026-07-07T06:53:24.501Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
     "total_anomalies_detected": 3
   },
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Cape Verde",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q1011",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -23.7,
-          15.3
-        ]
-      }
-    },
     {
       "type": "Feature",
       "properties": {
@@ -50,17 +33,34 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Abu Ghraib torture and prisoner abuse",
-        "timestamp": "2004-04-01T00:00:00Z",
-        "source": "Wikidata:Q334720",
+        "name": "Cape Verde",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q1011",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          44.065,
-          33.2925
+          -23.7,
+          15.3
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Neatsville",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q6984524",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.125555555,
+          37.197222222
         ]
       }
     }
