@@ -1,49 +1,31 @@
-[SYS] Interceptando telemetría de atención para: 2026/07/06
+[SYS] Interceptando telemetría de atención para: 2026/07/07
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Estadio Azteca | Coord: -99.150555555,19.303055555 | Tiempo: Indeterminado
-[+] Vector anclado: Cape Verde | Coord: -23.7,15.3 | Tiempo: Indeterminado
+[+] Vector anclado: Belgium | Coord: 4.668055555,50.641111111 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-07-07T06:53:24.501Z",
+    "harvest_date": "2026-07-08T06:04:51.693Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 3
+    "total_anomalies_detected": 2
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "Estadio Azteca",
+        "name": "Belgium",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q320454",
+        "source": "Wikidata:Q31",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -99.150555555,
-          19.303055555
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Cape Verde",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q1011",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -23.7,
-          15.3
+          4.668055555,
+          50.641111111
         ]
       }
     },
