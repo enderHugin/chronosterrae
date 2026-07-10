@@ -1,16 +1,34 @@
-[SYS] Interceptando telemetría de atención para: 2026/07/08
+[SYS] Interceptando telemetría de atención para: 2026/07/09
 [SYS] Procesando 50 nodos semánticos...
+[+] Vector anclado: Morocco | Coord: -6,32 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-07-09T06:52:38.803Z",
+    "harvest_date": "2026-07-10T06:52:34.667Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 1
+    "total_anomalies_detected": 2
   },
   "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Morocco",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q1028",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6,
+          32
+        ]
+      }
+    },
     {
       "type": "Feature",
       "properties": {
