@@ -1,49 +1,67 @@
-[SYS] Interceptando telemetría de atención para: 2026/07/10
+[SYS] Interceptando telemetría de atención para: 2026/07/11
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: SoFi Stadium | Coord: -118.338,33.9504 | Tiempo: Indeterminado
-[+] Vector anclado: Bayeux Tapestry | Coord: -0.70029,49.27436 | Tiempo: Indeterminado
+[+] Vector anclado: Costa Concordia disaster | Coord: 10.921666666,42.365277777 | Tiempo: 2012-01-13T00:00:00Z
+[+] Vector anclado: Argentina | Coord: -64,-34 | Tiempo: Indeterminado
+[+] Vector anclado: Norway | Coord: 10.683333333,59.933333333 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-07-11T05:47:23.237Z",
+    "harvest_date": "2026-07-12T06:10:29.048Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 3
+    "total_anomalies_detected": 4
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "SoFi Stadium",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q19520501",
+        "name": "Costa Concordia disaster",
+        "timestamp": "2012-01-13T00:00:00Z",
+        "source": "Wikidata:Q1245004",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -118.338,
-          33.9504
+          10.921666666,
+          42.365277777
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "Bayeux Tapestry",
+        "name": "Argentina",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q187483",
+        "source": "Wikidata:Q414",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.70029,
-          49.27436
+          -64,
+          -34
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Norway",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q20",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.683333333,
+          59.933333333
         ]
       }
     },
