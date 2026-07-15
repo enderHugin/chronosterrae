@@ -1,50 +1,32 @@
-[SYS] Interceptando telemetría de atención para: 2026/07/13
+[SYS] Interceptando telemetría de atención para: 2026/07/14
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Costa Concordia disaster | Coord: 10.921666666,42.365277777 | Tiempo: 2012-01-13T00:00:00Z
-[+] Vector anclado: death of Tamla Horsford | Coord: -84.139166666,34.206944444 | Tiempo: 2018-11-04T00:00:00Z
-[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 [+] Vector anclado: Falklands War | Coord: -59,-51.75 | Tiempo: 1982-04-02T00:00:00Z
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: Costa Concordia disaster | Coord: 10.921666666,42.365277777 | Tiempo: 2012-01-13T00:00:00Z
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-07-14T05:38:16.111Z",
+    "harvest_date": "2026-07-15T05:39:31.874Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 4
+    "total_anomalies_detected": 3
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "Costa Concordia disaster",
-        "timestamp": "2012-01-13T00:00:00Z",
-        "source": "Wikidata:Q1245004",
+        "name": "Falklands War",
+        "timestamp": "1982-04-02T00:00:00Z",
+        "source": "Wikidata:Q48249",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.921666666,
-          42.365277777
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "death of Tamla Horsford",
-        "timestamp": "2018-11-04T00:00:00Z",
-        "source": "Wikidata:Q97356939",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -84.139166666,
-          34.206944444
+          -59,
+          -51.75
         ]
       }
     },
@@ -68,17 +50,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Falklands War",
-        "timestamp": "1982-04-02T00:00:00Z",
-        "source": "Wikidata:Q48249",
+        "name": "Costa Concordia disaster",
+        "timestamp": "2012-01-13T00:00:00Z",
+        "source": "Wikidata:Q1245004",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -59,
-          -51.75
+          10.921666666,
+          42.365277777
         ]
       }
     }
