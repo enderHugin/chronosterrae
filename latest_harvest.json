@@ -1,16 +1,18 @@
-[SYS] Interceptando telemetría de atención para: 2026/07/14
+[SYS] Interceptando telemetría de atención para: 2026/07/15
 [SYS] Procesando 50 nodos semánticos...
 [+] Vector anclado: Falklands War | Coord: -59,-51.75 | Tiempo: 1982-04-02T00:00:00Z
+[+] Vector anclado: Falkland Islands | Coord: -59.22,-51.73 | Tiempo: Indeterminado
+[+] Vector anclado: Argentina | Coord: -64,-34 | Tiempo: Indeterminado
+[+] Vector anclado: 2026 FIFA World Cup final | Coord: -74.074444444,40.813611111 | Tiempo: 2026-07-19T00:00:00Z
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Costa Concordia disaster | Coord: 10.921666666,42.365277777 | Tiempo: 2012-01-13T00:00:00Z
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-07-15T05:39:31.874Z",
+    "harvest_date": "2026-07-16T05:47:25.135Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 3
+    "total_anomalies_detected": 5
   },
   "features": [
     {
@@ -33,6 +35,57 @@
     {
       "type": "Feature",
       "properties": {
+        "name": "Falkland Islands",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q9648",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -59.22,
+          -51.73
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Argentina",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q414",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -64,
+          -34
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "2026 FIFA World Cup final",
+        "timestamp": "2026-07-19T00:00:00Z",
+        "source": "Wikidata:Q55640701",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.074444444,
+          40.813611111
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "name": "Neatsville",
         "timestamp": "Indeterminado",
         "source": "Wikidata:Q6984524",
@@ -44,23 +97,6 @@
         "coordinates": [
           -85.125555555,
           37.197222222
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Costa Concordia disaster",
-        "timestamp": "2012-01-13T00:00:00Z",
-        "source": "Wikidata:Q1245004",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.921666666,
-          42.365277777
         ]
       }
     }
