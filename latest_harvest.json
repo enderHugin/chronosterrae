@@ -1,14 +1,14 @@
-[SYS] Interceptando telemetría de atención para: 2026/07/19
+[SYS] Interceptando telemetría de atención para: 2026/07/20
 [SYS] Procesando 50 nodos semánticos...
 [+] Vector anclado: 2026 FIFA World Cup final | Coord: -74.074444444,40.813611111 | Tiempo: 2026-07-19T00:00:00Z
-[+] Vector anclado: MetLife Stadium | Coord: -74.074444444,40.813611111 | Tiempo: Indeterminado
+[+] Vector anclado: Spain | Coord: -3.5,40.2 | Tiempo: Indeterminado
 [+] Vector anclado: Argentina | Coord: -64,-34 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-07-20T06:24:05.109Z",
+    "harvest_date": "2026-07-21T05:57:38.831Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
     "total_anomalies_detected": 3
   },
@@ -33,17 +33,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "MetLife Stadium",
+        "name": "Spain",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q10862290",
+        "source": "Wikidata:Q29",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -74.074444444,
-          40.813611111
+          -3.5,
+          40.2
         ]
       }
     },
