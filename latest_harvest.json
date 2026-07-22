@@ -1,66 +1,30 @@
-[SYS] Interceptando telemetría de atención para: 2026/07/20
+[SYS] Interceptando telemetría de atención para: 2026/07/21
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: 2026 FIFA World Cup final | Coord: -74.074444444,40.813611111 | Tiempo: 2026-07-19T00:00:00Z
-[+] Vector anclado: Spain | Coord: -3.5,40.2 | Tiempo: Indeterminado
-[+] Vector anclado: Argentina | Coord: -64,-34 | Tiempo: Indeterminado
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-07-21T05:57:38.831Z",
+    "harvest_date": "2026-07-22T05:56:27.941Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 3
+    "total_anomalies_detected": 1
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "2026 FIFA World Cup final",
-        "timestamp": "2026-07-19T00:00:00Z",
-        "source": "Wikidata:Q55640701",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -74.074444444,
-          40.813611111
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Spain",
+        "name": "Neatsville",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q29",
+        "source": "Wikidata:Q6984524",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -3.5,
-          40.2
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Argentina",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q414",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -64,
-          -34
+          -85.125555555,
+          37.197222222
         ]
       }
     }
