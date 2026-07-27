@@ -1,15 +1,14 @@
-[SYS] Interceptando telemetría de atención para: 2026/07/25
+[SYS] Interceptando telemetría de atención para: 2026/07/26
 [SYS] Procesando 50 nodos semánticos...
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Etemenanki | Coord: 44.420833333,32.536388888 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-07-26T06:12:36.466Z",
+    "harvest_date": "2026-07-27T06:37:43.802Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 2
+    "total_anomalies_detected": 1
   },
   "features": [
     {
@@ -26,23 +25,6 @@
         "coordinates": [
           -85.125555555,
           37.197222222
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Etemenanki",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q285788",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          44.420833333,
-          32.536388888
         ]
       }
     }
