@@ -1,37 +1,20 @@
-[SYS] Interceptando telemetría de atención para: 2026/08/01
+[SYS] Interceptando telemetría de atención para: 2026/08/02
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Ceuta | Coord: -5.3,35.886667 | Tiempo: Indeterminado
 [+] Vector anclado: Pan Am Flight 103 | Coord: -3.358447428,55.115477662 | Tiempo: 1988-12-21T00:00:00Z
+[+] Vector anclado: Ceuta | Coord: -5.3,35.886667 | Tiempo: Indeterminado
 [+] Vector anclado: 2022 University of Idaho Massacre | Coord: -117.010833333,46.721944444 | Tiempo: 2022-11-13T00:00:00Z
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Broad Peak | Coord: 76.568055555,35.810555555 | Tiempo: Indeterminado
+[+] Vector anclado: 2026 Broad Peak avalanche | Coord: 76.548743,35.811085 | Tiempo: 2026-07-30T00:00:00Z
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-08-02T06:09:25.315Z",
+    "harvest_date": "2026-08-03T06:31:25.966Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
     "total_anomalies_detected": 5
   },
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Ceuta",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q5823",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -5.3,
-          35.886667
-        ]
-      }
-    },
     {
       "type": "Feature",
       "properties": {
@@ -46,6 +29,23 @@
         "coordinates": [
           -3.358447428,
           55.115477662
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ceuta",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q5823",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.3,
+          35.886667
         ]
       }
     },
@@ -86,17 +86,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Broad Peak",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q180996",
+        "name": "2026 Broad Peak avalanche",
+        "timestamp": "2026-07-30T00:00:00Z",
+        "source": "Wikidata:Q140800370",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          76.568055555,
-          35.810555555
+          76.548743,
+          35.811085
         ]
       }
     }
