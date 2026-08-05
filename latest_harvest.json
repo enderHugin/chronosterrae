@@ -1,38 +1,20 @@
-[SYS] Interceptando telemetría de atención para: 2026/08/03
+[SYS] Interceptando telemetría de atención para: 2026/08/04
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Bankipur Vidhan Sabha constituency | Coord: 85.09055556,25.64111111 | Tiempo: Indeterminado
 [+] Vector anclado: Pan Am Flight 103 | Coord: -3.358447428,55.115477662 | Tiempo: 1988-12-21T00:00:00Z
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: 2022 University of Idaho Massacre | Coord: -117.010833333,46.721944444 | Tiempo: 2022-11-13T00:00:00Z
 [+] Vector anclado: Ceuta | Coord: -5.3,35.886667 | Tiempo: Indeterminado
-[+] Vector anclado: Datia Vidhan Sabha constituency | Coord: 78.45,25.67 | Tiempo: Indeterminado
-[+] Vector anclado: Heart Attack Grill | Coord: -111.947991666,33.305183333 | Tiempo: Indeterminado
+[+] Vector anclado: United States | Coord: -98.5795,39.828175 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-08-04T05:56:15.753Z",
+    "harvest_date": "2026-08-05T05:52:48.513Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 6
+    "total_anomalies_detected": 5
   },
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Bankipur Vidhan Sabha constituency",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q17049574",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          85.09055556,
-          25.64111111
-        ]
-      }
-    },
     {
       "type": "Feature",
       "properties": {
@@ -70,6 +52,23 @@
     {
       "type": "Feature",
       "properties": {
+        "name": "2022 University of Idaho Massacre",
+        "timestamp": "2022-11-13T00:00:00Z",
+        "source": "Wikidata:Q115288121",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -117.010833333,
+          46.721944444
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "name": "Ceuta",
         "timestamp": "Indeterminado",
         "source": "Wikidata:Q5823",
@@ -87,34 +86,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Datia Vidhan Sabha constituency",
+        "name": "United States",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q5227655",
+        "source": "Wikidata:Q30",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          78.45,
-          25.67
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Heart Attack Grill",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q2068768",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -111.947991666,
-          33.305183333
+          -98.5795,
+          39.828175
         ]
       }
     }
