@@ -1,1 +1,86 @@
-[SYS] Interceptando telemetría de atención para: 2026/08/09
+[SYS] Interceptando telemetría de atención para: 2026/08/10
+[SYS] Procesando 50 nodos semánticos...
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: Pan Am Flight 103 | Coord: -3.358447428,55.115477662 | Tiempo: 1988-12-21T00:00:00Z
+[+] Vector anclado: United States | Coord: -98.5795,39.828175 | Tiempo: Indeterminado
+[+] Vector anclado: solar eclipse of August 12, 2026 | Coord: -25.2,65.2 | Tiempo: 2026-08-12T00:00:00Z
+
+[SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "harvest_date": "2026-08-11T04:26:47.791Z",
+    "node_origin": "ChronosTerrae_Local_Alpha",
+    "total_anomalies_detected": 4
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Neatsville",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q6984524",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.125555555,
+          37.197222222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pan Am Flight 103",
+        "timestamp": "1988-12-21T00:00:00Z",
+        "source": "Wikidata:Q211087",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.358447428,
+          55.115477662
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "United States",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q30",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.5795,
+          39.828175
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "solar eclipse of August 12, 2026",
+        "timestamp": "2026-08-12T00:00:00Z",
+        "source": "Wikidata:Q2464643",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -25.2,
+          65.2
+        ]
+      }
+    }
+  ]
+}
