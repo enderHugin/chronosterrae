@@ -1,39 +1,19 @@
-[SYS] Interceptando telemetría de atención para: 2026/08/11
+[SYS] Interceptando telemetría de atención para: 2026/08/12
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 [+] Vector anclado: solar eclipse of August 12, 2026 | Coord: -25.2,65.2 | Tiempo: 2026-08-12T00:00:00Z
-[+] Vector anclado: Watson Brake | Coord: -92.144722222,32.368888888 | Tiempo: Indeterminado
-[+] Vector anclado: 2026 Colombia earthquake | Coord: -76.242,4.844 | Tiempo: 2026-08-10T00:00:00Z
-[+] Vector anclado: Pan Am Flight 103 | Coord: -3.358447428,55.115477662 | Tiempo: 1988-12-21T00:00:00Z
-[+] Vector anclado: Göbekli Tepe | Coord: 38.9225,37.223055555 | Tiempo: Indeterminado
-[+] Vector anclado: United States | Coord: -98.5795,39.828175 | Tiempo: Indeterminado
+[+] Vector anclado: solar eclipse of August 2, 2027 | Coord: 33.033,25.083 | Tiempo: 2027-08-02T00:00:00Z
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: solar eclipse of August 11, 1999 | Coord: 24.2883,45.08 | Tiempo: 1999-08-11T00:00:00Z
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-08-12T04:54:58.174Z",
+    "harvest_date": "2026-08-13T04:59:01.972Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 7
+    "total_anomalies_detected": 4
   },
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Neatsville",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q6984524",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -85.125555555,
-          37.197222222
-        ]
-      }
-    },
     {
       "type": "Feature",
       "properties": {
@@ -54,85 +34,51 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Watson Brake",
+        "name": "solar eclipse of August 2, 2027",
+        "timestamp": "2027-08-02T00:00:00Z",
+        "source": "Wikidata:Q3577554",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.033,
+          25.083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Neatsville",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q2552689",
+        "source": "Wikidata:Q6984524",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -92.144722222,
-          32.368888888
+          -85.125555555,
+          37.197222222
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "2026 Colombia earthquake",
-        "timestamp": "2026-08-10T00:00:00Z",
-        "source": "Wikidata:Q140984463",
+        "name": "solar eclipse of August 11, 1999",
+        "timestamp": "1999-08-11T00:00:00Z",
+        "source": "Wikidata:Q1281799",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -76.242,
-          4.844
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Pan Am Flight 103",
-        "timestamp": "1988-12-21T00:00:00Z",
-        "source": "Wikidata:Q211087",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -3.358447428,
-          55.115477662
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Göbekli Tepe",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q214944",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          38.9225,
-          37.223055555
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "United States",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q30",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -98.5795,
-          39.828175
+          24.2883,
+          45.08
         ]
       }
     }
