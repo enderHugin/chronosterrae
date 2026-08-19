@@ -1,14 +1,15 @@
-[SYS] Interceptando telemetría de atención para: 2026/08/17
+[SYS] Interceptando telemetría de atención para: 2026/08/18
 [SYS] Procesando 50 nodos semánticos...
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: United States | Coord: -98.5795,39.828175 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-08-18T03:50:58.747Z",
+    "harvest_date": "2026-08-19T03:52:36.028Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 1
+    "total_anomalies_detected": 2
   },
   "features": [
     {
@@ -25,6 +26,23 @@
         "coordinates": [
           -85.125555555,
           37.197222222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "United States",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q30",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.5795,
+          39.828175
         ]
       }
     }
