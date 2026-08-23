@@ -1,16 +1,15 @@
-[SYS] Interceptando telemetría de atención para: 2026/08/21
+[SYS] Interceptando telemetría de atención para: 2026/08/22
 [SYS] Procesando 50 nodos semánticos...
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Space Shuttle Challenger disaster | Coord: -80.28,28.64 | Tiempo: 1986-01-28T00:00:00Z
 [+] Vector anclado: United States | Coord: -98.5795,39.828175 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-08-22T03:48:37.833Z",
+    "harvest_date": "2026-08-23T03:56:08.474Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 3
+    "total_anomalies_detected": 2
   },
   "features": [
     {
@@ -27,23 +26,6 @@
         "coordinates": [
           -85.125555555,
           37.197222222
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Space Shuttle Challenger disaster",
-        "timestamp": "1986-01-28T00:00:00Z",
-        "source": "Wikidata:Q858145",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -80.28,
-          28.64
         ]
       }
     },
