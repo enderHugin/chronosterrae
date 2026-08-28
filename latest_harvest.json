@@ -1,33 +1,105 @@
-[SYS] Interceptando telemetría de atención para: 2026/08/26
+[SYS] Interceptando telemetría de atención para: 2026/08/27
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: Dollywood | Coord: -83.5312,35.7951 | Tiempo: Indeterminado
+[+] Vector anclado: Lake Ontario | Coord: -78.106388888,43.728888888 | Tiempo: Indeterminado
+[+] Vector anclado: 2026 Nepal floods | Coord: 85.53707,28.2867 | Tiempo: 2026-08-26T00:00:00Z
+[+] Vector anclado: Killing of the Clancy children | Coord: -70.672777777,42.041666666 | Tiempo: 2023-01-24T00:00:00Z
+[+] Vector anclado: Nepal | Coord: 84,28 | Tiempo: Indeterminado
+[+] Vector anclado: assassination of Louis Mountbatten, 1st Earl Mountbatten of Burma | Coord: -8.4486,54.4664 | Tiempo: 1979-08-27T00:00:00Z
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Pittman Center | Coord: -83.395277777,35.758333333 | Tiempo: Indeterminado
-[+] Vector anclado: 2026 China–Nepal floods | Coord: 85.377777777,28.279722222 | Tiempo: 2026-08-26T00:00:00Z
+[+] Vector anclado: Dollywood | Coord: -83.5312,35.7951 | Tiempo: Indeterminado
+[+] Vector anclado: Great Lakes | Coord: -84,45.75 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-08-27T14:04:02.574Z",
+    "harvest_date": "2026-08-28T15:15:05.680Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 4
+    "total_anomalies_detected": 8
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "Dollywood",
+        "name": "Lake Ontario",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q530744",
+        "source": "Wikidata:Q1062",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -83.5312,
-          35.7951
+          -78.106388888,
+          43.728888888
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "2026 Nepal floods",
+        "timestamp": "2026-08-26T00:00:00Z",
+        "source": "Wikidata:Q141182413",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.53707,
+          28.2867
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Killing of the Clancy children",
+        "timestamp": "2023-01-24T00:00:00Z",
+        "source": "Wikidata:Q141112599",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.672777777,
+          42.041666666
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Nepal",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q837",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          84,
+          28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "assassination of Louis Mountbatten, 1st Earl Mountbatten of Burma",
+        "timestamp": "1979-08-27T00:00:00Z",
+        "source": "Wikidata:Q113213574",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.4486,
+          54.4664
         ]
       }
     },
@@ -51,34 +123,34 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Pittman Center",
+        "name": "Dollywood",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q2556469",
+        "source": "Wikidata:Q530744",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -83.395277777,
-          35.758333333
+          -83.5312,
+          35.7951
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "2026 China–Nepal floods",
-        "timestamp": "2026-08-26T00:00:00Z",
-        "source": "Wikidata:Q141182413",
+        "name": "Great Lakes",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q7347",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          85.377777777,
-          28.279722222
+          -84,
+          45.75
         ]
       }
     }
