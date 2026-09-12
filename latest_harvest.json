@@ -1,22 +1,58 @@
-[SYS] Interceptando telemetría de atención para: 2026/09/10
+[SYS] Interceptando telemetría de atención para: 2026/09/11
 [SYS] Procesando 50 nodos semánticos...
-[+] Vector anclado: killing of the Clancy children | Coord: -70.672777777,42.041666666 | Tiempo: 2023-01-24T00:00:00Z
-[+] Vector anclado: assassination of Charlie Kirk | Coord: -111.714,40.277533 | Tiempo: 2025-09-10T00:00:00Z
-[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: Bayeux Tapestry | Coord: -0.70029,49.27436 | Tiempo: Indeterminado
-[+] Vector anclado: United States | Coord: -98.5795,39.828175 | Tiempo: Indeterminado
 [+] Vector anclado: United Airlines Flight 93 | Coord: -78.90475,40.050611111 | Tiempo: 2001-09-11T00:00:00Z
-[+] Vector anclado: Nishiyama Onsen Keiunkan | Coord: 138.306,35.55433333 | Tiempo: Indeterminado
+[+] Vector anclado: American Airlines Flight 11 | Coord: -74.013027777,40.712361111 | Tiempo: 2001-09-11T00:00:00Z
+[+] Vector anclado: killing of the Clancy children | Coord: -70.672777777,42.041666666 | Tiempo: 2023-01-24T00:00:00Z
+[+] Vector anclado: World Trade Center | Coord: -74.0125,40.711388888 | Tiempo: Indeterminado
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
+[+] Vector anclado: assassination of Charlie Kirk | Coord: -111.714,40.277533 | Tiempo: 2025-09-10T00:00:00Z
+[+] Vector anclado: United Airlines Flight 175 | Coord: -74.013138888,40.710777777 | Tiempo: 2001-09-11T00:00:00Z
+[+] Vector anclado: collapse of the World Trade Center | Coord: -74.012222222,40.711422222 | Tiempo: 2001-09-11T00:00:00Z
+[+] Vector anclado: American Airlines Flight 77 | Coord: -77.058055555,38.871111111 | Tiempo: 2001-09-11T00:00:00Z
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-09-11T07:58:19.916Z",
+    "harvest_date": "2026-09-12T07:51:19.508Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 7
+    "total_anomalies_detected": 9
   },
   "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "United Airlines Flight 93",
+        "timestamp": "2001-09-11T00:00:00Z",
+        "source": "Wikidata:Q638603",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.90475,
+          40.050611111
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "American Airlines Flight 11",
+        "timestamp": "2001-09-11T00:00:00Z",
+        "source": "Wikidata:Q11694",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.013027777,
+          40.712361111
+        ]
+      }
+    },
     {
       "type": "Feature",
       "properties": {
@@ -37,17 +73,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "assassination of Charlie Kirk",
-        "timestamp": "2025-09-10T00:00:00Z",
-        "source": "Wikidata:Q136210698",
+        "name": "World Trade Center",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q11235",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -111.714,
-          40.277533
+          -74.0125,
+          40.711388888
         ]
       }
     },
@@ -71,68 +107,68 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Bayeux Tapestry",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q187483",
+        "name": "assassination of Charlie Kirk",
+        "timestamp": "2025-09-10T00:00:00Z",
+        "source": "Wikidata:Q136210698",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -0.70029,
-          49.27436
+          -111.714,
+          40.277533
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "United States",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q30",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -98.5795,
-          39.828175
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "United Airlines Flight 93",
+        "name": "United Airlines Flight 175",
         "timestamp": "2001-09-11T00:00:00Z",
-        "source": "Wikidata:Q638603",
+        "source": "Wikidata:Q11705",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -78.90475,
-          40.050611111
+          -74.013138888,
+          40.710777777
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "name": "Nishiyama Onsen Keiunkan",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q7040843",
+        "name": "collapse of the World Trade Center",
+        "timestamp": "2001-09-11T00:00:00Z",
+        "source": "Wikidata:Q62179",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          138.306,
-          35.55433333
+          -74.012222222,
+          40.711422222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "American Airlines Flight 77",
+        "timestamp": "2001-09-11T00:00:00Z",
+        "source": "Wikidata:Q463237",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.058055555,
+          38.871111111
         ]
       }
     }
