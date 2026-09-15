@@ -1,19 +1,36 @@
-[SYS] Interceptando telemetría de atención para: 2026/09/13
+[SYS] Interceptando telemetría de atención para: 2026/09/14
 [SYS] Procesando 50 nodos semánticos...
+[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 [+] Vector anclado: killing of the Clancy children | Coord: -70.672777777,42.041666666 | Tiempo: 2023-01-24T00:00:00Z
 [+] Vector anclado: United Airlines Flight 93 | Coord: -78.90475,40.050611111 | Tiempo: 2001-09-11T00:00:00Z
-[+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
-[+] Vector anclado: World Trade Center | Coord: -74.0125,40.711388888 | Tiempo: Indeterminado
+[+] Vector anclado: United States | Coord: -98.5795,39.828175 | Tiempo: Indeterminado
 
 [SYS] Ciclo de ingesta finalizado. Payload CRDT generado:
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-09-14T08:48:07.214Z",
+    "harvest_date": "2026-09-15T08:35:19.210Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
     "total_anomalies_detected": 4
   },
   "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Neatsville",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q6984524",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.125555555,
+          37.197222222
+        ]
+      }
+    },
     {
       "type": "Feature",
       "properties": {
@@ -51,34 +68,17 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Neatsville",
+        "name": "United States",
         "timestamp": "Indeterminado",
-        "source": "Wikidata:Q6984524",
+        "source": "Wikidata:Q30",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -85.125555555,
-          37.197222222
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "World Trade Center",
-        "timestamp": "Indeterminado",
-        "source": "Wikidata:Q11235",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -74.0125,
-          40.711388888
+          -98.5795,
+          39.828175
         ]
       }
     }
