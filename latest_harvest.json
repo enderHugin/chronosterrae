@@ -1,5 +1,6 @@
-[SYS] Interceptando telemetría de atención para: 2026/09/16
+[SYS] Interceptando telemetría de atención para: 2026/09/17
 [SYS] Procesando 50 nodos semánticos...
+[+] Vector anclado: Chicxulub crater | Coord: -89.516666666,21.4 | Tiempo: Indeterminado
 [+] Vector anclado: Neatsville | Coord: -85.125555555,37.197222222 | Tiempo: Indeterminado
 [+] Vector anclado: killing of the Clancy children | Coord: -70.672777777,42.041666666 | Tiempo: 2023-01-24T00:00:00Z
 [+] Vector anclado: United States | Coord: -98.5795,39.828175 | Tiempo: Indeterminado
@@ -8,11 +9,28 @@
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-09-17T08:35:19.181Z",
+    "harvest_date": "2026-09-18T08:11:09.329Z",
     "node_origin": "ChronosTerrae_Local_Alpha",
-    "total_anomalies_detected": 3
+    "total_anomalies_detected": 4
   },
   "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Chicxulub crater",
+        "timestamp": "Indeterminado",
+        "source": "Wikidata:Q55816",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -89.516666666,
+          21.4
+        ]
+      }
+    },
     {
       "type": "Feature",
       "properties": {
