@@ -38,6 +38,8 @@
             --map-filter: contrast(1.2) brightness(0.8);
         }
 
+        html, body { width: 100%; height: 100%; }
+
         body {
             margin: 0; padding: 0;
             background-color: var(--bg-color);
@@ -47,8 +49,13 @@
             transition: all 0.8s ease;
         }
 
-        #map { position: absolute; top: 0; bottom: 0; width: 100%; transition: filter 0.8s ease; }
-        
+        /* FIX W1: sin alto explicito el contenedor colapsaba a 0x0 y el mapa no se veia */
+        #map {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            transition: filter 0.8s ease;
+        }
+
         .glass-panel {
             background: var(--ui-bg);
             backdrop-filter: blur(8px);
@@ -73,6 +80,19 @@
         }
         .sys-btn:active { transform: scale(0.95); }
 
+        /* Estado del sistema: nunca fallar en silencio */
+        #system-status {
+            position: absolute; left: 20px; bottom: 20px; z-index: 12;
+            max-width: 340px; padding: 8px 12px;
+            font-family: sans-serif; font-size: 12px; line-height: 1.4;
+            border-left: 3px solid var(--accent);
+            display: none;
+        }
+        #system-status.visible { display: block; }
+        #system-status.state-ok { border-left-color: #2e7d32; }
+        #system-status.state-warn { border-left-color: #e6a700; }
+        #system-status.state-error { border-left-color: #c62828; }
+
         /* Controles Inferiores */
         #timeline-control {
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -92,6 +112,11 @@
             background: var(--accent); border-radius: 50%; cursor: pointer;
         }
 
+        #era-ticks {
+            display: flex; justify-content: space-between;
+            font-family: sans-serif; font-size: 11px; opacity: 0.75;
+        }
+
         /* Brújula SVG Dinámica */
         #compass {
             position: absolute; top: 20px; left: 20px; z-index: 10;
@@ -104,6 +129,10 @@
             position: absolute; top: 70px; right: 20px; width: 300px;
             padding: 20px; z-index: 10; display: none;
         }
+
+        .info-row { margin-top: 8px; font-family: sans-serif; font-size: 13px; word-break: break-word; }
+        .info-row b { color: var(--accent); }
+        .info-row a { color: var(--accent); }
 
         .kofi-btn {
             background-color: #29abe0; color: white; padding: 8px 15px;
@@ -140,14 +169,18 @@
         <div id="entity-data">--</div>
     </div>
 
+    <div id="system-status" class="glass-panel"></div>
+
     <div id="timeline-control" class="glass-panel">
         <div class="top-bar">
             <div id="year-display">Year: -250,000,000</div>
-            <a href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" class="kofi-btn" id="ui-donate">
-                <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-fi"> Support Project
+            <a href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" rel="noopener" class="kofi-btn" id="ui-donate">
+                <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-fi">
+                <span id="donate-label">Support Project</span>
             </a>
         </div>
         <input type="range" id="timeline" min="0" max="2" value="0" step="1">
+        <div id="era-ticks"></div>
     </div>
 
     <script>
@@ -156,19 +189,39 @@
             en: {
                 donate: "Support Project",
                 yearPrefix: "Year",
-                clickPrompt: "Click a region on the map."
+                clickPrompt: "Click a region on the map.",
+                dataLabel: "Data",
+                tierLabel: "Tier",
+                eventLabel: "Event date",
+                harvestLabel: "Harvested",
+                sourceLabel: "Source",
+                unknownDate: "Unknown",
+                noResults: "No records found for that search.",
+                liveOk: "Live intake loaded: {n} records.",
+                liveBad: "Live intake unreadable: {err}",
+                mapBad: "Map error: {err}"
             },
             es: {
                 donate: "Financiar Proyecto",
                 yearPrefix: "Año",
-                clickPrompt: "Haz clic en una región en el mapa."
+                clickPrompt: "Haz clic en una región en el mapa.",
+                dataLabel: "Dato",
+                tierLabel: "Capa",
+                eventLabel: "Fecha del suceso",
+                harvestLabel: "Cosechado",
+                sourceLabel: "Fuente",
+                unknownDate: "Desconocida",
+                noResults: "Ningún registro coincide con esa búsqueda.",
+                liveOk: "Ingesta viva cargada: {n} registros.",
+                liveBad: "Ingesta viva ilegible: {err}",
+                mapBad: "Error de mapa: {err}"
             }
         };
 
         // Base de Datos Semilla con Traducciones (Mock del Agente)
         const mockDatabase = {
             0: {
-                yearStr: { es: "-250,000,000 (Pérmico)", en: "-250,000,000 (Permian)" },
+                yearStr: { es: "-250.000.000 (Pérmico)", en: "-250,000,000 (Permian)" },
                 theme: 'ancient-era',
                 data: {
                     type: "FeatureCollection",
@@ -217,6 +270,47 @@
         let currentLang = 'en'; // Inglés por defecto para tráfico internacional
         let isDarkMode = false;
         let activePolygonProps = null;
+        let liveData = null;
+
+        const t = (key) => i18n[currentLang][key];
+        const formatTemplate = (key, vars) => t(key).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : ''));
+
+        const getCssVar = (name, fallback) => {
+            const value = getComputedStyle(document.body).getPropertyValue(name).trim();
+            return value || fallback;
+        };
+
+        const getAccentColor = () => getCssVar('--accent', '#8b5a2b');
+
+        const setStatus = (state, message) => {
+            const el = document.getElementById('system-status');
+            el.className = 'glass-panel visible state-' + state;
+            el.textContent = message;
+        };
+
+        const formatDate = (value) => {
+            if (!value || value === 'Indeterminado') return t('unknownDate');
+            const parsed = new Date(value);
+            if (isNaN(parsed.getTime())) return String(value);
+            return parsed.toISOString().slice(0, 10);
+        };
+
+        const clearInfo = (content) => {
+            const data = document.getElementById('entity-data');
+            data.textContent = content;
+        };
+
+        const addInfoRow = (label, value) => {
+            const data = document.getElementById('entity-data');
+            const row = document.createElement('div');
+            row.className = 'info-row';
+            const strong = document.createElement('b');
+            strong.textContent = label + ': ';
+            row.appendChild(strong);
+            row.appendChild(document.createTextNode(String(value)));
+            data.appendChild(row);
+            return row;
+        };
 
         const mapStyles = {
             light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
@@ -230,39 +324,74 @@
             renderWorldCopies: false
         });
 
-        const purifyMapStyle = () => {
-            const style = map.getStyle();
-            if (!style || !style.layers) return;
-            style.layers.forEach(layer => {
-                if (layer.id.includes('admin') || layer.id.includes('place') || layer.id.includes('boundary')) {
-                    if (map.getLayer(layer.id)) {
-                        map.setLayoutProperty(layer.id, 'visibility', 'none');
-                    }
-                }
-            });
+        const applyAccentColor = () => {
+            const color = getAccentColor();
+            if (map.getLayer('chronos-fill')) map.setPaintProperty('chronos-fill', 'fill-color', color);
+            if (map.getLayer('chronos-line')) map.setPaintProperty('chronos-line', 'line-color', color);
         };
 
         const renderChronosLayer = () => {
             const currentIndex = document.getElementById('timeline').value;
+            const era = mockDatabase[currentIndex];
+            if (!era) return;
+
+            // FIX W1: MapLibre no resuelve var(--accent) en paint; hay que pasar un color literal
             if (!map.getSource('chronos-source')) {
-                map.addSource('chronos-source', { type: 'geojson', data: mockDatabase[currentIndex].data });
+                map.addSource('chronos-source', { type: 'geojson', data: era.data });
                 map.addLayer({
                     id: 'chronos-fill', type: 'fill', source: 'chronos-source',
-                    paint: { 'fill-color': 'var(--accent)', 'fill-opacity': 0.3 }
+                    paint: { 'fill-color': getAccentColor(), 'fill-opacity': 0.3 }
                 });
                 map.addLayer({
                     id: 'chronos-line', type: 'line', source: 'chronos-source',
-                    paint: { 'line-color': 'var(--accent)', 'line-width': 2 }
+                    paint: { 'line-color': getAccentColor(), 'line-width': 2 }
                 });
             } else {
-                map.getSource('chronos-source').setData(mockDatabase[currentIndex].data);
+                map.getSource('chronos-source').setData(era.data);
+                applyAccentColor();
             }
         };
 
-        map.on('style.load', () => {
-            purifyMapStyle();
-            renderChronosLayer();
+        // FIX W1: filtro por id explicito y verificacion de lo realmente oculto
+        const purifyMapStyle = () => {
+            const style = map.getStyle();
+            if (!style || !style.layers) return [];
+            const modernEra = document.body.classList.contains('modern-era');
+            const hidden = [];
+
+            style.layers.forEach(layer => {
+                const id = layer.id || '';
+                const isModernSovereignty = /admin|boundary/i.test(id);
+                const isPlaceLabel = /place[-_]?label/i.test(id);
+                const shouldHide = isModernSovereignty || (isPlaceLabel && !modernEra);
+                if (shouldHide && map.getLayer(id)) {
+                    map.setLayoutProperty(id, 'visibility', 'none');
+                    hidden.push(id);
+                }
+            });
+
+            console.log('[MAP] Capas deReferencia moderna ocultas: ' + hidden.length + (hidden.length ? ' -> ' + hidden.join(', ') : ''));
+            return hidden;
+        };
+
+        const applyMapFilter = () => {
             document.getElementById('map').style.filter = getComputedStyle(document.body).getPropertyValue('--map-filter');
+        };
+
+        map.on('error', (e) => {
+            const message = e && e.error ? e.error.message : 'desconocido';
+            setStatus('error', formatTemplate('mapBad', { err: message }));
+        });
+
+        map.on('style.load', () => {
+            try {
+                purifyMapStyle();
+                renderChronosLayer();
+                applyMapFilter();
+            } catch (err) {
+                setStatus('error', formatTemplate('mapBad', { err: err.message }));
+                throw err;
+            }
         });
 
         map.on('click', 'chronos-fill', (e) => {
@@ -271,49 +400,77 @@
             document.getElementById('info-panel').style.display = 'block';
         });
 
+        const renderEraTicks = () => {
+            const container = document.getElementById('era-ticks');
+            container.textContent = '';
+            Object.keys(mockDatabase).forEach(key => {
+                const span = document.createElement('span');
+                span.textContent = mockDatabase[key].yearStr[currentLang];
+                container.appendChild(span);
+            });
+        };
+
         const updateUIStrings = () => {
             document.documentElement.lang = currentLang;
-            document.getElementById('ui-donate').innerHTML = `<img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-fi"> ${i18n[currentLang].donate}`;
-            
+            document.getElementById('donate-label').textContent = t('donate');
+
             const index = document.getElementById('timeline').value;
             const currentEra = mockDatabase[index];
-            document.getElementById('year-display').innerText = `${i18n[currentLang].yearPrefix}: ${currentEra.yearStr[currentLang]}`;
-            
+            document.getElementById('year-display').innerText = `${t('yearPrefix')}: ${currentEra.yearStr[currentLang]}`;
+
+            renderEraTicks();
+
             if (activePolygonProps) {
                 updateInfoPanel();
             } else {
-                document.getElementById('entity-data').innerText = i18n[currentLang].clickPrompt;
+                document.getElementById('entity-title').innerText = '';
+                clearInfo(t('clickPrompt'));
             }
+        };
+
+        const localize = (value) => {
+            if (typeof value === 'string') {
+                try { return JSON.parse(value); } catch (err) { return value; }
+            }
+            return value;
         };
 
         const updateInfoPanel = () => {
             if (!activePolygonProps) return;
+            const data = document.getElementById('entity-data');
+            data.textContent = '';
+
             try {
-                // Parseo en caso de que MapLibre devuelva strings en lugar de objetos (comportamiento de capas vectoriales)
-                const nameObj = typeof activePolygonProps.name === 'string' ? JSON.parse(activePolygonProps.name) : activePolygonProps.name;
-                const descObj = typeof activePolygonProps.desc === 'string' ? JSON.parse(activePolygonProps.desc) : activePolygonProps.desc;
-                
-                document.getElementById('entity-title').innerText = nameObj[currentLang];
-                document.getElementById('entity-data').innerHTML = `<strong>Data:</strong> ${descObj[currentLang]}`;
+                const nameObj = localize(activePolygonProps.name) || {};
+                const descObj = localize(activePolygonProps.desc) || {};
+                document.getElementById('entity-title').innerText = nameObj[currentLang] || nameObj.en || '';
+
+                addInfoRow(t('dataLabel'), descObj[currentLang] || descObj.en || t('unknownDate'));
+
+                if (activePolygonProps.timestamp) addInfoRow(t('eventLabel'), formatDate(activePolygonProps.timestamp));
+                if (activePolygonProps.harvest_date) addInfoRow(t('harvestLabel'), formatDate(activePolygonProps.harvest_date));
             } catch (err) {
-                // Fallback seguro
-                document.getElementById('entity-title').innerText = "Entity";
+                document.getElementById('entity-title').innerText = '—';
+                clearInfo(t('unknownDate'));
             }
+        };
+
+        const applyEraTheme = () => {
+            const index = document.getElementById('timeline').value;
+            const currentEra = mockDatabase[index];
+            document.body.className = isDarkMode ? `${currentEra.theme} dark-mode` : currentEra.theme;
         };
 
         // Controladores de Eventos
         document.getElementById('timeline').addEventListener('input', (e) => {
-            const index = e.target.value;
-            const currentEra = mockDatabase[index];
-            
-            document.body.className = isDarkMode ? `${currentEra.theme} dark-mode` : currentEra.theme;
-            document.getElementById('compass').style.transform = `rotate(${index * 45}deg)`;
+            applyEraTheme();
             document.getElementById('info-panel').style.display = 'none';
             activePolygonProps = null;
-            
+
             renderChronosLayer();
             updateUIStrings();
-            document.getElementById('map').style.filter = getComputedStyle(document.body).getPropertyValue('--map-filter');
+            applyMapFilter();
+            purifyMapStyle();
         });
 
         document.getElementById('btn-lang').addEventListener('click', () => {
@@ -323,93 +480,113 @@
 
         document.getElementById('btn-theme').addEventListener('click', () => {
             isDarkMode = !isDarkMode;
-            const index = document.getElementById('timeline').value;
-            const currentEra = mockDatabase[index];
-            
-            document.body.className = isDarkMode ? `${currentEra.theme} dark-mode` : currentEra.theme;
-            
-            // Recarga del mapa base estricto
+            applyEraTheme();
             map.setStyle(isDarkMode ? mapStyles.dark : mapStyles.light);
         });
 
-        let liveData = null;
-
         async function loadLiveAnomalies() {
             try {
-                const response = await fetch('./latest_harvest.json');
-                if (response.ok) {
-                    liveData = await response.json();
-                    console.log('[SYS] Telemetría viva asociada al enjambre cargada.');
-                }
+                const response = await fetch('./latest_harvest.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const parsed = JSON.parse(await response.text());
+                if (!parsed || !Array.isArray(parsed.features)) throw new Error('sin array features');
+
+                liveData = parsed;
+                setStatus('ok', formatTemplate('liveOk', { n: parsed.features.length }));
             } catch (err) {
-                console.warn('[SYS] Ausencia de datos de ingesta cruda automáticos.');
+                liveData = null;
+                setStatus('warn', formatTemplate('liveBad', { err: err.message }));
             }
         }
 
-        document.getElementById('universal-search').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                const query = e.target.value.toLowerCase().trim();
-                if (!query) return;
+        const showLiveFeature = (feature) => {
+            const props = feature.properties || {};
+            const coords = feature.geometry && feature.geometry.coordinates;
+            map.flyTo({ center: coords, zoom: 6 });
 
-                let found = false;
-                
-                for (const key in mockDatabase) {
-                    const era = mockDatabase[key];
-                    const feature = era.data.features.find(f => 
-                        f.properties.name[currentLang].toLowerCase().includes(query) ||
-                        f.properties.desc[currentLang].toLowerCase().includes(query)
-                    );
-                    if (feature) {
-                        document.getElementById('timeline').value = key;
-                        document.getElementById('timeline').dispatchEvent(new Event('input'));
-                        const coords = feature.geometry.coordinates[0][0];
-                        map.flyTo({ center: coords, zoom: 4 });
-                        activePolygonProps = feature.properties;
-                        updateInfoPanel();
-                        document.getElementById('info-panel').style.display = 'block';
-                        found = true;
-                        break;
+            if (map.getSource('search-source')) {
+                map.getSource('search-source').setData(feature);
+            } else {
+                map.addSource('search-source', { type: 'geojson', data: feature });
+                map.addLayer({
+                    id: 'search-point', type: 'circle', source: 'search-source',
+                    paint: {
+                        'circle-radius': 10,
+                        'circle-color': '#ff3333',
+                        'circle-stroke-width': 2,
+                        'circle-stroke-color': '#ffffff'
                     }
-                }
+                });
+            }
 
-                if (!found && liveData && liveData.features) {
-                    const feature = liveData.features.find(f => 
-                        f.properties.name.toLowerCase().includes(query)
-                    );
-                    if (feature) {
-                        const coords = feature.geometry.coordinates;
-                        map.flyTo({ center: coords, zoom: 6 });
-                        
-                        if (map.getSource('search-source')) {
-                            map.getSource('search-source').setData(feature);
-                        } else {
-                            map.addSource('search-source', { type: 'geojson', data: feature });
-                            map.addLayer({
-                                id: 'search-point', type: 'circle', source: 'search-source',
-                                paint: { 
-                                    'circle-radius': 10, 
-                                    'circle-color': '#ff3333', 
-                                    'circle-stroke-width': 2, 
-                                    'circle-stroke-color': '#ffffff' 
-                                }
-                            });
-                        }
-                        
-                        document.getElementById('entity-title').innerText = feature.properties.name;
-                        document.getElementById('entity-data').innerHTML = `
-                            <strong>Tier:</strong> ${feature.properties.tier}<br>
-                            <strong>Timestamp:</strong> ${feature.properties.timestamp}<br>
-                            <strong>Source:</strong> <a href="https://wikidata.org/wiki/${feature.properties.source.split(':')[1]}" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:bold;">${feature.properties.source}</a>
-                        `;
-                        document.getElementById('info-panel').style.display = 'block';
-                        found = true;
-                    }
-                }
+            document.getElementById('entity-title').innerText = props.name || '';
+            const data = document.getElementById('entity-data');
+            data.textContent = '';
+            addInfoRow(t('tierLabel'), props.tier || t('unknownDate'));
+            addInfoRow(t('eventLabel'), formatDate(props.timestamp));
+            if (props.harvest_date) addInfoRow(t('harvestLabel'), formatDate(props.harvest_date));
 
-                if (!found) {
-                    alert(currentLang === 'es' ? 'Ninguna anomalía detectada en esas coordenadas temporales.' : 'No anomalies detected within those temporal coordinates.');
+            const entityId = String(props.source || '').split(':')[1] || '';
+            if (/^Q\d+$/.test(entityId)) {
+                const row = addInfoRow(t('sourceLabel'), props.source);
+                const link = document.createElement('a');
+                link.href = 'https://www.wikidata.org/wiki/' + entityId;
+                link.target = '_blank';
+                link.rel = 'noopener';
+                link.textContent = props.source;
+                row.textContent = '';
+                const strong = document.createElement('b');
+                strong.textContent = t('sourceLabel') + ': ';
+                row.appendChild(strong);
+                row.appendChild(link);
+            } else {
+                addInfoRow(t('sourceLabel'), props.source || t('unknownDate'));
+            }
+
+            document.getElementById('info-panel').style.display = 'block';
+        };
+
+        document.getElementById('universal-search').addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter') return;
+
+            const query = e.target.value.toLowerCase().trim();
+            if (!query) return;
+
+            let found = false;
+
+            for (const key in mockDatabase) {
+                const era = mockDatabase[key];
+                const feature = era.data.features.find(f => {
+                    const name = (f.properties.name[currentLang] || f.properties.name.en || '').toLowerCase();
+                    const desc = (f.properties.desc[currentLang] || f.properties.desc.en || '').toLowerCase();
+                    return name.includes(query) || desc.includes(query);
+                });
+                if (feature) {
+                    document.getElementById('timeline').value = key;
+                    document.getElementById('timeline').dispatchEvent(new Event('input'));
+                    const coords = feature.geometry.coordinates[0][0];
+                    map.flyTo({ center: coords, zoom: 4 });
+                    activePolygonProps = feature.properties;
+                    updateInfoPanel();
+                    document.getElementById('info-panel').style.display = 'block';
+                    found = true;
+                    break;
                 }
             }
+
+            if (!found && liveData && liveData.features) {
+                const feature = liveData.features.find(f => {
+                    const name = String(f.properties.name || '').toLowerCase();
+                    const timestamp = String(f.properties.timestamp || '').toLowerCase();
+                    return name.includes(query) || timestamp.includes(query);
+                });
+                if (feature) {
+                    showLiveFeature(feature);
+                    found = true;
+                }
+            }
+
+            if (!found) setStatus('warn', t('noResults'));
         });
 
         // Inicialización

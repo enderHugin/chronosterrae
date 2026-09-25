@@ -1,0 +1,26 @@
+W0+W1: contenedor aislado, mapa visible y datos vivos integros
+
+W0 - Entorno
+- Contenedor chronosterrae-core (Debian i386 + git + node18) con GIT_CONFIG
+  apuntando a /dev/null: cero config global/sistema, git solo dentro.
+- Repo clonado a /home/ender/CT_chronosterrae/workspace/chronosterrae.
+- Clave de despliegue ed25519 aislada en keys/ (nunca en el host).
+- Wrapper bin/ct para operar el contenedor sin git en el host.
+
+W1 - Fallos reales corregidos (verificados en Chrome, no supuestos)
+- #map colapsaba a 0x0: faltaba alto explicito. Era la causa del mapa invisible.
+- MapLibre no resuelve var(--accent) en paint; se pasa color literal y se
+  actualiza al cambiar de era/tema. El mapa ya se pinta.
+- latest_harvest.json era JSON invalido: el harvester escribia logs en stdout y
+  el workflow los guardaba como datos. Ahora stdout = solo JSON, stderr = logs.
+- Ciclo vacio destruia el payload anterior. Ahora se archiva en
+  data/harvests/AAAA-MM-DD.json y latest_harvest.json se conserva.
+- XSS: el panel de busqueda usaba innerHTML con datos de Wikidata. Ahora todo
+  va por textContent/createElement; el enlace Wikidata valida /^Q\d+$/.
+- Purga de anacronismos por id explicito y registro de lo oculto; las etiquetas
+  de lugar reaparecen en epoca moderna.
+- Fechas: date_precision (milenio/century/month/day) y harvest_date separado
+  del timestamp del suceso. Sin esto la cronobarra trataria un milenio como un dia.
+- Escape SPARQL, User-Agent, dedup por entidad, fin del filtro Cleopatra.
+- scripts/check.js: 9 regresiones, rojas antes de este commit.
+- Banner de estado: la web ya no falla en silencio.

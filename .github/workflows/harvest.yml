@@ -1,15 +1,17 @@
 name: AI Harvester Swarm
 
 on:
-  # Disparador automático: Ejecuta a las 03:00 AM (UTC) todos los días
   schedule:
     - cron: '0 3 * * *'
-  # Disparador manual: Te permite pulsar un botón para forzar la recolección
-  workflow_dispatch: 
+  workflow_dispatch:
 
-# Permisos necesarios para que el bot pueda escribir en tu repositorio
 permissions:
   contents: write
+
+# Nunca dos ingesta solapadas: si llegan a la vez, la segunda espera.
+concurrency:
+  group: harvest-swarm
+  cancel-in-progress: false
 
 jobs:
   ingest-data:
@@ -25,14 +27,41 @@ jobs:
           node-version: '18'
 
       - name: 📡 Ejecutar Sismógrafo (AI Harvester)
-        # Ejecuta el script y guarda la salida JSON en un archivo de recolección
-        run: node scripts/harvester.js > latest_harvest.json
+        # stdout del script = SOLO JSON. Los logs van a stderr.
+        run: node scripts/harvester.js > /tmp/harvest.json
 
-      - name: 💾 Inyectar CRDT y Confirmar Cambios
+      - name: 🧪 Validar y archivar (nunca commitear JSON roto)
+        id: validate
         run: |
-          git config --global user.name "ChronosTerrae-Swarm"
-          git config --global user.email "bot@chronosterrae.local"
-          git add latest_harvest.json
-          # Solo hace commit si el agente encontró anomalías reales
-          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 [CRDT] Ingesta automatizada de anomalías temporales"
+          node scripts/archive-harvest.js /tmp/harvest.json
+          echo "has_features=$([ "$(jq -r '.metadata.total_anomalies_detected' /tmp/harvest.json)" -gt 0 ] && echo 1 || echo 0)" >> "$GITHUB_OUTPUT"
+
+      - name: 💾 Inyectar y confirmar
+        if: steps.validate.outputs.has_features == '1'
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Swarm"
+          git config user.email "bot@chronosterrae.local"
+          git add latest_harvest.json data/harvests
+          if git diff --staged --quiet; then
+            echo "Sin cambios nuevos."
+          else
+            git commit -m "🤖 [CRDT] Ingesta automatizada de anomalías temporales"
+          fi
+          git pull --rebase origin HEAD
+          git push
+
+      - name: 🗃️ Archivar ciclo sin vectores
+        if: steps.validate.outputs.has_features == '0'
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Swarm"
+          git config user.email "bot@chronosterrae.local"
+          git add data/harvests
+          if git diff --staged --quiet; then
+            echo "Ciclo vacío: nada que archivar."
+          else
+            git commit -m "🗃️ Ciclo de ingesta sin vectores (latest_harvest.json intacto)"
+          fi
+          git pull --rebase origin HEAD
           git push
