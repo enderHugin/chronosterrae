@@ -1,0 +1,69 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "harvest_date": "2026-10-15T08:10:25.250Z",
+    "source_date": "2026/10/14",
+    "node_origin": "ChronosTerrae_Harvester_0.2",
+    "total_anomalies_detected": 3,
+    "status": "ok"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Neatsville",
+        "timestamp": "Indeterminado",
+        "date_precision": "unknown",
+        "harvest_date": "2026-10-15T08:10:25.250Z",
+        "source": "Wikidata:Q6984524",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.125555555,
+          37.197222222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "United States",
+        "timestamp": "Indeterminado",
+        "date_precision": "unknown",
+        "harvest_date": "2026-10-15T08:10:25.250Z",
+        "source": "Wikidata:Q30",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.5795,
+          39.828175
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pepperdine University",
+        "timestamp": "Indeterminado",
+        "date_precision": "unknown",
+        "harvest_date": "2026-10-15T08:10:25.250Z",
+        "source": "Wikidata:Q117876",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -118.707580555,
+          34.038683333
+        ]
+      }
+    }
+  ]
+}
