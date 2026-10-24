@@ -1,58 +1,20 @@
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-10-23T08:25:47.886Z",
-    "source_date": "2026/10/22",
+    "harvest_date": "2026-10-24T08:00:57.232Z",
+    "source_date": "2026/10/23",
     "node_origin": "ChronosTerrae_Harvester_0.2",
-    "total_anomalies_detected": 3,
+    "total_anomalies_detected": 2,
     "status": "ok"
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "name": "Aberfan disaster",
-        "timestamp": "1966-10-21T00:00:00Z",
-        "date_precision": "day",
-        "harvest_date": "2026-10-23T08:25:47.886Z",
-        "source": "Wikidata:Q384291",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -3.3475,
-          51.694722222
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Neatsville",
-        "timestamp": "Indeterminado",
-        "date_precision": "unknown",
-        "harvest_date": "2026-10-23T08:25:47.886Z",
-        "source": "Wikidata:Q6984524",
-        "tier": "Ingesta Cruda (Tier 2)",
-        "confidence": 0.6
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -85.125555555,
-          37.197222222
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "name": "United States",
         "timestamp": "Indeterminado",
         "date_precision": "unknown",
-        "harvest_date": "2026-10-23T08:25:47.886Z",
+        "harvest_date": "2026-10-24T08:00:57.232Z",
         "source": "Wikidata:Q30",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
@@ -62,6 +24,25 @@
         "coordinates": [
           -98.5795,
           39.828175
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Neatsville",
+        "timestamp": "Indeterminado",
+        "date_precision": "unknown",
+        "harvest_date": "2026-10-24T08:00:57.232Z",
+        "source": "Wikidata:Q6984524",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.125555555,
+          37.197222222
         ]
       }
     }
