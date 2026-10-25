@@ -1,20 +1,39 @@
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-10-24T08:00:57.232Z",
-    "source_date": "2026/10/23",
+    "harvest_date": "2026-10-25T08:17:54.475Z",
+    "source_date": "2026/10/24",
     "node_origin": "ChronosTerrae_Harvester_0.2",
-    "total_anomalies_detected": 2,
+    "total_anomalies_detected": 3,
     "status": "ok"
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
+        "name": "Kehlsteinhaus",
+        "timestamp": "Indeterminado",
+        "date_precision": "unknown",
+        "harvest_date": "2026-10-25T08:17:54.475Z",
+        "source": "Wikidata:Q162082",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.041944444,
+          47.611388888
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "name": "United States",
         "timestamp": "Indeterminado",
         "date_precision": "unknown",
-        "harvest_date": "2026-10-24T08:00:57.232Z",
+        "harvest_date": "2026-10-25T08:17:54.475Z",
         "source": "Wikidata:Q30",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
@@ -33,7 +52,7 @@
         "name": "Neatsville",
         "timestamp": "Indeterminado",
         "date_precision": "unknown",
-        "harvest_date": "2026-10-24T08:00:57.232Z",
+        "harvest_date": "2026-10-25T08:17:54.475Z",
         "source": "Wikidata:Q6984524",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
