@@ -1,0 +1,42 @@
+name: Sonda de fronteras (Natural Earth, geoBoundaries, OHM)
+
+# Mide licencia, resolucion y cobertura de fuentes de fronteras; informe en la rama `borders-build`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: borders-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear fronteras
+        run: node scripts/probe-borders.js > /tmp/borders.json 2> /tmp/borders.log
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 30 /tmp/borders.log || true
+          head -c 800 /tmp/borders.json || true
+      - name: Informe en la rama borders-build
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/borders.json || echo '{"error":"sin salida"}' > /tmp/borders.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan borders-build
+          cp /tmp/borders.json report.json
+          cp /tmp/borders.log report.log || true
+          git add report.json report.log
+          git commit -m "Sonda de fronteras $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin borders-build
