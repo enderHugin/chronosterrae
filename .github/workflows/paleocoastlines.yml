@@ -3,7 +3,7 @@ name: Paleocostas (construcción)
 # Descarga PaleoMAP PaleoCoastlines (Kocsis y Scotese, CC BY 4.0) desde Zenodo,
 # verifica su md5, lo convierte a GeoJSON ligero y lo deja en la rama `paleo-build`
 # para revisarlo. Solo se publica en `main` (data/paleocoastlines/) si el mensaje
-# del commit que dispara el workflow incluye [paleo:publish], o si se lanza a mano
+# del commit que dispara el workflow (SOLO la primera linea) incluye la marca de publicacion, o si se lanza a mano
 # con mode=publish.
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
         run: |
           MODE="${INPUT_MODE:-}"
           if [ -z "$MODE" ]; then
-            if printf '%s' "$COMMIT_MSG" | grep -qF '[paleo:publish]'; then MODE=publish; else MODE=convert; fi
+            if printf '%s' "$COMMIT_MSG" | head -n1 | grep -qF '[paleo:publish]'; then MODE=publish; else MODE=convert; fi
           fi
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
           echo "Modo: $MODE"
