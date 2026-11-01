@@ -210,6 +210,17 @@ check('index.html centra con doble clic en vez de hacer zoom', () => {
     return /map\.doubleClickZoom\.disable\(\)/.test(html) && /map\.easeTo\(\{\s*center:\s*e\.lngLat/.test(html);
 });
 
+check('index.html carga el motor astronomico y el cielo desde el propio repositorio, no desde un CDN', () => {
+    const html = readIndex();
+    return /src="\.\/vendor\/astronomy-engine\/astronomy\.browser\.min\.js"/.test(html) && /src="\.\/sky\/sky\.js"/.test(html)
+        && !/(unpkg|jsdelivr|cdnjs)[^"']*astronomy/i.test(html);
+});
+
+check('index.html no declara precision del cielo que no haya medido (usa validation.json o lo dice)', () => {
+    const html = readIndex();
+    return /noValidation/.test(html) && /skyAccuracyText/.test(html) && /data\/sky\/validation\.json/.test(html);
+});
+
 // --- Simplificacion de paleocostas: no debe perder ni deformar datos en silencio ---
 const paleo = require('./build-paleocoastlines.js');
 const square = (n) => {

@@ -24,8 +24,10 @@ const TIMEOUT_MS = 60000;
 const YEARS = [-2000, -1500, -1000, -500, 0, 500, 1000, 1500, 1700, 1900, 2000, 2026, 2100, 2300, 2600, 3000];
 const BODIES = [
     { id: 'Sun', cmd: '10' }, { id: 'Moon', cmd: '301' }, { id: 'Mercury', cmd: '199' }, { id: 'Venus', cmd: '299' },
-    { id: 'Mars', cmd: '499' }, { id: 'Jupiter', cmd: '599' }, { id: 'Saturn', cmd: '699' },
-    { id: 'Uranus', cmd: '799' }, { id: 'Neptune', cmd: '899' }
+    // Horizons solo tiene el CENTRO de Marte y los gigantes desde 1600-1800; el baricentro de su sistema
+    // (4..8) existe en toda la efemeride DE441 y difiere del planeta en kilometros (< 0,01 segundos de arco).
+    { id: 'Mars', cmd: '4' }, { id: 'Jupiter', cmd: '5' }, { id: 'Saturn', cmd: '6' },
+    { id: 'Uranus', cmd: '7' }, { id: 'Neptune', cmd: '8' }
 ];
 
 const log = (...a) => console.error(...a);

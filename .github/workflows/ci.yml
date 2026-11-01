@@ -30,5 +30,8 @@ jobs:
       - name: Regresiones del front y del harvester
         run: npm run check
 
+      - name: Cielo (calendario, precesion, Sol, Luna, planetas)
+        run: npm run check:sky
+
       - name: Validar registros contra el esquema
         run: npm run validate

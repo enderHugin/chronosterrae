@@ -99,7 +99,32 @@
         #credits a { color: var(--muted); }
         .kofi { background: #29abe0; color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font: 700 13px var(--font-ui); }
 
+        #sky { position: absolute; top: 60px; left: 14px; width: 344px; max-width: calc(100% - 28px); max-height: calc(100% - 300px); overflow: auto; padding: 12px 14px 10px; z-index: 11; display: none; box-sizing: border-box; }
+        #sky.open { display: block; }
+        #sky h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
+        #sky .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #sky-chart { width: 100%; aspect-ratio: 1; display: block; color: var(--text); cursor: crosshair; }
+        #sky-when { font-size: 12px; color: var(--muted); margin: 4px 0 8px; line-height: 1.35; }
+        #sky-range, #sky-error { font-size: 12px; line-height: 1.4; margin: 6px 0; }
+        #sky-error { color: var(--err); }
+        .sky-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; font-size: 11.5px; margin-top: 6px; }
+        .sky-grid label { display: flex; flex-direction: column; gap: 2px; color: var(--muted); }
+        .sky-grid select, .sky-grid input[type="number"], .sky-grid input[type="time"] { padding: 4px 6px; border: 1px solid var(--accent); border-radius: 5px; background: transparent; color: var(--text); font: 600 13px var(--font-ui); width: 100%; box-sizing: border-box; }
+        .sky-grid select option { color: #222; }
+        .sky-grid .wide { grid-column: 1 / -1; }
+        .sky-grid .check { flex-direction: row; align-items: center; gap: 6px; }
+        .sky-actions { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+        .sky-actions .btn { padding: 4px 10px; font-size: 12px; }
+        .sky-toggles { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; }
+        #sky-twilight { font-size: 12px; margin-top: 8px; }
+        #sky-list { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+        #sky-list th { text-align: left; color: var(--muted); font-weight: 600; padding: 2px 4px; }
+        #sky-list td { padding: 2px 4px; border-top: 1px solid rgba(128, 128, 128, 0.25); }
+        #sky-list tr.down { opacity: 0.55; }
+        #sky-note, #sky-accuracy, #sky-stars-note { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: 6px; }
+
         @media (max-width: 640px) {
+            #sky { top: 108px; right: 14px; width: auto; max-height: calc(100% - 330px); }
             #top-left { max-width: 100%; top: 56px; }
             #time-label { font-size: 19px; min-width: 0; }
             #info { top: 108px; max-height: calc(100% - 330px); }
@@ -116,8 +141,49 @@
     </div>
 
     <div id="top-right">
+        <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
         <button class="btn" id="btn-lang" type="button">EN / ES</button>
         <button class="btn" id="btn-theme" type="button">Dark</button>
+    </div>
+
+    <div id="sky" class="panel" role="region" aria-label="Sky">
+        <button class="close" id="sky-close" type="button" aria-label="Close">&times;</button>
+        <h2 data-i18n="sky.title"></h2>
+        <div id="sky-range"></div>
+        <div id="sky-body">
+            <canvas id="sky-chart" width="320" height="320"></canvas>
+            <div id="sky-when"></div>
+            <div id="sky-error"></div>
+            <div class="sky-grid">
+                <label><span data-i18n="sky.month"></span><select id="sky-month"></select></label>
+                <label><span data-i18n="sky.day"></span><input id="sky-day" type="number" min="1" max="31" step="1"></label>
+                <label><span data-i18n="sky.time"></span><input id="sky-time" type="time"></label>
+                <label><span data-i18n="sky.calendar"></span>
+                    <select id="sky-cal">
+                        <option value="auto" data-i18n="sky.cal.auto"></option>
+                        <option value="julian" data-i18n="sky.cal.julian"></option>
+                        <option value="gregorian" data-i18n="sky.cal.gregorian"></option>
+                    </select></label>
+                <label class="check wide"><input id="sky-follow" type="checkbox" checked><span data-i18n="sky.follow"></span></label>
+                <label><span data-i18n="sky.lat"></span><input id="sky-lat" type="number" min="-90" max="90" step="0.1"></label>
+                <label><span data-i18n="sky.lon"></span><input id="sky-lon" type="number" min="-180" max="180" step="0.1"></label>
+            </div>
+            <div class="sky-actions">
+                <button class="btn" id="sky-now" type="button" data-i18n="sky.now"></button>
+                <span class="sky-toggles">
+                    <label><input id="sky-t-stars" type="checkbox" checked> <span data-i18n="sky.stars"></span></label>
+                    <label><input id="sky-t-names" type="checkbox" checked> <span data-i18n="sky.names"></span></label>
+                    <label><input id="sky-t-lines" type="checkbox" checked> <span data-i18n="sky.lines"></span></label>
+                    <label><input id="sky-t-day" type="checkbox"> <span data-i18n="sky.dayStars"></span></label>
+                </span>
+            </div>
+            <div id="sky-twilight"></div>
+            <table id="sky-list"><thead><tr><th></th><th data-i18n="sky.colAlt"></th><th data-i18n="sky.colAz"></th><th data-i18n="sky.colMag"></th><th></th></tr></thead><tbody id="sky-rows"></tbody></table>
+            <div id="sky-stars-note"></div>
+            <div id="sky-note"><span class="badge model" data-i18n="sky.model"></span> <span data-i18n="sky.note"></span></div>
+            <div id="sky-accuracy"></div>
+            <div id="sky-caption" data-i18n="sky.caption" style="font-size:11px;color:var(--muted);margin-top:6px"></div>
+        </div>
     </div>
 
     <div id="info" class="panel" role="region" aria-live="polite">
@@ -144,6 +210,9 @@
 
     <noscript>ChronosTerrae needs JavaScript.</noscript>
 
+<script src="./vendor/astronomy-engine/astronomy.browser.min.js"></script>
+<script src="./sky/sky.js"></script>
+<script src="./sky/sky-view.js"></script>
 <script>
 'use strict';
 
@@ -229,11 +298,32 @@ const i18n = {
         evidence: 'Tipo de evidencia', source: 'Fuente', snapshotLabel: 'Instantánea', precision: 'Precisión de la frontera',
         parent: 'Parte de', power: 'Bajo autoridad de', model: 'Modelo', age: 'Edad',
         ev: { measurement: 'Medición', documentary: 'Documento', artefact: 'Artefacto', model: 'Modelo', reconstruction: 'Reconstrucción', speculation: 'Especulación' },
-        coastTitle: 'Contorno continental (modelo de placas)', coastNote: 'Los contornos ACTUALES de los continentes, desplazados como bloques rígidos según un modelo de placas. No son las costas reales de esa época: no incluyen mares someros, nivel del mar ni deformación. Las costas paleogeográficas reales aún no están disponibles.',
+        coastTitle: 'Contorno continental (modelo de placas)', coastNote: 'Los contornos ACTUALES de los continentes, desplazados como bloques rígidos según un modelo de placas. No son las costas reales de esa época: no incluyen mares someros, nivel del mar ni deformación. Las costas paleogeográficas reales solo están disponibles hasta 535 Ma.',
         bordersNote: 'Mapa histórico compilado por su autor y en elaboración: contrástalo antes de citarlo.',
         prec: { 1: 'aproximada', 2: 'moderada', 3: 'fijada por tratado' },
         unnamed: 'Sin nombre en el conjunto de datos', liveTitle: 'Dato reciente', event: 'Fecha del suceso', harvested: 'Recogido', tier: 'Nivel', unknown: 'Desconocida',
-        creditsLand: 'Costas', creditsBorders: 'Fronteras'
+        creditsLand: 'Costas', creditsBorders: 'Fronteras',
+        sky: {
+            button: 'Cielo', title: 'Cielo en este lugar e instante',
+            month: 'Mes', day: 'Día', time: 'Hora solar local', calendar: 'Calendario', follow: 'Seguir el centro del mapa',
+            lat: 'Latitud', lon: 'Longitud', now: 'Ahora',
+            cal: { auto: 'Automático (juliano hasta el 4-10-1582)', julian: 'Juliano', gregorian: 'Gregoriano' },
+            stars: 'Estrellas', names: 'Nombres', lines: 'Constelaciones', dayStars: 'Estrellas de día',
+            caption: 'Se mira hacia arriba: N arriba y E a la izquierda. Los símbolos del Sol, la Luna y los planetas no están a escala.',
+            when: '{date} ({cal}) · {ut} UT · ΔT {dt} s',
+            down: 'bajo el horizonte', outOfRange: 'El cielo se calcula entre {a} y {b}. Esta época queda fuera de ese intervalo.',
+            badDate: 'Fecha no válida: {err}.',
+            err: { SKIPPED_DATE: 'ese día no existió: tras el 4-10-1582 (juliano) vino el 15-10-1582 (gregoriano)', BAD_DATE: 'el día, el mes o la hora no existen en ese calendario' },
+            tw: { day: 'Es de día: las estrellas no se ven.', civil: 'Crepúsculo civil.', nautical: 'Crepúsculo náutico.', astronomical: 'Crepúsculo astronómico.', night: 'Noche cerrada.' },
+            body: { Sun: 'Sol', Moon: 'Luna', Mercury: 'Mercurio', Venus: 'Venus', Mars: 'Marte', Jupiter: 'Júpiter', Saturn: 'Saturno', Uranus: 'Urano', Neptune: 'Neptuno' },
+            phase: { new: 'nueva', waxingCrescent: 'creciente', firstQuarter: 'cuarto creciente', waxingGibbous: 'gibosa creciente', full: 'llena', waningGibbous: 'gibosa menguante', lastQuarter: 'cuarto menguante', waningCrescent: 'menguante' },
+            cardinals: ['N', 'E', 'S', 'O'], colAlt: 'Alt.', colAz: 'Az.', colMag: 'Mag.',
+            model: 'Modelo', note: 'Cálculo, no observación. Posiciones aparentes con refracción normal; sin aberración ni paralaje de las estrellas ni estrellas variables. La rotación de la Tierra (ΔT) antes de ~1600 es una estimación y desplaza el cielo local.',
+            noStars: 'El catálogo de estrellas aún no está disponible: solo se muestran el Sol, la Luna y los planetas.',
+            accuracy: 'Frente a JPL Horizons en el año medido más cercano ({y}): Sol {sun}, Luna {moon}, peor planeta {planet}. Solo la efeméride, sin la incertidumbre de ΔT.',
+            noValidation: 'La comparación con JPL Horizons aún no está publicada: no se declara precisión.',
+            unavailable: 'No se pudo cargar el módulo de cielo.'
+        }
     },
     en: {
         donate: 'Support the project', searchPlaceholder: 'Search an empire, people or place…', timePlaceholder: '1789 · 44 BC · 250 Ma',
@@ -255,11 +345,32 @@ const i18n = {
         evidence: 'Evidence type', source: 'Source', snapshotLabel: 'Snapshot', precision: 'Border precision',
         parent: 'Part of', power: 'Under authority of', model: 'Model', age: 'Age',
         ev: { measurement: 'Measurement', documentary: 'Documentary', artefact: 'Artefact', model: 'Model', reconstruction: 'Reconstruction', speculation: 'Speculation' },
-        coastTitle: 'Continental outline (plate model)', coastNote: 'The PRESENT-DAY outlines of the continents, moved as rigid blocks by a plate model. They are not the real coastlines of that time: no shallow seas, sea level or deformation. Real palaeogeographic coastlines are not available yet.',
+        coastTitle: 'Continental outline (plate model)', coastNote: 'The PRESENT-DAY outlines of the continents, moved as rigid blocks by a plate model. They are not the real coastlines of that time: no shallow seas, sea level or deformation. Real palaeogeographic coastlines are only available up to 535 Ma.',
         bordersNote: 'Historical map compiled by its author and work in progress: cross-check before citing.',
         prec: { 1: 'approximate', 2: 'moderate', 3: 'set by treaty' },
         unnamed: 'Unnamed in the dataset', liveTitle: 'Recent data', event: 'Event date', harvested: 'Harvested', tier: 'Tier', unknown: 'Unknown',
-        creditsLand: 'Coastlines', creditsBorders: 'Borders'
+        creditsLand: 'Coastlines', creditsBorders: 'Borders',
+        sky: {
+            button: 'Sky', title: 'Sky at this place and time',
+            month: 'Month', day: 'Day', time: 'Local solar time', calendar: 'Calendar', follow: 'Follow the map centre',
+            lat: 'Latitude', lon: 'Longitude', now: 'Now',
+            cal: { auto: 'Automatic (Julian up to 4 Oct 1582)', julian: 'Julian', gregorian: 'Gregorian' },
+            stars: 'Stars', names: 'Names', lines: 'Constellations', dayStars: 'Stars by day',
+            caption: 'Looking up: N at the top and E on the left. The symbols for the Sun, Moon and planets are not to scale.',
+            when: '{date} ({cal}) · {ut} UT · ΔT {dt} s',
+            down: 'below the horizon', outOfRange: 'The sky is computed between {a} and {b}. This era is outside that range.',
+            badDate: 'Invalid date: {err}.',
+            err: { SKIPPED_DATE: 'that day never existed: 15 Oct 1582 (Gregorian) followed 4 Oct 1582 (Julian)', BAD_DATE: 'the day, month or time does not exist in that calendar' },
+            tw: { day: 'Daytime: stars are not visible.', civil: 'Civil twilight.', nautical: 'Nautical twilight.', astronomical: 'Astronomical twilight.', night: 'Full night.' },
+            body: { Sun: 'Sun', Moon: 'Moon', Mercury: 'Mercury', Venus: 'Venus', Mars: 'Mars', Jupiter: 'Jupiter', Saturn: 'Saturn', Uranus: 'Uranus', Neptune: 'Neptune' },
+            phase: { new: 'new', waxingCrescent: 'waxing crescent', firstQuarter: 'first quarter', waxingGibbous: 'waxing gibbous', full: 'full', waningGibbous: 'waning gibbous', lastQuarter: 'last quarter', waningCrescent: 'waning crescent' },
+            cardinals: ['N', 'E', 'S', 'W'], colAlt: 'Alt.', colAz: 'Az.', colMag: 'Mag.',
+            model: 'Model', note: 'A calculation, not an observation. Apparent positions with standard refraction; no aberration or parallax for stars, no variable stars. Earth\'s rotation (ΔT) before ~1600 is an estimate and shifts the local sky.',
+            noStars: 'The star catalogue is not available yet: only the Sun, Moon and planets are shown.',
+            accuracy: 'Against JPL Horizons in the nearest measured year ({y}): Sun {sun}, Moon {moon}, worst planet {planet}. Ephemeris only, without the ΔT uncertainty.',
+            noValidation: 'The comparison with JPL Horizons is not published yet: no accuracy is claimed.',
+            unavailable: 'The sky module could not be loaded.'
+        }
     }
 };
 let lang = prefs.lang || ((navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en');
@@ -520,6 +631,7 @@ map.on('moveend', () => {
     const c = map.getCenter().wrap();
     const r = (n, d) => Math.round(n * 10 ** d) / 10 ** d;
     savePrefs({ c: [r(c.lng, 3), r(Math.max(-85, Math.min(85, c.lat)), 3)], z: r(map.getZoom(), 2) });
+    if (sky.open && sky.follow) { syncPlace(); scheduleSky(); }
 });
 
 map.on('error', (e) => {
@@ -727,6 +839,7 @@ function setTime(ybp, { fromSlider = false, immediate = false, persist = true } 
     $('time-label').textContent = f.main;
     $('time-sub').textContent = f.sub;
     if (immediate) { clearTimeout(sceneTimer); sceneTimer = null; lastScene = performance.now(); updateScene({ immediate: true }); } else scheduleScene();
+    if (sky.open) scheduleSky();
 }
 
 /* ------------------------------------------------------------------ */
@@ -893,6 +1006,7 @@ function applyStrings() {
     document.querySelectorAll('[data-i18n-placeholder]').forEach((n) => { n.placeholder = t(n.dataset.i18nPlaceholder); });
     renderPresets();
     renderCredits();
+    skyTexts();
     setTime(state.ybp, { immediate: false, persist: false });
 }
 
@@ -912,6 +1026,223 @@ $('search').addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearc
 $('btn-lang').addEventListener('click', () => { lang = lang === 'es' ? 'en' : 'es'; applyStrings(); savePrefs({ lang }); });
 $('btn-theme').addEventListener('click', () => { state.dark = !state.dark; applyTheme(); savePrefs({ dark: state.dark }); });
 $('info-close').addEventListener('click', hideInfo);
+
+/* ------------------------------------------------------------------ */
+/* Cielo: Sol, Luna, planetas y estrellas para un instante y un lugar  */
+/* ------------------------------------------------------------------ */
+// El calculo vive en sky/sky.js (probado en Node contra referencias independientes y contra JPL Horizons);
+// aqui solo se conectan la linea de tiempo, el centro del mapa y los controles.
+const sky = {
+    open: false, ready: Boolean(window.ChronosSky && window.ChronosSkyView && window.Astronomy),
+    month: 1, day: 1, minutes: 720, calendar: 'auto', follow: true, lat: 0, lon: 0,
+    stars: true, names: true, lines: true, dayStars: false,
+    catalog: null, catalogState: 'idle', validation: undefined, drawn: [], raf: 0, started: false
+};
+
+const compass = (az) => (lang === 'es' ? ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'] : ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])[Math.round(az / 45) % 8];
+const pad2 = (n) => String(n).padStart(2, '0');
+const hhmm = (minutes) => pad2(Math.floor(minutes / 60)) + ':' + pad2(minutes % 60);
+const monthName = (m) => new Date(2001, m - 1, 1).toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { month: 'long' });
+
+// Fecha y hora del reloj real, expresadas en hora solar media local del meridiano dado.
+function skyClock(lon) {
+    const jdUT = Date.now() / 86400000 + 2440587.5;
+    const c = ChronosSky.jdToCalendar(jdUT + lon / 360, 'gregorian');
+    return { year: c.year, month: c.month, day: c.day, minutes: Math.floor(c.hour * 60 + c.minute) };
+}
+
+function syncPlace() {
+    const c = map.getCenter().wrap();
+    sky.lat = Math.round(Math.max(-90, Math.min(90, c.lat)) * 1000) / 1000;
+    sky.lon = Math.round(c.lng * 1000) / 1000;
+    if (document.activeElement !== $('sky-lat')) $('sky-lat').value = sky.lat;
+    if (document.activeElement !== $('sky-lon')) $('sky-lon').value = sky.lon;
+}
+
+function skyTexts() {
+    const sel = $('sky-month');
+    const keep = sky.month;
+    sel.textContent = '';
+    for (let m = 1; m <= 12; m++) sel.appendChild(el('option', { value: String(m), text: monthName(m) }));
+    sel.value = String(keep);
+    if (sky.open) updateSky();
+}
+
+function syncControls() {
+    $('sky-month').value = String(sky.month);
+    $('sky-day').value = sky.day;
+    $('sky-time').value = hhmm(sky.minutes);
+    $('sky-cal').value = sky.calendar;
+}
+
+function scheduleSky() {
+    if (sky.raf) return;
+    sky.raf = requestAnimationFrame(() => { sky.raf = 0; updateSky(); });
+}
+
+async function skyLoadCatalog() {
+    if (sky.catalogState !== 'idle') return;
+    sky.catalogState = 'loading';
+    try {
+        const [raw, con] = await Promise.all([getJSON('./data/sky/stars.json'), getJSON('./data/sky/constellations.json').catch(() => null)]);
+        sky.catalog = ChronosSky.prepareCatalog(raw, con);
+        sky.catalogState = 'ready';
+    } catch (err) {
+        sky.catalogState = 'missing';
+    }
+    scheduleSky();
+}
+
+async function skyLoadValidation() {
+    if (sky.validation !== undefined) return;
+    sky.validation = null;
+    try {
+        const res = await fetch('./data/sky/validation.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const v = JSON.parse(await res.text());
+        if (v && Array.isArray(v.cases) && v.cases.length) sky.validation = v;
+    } catch (err) { sky.validation = null; }
+    scheduleSky();
+}
+
+// Error medido frente a Horizons en el anio muestreado mas cercano al que se esta viendo.
+function skyAccuracyText(year) {
+    const v = sky.validation;
+    if (!v) return t('sky.noValidation');
+    const years = [...new Set(v.cases.map((c) => c.year))];
+    const y = years.reduce((a, b) => (Math.abs(b - year) < Math.abs(a - year) ? b : a));
+    const at = v.cases.filter((c) => c.year === y);
+    const max = (ids) => Math.max(...at.filter((c) => ids.includes(c.body)).map((c) => c.error_arcsec));
+    const planets = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'];
+    // segundos de arco, minutos de arco o grados segun el tamano del error
+    const f = (n) => {
+        if (!Number.isFinite(n)) return '?';
+        if (n < 120) return nf().format(Math.round(n * 10) / 10) + '\u2033';
+        if (n < 7200) return nf().format(Math.round(n / 6) / 10) + '\u2032';
+        return nf().format(Math.round(n / 360) / 10) + '\u00b0';
+    };
+    return fmt('sky.accuracy', { y: formatYear(y), sun: f(max(['Sun'])), moon: f(max(['Moon'])), planet: f(max(planets)) });
+}
+
+function moonPhaseName(angle) {
+    const k = ['new', 'waxingCrescent', 'firstQuarter', 'waxingGibbous', 'full', 'waningGibbous', 'lastQuarter', 'waningCrescent'];
+    return t('sky.phase.' + k[Math.floor(((angle + 22.5) % 360) / 45)]);
+}
+
+function skyErrorText(e) {
+    return (e && e.code && t('sky.err.' + e.code)) || (e && e.message) || '?';
+}
+
+function updateSky() {
+    if (!sky.open) return;
+    if (!sky.ready) { $('sky-range').textContent = t('sky.unavailable'); $('sky-body').style.display = 'none'; return; }
+    const W = ChronosSky.WINDOW;
+    const year = ybpToYear(state.ybp);
+    const inRange = year >= W.minYear && year <= W.maxYear;
+    $('sky-body').style.display = inRange ? '' : 'none';
+    $('sky-range').textContent = inRange ? '' : fmt('sky.outOfRange', { a: formatYear(W.minYear), b: formatYear(W.maxYear) });
+    if (!inRange) return;
+    $('sky-error').textContent = '';
+    let local;
+    try {
+        local = ChronosSky.calendarToJD({ year, month: sky.month, day: sky.day, hour: Math.floor(sky.minutes / 60), minute: sky.minutes % 60 }, sky.calendar);
+    } catch (e) {
+        $('sky-error').textContent = fmt('sky.badDate', { err: skyErrorText(e) });
+        return;
+    }
+    const jd = local.jd - sky.lon / 360;   // hora solar media local -> UT
+    const res = ChronosSky.skyAt({ jd, lat: sky.lat, lon: sky.lon, catalog: sky.stars ? sky.catalog : null });
+
+    const u = ChronosSky.jdToCalendar(jd, local.calendar);
+    $('sky-when').textContent = fmt('sky.when', {
+        date: u.day + ' ' + monthName(u.month) + ' ' + formatYear(u.year), cal: t('sky.cal.' + local.calendar),
+        ut: pad2(u.hour) + ':' + pad2(u.minute), dt: nf().format(Math.round(res.deltaTSeconds))
+    });
+
+    const names = {};
+    ChronosSky.BODIES.forEach((id) => { names[id] = t('sky.body.' + id); });
+    sky.drawn = ChronosSkyView.draw($('sky-chart'), res, {
+        catalog: sky.stars ? sky.catalog : null, names, cardinals: t('sky.cardinals'),
+        showStars: sky.stars, showNames: sky.names, showLines: sky.lines, dayStars: sky.dayStars, lang
+    });
+
+    $('sky-twilight').textContent = t('sky.tw.' + res.twilight);
+    const rows = $('sky-rows');
+    rows.textContent = '';
+    [res.sun, res.moon, ...res.planets].forEach((b) => {
+        const up = b.alt > 0;
+        const label = t('sky.body.' + b.id) + (b.id === 'Moon' ? ' · ' + moonPhaseName(b.phaseAngle) + ' ' + Math.round(b.phaseFraction * 100) + ' %' : '');
+        rows.appendChild(el('tr', { class: up ? '' : 'down' }, [
+            el('td', { text: label }),
+            el('td', { text: nf().format(Math.round(b.alt * 10) / 10) + '°' }),
+            el('td', { text: compass(b.az) + ' ' + Math.round(b.az) + '°' }),
+            el('td', { text: b.id === 'Sun' ? '' : nf().format(Math.round(b.mag * 10) / 10) }),
+            el('td', { text: up ? '' : t('sky.down') })
+        ]));
+    });
+    $('sky-stars-note').textContent = sky.stars && sky.catalogState === 'missing' ? t('sky.noStars') : '';
+    $('sky-accuracy').textContent = skyAccuracyText(year);
+}
+
+function setSkyOpen(open) {
+    sky.open = open;
+    $('sky').classList.toggle('open', open);
+    if (!open) return;
+    if (!sky.ready) { updateSky(); return; }
+    syncPlace();
+    if (!sky.started) {   // primera vez: hoy a esta hora solar en el lugar del mapa
+        sky.started = true;
+        const now = skyClock(sky.lon);
+        sky.month = now.month; sky.day = now.day; sky.minutes = now.minutes;
+    }
+    syncControls();
+    skyLoadCatalog();
+    skyLoadValidation();
+    updateSky();
+}
+
+$('btn-sky').addEventListener('click', () => setSkyOpen(!sky.open));
+$('sky-close').addEventListener('click', () => setSkyOpen(false));
+$('sky-month').addEventListener('change', (e) => { sky.month = parseInt(e.target.value, 10); updateSky(); });
+$('sky-day').addEventListener('input', (e) => { const d = parseInt(e.target.value, 10); if (Number.isFinite(d)) { sky.day = d; updateSky(); } });
+$('sky-time').addEventListener('input', (e) => {
+    const m = /^(\d{1,2}):(\d{2})/.exec(e.target.value);
+    if (m) { sky.minutes = Math.min(1439, parseInt(m[1], 10) * 60 + parseInt(m[2], 10)); updateSky(); }
+});
+$('sky-cal').addEventListener('change', (e) => { sky.calendar = e.target.value; updateSky(); });
+$('sky-follow').addEventListener('change', (e) => {
+    sky.follow = e.target.checked;
+    $('sky-lat').disabled = $('sky-lon').disabled = sky.follow;
+    if (sky.follow) syncPlace();
+    updateSky();
+});
+$('sky-lat').disabled = $('sky-lon').disabled = true;
+const readPlace = () => {
+    const la = parseFloat($('sky-lat').value); const lo = parseFloat($('sky-lon').value);
+    if (Number.isFinite(la) && Math.abs(la) <= 90) sky.lat = la;
+    if (Number.isFinite(lo) && Math.abs(lo) <= 180) sky.lon = lo;
+    updateSky();
+};
+$('sky-lat').addEventListener('input', readPlace);
+$('sky-lon').addEventListener('input', readPlace);
+$('sky-now').addEventListener('click', () => {
+    if (!sky.ready) return;
+    const now = skyClock(sky.lon);
+    sky.month = now.month; sky.day = now.day; sky.minutes = now.minutes;
+    syncControls();
+    setTime(yearToYbp(now.year), { immediate: true });
+    updateSky();
+});
+[['sky-t-stars', 'stars'], ['sky-t-names', 'names'], ['sky-t-lines', 'lines'], ['sky-t-day', 'dayStars']].forEach(([id, key]) => {
+    $(id).addEventListener('change', (e) => { sky[key] = e.target.checked; updateSky(); });
+});
+$('sky-chart').addEventListener('mousemove', (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - r.left; const y = e.clientY - r.top;
+    let best = null;
+    sky.drawn.forEach((d) => { const dist = Math.hypot(d.x - x, d.y - y); if (dist < 11 && (!best || dist < best.dist)) best = { dist, label: d.label }; });
+    e.currentTarget.title = best ? best.label : '';
+});
 
 /* Datos recientes del harvester (se muestran solo cerca del presente) */
 async function loadLive() {

@@ -10,9 +10,12 @@ on:
       - 'index.html'
       - 'latest_harvest.json'
       - 'data/paleocoastlines/**'
+      - 'data/sky/**'
+      - 'sky/**'
+      - 'vendor/**'
       - '.github/workflows/pages.yml'
   workflow_run:
-    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)']
+    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (catálogo de estrellas)', 'Cielo (validación contra Horizons)']
     types: [completed]
     branches: [main]
   workflow_dispatch:
@@ -43,6 +46,8 @@ jobs:
           mkdir -p _site/data
           cp index.html latest_harvest.json _site/
           cp -r data/paleocoastlines _site/data/paleocoastlines
+          cp -r sky vendor _site/
+          if [ -d data/sky ]; then cp -r data/sky _site/data/sky; fi
           touch _site/.nojekyll
           du -sh _site
 

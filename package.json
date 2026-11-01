@@ -10,8 +10,9 @@
   },
   "scripts": {
     "check": "node scripts/check.js",
+    "check:sky": "node scripts/check-sky.js",
     "validate": "node scripts/validate-records.js",
-    "test": "npm run check && npm run validate"
+    "test": "npm run check && npm run check:sky && npm run validate"
   },
   "devDependencies": {
     "ajv": "^8.17.1",
