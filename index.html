@@ -159,7 +159,9 @@ const CFG = {
     nowYear: 2026,
     maxYbp: 1e9,                         // límite del modelo de placas (1000 Ma)
     sliderMax: 10000,
-    deepTimeFrom: 1e6,                   // desde 1 Ma las costas son las del modelo de placas
+    deepTimeFrom: 1e6,                   // desde 1 Ma se muestra la edad en Ma
+    paleoBase: './data/paleocoastlines/',   // archivo propio: PaleoMAP PaleoCoastlines (CC BY 4.0), 0-535 Ma
+    paleoMaxDeltaMa: 10,                 // no se usa una loncha mas lejana que esto
     bordersMaxYbp: 125000,               // las fronteras históricas empiezan en -123000
     debounceMs: 220,
     fetchTimeoutMs: 40000
@@ -176,6 +178,10 @@ const i18n = {
         donate: 'Apoyar el proyecto', searchPlaceholder: 'Buscar un imperio, pueblo o lugar…', timePlaceholder: '1789 · 44 a.C. · 250 Ma',
         flat: 'Plano', globe: 'Globo', today: 'Hoy', yearsAgo: 'hace {n} años', approxYear: '≈ año {y}',
         ce: 'd.C.', bce: 'a.C.',
+        paleoOk: 'Costas paleogeográficas (PaleoMAP): {age}{near}.', paleoNear: ' · loncha más cercana a {t} Ma (a {d} Ma)',
+        paleoFallback: 'No se pudieron cargar las costas paleogeográficas ({err}). Se usan contornos rígidos del modelo de placas.',
+        paleoTitle: 'Costa paleogeográfica', paleoNote: 'Reconstrucción de las costas de esa época a partir de modelos de elevación del terreno (PaleoDEM), incluidas las zonas inundadas del continente. Es una reconstrucción publicada, no una observación.',
+        paleoMargin: 'Margen continental', paleoMarginNote: 'Isóbata de −1400 m: hasta dónde llega la plataforma continental.', slice: 'Edad de la loncha', license: 'Licencia',
         loadingLand: 'Cargando costas del modelo de placas…', loadingBorders: 'Cargando fronteras históricas…',
         landFail: 'No se pudieron cargar las costas ({err}). Se conservan las anteriores.',
         bordersFail: 'No se pudieron cargar las fronteras ({err}).',
@@ -192,12 +198,16 @@ const i18n = {
         bordersNote: 'Mapa histórico compilado por su autor y en elaboración: contrástalo antes de citarlo.',
         prec: { 1: 'aproximada', 2: 'moderada', 3: 'fijada por tratado' },
         unnamed: 'Sin nombre en el conjunto de datos', liveTitle: 'Dato reciente', event: 'Fecha del suceso', harvested: 'Recogido', tier: 'Nivel', unknown: 'Desconocida',
-        creditsLand: 'Contornos', creditsBorders: 'Fronteras'
+        creditsLand: 'Costas', creditsBorders: 'Fronteras'
     },
     en: {
         donate: 'Support the project', searchPlaceholder: 'Search an empire, people or place…', timePlaceholder: '1789 · 44 BC · 250 Ma',
         flat: 'Flat', globe: 'Globe', today: 'Today', yearsAgo: '{n} years ago', approxYear: '≈ year {y}',
         ce: 'AD', bce: 'BC',
+        paleoOk: 'Palaeogeographic coastlines (PaleoMAP): {age}{near}.', paleoNear: ' · nearest slice to {t} Ma (off by {d} Ma)',
+        paleoFallback: 'Could not load the palaeogeographic coastlines ({err}). Using rigid plate-model outlines.',
+        paleoTitle: 'Palaeogeographic coastline', paleoNote: 'Reconstruction of the coastlines of that time from terrain-elevation models (PaleoDEM), including flooded parts of the continents. A published reconstruction, not an observation.',
+        paleoMargin: 'Continental margin', paleoMarginNote: '−1400 m isobath: how far the continental shelf extends.', slice: 'Slice age', license: 'License',
         loadingLand: 'Loading plate-model coastlines…', loadingBorders: 'Loading historical borders…',
         landFail: 'Could not load coastlines ({err}). Keeping the previous ones.',
         bordersFail: 'Could not load borders ({err}).',
@@ -214,7 +224,7 @@ const i18n = {
         bordersNote: 'Historical map compiled by its author and work in progress: cross-check before citing.',
         prec: { 1: 'approximate', 2: 'moderate', 3: 'set by treaty' },
         unnamed: 'Unnamed in the dataset', liveTitle: 'Recent data', event: 'Event date', harvested: 'Harvested', tier: 'Tier', unknown: 'Unknown',
-        creditsLand: 'Outlines', creditsBorders: 'Borders'
+        creditsLand: 'Coastlines', creditsBorders: 'Borders'
     }
 };
 let lang = (navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en';
@@ -258,7 +268,7 @@ function parseTime(raw) {
 /* Estado de la interfaz                                              */
 /* ------------------------------------------------------------------ */
 const $ = (id) => document.getElementById(id);
-const state = { ybp: 250e6, dark: false, globe: true, land: null, borders: null, live: null, polities: null, selected: null };
+const state = { paleo: null, ybp: 250e6, dark: false, globe: true, land: null, borders: null, live: null, polities: null, selected: null };
 
 let statusTimer = null;
 function setStatus(level, message, autoHideMs) {
@@ -311,14 +321,39 @@ async function getJSON(url, signal) {
 
 const emptyFC = () => ({ type: 'FeatureCollection', features: [] });
 
+async function loadPaleoManifest(signal) {
+    if (state.paleo) return state.paleo;
+    const m = await getJSON(CFG.paleoBase + 'manifest.json', signal);
+    if (!m || !Array.isArray(m.ages) || !m.ages.length) throw new Error('manifiesto sin edades');
+    state.paleo = m;
+    return m;
+}
+
+// 1) Costas paleogeograficas reales (archivo propio). 2) Si no hay loncha cercana o falla,
+// contornos rigidos de GPlates: siempre rotulados como tales.
 async function loadLand(ybp, signal) {
+    const targetMa = Math.max(0, ybp / 1e6);
+    let paleoError = null;
+    try {
+        const manifest = await loadPaleoManifest(signal);
+        let best = null;
+        manifest.ages.forEach((a) => { const d = Math.abs(a.age_ma - targetMa); if (!best || d < best.d) best = { a, d }; });
+        if (best && best.d <= CFG.paleoMaxDeltaMa) {
+            const data = await getJSON(CFG.paleoBase + best.a.file, signal);
+            if (!data || !Array.isArray(data.features)) throw new Error('sin features');
+            return { type: 'paleo', data, ma: best.a.age_ma, targetMa, delta: best.d };
+        }
+    } catch (err) {
+        if (err && err.name === 'AbortError') throw err;
+        paleoError = err;
+    }
     const deep = ybp >= CFG.deepTimeFrom;
     const ma = deep ? effectiveMa(ybp) : 0;
     // Mismas formas de URL que se comprobaron con la sonda: ma=0 sin modelo, el resto con modelo.
     const url = CFG.gplates + '?time=' + ma + (ma > 0 ? '&model=' + CFG.model : '');
     const data = await getJSON(url, signal);
     if (!data || !Array.isArray(data.features)) throw new Error('sin features');
-    return { data, ma, deep };
+    return { type: 'rigid', data, ma, deep, fallbackError: paleoError };
 }
 
 function hue(str) {
@@ -367,8 +402,8 @@ async function loadBorders(ybp, signal) {
 /* Mapa                                                               */
 /* ------------------------------------------------------------------ */
 const palette = () => state.dark
-    ? { ocean: '#0b1a26', land: '#2d3338', landLine: '#59636b', line: '#e6e2d8' }
-    : { ocean: '#cfe3ee', land: '#ece4cf', landLine: '#b9ab87', line: '#3a2a1a' };
+    ? { ocean: '#0b1a26', shelf: '#17303f', land: '#2d3338', landLine: '#59636b', line: '#e6e2d8' }
+    : { ocean: '#c3dbe9', shelf: '#dbeaf2', land: '#ece4cf', landLine: '#b9ab87', line: '#3a2a1a' };
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -392,8 +427,11 @@ mapReady.then(() => {
     map.addSource('land', { type: 'geojson', data: emptyFC() });
     map.addSource('borders', { type: 'geojson', data: emptyFC() });
     map.addSource('live', { type: 'geojson', data: emptyFC() });
-    map.addLayer({ id: 'land-fill', type: 'fill', source: 'land', paint: { 'fill-color': p.land, 'fill-opacity': 1 } });
-    map.addLayer({ id: 'land-line', type: 'line', source: 'land', paint: { 'line-color': p.landLine, 'line-width': 0.8 } });
+    const isMargin = ['==', ['get', 'kind'], 'margin'];
+    const notMargin = ['!=', ['get', 'kind'], 'margin'];   // los contornos rigidos de GPlates no traen 'kind'
+    map.addLayer({ id: 'margin-fill', type: 'fill', source: 'land', filter: isMargin, paint: { 'fill-color': p.shelf, 'fill-opacity': 1 } });
+    map.addLayer({ id: 'land-fill', type: 'fill', source: 'land', filter: notMargin, paint: { 'fill-color': p.land, 'fill-opacity': 1 } });
+    map.addLayer({ id: 'land-line', type: 'line', source: 'land', filter: notMargin, paint: { 'line-color': p.landLine, 'line-width': 0.8 } });
     map.addLayer({ id: 'borders-fill', type: 'fill', source: 'borders', paint: { 'fill-color': ['get', '_c'], 'fill-opacity': ['get', '_o'] } });
     map.addLayer({ id: 'borders-line', type: 'line', source: 'borders', paint: { 'line-color': p.line, 'line-width': 0.6, 'line-opacity': 0.55 } });
     map.addLayer({ id: 'borders-hl', type: 'line', source: 'borders', filter: ['==', ['get', 'NAME'], '\u0000'], paint: { 'line-color': '#e53935', 'line-width': 3 } });
@@ -411,6 +449,7 @@ function applyTheme() {
     if (!map.getLayer('land-fill')) return;
     const p = palette();
     map.setPaintProperty('ocean', 'background-color', p.ocean);
+    map.setPaintProperty('margin-fill', 'fill-color', p.shelf);
     map.setPaintProperty('land-fill', 'fill-color', p.land);
     map.setPaintProperty('land-line', 'line-color', p.landLine);
     map.setPaintProperty('borders-line', 'line-color', p.line);
@@ -445,10 +484,19 @@ async function updateScene() {
     if (token !== sceneToken) return;   // llegó tarde: ya hay otra escena pedida
 
     if (landRes.status === 'fulfilled') {
-        state.land = landRes.value;
-        map.getSource('land').setData(landRes.value.data);
-        const age = landRes.value.deep ? landRes.value.ma + ' Ma' : t('today').toLowerCase();
-        messages.push(landRes.value.deep ? fmt('landOk', { model: CFG.model, age }) : t('seaLevel'));
+        const L = landRes.value;
+        state.land = L;
+        map.getSource('land').setData(L.data);
+        if (L.type === 'paleo') {
+            if (ybp < CFG.deepTimeFrom) messages.push(t('seaLevel'));
+            else {
+                const near = L.delta > 0 ? fmt('paleoNear', { t: nf().format(L.targetMa), d: nf().format(L.delta) }) : '';
+                messages.push(fmt('paleoOk', { age: L.ma + ' Ma', near }));
+            }
+        } else {
+            if (L.fallbackError) { level = 'warn'; messages.push(fmt('paleoFallback', { err: L.fallbackError.message })); }
+            messages.push(L.deep ? fmt('landOk', { model: CFG.model, age: L.ma + ' Ma' }) : t('seaLevel'));
+        }
     } else if (!(landRes.reason && landRes.reason.name === 'AbortError')) {
         level = 'warn';
         messages.push(fmt('landFail', { err: landRes.reason && landRes.reason.message }));
@@ -522,8 +570,19 @@ function showPolity(p) {
     showInfo(p.NAME || t('unnamed'), rows);
 }
 
-function showCoast() {
-    const ma = state.land && state.land.deep ? state.land.ma + ' Ma' : t('today');
+function showCoast(props) {
+    const L = state.land;
+    if (L && L.type === 'paleo') {
+        const isMargin = props && props.kind === 'margin';
+        showInfo(isMargin ? t('paleoMargin') : (props && props.name) || t('paleoTitle'), [
+            { label: t('evidence'), badge: 'reconstruction', note: isMargin ? t('paleoMarginNote') : t('paleoNote') },
+            { label: t('slice'), value: L.ma + ' Ma' },
+            { label: t('source'), value: 'PaleoMAP PaleoCoastlines (Kocsis & Scotese)', href: 'https://doi.org/10.5281/zenodo.7994000' },
+            { label: t('license'), value: 'CC BY 4.0' }
+        ]);
+        return;
+    }
+    const ma = L && L.deep ? L.ma + ' Ma' : t('today');
     showInfo(t('coastTitle'), [
         { label: t('evidence'), badge: 'model', note: t('coastNote') },
         { label: t('model'), value: CFG.model },
@@ -544,13 +603,13 @@ function showLive(p) {
 
 map.on('click', (e) => {
     if (!map.getLayer('borders-fill')) return;
-    const hit = map.queryRenderedFeatures(e.point, { layers: ['live-points', 'borders-fill', 'land-fill'] })[0];
+    const hit = map.queryRenderedFeatures(e.point, { layers: ['live-points', 'borders-fill', 'land-fill', 'margin-fill'] })[0];
     clearHighlight();
     if (!hit) { hideInfo(); return; }
     if (hit.layer.id === 'live-points') showLive(hit.properties);
     else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { map.setFilter('borders-hl', ['==', ['get', 'NAME'], hit.properties.NAME]); showPolity(hit.properties); }
     else if (hit.layer.id === 'borders-fill') showPolity(hit.properties);
-    else showCoast();
+    else showCoast(hit.properties);
 });
 ['live-points', 'borders-fill'].forEach((id) => {
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
@@ -599,9 +658,16 @@ async function runSearch(raw) {
 function renderCredits() {
     const box = $('credits');
     box.textContent = '';
+    const rigid = state.land && state.land.type === 'rigid';
     box.appendChild(document.createTextNode(t('creditsLand') + ': '));
-    box.appendChild(el('a', { href: 'https://www.gplates.org/', target: '_blank', rel: 'noopener', text: 'GPlates Web Service' }));
-    box.appendChild(document.createTextNode(' · ' + CFG.model + '   |   ' + t('creditsBorders') + ': '));
+    if (rigid) {
+        box.appendChild(el('a', { href: 'https://www.gplates.org/', target: '_blank', rel: 'noopener', text: 'GPlates Web Service' }));
+        box.appendChild(document.createTextNode(' · ' + CFG.model));
+    } else {
+        box.appendChild(el('a', { href: 'https://doi.org/10.5281/zenodo.7994000', target: '_blank', rel: 'noopener', text: 'PaleoMAP PaleoCoastlines' }));
+        box.appendChild(document.createTextNode(' (Kocsis & Scotese, CC BY 4.0)'));
+    }
+    box.appendChild(document.createTextNode('   |   ' + t('creditsBorders') + ': '));
     box.appendChild(el('a', { href: 'https://github.com/aourednik/historical-basemaps', target: '_blank', rel: 'noopener', text: 'historical-basemaps' }));
     box.appendChild(document.createTextNode(' (A. Ourednik, GPL-3.0)'));
 }
@@ -645,6 +711,7 @@ $('time-input').addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     const ybp = parseTime(e.target.value);
     if (ybp === null) { setStatus('warn', t('badTime')); return; }
+    e.target.value = '';
     setTime(ybp, { immediate: true });
     e.target.blur();
 });

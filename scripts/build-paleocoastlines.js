@@ -12,6 +12,9 @@
 //                        a un GeoJSON ligero <edad>.json y escribe manifest.json con la
 //                        procedencia, la licencia y la huella de cada fichero.
 //
+// Salida archivada en el repositorio: data/paleocoastlines/ (una loncha <edad>.json por edad y
+// manifest.json con licencia, DOI, md5/sha256 y parametros). La web lee de ahi, no de Zenodo.
+//
 // stdout = JSON con el informe. stderr = progreso. Requiere `unzip` y red completa
 // (se ejecuta en el runner de GitHub, no en el entorno del agente).
 

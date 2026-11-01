@@ -145,8 +145,8 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
 | Fase | Contenido | Estado |
 |---|---|---|
 | 0 | Cimientos: CI en Node 22, esquema con procedencia, validador y pruebas, sonda de fuentes | **Hecho** |
-| 1 | Globo con viaje en el tiempo: costas reales (GPlates), fronteras históricas, slider | En curso |
-| 1b | Archivo propio: instantáneas de costas por modelo y edad con hash y atribución; campos de archivo en el esquema | En curso |
+| 1 | Globo con viaje en el tiempo: costas paleogeográficas reales (PaleoMAP, 0–535 Ma), fronteras históricas (−123000 a 2010), slider logarítmico | **Hecho** (falta 535–1000 Ma real) |
+| 1b | Archivo propio: paleocostas convertidas con manifiesto (licencia, DOI, md5/sha256, parámetros) en `data/paleocoastlines/` | **Hecho** para paleocostas; pendiente para el resto de capas |
 | 2 | Cielo: Sol, Luna, planetas y estrellas según instante y lugar | Pendiente |
 | 3 | Personas, obras e inventos (Wikidata/MusicBrainz) con calendario correcto | Pendiente |
 | 4 | Vida: fauna y flora actual y fósil, taxonomía | Pendiente |
@@ -169,11 +169,13 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
 
 ## 6. Pendiente de aclarar
 
-- **Costas reales de Pangea (prioridad alta).** El creador pidió explícitamente «las costas
-  reales de Pangea». La fuente actual (GPlates `coastlines`) solo desplaza contornos
-  actuales; la web lo dice así en pantalla. Hay que encontrar una fuente de paleogeografía
-  real (líneas de costa con mares someros) con licencia compatible y verificar su formato
-  con la sonda antes de integrarla.
+- **Costas reales de Pangea: RESUELTO para 0–535 Ma** con *PaleoMAP PaleoCoastlines*
+  (Kocsis & Scotese, CC BY 4.0, doi:10.5281/zenodo.7994000), derivado de los PaleoDEM e
+  incluyendo inundación continental. Se archiva en `data/paleocoastlines/` con
+  `scripts/build-paleocoastlines.js`. Pendiente: de 535 a 1000 Ma solo hay contornos
+  rígidos de GPlates (rotulados como tales); el DOI del artículo asociado
+  (10.1016/j.earscirev.2020.103463) viene de la ficha de Zenodo y la sonda lo verifica en
+  Crossref.
 - El creador ofreció compartir su conversación previa con **opencode** para ver qué se
   intentó y no se logró. **Aún no ha llegado.** Revisarla puede cambiar el orden de la
   hoja de ruta.

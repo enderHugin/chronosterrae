@@ -63,6 +63,7 @@ const targets = [
     { id: 'zenodo-merdith-model', area: 'paleogeografia-real', url: 'https://zenodo.org/api/records?q=Merdith%20plate%20tectonic%20model%20Neoproterozoic&size=5', full: true, expect: jsonHas('hits') },
     { id: 'zenodo-cao-paleogeography', area: 'paleogeografia-real', url: 'https://zenodo.org/api/records?q=Cao%20Phanerozoic%20palaeogeography%20GPlates&size=5', full: true, expect: jsonHas('hits') },
     { id: 'crossref-merdith2021', area: 'verificacion-doi', url: 'https://api.crossref.org/works/10.1016/j.earscirev.2020.103477', full: true, expect: jsonHas('message') },
+    { id: 'crossref-kocsis-scotese', area: 'verificacion-doi', url: 'https://api.crossref.org/works/10.1016/j.earscirev.2020.103463', full: true, expect: jsonHas('message') },
     { id: 'crossref-renne2013', area: 'verificacion-doi', url: 'https://api.crossref.org/works/10.1126/science.1230492', full: true, expect: jsonHas('message') },
     { id: 'zenodo-search-plate-model', area: 'paleogeografia', url: 'https://zenodo.org/api/records?q=Merdith2021%20plate%20model&size=1', expect: jsonHas('hits') }
 ];
