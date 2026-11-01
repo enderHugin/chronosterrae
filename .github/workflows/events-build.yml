@@ -1,0 +1,76 @@
+name: Sucesos (Wikidata)
+
+# Construye los sucesos con fecha desde Wikidata en trozos de tiempo y deja el resultado en la rama
+# `events-build`. Con mode=publish ademas los copia a data/events/ (sin tocar seed.json, que es a mano).
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'run | publish'
+        default: 'run'
+      kinds:
+        description: 'birth,death,publication,composition,discovery,event'
+        default: 'birth,death,publication,composition,discovery,event'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: events-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    env:
+      MODE: ${{ github.event.inputs.mode }}
+      KINDS: ${{ github.event.inputs.kinds }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+
+      - name: Construir
+        run: node scripts/build-events.js --out /tmp/events-out --kinds "$KINDS" > /tmp/build.out 2> /tmp/build.log
+
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 25 /tmp/build.log || true
+          ls -la /tmp/events-out 2>/dev/null | head -40 || true
+
+      - name: Publicar en main (data/events)
+        if: env.MODE == 'publish'
+        run: |
+          set -euo pipefail
+          test -f /tmp/events-out/index.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          mkdir -p data/events
+          rm -f data/events/c*.json
+          cp /tmp/events-out/c*.json /tmp/events-out/index.json /tmp/events-out/manifest.json data/events/
+          git add data/events
+          if git diff --staged --quiet; then
+            echo "Sin cambios."
+          else
+            git commit -m "Datos: sucesos con fecha desde Wikidata (CC0)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Informe en la rama events-build
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan events-build
+          cp /tmp/build.log build.log || true
+          if [ -d /tmp/events-out ]; then cp -r /tmp/events-out out; git add out; fi
+          git add build.log
+          git commit -m "Construccion de sucesos $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin events-build
