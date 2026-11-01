@@ -1,0 +1,86 @@
+name: Cielo (validación contra Horizons)
+
+# Compara el calculo del cielo con JPL Horizons en 16 epocas (-2000 a 3000) y guarda los errores
+# medidos en la rama `sky-validation`. Con mode=publish deja el informe en data/sky/validation.json,
+# que la web muestra como precision comprobada.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'run | publish'
+        default: 'run'
+  push:
+    branches: [main]
+    paths:
+      - 'sky/sky.js'
+      - 'scripts/validate-sky.js'
+      - '.github/workflows/sky-validate.yml'
+  schedule:
+    - cron: '17 4 1 * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sky-validate
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      MODE: ${{ github.event.inputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Contrastar con Horizons
+        run: node scripts/validate-sky.js > /tmp/validation.json 2> /tmp/validation.log
+
+      - name: Resumen en el log
+        if: always()
+        run: |
+          cat /tmp/validation.log || true
+          python3 - <<'PY' || true
+          import json
+          d = json.load(open('/tmp/validation.json'))
+          print(json.dumps(d.get('summary'), indent=1))
+          print('errores:', d.get('errors'))
+          PY
+
+      - name: Publicar en main (data/sky/validation.json)
+        if: env.MODE == 'publish'
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          mkdir -p data/sky
+          cp /tmp/validation.json data/sky/validation.json
+          git add data/sky/validation.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios."
+          else
+            git commit -m "Datos: validacion del cielo contra JPL Horizons"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Informe en la rama sky-validation
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/validation.json || echo '{"error":"sin salida"}' > /tmp/validation.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan sky-validation
+          cp /tmp/validation.json validation.json
+          cp /tmp/validation.log validation.log || true
+          git add validation.json validation.log
+          git commit -m "Validacion del cielo $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin sky-validation
