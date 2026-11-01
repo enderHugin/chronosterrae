@@ -1,6 +1,6 @@
 name: Sucesos (Wikidata)
 
-# Construye los sucesos con fecha desde Wikidata en trozos de tiempo y deja el resultado en la rama
+# Construye los sucesos con fecha desde Wikidata (via QLever, una consulta por tipo) y deja el resultado en la rama
 # `events-build`. Con mode=publish ademas los copia a data/events/ (sin tocar seed.json, que es a mano).
 on:
   workflow_dispatch:
@@ -22,7 +22,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 170
+    timeout-minutes: 40
     env:
       MODE: ${{ github.event.inputs.mode }}
       KINDS: ${{ github.event.inputs.kinds }}

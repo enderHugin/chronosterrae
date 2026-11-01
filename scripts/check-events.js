@@ -114,6 +114,15 @@ check('wikidata: las ventanas de tiempo cubren todo sin huecos ni solapes', () =
     }
     return true;
 });
+check('wikidata: la consulta masiva no filtra por fecha en el servidor y empieza por la notoriedad', () => {
+    for (const k of Object.keys(B.KINDS)) {
+        const q = B.queryAll(k);
+        if (/xsd:dateTime|FILTER\(\?t /.test(q)) throw new Error(k + ': filtra por fecha en el servidor');
+        if (q.indexOf('wikibase:sitelinks') > q.indexOf('p:' + B.KINDS[k].prop)) throw new Error(k + ': la notoriedad no va primero');
+        if (!/PREFIX wikibase:/.test(q) || !/SELECT DISTINCT/.test(q)) throw new Error(k + ': faltan prefijos o DISTINCT');
+    }
+    return !/DeprecatedRank/.test(B.queryAll('birth', false)) && /DeprecatedRank/.test(B.queryAll('birth', true));
+});
 check('wikidata: la importancia crece con las sitelinks y se queda en [0,1]', () => {
     const imp = (sl) => B.bindingToFeature('birth', row({ sl }), 'x').feature.properties.importance;
     return imp(60) < imp(120) && imp(120) < imp(300) && imp(100000) === 1 && imp(1) >= 0;

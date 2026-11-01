@@ -3,8 +3,12 @@
 //
 //   node scripts/build-events.js --out <carpeta> [--kinds birth,death,publication,composition,discovery,event]
 //
-// Wikidata (CC0) se consulta por SPARQL en trozos de tiempo, solo elementos con muchos articulos en
-// Wikipedia (sitelinks), que es la medida de notoriedad que usamos para decidir que mostrar a cada escala.
+// Wikidata (CC0) se consulta por SPARQL, solo elementos con muchos articulos en Wikipedia (sitelinks),
+// que es la medida de notoriedad que usamos para decidir que mostrar a cada escala.
+// Servidor: QLever (https://qlever.cs.uni-freiburg.de/api/wikidata, mismo grafo de Wikidata). Sonda del
+// 2026-11-01: 8 355 nacimientos con >= 60 sitelinks en 1,3 s, 43 012 con >= 30 en 2,2 s; query.wikidata.org
+// agotaba el tiempo (504/429) incluso en una sola banda, y el build por ventanas de fecha no terminaba.
+// Una consulta por tipo, SIN filtrar por fecha en el servidor; el filtro (año >= 1) se aplica aqui.
 // Se ejecuta en Actions (el entorno de desarrollo no alcanza Wikidata). No se inventa nada:
 //   - sin etiqueta, sin fecha o con precision menor que el año => no entra;
 //   - calendario: el que Wikidata declara para ESA fecha (juliano o gregoriano);
@@ -18,9 +22,9 @@ const fs = require('fs');
 const path = require('path');
 const S = require('../sky/sky.js');
 
-const ENDPOINT = 'https://query.wikidata.org/sparql';
-const UA = 'ChronosTerrae-Build/0.2 (https://github.com/enderHugin/chronosterrae)';
-const TIMEOUT_MS = 75000;
+const ENDPOINT = process.env.CT_SPARQL_ENDPOINT || 'https://qlever.cs.uni-freiburg.de/api/wikidata';   // la variable solo la usan las pruebas
+const UA = 'ChronosTerrae-Build/0.3 (https://github.com/enderHugin/chronosterrae)';
+const TIMEOUT_MS = 300000;
 const JD_1950 = 2433282.5;                 // 1950-01-01 0 h: el "presente" de BP
 const FIRST_YEAR = 1;                      // antes del año 1 hay que calibrar la numeracion de Wikidata (no existe año 0)
 
@@ -57,6 +61,26 @@ function query(kind, y0, y1) {
   ?item p:${k.prop} ?st . ?st psv:${k.prop} ?v ; wikibase:rank ?rank . FILTER(?rank != wikibase:DeprecatedRank)
   ?v wikibase:timeValue ?t ; wikibase:timePrecision ?prec ; wikibase:timeCalendarModel ?cal .
   FILTER(?t >= ${dt(y0)} && ?t < ${dt(y1)} && ?prec >= 9)
+  ${coord}
+  ?item rdfs:label ?label . FILTER(LANG(?label) = "en")
+  OPTIONAL { ?item rdfs:label ?es . FILTER(LANG(?es) = "es") }
+}`;
+}
+
+const PREFIXES = 'PREFIX wd: <http://www.wikidata.org/entity/> PREFIX wdt: <http://www.wikidata.org/prop/direct/> PREFIX p: <http://www.wikidata.org/prop/> PREFIX ps: <http://www.wikidata.org/prop/statement/> PREFIX psv: <http://www.wikidata.org/prop/statement/value/> PREFIX wikibase: <http://wikiba.se/ontology#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ';
+
+/** Todos los elementos del tipo con su fecha, en una sola consulta (la notoriedad va primero para que el
+ *  servidor empiece por los pocos miles de elementos famosos). withRank: descarta declaraciones obsoletas. */
+function queryAll(kind, withRank = true) {
+    const k = KINDS[kind];
+    const coord = k.ownCoord ? 'OPTIONAL { ?item wdt:P625 ?coord }' : k.place ? 'OPTIONAL { ?item wdt:' + k.place + '/wdt:P625 ?coord }' : '';
+    const rank = withRank ? `?st wikibase:rank ?rank . FILTER(?rank != wikibase:DeprecatedRank)` : '';
+    return PREFIXES + `SELECT DISTINCT ?item ?label ?es ?sl ?t ?prec ?cal ?coord WHERE {
+  ?item wikibase:sitelinks ?sl . FILTER(?sl >= ${k.minSl})
+  ${k.filter}
+  ?item p:${k.prop} ?st . ?st psv:${k.prop} ?v . ${rank}
+  ?v wikibase:timeValue ?t ; wikibase:timePrecision ?prec ; wikibase:timeCalendarModel ?cal .
+  FILTER(?prec >= 9)
   ${coord}
   ?item rdfs:label ?label . FILTER(LANG(?label) = "en")
   OPTIONAL { ?item rdfs:label ?es . FILTER(LANG(?es) = "es") }
@@ -138,16 +162,22 @@ async function sparql(q) {
     return JSON.parse(text).results.bindings;
 }
 
-// Si un trozo falla (tiempo agotado), se divide a la mitad hasta llegar a 1 año.
-async function fetchRange(kind, y0, y1, log, stats, depth = 0) {
+// Una consulta por tipo. Si el servidor rechaza el filtro de rango (obsoleto), se repite sin el y se anota.
+async function fetchAll(kind, log, stats) {
     let lastErr;
-    for (let attempt = 0; attempt < 2; attempt++) {
-        try { const rows = await sparql(query(kind, y0, y1)); stats.queries++; return rows; } catch (e) { lastErr = e; await sleep(3000 * (attempt + 1)); }
+    for (const withRank of [true, false]) {
+        for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+                const t0 = Date.now();
+                const rows = await sparql(queryAll(kind, withRank)); stats.queries++;
+                if (!withRank) (stats.no_rank_filter = stats.no_rank_filter || []).push(kind);
+                log('OK  ' + kind + ' filas=' + rows.length + ' ' + (Date.now() - t0) + ' ms' + (withRank ? '' : ' (sin filtro de rango)'));
+                return rows;
+            } catch (e) { lastErr = e; log('..  ' + kind + (withRank ? '' : ' sin rango') + ' intento ' + (attempt + 1) + ': ' + describe(e)); await sleep(3000 * (attempt + 1)); }
+        }
     }
-    if (y1 - y0 <= 1) { stats.failed.push({ kind, from: y0, to: y1, error: describe(lastErr) }); log('XX  ' + kind + ' ' + y0 + '-' + y1 + ' ' + describe(lastErr)); return []; }
-    log('..  ' + kind + ' ' + y0 + '-' + y1 + ' dividido (' + describe(lastErr) + ')');
-    const mid = Math.floor((y0 + y1) / 2);
-    return [...await fetchRange(kind, y0, mid, log, stats, depth + 1), ...await fetchRange(kind, mid, y1, log, stats, depth + 1)];
+    stats.failed.push({ kind, error: describe(lastErr) });
+    return [];
 }
 
 async function main() {
@@ -160,23 +190,22 @@ async function main() {
     for (const kind of kinds) {
         if (!KINDS[kind]) throw new Error('tipo desconocido: ' + kind);
         perKind[kind] = 0;
-        const seen = new Map();
-        for (const [y0, y1] of windows(KINDS[kind].steps)) {
-            const rows = await fetchRange(kind, y0, y1, log, stats);
-            stats.rows += rows.length;
-            for (const b of rows) {
-                const r = bindingToFeature(kind, b, retrievedAt);
-                if (r.skip) { stats.skipped[r.skip] = (stats.skipped[r.skip] || 0) + 1; continue; }
-                const f = r.feature;
-                const n = (seen.get(f.properties.id) || 0) + 1; seen.set(f.properties.id, n);
-                if (n > 1) f.properties.id += '.' + n;         // el mismo elemento con varias fechas: se conservan todas, declaradas
-                const century = Math.floor(ybpToYear(f.properties.time.start_ybp, f.properties.time.end_ybp) / 100);
-                const key = 'c' + (century < 0 ? 'm' + (-century) : century);
-                if (!byShard.has(key)) byShard.set(key, []);
-                byShard.get(key).push(f); perKind[kind]++;
-            }
-            log('OK  ' + kind + ' ' + y0 + '-' + y1 + ' filas=' + rows.length);
-            await sleep(1500);
+        const seen = new Map(); const dup = new Set();
+        const rows = await fetchAll(kind, log, stats);
+        stats.rows += rows.length;
+        for (const b of rows) {
+            const r = bindingToFeature(kind, b, retrievedAt);
+            if (r.skip) { stats.skipped[r.skip] = (stats.skipped[r.skip] || 0) + 1; continue; }
+            const f = r.feature;
+            const dkey = f.properties.id + '|' + f.properties.time.iso;   // misma fecha con varias coordenadas: una sola
+            if (dup.has(dkey)) { stats.skipped['duplicado (misma fecha, otro lugar)'] = (stats.skipped['duplicado (misma fecha, otro lugar)'] || 0) + 1; continue; }
+            dup.add(dkey);
+            const n = (seen.get(f.properties.id) || 0) + 1; seen.set(f.properties.id, n);
+            if (n > 1) f.properties.id += '.' + n;         // el mismo elemento con varias fechas: se conservan todas, declaradas
+            const century = Math.floor(ybpToYear(f.properties.time.start_ybp, f.properties.time.end_ybp) / 100);
+            const key = 'c' + (century < 0 ? 'm' + (-century) : century);
+            if (!byShard.has(key)) byShard.set(key, []);
+            byShard.get(key).push(f); perKind[kind]++;
         }
     }
     fs.mkdirSync(out, { recursive: true });
@@ -188,7 +217,7 @@ async function main() {
         index.shards[key] = { file, count: feats.length, bytes: fs.statSync(path.join(out, file)).size };
     }
     fs.writeFileSync(path.join(out, 'index.json'), JSON.stringify(index, null, 1) + '\n');
-    fs.writeFileSync(path.join(out, 'manifest.json'), JSON.stringify({ generated_at: retrievedAt, source: 'Wikidata (CC0) via query.wikidata.org', kinds, per_kind: perKind, stats }, null, 2) + '\n');
+    fs.writeFileSync(path.join(out, 'manifest.json'), JSON.stringify({ generated_at: retrievedAt, source: 'Wikidata (CC0) via QLever (qlever.cs.uni-freiburg.de/api/wikidata)', kinds, per_kind: perKind, stats }, null, 2) + '\n');
     log(JSON.stringify({ perKind, queries: stats.queries, failed: stats.failed.length, skipped: stats.skipped }));
 }
 
@@ -196,4 +225,4 @@ async function main() {
 function ybpToYear(startYbp, endYbp) { return Math.floor(1950 - (startYbp + endYbp) / 2); }
 
 if (require.main === module) main().catch((e) => { console.error('[ERR] ' + describe(e)); process.exitCode = 1; });
-module.exports = { KINDS, query, bindingToFeature, windows, ybpToYear };
+module.exports = { KINDS, query, queryAll, bindingToFeature, windows, ybpToYear };
