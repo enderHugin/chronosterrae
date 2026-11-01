@@ -21,14 +21,23 @@ sale y cuánto se puede fiar de él.
   especulación), siempre visible.
 - **Datos recientes** de un recolector diario (artículos más vistos de Wikipedia con coordenadas
   en Wikidata), mostrados solo en el presente.
-- ES/EN, tema claro/oscuro.
+- **Cielo** (botón «Cielo»): Sol, Luna con su fase, y Mercurio a Neptuno para cualquier fecha entre
+  el 2001 a. C. y hoy, hora solar local y lugar (el centro del mapa o el que escribas), con calendario
+  juliano hasta el 4-10-1582 y gregoriano después, refracción y crepúsculo. El cálculo está en
+  `sky/sky.js` y se contrasta con JPL Horizons en Actions: **el error medido se muestra en la propia
+  web** (segundos de arco hoy; unos 15′ para la Luna hacia el año 0 y ~1,2° hacia el 2000 a. C.).
+- ES/EN, tema claro/oscuro; idioma, tema, instante y cámara se recuerdan en una cookie propia.
 
 ## Límites conocidos (dichos sin adornos)
 
 - De 535 a 1.000 Ma solo hay **contornos actuales movidos como bloques rígidos** (GPlates,
   modelo Merdith 2021). La web lo rotula; no son las costas reales de esa época.
 - Las fronteras históricas son un mapa compilado y en elaboración: contrástalas antes de citarlas.
-- Sin cielo, personas, obras, fauna o flora todavía. Están en la hoja de ruta.
+- **Cielo sin estrellas todavía**: falta decidir la fuente del catálogo (Hipparcos es de ESA con
+  licencia CC BY-NC 3.0 IGO, solo no comercial). Hasta entonces el panel avisa y dibuja Sol, Luna y planetas.
+- La precisión del cielo se degrada hacia el pasado (efemérides analíticas truncadas y ΔT, la
+  rotación de la Tierra, que es una estimación antes de ~1600): la web muestra el error medido, no una promesa.
+- Sin personas, obras, fauna o flora todavía. Están en la hoja de ruta.
 
 ## Hoja de ruta
 

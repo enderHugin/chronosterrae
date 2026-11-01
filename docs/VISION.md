@@ -115,11 +115,15 @@ fase inicial. La financiación comunitaria (Ko-fi y similares) debe cubrir el ar
 
 ### Cielo en el tiempo profundo
 
-Se calcula, no se almacena. Con efemérides publicadas (JPL DE441) es fiable durante unos
-30.000 años; las estrellas llevan movimiento propio. Más atrás entran modelos con
-incertidumbre creciente (ΔT de la rotación terrestre incierto en la antigüedad; hace
-~600 Ma el día duraba ~21 h y la Luna estaba más cerca). Se muestra como **modelo con su
-margen**, nunca como certeza.
+Se calcula, no se almacena. **Estado real (medido el 2026-11-01 contra JPL Horizons/DE441,
+`data/sky/validation.json`)**: con astronomy-engine (series analíticas truncadas) el error de Sol,
+Luna y planetas es de segundos de arco entre 1700 y 2200, pero crece hacia el pasado: ~1′–3′
+hacia el año 1000, ~15′–19′ para la Luna hacia el año 0 y 500 a. C., y ~1,2° (Luna) / ~24′
+(planetas) hacia el 2000 a. C. Para precisión de efeméride en la antigüedad hay que pasar a series
+completas (VSOP87/ELP-MPP02) o a DE441 directamente. Aparte, ΔT (la rotación terrestre) es una
+estimación antes de ~1600 y desplaza el cielo local. Más atrás de unos milenios entran modelos con
+incertidumbre creciente (hace ~600 Ma el día duraba ~21 h y la Luna estaba más cerca). Se muestra
+como **modelo con su margen medido**, nunca como certeza.
 
 ### Escalas extremas
 
@@ -147,7 +151,7 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
 | 0 | Cimientos: CI en Node 22, esquema con procedencia, validador y pruebas, sonda de fuentes | **Hecho** |
 | 1 | Globo con viaje en el tiempo: costas paleogeográficas reales (PaleoMAP, 0–535 Ma), fronteras históricas (−123000 a 2010), slider logarítmico | **Hecho** (falta 535–1000 Ma real) |
 | 1b | Archivo propio: paleocostas convertidas con manifiesto (licencia, DOI, md5/sha256, parámetros) en `data/paleocoastlines/` | **Hecho** para paleocostas; pendiente para el resto de capas |
-| 2 | Cielo: Sol, Luna, planetas y estrellas según instante y lugar | Pendiente |
+| 2 | Cielo: Sol, Luna, planetas y estrellas según instante y lugar | **En curso**: Sol, Luna y planetas hechos y validados (2001 a. C.–hoy); estrellas pendientes de fuente/licencia; falta efeméride más precisa en la antigüedad, futuro y terminador día/noche en el globo |
 | 3 | Personas, obras e inventos (Wikidata/MusicBrainz) con calendario correcto | Pendiente |
 | 4 | Vida: fauna y flora actual y fósil, taxonomía | Pendiente |
 | 5 | Directo: terremotos, eventos naturales, noticias geolocalizadas | Pendiente |
@@ -178,6 +182,13 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
   Crossref** (sonda del 2026-11-01): «Mapping paleocoastlines and continental flooding
   during the Phanerozoic», Kocsis y Scotese, *Earth-Science Reviews*, 2021. Falta quitar la
   nota «pendiente de verificar» del manifiesto en la próxima publicación de datos.
+- **Catálogo de estrellas: decisión de licencia pendiente.** Hipparcos (ESA 1997) es la mejor fuente
+  de movimientos propios, pero se distribuye bajo **CC BY-NC 3.0 IGO** (solo no comercial), y este
+  proyecto contempla clientes y financiación. Alternativas por verificar: Wikidata (CC0, pocas estrellas
+  y calidad desigual), Yale BSC (condiciones por confirmar), o cargar Hipparcos en tiempo de ejecución
+  sin copiarlo al repositorio. Los servidores de CDS (Estrasburgo) no responden desde los runners de
+  GitHub; el espejo del CfA acepta la conexión pero cierra las consultas. `scripts/build-stars.js`
+  (modo `inspect`) y `sky-stars.yml` ya existen; el cliente carga `data/sky/stars.json` si aparece.
 - El creador ofreció compartir su conversación previa con **opencode** para ver qué se
   intentó y no se logró. **Aún no ha llegado.** Revisarla puede cambiar el orden de la
   hoja de ruta.

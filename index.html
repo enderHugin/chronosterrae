@@ -1075,9 +1075,11 @@ function syncControls() {
     $('sky-cal').value = sky.calendar;
 }
 
+// Temporizador corto en vez de requestAnimationFrame: el panel no necesita ir al ritmo del mapa y un
+// fotograma lento (el mapa renderizando) no debe retrasar el cielo.
 function scheduleSky() {
     if (sky.raf) return;
-    sky.raf = requestAnimationFrame(() => { sky.raf = 0; updateSky(); });
+    sky.raf = setTimeout(() => { sky.raf = 0; updateSky(); }, 30);
 }
 
 async function skyLoadCatalog() {
