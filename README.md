@@ -17,6 +17,9 @@ sale y cuánto se puede fiar de él.
   (`data/paleocoastlines/`), no de un servicio externo.
 - **Fronteras y pueblos históricos de −123000 a 2010** ([historical-basemaps](https://github.com/aourednik/historical-basemaps),
   GPL-3.0, cargadas en tiempo de ejecución con atribución). Búsqueda por nombre con salto a su época.
+- **Fronteras vigentes de alta resolución desde 2020** (Natural Earth 10m, dominio público, ~1,7 km de
+  mediana entre vértices; origen, commit y sha256 en `data/borders/manifest.json`). Ceuta y Melilla salen
+  como España, igual que en OpenStreetMap. Antes de 2020 sigue la compilación histórica, mucho más gruesa.
 - **Tipo de evidencia en cada capa** (medición, documento, artefacto, modelo, reconstrucción,
   especulación), siempre visible.
 - **Datos recientes** de un recolector diario (artículos más vistos de Wikipedia con coordenadas
@@ -46,7 +49,7 @@ sale y cuánto se puede fiar de él.
 
 - De 535 a 1.000 Ma solo hay **contornos actuales movidos como bloques rígidos** (GPlates,
   modelo Merdith 2021). La web lo rotula; no son las costas reales de esa época.
-- Las fronteras históricas son un mapa compilado y en elaboración: contrástalas antes de citarlas.
+- Las fronteras históricas son un mapa compilado y en elaboración: su precisión legal es alta, pero están dibujadas con muy pocos vértices (mediana de 10 a 30 km entre puntos), así que a zoom alto no encajan con la costa real. Contrástalas antes de citarlas.
 - Las estrellas vienen de HYG (CC BY-SA 4.0): los datos derivados se atribuyen y comparten igual
   (`data/sky/NOTICE.md`). El catálogo llega a magnitud ~6,5 y las posiciones se extrapolan con movimiento propio.
 - Los sucesos con hora son pocos todavía y los anteriores al año 1 no están (la numeración a. C. de

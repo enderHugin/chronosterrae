@@ -287,6 +287,7 @@ const CFG = {
     deepTimeFrom: 1e6,                   // desde 1 Ma se muestra la edad en Ma
     paleoBase: './data/paleocoastlines/',   // archivo propio: PaleoMAP PaleoCoastlines (CC BY 4.0), 0-535 Ma
     paleoMaxDeltaMa: 10,                 // no se usa una loncha mas lejana que esto
+    neFromYear: 2020, neUrl: './data/borders/ne-10m-countries.json',   // fronteras vigentes (Natural Earth 10m) desde este año
     bordersMaxYbp: 125000,               // las fronteras históricas empiezan en -123000
     throttleMs: 80,                      // costas: ligeras, se actualizan mientras se arrastra el slider
     bordersDebounceMs: 300,              // fronteras: archivos de 1-3,6 MB, se piden cuando el slider se detiene
@@ -351,6 +352,8 @@ const i18n = {
         bordersFail: 'No se pudieron cargar las fronteras ({err}).',
         landOk: 'Contornos actuales movidos por el modelo de placas {model}, {age}. No son las costas reales de la época.', seaLevel: 'Costas actuales. El nivel del mar y las glaciaciones no están modelados.',
         noBorders: 'Sin fronteras históricas para esta época (el conjunto cubre desde 123.000 a.C.).',
+        bordersNE: 'Fronteras vigentes: Natural Earth 10m (dominio público), resolución mediana ~{km} km.',
+        neNote: 'Fronteras vigentes según Natural Earth. En zonas en disputa se muestra la convención de esa fuente (campo «Tipo»), sin juicio sobre soberanía.', resolution: 'Resolución de la fuente', typeLabel: 'Tipo según la fuente',
         bordersSnapshot: 'Fronteras: instantánea de {y} ({d}).', exact: 'misma fecha', apart: 'a {n} años',
         noResults: 'Sin resultados para «{q}». Pronto una búsqueda sin resultado podrá convertirse en una petición de datos.',
         found: '«{n}» aparece en {c} épocas. Mostrando {y}.', badTime: 'No entiendo esa fecha. Prueba: 1789, 44 a.C., 12 ka, 250 Ma.',
@@ -423,6 +426,8 @@ const i18n = {
         bordersFail: 'Could not load borders ({err}).',
         landOk: 'Present-day outlines moved by plate model {model}, {age}. Not the real coastlines of that time.', seaLevel: 'Present-day coastlines. Sea level and ice ages are not modelled.',
         noBorders: 'No historical borders for this era (the dataset starts at 123,000 BC).',
+        bordersNE: 'Current borders: Natural Earth 10m (public domain), median resolution ~{km} km.',
+        neNote: 'Current borders per Natural Earth. In disputed areas the source\'s own convention is shown ("Type" field), with no judgement on sovereignty.', resolution: 'Source resolution', typeLabel: 'Type per the source',
         bordersSnapshot: 'Borders: snapshot of {y} ({d}).', exact: 'same date', apart: '{n} years apart',
         noResults: 'No results for "{q}". Soon an empty search will be able to become a data request.',
         found: '"{n}" appears in {c} eras. Showing {y}.', badTime: "I can't read that date. Try: 1789, 44 BC, 12 ka, 250 Ma.",
@@ -666,8 +671,14 @@ function pickSnapshot(ybp) {
 
 const snapshotUrl = (best) => CFG.hbBase + 'geojson/' + best.p.file;
 
+// Desde 2020 se usan las fronteras vigentes de Natural Earth 10m (dominio publico, resolucion ~1,7 km, fuente y
+// licencia en data/borders/manifest.json), mucho mas precisas que la compilacion historica; antes, esa compilacion.
+const usesNE = (ybp) => ybpToYear(ybp) >= CFG.neFromYear;
+const neBorders = (fc) => ({ data: colorize(fc), year: CFG.neFromYear, delta: 0, source: 'ne', meta: fc.meta });
+
 // Fronteras ya en memoria: objeto o null (no corresponde mostrar ninguna). undefined = hay que descargar.
 function bordersCached(ybp) {
+    if (usesNE(ybp)) return cache.has(CFG.neUrl) ? neBorders(cache.get(CFG.neUrl)) : undefined;
     if (ybp > CFG.bordersMaxYbp) return null;
     if (!state.polities) return undefined;
     const best = pickSnapshot(ybp);
@@ -678,6 +689,7 @@ function bordersCached(ybp) {
 }
 
 async function loadBorders(ybp, signal) {
+    if (usesNE(ybp)) return neBorders(await getJSON(CFG.neUrl, signal));
     if (ybp > CFG.bordersMaxYbp) return null;
     await loadPolities(signal);
     const best = pickSnapshot(ybp);
@@ -962,7 +974,8 @@ function renderStatus() {
         messages.push(t('loadingBorders'));
     } else if (state.borders) {
         const b = state.borders;
-        messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
+        if (b.source === 'ne') messages.push(fmt('bordersNE', { km: nf().format(b.meta.segment_median_km) }));
+        else messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
     } else if (ybp <= CFG.bordersMaxYbp) {
         messages.push(t('noBorders'));
     }
@@ -1130,6 +1143,18 @@ function focusPolity(name) {
 }
 
 function showPolity(p) {
+    if (state.borders && state.borders.source === 'ne') {
+        const m = state.borders.meta;
+        const rows = [{ label: t('evidence'), badge: 'documentary', note: t('neNote') }];
+        if (p.SUBJECTO && p.SUBJECTO !== p.NAME) rows.push({ label: t('power'), value: p.SUBJECTO });
+        if (p.TYPE) rows.push({ label: t('typeLabel'), value: p.TYPE });
+        rows.push({ label: t('resolution'), value: '~' + nf().format(m.segment_median_km) + ' km (' + nf().format(m.segment_p90_km) + ' km p90)' });
+        if (p.WIKIDATAID) rows.push({ label: 'Wikidata', value: p.WIKIDATAID, href: 'https://www.wikidata.org/wiki/' + p.WIKIDATAID });
+        rows.push({ label: t('source'), value: 'Natural Earth 10m', href: 'https://www.naturalearthdata.com/' });
+        rows.push({ label: t('license'), value: lang === 'es' ? 'Dominio público' : 'Public domain' });
+        showInfo((lang === 'es' && p.NAME_ES) || p.NAME || t('unnamed'), rows);
+        return;
+    }
     const rows = [{ label: t('evidence'), badge: 'reconstruction', note: t('bordersNote') }];
     if (p.SUBJECTO && p.SUBJECTO !== p.NAME) rows.push({ label: t('power'), value: p.SUBJECTO });
     if (p.PARTOF) rows.push({ label: t('parent'), value: p.PARTOF });
@@ -1238,8 +1263,13 @@ function renderCredits() {
         box.appendChild(document.createTextNode(' (Kocsis & Scotese, CC BY 4.0)'));
     }
     box.appendChild(document.createTextNode('   |   ' + t('creditsBorders') + ': '));
-    box.appendChild(el('a', { href: 'https://github.com/aourednik/historical-basemaps', target: '_blank', rel: 'noopener', text: 'historical-basemaps' }));
-    box.appendChild(document.createTextNode(' (A. Ourednik, GPL-3.0)'));
+    if (state.borders && state.borders.source === 'ne') {
+        box.appendChild(el('a', { href: 'https://www.naturalearthdata.com/', target: '_blank', rel: 'noopener', text: 'Natural Earth' }));
+        box.appendChild(document.createTextNode(' (' + (lang === 'es' ? 'dominio público' : 'public domain') + ')'));
+    } else {
+        box.appendChild(el('a', { href: 'https://github.com/aourednik/historical-basemaps', target: '_blank', rel: 'noopener', text: 'historical-basemaps' }));
+        box.appendChild(document.createTextNode(' (A. Ourednik, GPL-3.0)'));
+    }
     if (DETAIL.shown) {
         box.appendChild(document.createTextNode('   |   ' + t('creditsDetail') + ': '));
         box.appendChild(el('a', { href: 'https://openfreemap.org', target: '_blank', rel: 'noopener', text: 'OpenFreeMap' }));

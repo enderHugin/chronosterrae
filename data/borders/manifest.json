@@ -1,0 +1,20 @@
+{
+  "source": "Natural Earth 10m admin 0 countries (nvkelso/natural-earth-vector)",
+  "source_url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_10m_admin_0_countries.geojson",
+  "commit": "ca96624a56bd078437bca8184e78163e5039ad19",
+  "source_sha256": "239eec57ac17f100a11e2536cffc56752c318b50ae765b0918ff7aab4ce8f255",
+  "license": "Dominio publico (Natural Earth: https://www.naturalearthdata.com/about/terms-of-use/)",
+  "retrieved_at": "2026-11-01T21:23:54.567Z",
+  "valid_from_year": 2020,
+  "transformations": [
+    "propiedades recortadas a NAME, NAME_ES, SUBJECTO (=SOVEREIGNT), ADM0_A3, TYPE, WIKIDATAID",
+    "coordenadas redondeadas a 4 decimales",
+    "puntos consecutivos repetidos eliminados"
+  ],
+  "features": 258,
+  "dropped": 0,
+  "vertices": 548432,
+  "segment_median_km": 1.68,
+  "segment_p90_km": 5.05,
+  "segment_max_km": 55.1
+}
