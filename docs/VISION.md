@@ -91,8 +91,20 @@ realista: poder entrar en otra época y ver cómo era.
 | Vestimenta, objetos, imágenes | Cómo vestían, qué usaban | Met Open Access (CC0), Wikimedia Commons, Europeana | Commons OK. **Met: migrar a `/v1.1/search`** (v1 retirado el 2026-10-01). Europeana requiere clave |
 | Literatura científica | Citas y respaldo | OpenAlex, Crossref | **OpenAlex exige clave de API**: llamar desde Actions |
 | Directo | Terremotos, eventos naturales | USGS, NASA EONET (+ noticias geolocalizadas) | Responden con CORS |
-| Cielo | Sol, Luna, planetas, estrellas | Cálculo en el cliente (efemérides + catálogo con movimiento propio), validado en CI contra JPL Horizons | Horizons **sin CORS**: solo para validar en CI |
-| Mapa base | Teselas de fondo | Carto | Responde con CORS |
+| Cielo | Sol, Luna, planetas, estrellas | Cálculo en el cliente (efemérides + catálogo HYG con movimiento propio, CC BY-SA 4.0), validado en CI contra JPL Horizons | Horizons **sin CORS**: solo para validar en CI. Fondo espacial tras el globo con la proyección real de la cámara |
+| Mapa base y detalle | Teselas de fondo; detalle vectorial al acercar | OpenFreeMap (OpenStreetMap, ODbL, sin claves ni límites) | **Sonda 2026-11-01: estilo Liberty, TileJSON, teselas z6–z14, glifos y sprite responden con CORS `*`.** Es geografía actual, no reconstruida |
+
+### Sucesos con hora y avisos
+
+Un suceso es un registro del esquema (`kind`, `importance`, `labels`, `time.precision` de segundo a año,
+`time.instant` solo si la hora está documentada, geometría nula permitida). Se parten en trozos por siglo
+(`data/events/c<siglo>.json` + `index.json` + `manifest.json`) y `seed.json` siempre se carga. La vista no
+se satura porque **el alcance decide**: ventana de ±183 días alrededor del reloj, un umbral de
+importancia que sube al alejarse (por anchura de vista) y un marcador por celda de pantalla (máx. 80).
+Los avisos salen solo al recorrer el reloj hacia delante (a 300, 60 y 10 s y «ahora» si hay hora; al
+entrar en el día si solo hay día). **Principio: la hora es un dato, no un adorno; sin fuente no hay
+cuenta atrás.** Wikidata suele traer solo la fecha, de modo que los sucesos con hora real son escasos
+y hay que ir verificándolos uno a uno.
 
 ### Archivo propio (resiliencia)
 
@@ -151,8 +163,8 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
 | 0 | Cimientos: CI en Node 22, esquema con procedencia, validador y pruebas, sonda de fuentes | **Hecho** |
 | 1 | Globo con viaje en el tiempo: costas paleogeográficas reales (PaleoMAP, 0–535 Ma), fronteras históricas (−123000 a 2010), slider logarítmico | **Hecho** (falta 535–1000 Ma real) |
 | 1b | Archivo propio: paleocostas convertidas con manifiesto (licencia, DOI, md5/sha256, parámetros) en `data/paleocoastlines/` | **Hecho** para paleocostas; pendiente para el resto de capas |
-| 2 | Cielo: Sol, Luna, planetas y estrellas según instante y lugar | **En curso**: Sol, Luna y planetas hechos y validados (2001 a. C.–hoy); estrellas pendientes de fuente/licencia; falta efeméride más precisa en la antigüedad, futuro y terminador día/noche en el globo |
-| 3 | Personas, obras e inventos (Wikidata/MusicBrainz) con calendario correcto | Pendiente |
+| 2 | Cielo: Sol, Luna, planetas y estrellas según instante y lugar | **Hecho en lo esencial**: Sol, Luna, planetas (validados 2001 a. C.–hoy), estrellas HYG, fondo espacial tras el globo, terminador, reloj. Falta efeméride más precisa en la antigüedad y la Luna delante del globo a distancias extremas |
+| 3 | Personas, obras e inventos (Wikidata/MusicBrainz) con calendario correcto | **En curso**: modelo, selección por alcance, avisos y semilla verificada hechos; carga masiva desde Wikidata en construcción; extinciones sin cosechar; antes del año 1 pendiente |
 | 4 | Vida: fauna y flora actual y fósil, taxonomía | Pendiente |
 | 5 | Directo: terremotos, eventos naturales, noticias geolocalizadas | Pendiente |
 | 6 | Inmersión por época: vestimenta, objetos, transporte, lengua, con tipo de evidencia | Pendiente |
@@ -182,13 +194,9 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
   Crossref** (sonda del 2026-11-01): «Mapping paleocoastlines and continental flooding
   during the Phanerozoic», Kocsis y Scotese, *Earth-Science Reviews*, 2021. Falta quitar la
   nota «pendiente de verificar» del manifiesto en la próxima publicación de datos.
-- **Catálogo de estrellas: decisión de licencia pendiente.** Hipparcos (ESA 1997) es la mejor fuente
-  de movimientos propios, pero se distribuye bajo **CC BY-NC 3.0 IGO** (solo no comercial), y este
-  proyecto contempla clientes y financiación. Alternativas por verificar: Wikidata (CC0, pocas estrellas
-  y calidad desigual), Yale BSC (condiciones por confirmar), o cargar Hipparcos en tiempo de ejecución
-  sin copiarlo al repositorio. Los servidores de CDS (Estrasburgo) no responden desde los runners de
-  GitHub; el espejo del CfA acepta la conexión pero cierra las consultas. `scripts/build-stars.js`
-  (modo `inspect`) y `sky-stars.yml` ya existen; el cliente carga `data/sky/stars.json` si aparece.
+- **Catálogo de estrellas: RESUELTO con HYG** (CC BY-SA 4.0, con atribución y aviso en
+  `data/sky/NOTICE.md`; constelaciones de d3-celestial, BSD-3). Hipparcos quedó descartado por su licencia
+  no comercial. `scripts/build-stars.js` reconstruye `data/sky/` desde el CSV con su commit fijado.
 - El creador ofreció compartir su conversación previa con **opencode** para ver qué se
   intentó y no se logró. **Aún no ha llegado.** Revisarla puede cambiar el orden de la
   hoja de ruta.

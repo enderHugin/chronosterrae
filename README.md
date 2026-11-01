@@ -26,6 +26,20 @@ sale y cuánto se puede fiar de él.
   juliano hasta el 4-10-1582 y gregoriano después, refracción y crepúsculo. El cálculo está en
   `sky/sky.js` y se contrasta con JPL Horizons en Actions: **el error medido se muestra en la propia
   web** (segundos de arco hoy; unos 15′ para la Luna hacia el año 0 y ~1,2° hacia el 2000 a. C.).
+- **Estrellas y planetas tras el globo**: al alejarte (pellizco) ves el espacio con las estrellas
+  del catálogo HYG (CC BY-SA 4.0, con movimiento propio) y los planetas, el Sol y la Luna en su
+  posición real del instante elegido, más el terminador día/noche sobre el mapa. La Luna se oculta
+  tras el globo, pero a distancias extremas puede quedar delante y entonces no se dibuja encima.
+- **Reloj** con horas, minutos y segundos (tiempo real, pausa, acelerado, atrás), enlazado al deslizador.
+- **Sucesos con hora conocida y avisos**: nacimientos, muertes, composiciones, obras, descubrimientos…
+  El alcance decide qué se ve (ventana temporal ±6 meses, umbral de importancia según el zoom, un
+  marcador por celda: nada se satura). Si la hora está documentada llega el aviso «dentro de 5 minutos…»,
+  «acaba de…»; si solo se conoce el día, avisa al entrar en ese día («hora desconocida»). **Nunca se
+  inventa una hora.** Hoy la semilla verificada tiene 5 sucesos con hora; la carga masiva desde Wikidata
+  (CC0) se está construyendo en Actions.
+- **Detalle al acercar**: desde zoom 4,6 se superpone el mapa vectorial actual de OpenFreeMap
+  (OpenStreetMap, ODbL): estilo completo desde 1950, solo agua y vegetación hasta hace 11 000 años (como
+  aproximación, y así se rotula) y nada antes, porque el nivel del mar era otro.
 - ES/EN, tema claro/oscuro; idioma, tema, instante y cámara se recuerdan en una cookie propia.
 
 ## Límites conocidos (dichos sin adornos)
@@ -33,8 +47,13 @@ sale y cuánto se puede fiar de él.
 - De 535 a 1.000 Ma solo hay **contornos actuales movidos como bloques rígidos** (GPlates,
   modelo Merdith 2021). La web lo rotula; no son las costas reales de esa época.
 - Las fronteras históricas son un mapa compilado y en elaboración: contrástalas antes de citarlas.
-- **Cielo sin estrellas todavía**: falta decidir la fuente del catálogo (Hipparcos es de ESA con
-  licencia CC BY-NC 3.0 IGO, solo no comercial). Hasta entonces el panel avisa y dibuja Sol, Luna y planetas.
+- Las estrellas vienen de HYG (CC BY-SA 4.0): los datos derivados se atribuyen y comparten igual
+  (`data/sky/NOTICE.md`). El catálogo llega a magnitud ~6,5 y las posiciones se extrapolan con movimiento propio.
+- Los sucesos con hora son pocos todavía y los anteriores al año 1 no están (la numeración a. C. de
+  Wikidata aún no está calibrada). Wikidata da casi siempre solo el día: p. ej. Chopin, Poe o Pío XII no
+  tienen hora documentada allí, así que no hay cuenta atrás para ellos, solo el aviso del día.
+- El detalle al acercar es la **geografía de hoy** (OpenStreetMap), no una reconstrucción de la época;
+  en tema oscuro conserva el estilo Liberty con colores adaptados.
 - La precisión del cielo se degrada hacia el pasado (efemérides analíticas truncadas y ΔT, la
   rotación de la Tierra, que es una estimación antes de ~1600): la web muestra el error medido, no una promesa.
 - Sin personas, obras, fauna o flora todavía. Están en la hoja de ruta.
@@ -79,7 +98,8 @@ del archivo propio y las horas de desarrollo.
 ## Licencias
 
 Código: MIT. Datos: cada fuente conserva su licencia y se atribuye en la propia web
-(PaleoMAP: CC BY 4.0; historical-basemaps: GPL-3.0).
+(PaleoMAP: CC BY 4.0; historical-basemaps: GPL-3.0; HYG: CC BY-SA 4.0; Wikidata: CC0;
+OpenFreeMap/OpenMapTiles/OpenStreetMap: ODbL).
 
 ---
 
@@ -96,11 +116,11 @@ and how far it can be trusted.
 **Works today:** globe with a logarithmic time slider (2026 → 1,000 Ma) and free date
 entry; real palaeocoastlines for 0–535 Ma (PaleoMAP, Kocsis & Scotese, CC BY 4.0) served from this
 repository; historical borders from 123,000 BC to 2010; an evidence-type label on every layer;
-recent data from a daily harvester, shown only at the present day. Language, theme, time and camera are remembered in a single first-party cookie (`ct_prefs`, one year, no tracking).
+recent data from a daily harvester, shown only at the present day; stars, planets, Sun and Moon behind the globe at their real position for the chosen instant (HYG catalogue, CC BY-SA 4.0), a running clock, timed events with advance notices only where the time of day is documented (never invented), and present-day OpenStreetMap detail when zooming in (labelled as an approximation, not a reconstruction). Language, theme, time and camera are remembered in a single first-party cookie (`ct_prefs`, one year, no tracking).
 
 **Known limits:** from 535 to 1,000 Ma only rigidly moved present-day outlines are available (and
-labelled as such); historical borders are a work-in-progress compilation; no sky, people, works,
-fauna or flora yet.
+labelled as such); historical borders are a work-in-progress compilation; people, works,
+fauna or flora yet; timed events are few so far (the bulk Wikidata load is being built).
 
 **Development:** `npm ci && npm test`. Code is MIT; each data source keeps its own licence,
 credited on the site.
