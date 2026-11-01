@@ -1,0 +1,38 @@
+{
+  "probed_at": "2026-11-01T16:34:28.717Z",
+  "asu": {
+    "sample": {
+      "error": "asu sample: terminated [UND_ERR_SOCKET other side closed]"
+    },
+    "brightest": {
+      "error": "asu brightest: terminated [UND_ERR_SOCKET other side closed]"
+    },
+    "count": {
+      "error": "asu count: terminated [UND_ERR_SOCKET other side closed]"
+    },
+    "hip2": {
+      "error": "asu hip2: terminated [UND_ERR_SOCKET other side closed]"
+    }
+  },
+  "servers": {
+    "chosen": null,
+    "tried": [
+      {
+        "url": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync",
+        "ok": false,
+        "error": "fetch failed [UND_ERR_CONNECT_TIMEOUT Connect Timeout Error (attempted address: tapvizier.cds.unistra.fr:443, timeout: 10000ms)]"
+      },
+      {
+        "url": "https://vizier.cfa.harvard.edu/TAPVizieR/tap/sync",
+        "ok": false,
+        "error": "VizieR TAP HTTP 404: <!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html><head>\n<title>404 Not Found</title>\n</head><body>\n<h1>Not Found</h1>\n<p>The requested URL was not found on this server.</p>\n</body></html>\n"
+      },
+      {
+        "url": "https://vizier.china-vo.org/TAPVizieR/tap/sync",
+        "ok": false,
+        "error": "fetch failed [ECONNREFUSED ]"
+      }
+    ]
+  },
+  "tap": null
+}

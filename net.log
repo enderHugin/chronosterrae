@@ -1,0 +1,17 @@
+== https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=I/239/hip_main&-out.max=2&-out=HIP,Vmag
+curl: (28) Operation timed out after 25002 milliseconds with 0 bytes received
+http=000 ip=131.142.198.215 t=25.002262s
+== https://vizier.cfa.harvard.edu/TAPVizieR/tap/capabilities
+http=404 ip=131.142.198.215 t=0.154528s
+== https://vizier.cfa.harvard.edu/tap/capabilities
+http=404 ip=131.142.198.215 t=0.148533s
+== https://cdsarc.cds.unistra.fr/ftp/cats/I/239/ReadMe
+curl: (28) Connection timed out after 25002 milliseconds
+http=000 ip= t=25.002202s
+== https://cdsarc.u-strasbg.fr/ftp/cats/I/239/ReadMe
+curl: (28) Connection timed out after 25002 milliseconds
+http=000 ip= t=25.002325s
+== https://www.cosmos.esa.int/web/hipparcos/catalogues
+http=200 ip=195.169.141.9 t=1.401636s
+== https://raw.githubusercontent.com/astronexus/HYG-Database/main/README.md
+http=200 ip=185.199.108.133 t=0.132375s
