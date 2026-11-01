@@ -170,6 +170,46 @@ check('index.html no hace esperar a las costas por las fronteras pesadas', () =>
     return !/Promise\.allSettled\(\[\s*loadLand/.test(html) && /function scheduleBorders/.test(html);
 });
 
+// --- Preferencias en cookie y mapa ---
+const prefsFns = () => {
+    const html = readIndex();
+    const cfg = html.match(/const CFG = \{[\s\S]*?\n\};/)[0];
+    const offset = html.match(/const OFFSET = [^\n]*\n/)[0];
+    const parse = html.match(/const parsePrefs = [\s\S]*?\n\};\n/)[0];
+    return new Function(`${cfg}\n${offset}\n${parse}\nreturn { CFG, OFFSET, parsePrefs };`)();
+};
+
+check('cookie de preferencias: acepta valores validos', () => {
+    const { parsePrefs } = prefsFns();
+    const r = parsePrefs(JSON.stringify({ lang: 'en', dark: 1, ybp: 250000000, c: [15.5, -12], z: 3.4 }));
+    return r.lang === 'en' && r.dark === true && r.ybp === 250000000 && r.c[0] === 15.5 && r.c[1] === -12 && r.z === 3.4;
+});
+
+check('cookie de preferencias: ignora basura sin romperse', () => {
+    const { parsePrefs } = prefsFns();
+    for (const raw of ['', 'no es json', 'null', '[1,2]', '"x"', '{"lang":"fr"}', '{"ybp":"250"}', '{"ybp":1e12}', '{"ybp":-1000}', '{"c":[999,0]}', '{"c":[0,89]}', '{"c":["1","2"]}', '{"z":99}', '{"z":-1}', '{"dark":"yes"}']) {
+        const r = parsePrefs(raw);
+        if (Object.keys(r).length) throw new Error('acepto ' + raw + ' -> ' + JSON.stringify(r));
+    }
+    return true;
+});
+
+check('cookie de preferencias: un campo malo no invalida los buenos', () => {
+    const { parsePrefs } = prefsFns();
+    const r = parsePrefs(JSON.stringify({ lang: 'es', ybp: 'x', z: 2 }));
+    return r.lang === 'es' && r.z === 2 && !('ybp' in r);
+});
+
+check('index.html no ofrece modo plano (siempre globo)', () => {
+    const html = readIndex();
+    return !/mercator/i.test(html) && !/btn-proj/.test(html) && /projection:\s*\{\s*type:\s*'globe'\s*\}/.test(html);
+});
+
+check('index.html centra con doble clic en vez de hacer zoom', () => {
+    const html = readIndex();
+    return /map\.doubleClickZoom\.disable\(\)/.test(html) && /map\.easeTo\(\{\s*center:\s*e\.lngLat/.test(html);
+});
+
 // --- Simplificacion de paleocostas: no debe perder ni deformar datos en silencio ---
 const paleo = require('./build-paleocoastlines.js');
 const square = (n) => {

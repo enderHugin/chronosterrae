@@ -10,7 +10,7 @@ sale y cuánto se puede fiar de él.
 
 ## Qué funciona hoy
 
-- **Globo y plano** (MapLibre GL) con un deslizador de tiempo logarítmico de 2026 a 1.000 Ma y
+- **Globo** (MapLibre GL) con un deslizador de tiempo logarítmico de 2026 a 1.000 Ma y
   entrada libre de fechas: `1789`, `44 a.C.`, `12 ka`, `250 Ma`.
 - **Costas paleogeográficas reales de 0 a 535 Ma** (PaleoMAP PaleoCoastlines, Kocsis y Scotese,
   CC BY 4.0), con el margen continental. Se sirven desde este repositorio
@@ -43,6 +43,13 @@ Todo registro nuevo debe cumplir [`schemas/record.schema.json`](schemas/record.s
 fecha con incertidumbre y calendario, escala, fuente verificable (DOI, Wikidata, URL), tipo de
 evidencia y nivel de revisión. Sin fuente no hay dato. Un dato generado por IA no pasa de
 `community` sin revisión humana.
+
+## Privacidad
+
+La web guarda **una sola cookie propia**, `ct_prefs`, con tu idioma, el tema claro/oscuro, el
+instante que estabas viendo y la posición de la cámara, para que al volver todo siga como lo
+dejaste. Dura un año, no sale de tu navegador (no se envía a ningún servidor nuestro) y no se usa
+para seguimiento ni analítica. Si la borras, la web arranca con sus valores por defecto.
 
 ## Desarrollo
 
@@ -77,10 +84,10 @@ and how far it can be trusted.
 
 **Demo:** <https://enderhugin.github.io/chronosterrae/> · **Full vision:** [`docs/VISION.md`](docs/VISION.md)
 
-**Works today:** globe/flat map with a logarithmic time slider (2026 → 1,000 Ma) and free date
+**Works today:** globe with a logarithmic time slider (2026 → 1,000 Ma) and free date
 entry; real palaeocoastlines for 0–535 Ma (PaleoMAP, Kocsis & Scotese, CC BY 4.0) served from this
 repository; historical borders from 123,000 BC to 2010; an evidence-type label on every layer;
-recent data from a daily harvester, shown only at the present day.
+recent data from a daily harvester, shown only at the present day. Language, theme, time and camera are remembered in a single first-party cookie (`ct_prefs`, one year, no tracking).
 
 **Known limits:** from 535 to 1,000 Ma only rigidly moved present-day outlines are available (and
 labelled as such); historical borders are a work-in-progress compilation; no sky, people, works,

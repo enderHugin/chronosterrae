@@ -116,7 +116,6 @@
     </div>
 
     <div id="top-right">
-        <button class="btn" id="btn-proj" type="button"></button>
         <button class="btn" id="btn-lang" type="button">EN / ES</button>
         <button class="btn" id="btn-theme" type="button">Dark</button>
     </div>
@@ -172,12 +171,47 @@ CFG.hbBase = 'https://cdn.jsdelivr.net/gh/aourednik/historical-basemaps@' + CFG.
 const OFFSET = CFG.nowYear - CFG.present + 1;
 
 /* ------------------------------------------------------------------ */
+/* Preferencias (cookie propia, sin seguimiento)                      */
+/* ------------------------------------------------------------------ */
+// Una sola cookie "ct_prefs" con idioma, tema, instante, centro y zoom. Se valida campo a campo al
+// leerla: una cookie manipulada o antigua nunca puede romper la web, solo se ignora lo que no sirva.
+const PREF_COOKIE = 'ct_prefs';
+const parsePrefs = (raw) => {
+    const out = {};
+    let p;
+    try { p = JSON.parse(raw); } catch (err) { return out; }
+    if (!p || typeof p !== 'object') return out;
+    if (p.lang === 'es' || p.lang === 'en') out.lang = p.lang;
+    if (p.dark === 0 || p.dark === 1) out.dark = p.dark === 1;
+    if (typeof p.ybp === 'number' && Number.isFinite(p.ybp) && p.ybp >= 1 - OFFSET && p.ybp <= CFG.maxYbp) out.ybp = Math.round(p.ybp);
+    if (Array.isArray(p.c) && p.c.length === 2 && p.c.every((n) => typeof n === 'number' && Number.isFinite(n)) && Math.abs(p.c[0]) <= 180 && Math.abs(p.c[1]) <= 85) out.c = [p.c[0], p.c[1]];
+    if (typeof p.z === 'number' && p.z >= 0 && p.z <= 22) out.z = p.z;
+    return out;
+};
+const readPrefs = () => {
+    try {
+        const hit = document.cookie.split('; ').find((c) => c.startsWith(PREF_COOKIE + '='));
+        return hit ? parsePrefs(decodeURIComponent(hit.slice(PREF_COOKIE.length + 1))) : {};
+    } catch (err) { return {}; }
+};
+const prefs = readPrefs();
+const savePrefs = (patch) => {
+    Object.assign(prefs, patch);
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z };
+    try {
+        document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
+            + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
+            + (location.protocol === 'https:' ? '; Secure' : '');
+    } catch (err) { /* sin cookies: la web funciona igual, solo que no recuerda */ }
+};
+
+/* ------------------------------------------------------------------ */
 /* Textos                                                             */
 /* ------------------------------------------------------------------ */
 const i18n = {
     es: {
         donate: 'Apoyar el proyecto', searchPlaceholder: 'Buscar un imperio, pueblo o lugar…', timePlaceholder: '1789 · 44 a.C. · 250 Ma',
-        flat: 'Plano', globe: 'Globo', today: 'Hoy', yearsAgo: 'hace {n} años', approxYear: '≈ año {y}',
+        today: 'Hoy', yearsAgo: 'hace {n} años', approxYear: '≈ año {y}',
         ce: 'd.C.', bce: 'a.C.',
         paleoOk: 'Costas paleogeográficas (PaleoMAP): {age}{near}.', paleoNear: ' · loncha más cercana a {t} Ma (a {d} Ma)',
         paleoFallback: 'No se pudieron cargar las costas paleogeográficas ({err}). Se usan contornos rígidos del modelo de placas.',
@@ -203,7 +237,7 @@ const i18n = {
     },
     en: {
         donate: 'Support the project', searchPlaceholder: 'Search an empire, people or place…', timePlaceholder: '1789 · 44 BC · 250 Ma',
-        flat: 'Flat', globe: 'Globe', today: 'Today', yearsAgo: '{n} years ago', approxYear: '≈ year {y}',
+        today: 'Today', yearsAgo: '{n} years ago', approxYear: '≈ year {y}',
         ce: 'AD', bce: 'BC',
         paleoOk: 'Palaeogeographic coastlines (PaleoMAP): {age}{near}.', paleoNear: ' · nearest slice to {t} Ma (off by {d} Ma)',
         paleoFallback: 'Could not load the palaeogeographic coastlines ({err}). Using rigid plate-model outlines.',
@@ -228,7 +262,7 @@ const i18n = {
         creditsLand: 'Coastlines', creditsBorders: 'Borders'
     }
 };
-let lang = (navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en';
+let lang = prefs.lang || ((navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en');
 const t = (key) => key.split('.').reduce((o, k) => (o ? o[k] : undefined), i18n[lang]);
 const fmt = (key, vars) => String(t(key)).replace(/\{(\w+)\}/g, (_, k) => (vars && vars[k] !== undefined ? vars[k] : ''));
 
@@ -270,7 +304,7 @@ function parseTime(raw) {
 /* Estado de la interfaz                                              */
 /* ------------------------------------------------------------------ */
 const $ = (id) => document.getElementById(id);
-const state = { paleo: null, ybp: 250e6, dark: false, globe: true, land: null, borders: null, live: null, polities: null, selected: null,
+const state = { paleo: null, ybp: prefs.ybp !== undefined ? prefs.ybp : 250e6, dark: prefs.dark === true, land: null, borders: null, live: null, polities: null, selected: null,
                landData: null, bordersData: null, landError: null, bordersError: null, bordersLoading: false };
 
 let statusTimer = null;
@@ -440,8 +474,8 @@ const palette = () => state.dark
 
 const map = new maplibregl.Map({
     container: 'map',
-    center: [15, 12],     // Pangea (250 Ma) queda centrada en el hemisferio visible
-    zoom: 2.1,
+    center: prefs.c || [15, 12],     // por defecto, Pangea (250 Ma) queda centrada en el hemisferio visible
+    zoom: prefs.z !== undefined ? prefs.z : 2.1,
     attributionControl: false,
     style: {
         version: 8,
@@ -471,6 +505,23 @@ mapReady.then(() => {
     map.addLayer({ id: 'live-points', type: 'circle', source: 'live', paint: { 'circle-radius': 6, 'circle-color': '#e53935', 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff' } });
 });
 
+// Doble clic (o doble toque) = centrar el mapa en ese punto, sin cambiar el zoom.
+// Se desactiva el zoom por doble clic de MapLibre para que no compita con esto.
+map.doubleClickZoom.disable();
+let lastTap = null;
+map.on('click', (e) => {
+    const now = performance.now();
+    const again = lastTap && now - lastTap.t < 350 && Math.hypot(e.point.x - lastTap.x, e.point.y - lastTap.y) < 24;
+    lastTap = again ? null : { t: now, x: e.point.x, y: e.point.y };
+    if (again) map.easeTo({ center: e.lngLat, duration: 600 });
+});
+
+map.on('moveend', () => {
+    const c = map.getCenter().wrap();
+    const r = (n, d) => Math.round(n * 10 ** d) / 10 ** d;
+    savePrefs({ c: [r(c.lng, 3), r(Math.max(-85, Math.min(85, c.lat)), 3)], z: r(map.getZoom(), 2) });
+});
+
 map.on('error', (e) => {
     const msg = e && e.error && e.error.message ? e.error.message : 'unknown';
     console.error('[MAP]', msg);
@@ -486,11 +537,6 @@ function applyTheme() {
     map.setPaintProperty('land-fill', 'fill-color', p.land);
     map.setPaintProperty('land-line', 'line-color', p.landLine);
     map.setPaintProperty('borders-line', 'line-color', p.line);
-}
-
-function applyProjection() {
-    map.setProjection({ type: state.globe ? 'globe' : 'mercator' });
-    $('btn-proj').textContent = state.globe ? t('flat') : t('globe');
 }
 
 /* ------------------------------------------------------------------ */
@@ -668,8 +714,13 @@ function scheduleScene() {
     sceneTimer = setTimeout(() => { sceneTimer = null; lastScene = performance.now(); updateScene(); }, wait);
 }
 
-function setTime(ybp, { fromSlider = false, immediate = false } = {}) {
+let prefTimer = null;
+const rememberTime = () => { clearTimeout(prefTimer); prefTimer = setTimeout(() => { prefTimer = null; savePrefs({ ybp: state.ybp }); }, 400); };
+window.addEventListener('pagehide', () => { if (prefTimer) { clearTimeout(prefTimer); prefTimer = null; savePrefs({ ybp: state.ybp }); } });
+
+function setTime(ybp, { fromSlider = false, immediate = false, persist = true } = {}) {
     state.ybp = Math.min(Math.max(ybp, 1 - OFFSET), CFG.maxYbp);
+    if (persist) rememberTime();
     if (!fromSlider) $('slider').value = ybpToSlider(state.ybp);
     if (document.activeElement !== $('time-input')) $('time-input').value = '';
     const f = formatTime(state.ybp);
@@ -840,10 +891,9 @@ function applyStrings() {
     document.documentElement.lang = lang;
     document.querySelectorAll('[data-i18n]').forEach((n) => { n.textContent = t(n.dataset.i18n); });
     document.querySelectorAll('[data-i18n-placeholder]').forEach((n) => { n.placeholder = t(n.dataset.i18nPlaceholder); });
-    $('btn-proj').textContent = state.globe ? t('flat') : t('globe');
     renderPresets();
     renderCredits();
-    setTime(state.ybp, { immediate: false });
+    setTime(state.ybp, { immediate: false, persist: false });
 }
 
 /* ------------------------------------------------------------------ */
@@ -859,9 +909,8 @@ $('time-input').addEventListener('keydown', (e) => {
     e.target.blur();
 });
 $('search').addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(e.target.value); });
-$('btn-lang').addEventListener('click', () => { lang = lang === 'es' ? 'en' : 'es'; applyStrings(); });
-$('btn-theme').addEventListener('click', () => { state.dark = !state.dark; applyTheme(); });
-$('btn-proj').addEventListener('click', () => { state.globe = !state.globe; applyProjection(); });
+$('btn-lang').addEventListener('click', () => { lang = lang === 'es' ? 'en' : 'es'; applyStrings(); savePrefs({ lang }); });
+$('btn-theme').addEventListener('click', () => { state.dark = !state.dark; applyTheme(); savePrefs({ dark: state.dark }); });
 $('info-close').addEventListener('click', hideInfo);
 
 /* Datos recientes del harvester (se muestran solo cerca del presente) */
@@ -883,7 +932,8 @@ async function loadLive() {
 
 /* Inicio */
 applyStrings();
-setTime(state.ybp, { immediate: true });
+applyTheme();
+setTime(state.ybp, { immediate: true, persist: false });
 loadLive();
 </script>
 </body>
