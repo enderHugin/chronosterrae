@@ -33,7 +33,7 @@ const listJson = (dir) => {
 
 const dirs = process.argv.length > 2
     ? process.argv.slice(2).map((d) => path.resolve(d))
-    : [path.join(root, 'schemas/examples'), path.join(root, 'data/records')];
+    : [path.join(root, 'schemas/examples'), path.join(root, 'data/records'), path.join(root, 'data/events')];
 
 const problems = [];
 const seen = new Map();

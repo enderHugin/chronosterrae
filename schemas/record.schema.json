@@ -9,12 +9,18 @@
   "properties": {
     "type": { "const": "Feature" },
     "geometry": {
-      "type": "object",
-      "required": ["type", "coordinates"],
-      "properties": {
-        "type": { "enum": ["Point", "MultiPoint", "LineString", "Polygon", "MultiPolygon"] },
-        "coordinates": { "type": "array", "minItems": 1 }
-      }
+      "description": "Punto, línea o polígono; null (válido en GeoJSON) si el suceso tiene fecha pero no un lugar fiable: no se dibuja en el mapa, solo en las listas.",
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": { "enum": ["Point", "MultiPoint", "LineString", "Polygon", "MultiPolygon"] },
+            "coordinates": { "type": "array", "minItems": 1 }
+          }
+        }
+      ]
     },
     "properties": {
       "type": "object",
@@ -43,6 +49,18 @@
           "enum": ["measurement", "documentary", "artefact", "reconstruction", "model", "speculation"],
           "description": "De qué tipo es la prueba. measurement = medición publicada; documentary = fuente escrita o gráfica de la época; artefact = objeto o resto físico; reconstruction = ilustración, audio o modelo 3D hecho a posteriori a partir de pruebas; model = salida de un modelo numérico (placas, efemérides); speculation = hipótesis sin respaldo directo. La interfaz debe mostrarlo siempre."
         },
+        "kind": {
+          "enum": ["birth", "death", "publication", "composition", "discovery", "extinction", "event"],
+          "description": "Clase de suceso: decide cómo se cuenta («nace», «muere», «se publica»…) y qué se muestra a cada escala."
+        },
+        "importance": {
+          "type": "number", "minimum": 0, "maximum": 1,
+          "description": "Notoriedad relativa (0-1) dentro de su clase. Decide a qué escala del mapa se muestra: lo muy notorio se ve con el globo entero; lo demás, al acercarse."
+        },
+        "labels": {
+          "type": "object", "additionalProperties": { "type": "string" },
+          "description": "Nombre por idioma (clave = código de idioma). «name» es el nombre de referencia."
+        },
         "position_uncertainty_m": {
           "type": "number",
           "minimum": 0,
@@ -56,17 +74,40 @@
             "start_ybp": { "type": "number", "description": "Inicio, en años antes del presente (BP, presente = 1950). Más antiguo = mayor." },
             "end_ybp": { "type": "number", "description": "Fin, en años BP. Para un suceso puntual, igual que start_ybp." },
             "uncertainty_yr": { "type": "number", "minimum": 0, "description": "Margen de error (±) en años. 0 solo si la fecha es exacta." },
-            "precision": { "enum": ["exact", "day", "month", "year", "decade", "century", "millennium", "approximate"] },
+            "precision": { "enum": ["second", "minute", "hour", "exact", "day", "month", "year", "decade", "century", "millennium", "approximate"] },
             "iso": { "type": "string", "description": "Fecha original en ISO 8601 si la fuente la da así." },
             "calendar": {
               "enum": ["gregorian", "julian"],
-              "description": "Calendario en el que la fuente da la fecha. Obligatorio si la precisión es exact, day o month: la misma fecha difiere hasta 13 días entre calendarios y cada país adoptó el gregoriano en un año distinto."
+              "description": "Calendario en el que la fuente da la fecha. Obligatorio si la precisión es second, minute, hour, exact, day o month: la misma fecha difiere hasta 13 días entre calendarios y cada país adoptó el gregoriano en un año distinto."
+            },
+            "instant": {
+              "type": "object",
+              "required": ["jd_ut", "basis", "clock_text", "uncertainty_s"],
+              "additionalProperties": false,
+              "description": "Hora del día verificada en la fuente. jd_ut es el instante en día juliano UT (inequívoco entre calendarios y husos); clock_text es la hora tal como la da la fuente; basis dice a qué reloj se refiere.",
+              "properties": {
+                "jd_ut": { "type": "number" },
+                "basis": { "enum": ["utc", "local_civil"], "description": "utc = la fuente da la hora en UTC/GMT; local_civil = hora oficial del lugar, con utc_offset_minutes." },
+                "utc_offset_minutes": { "type": "integer", "minimum": -840, "maximum": 840 },
+                "clock_text": { "type": "string", "minLength": 3 },
+                "uncertainty_s": { "type": "number", "minimum": 0, "description": "Margen (±) del instante, en segundos: la resolución de la hora publicada más lo que la fuente deje abierto." }
+              },
+              "allOf": [
+                {
+                  "if": { "properties": { "basis": { "const": "local_civil" } } },
+                  "then": { "required": ["utc_offset_minutes"], "properties": { "utc_offset_minutes": true } }
+                }
+              ]
             }
           },
           "allOf": [
             {
-              "if": { "properties": { "precision": { "enum": ["exact", "day", "month"] } } },
+              "if": { "properties": { "precision": { "enum": ["second", "minute", "hour", "exact", "day", "month"] } } },
               "then": { "required": ["calendar"], "properties": { "calendar": true } }
+            },
+            {
+              "if": { "properties": { "precision": { "enum": ["second", "minute", "hour"] } } },
+              "then": { "required": ["instant"], "properties": { "instant": true } }
             }
           ]
         },

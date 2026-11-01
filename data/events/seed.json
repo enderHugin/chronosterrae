@@ -1,0 +1,288 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     63.342,
+     45.92
+    ]
+   },
+   "properties": {
+    "id": "seed.vostok-1-launch",
+    "name": "Vostok 1 launch (first human in space)",
+    "labels": {
+     "en": "Vostok 1 launch (first human in space)",
+     "es": "Lanzamiento de la Vostok 1 (primer humano en el espacio)"
+    },
+    "description": {
+     "en": "Launch of Vostok 1 with Yuri Gagarin from Baikonur, Gagarin's Start. Time as published to the minute.",
+     "es": "Lanzamiento de la Vostok 1 con Yuri Gagarin desde Baikonur (Rampa de Gagarin). Hora tal como se publica, al minuto."
+    },
+    "layer": "event",
+    "kind": "event",
+    "importance": 1,
+    "evidence": "documentary",
+    "position_uncertainty_m": 300,
+    "time": {
+     "start_ybp": -11.277905164,
+     "end_ybp": -11.277905164,
+     "uncertainty_yr": 0.000001901,
+     "precision": "minute",
+     "iso": "1961-04-12T06:07:00Z",
+     "calendar": "gregorian",
+     "instant": {
+      "jd_ut": 2437401.75486111,
+      "basis": "utc",
+      "clock_text": "06:07 UTC",
+      "uncertainty_s": 60
+     }
+    },
+    "scale": {
+     "min_m": 50,
+     "max_m": 20000000
+    },
+    "sources": [
+     {
+      "kind": "url",
+      "id": "https://en.wikipedia.org/wiki/Vostok_1",
+      "citation": "Wikipedia, «Vostok 1», infobox: \"April 12, 1961, 06:07 UTC\"; \"Baikonur, Site 1/5\".",
+      "retrieved_at": "2026-11-01T17:30:00Z"
+     },
+     {
+      "kind": "url",
+      "id": "https://en.wikipedia.org/wiki/Baikonur_Cosmodrome",
+      "citation": "Wikipedia, «Baikonur Cosmodrome»: \"Pad 1/5 (Gagarin's Start)\" 45°55′12″N 63°20′31″E / 45.920°N 63.342°E.",
+      "retrieved_at": "2026-11-01T17:30:00Z"
+     }
+    ],
+    "status": "community"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     63.342,
+     45.92
+    ]
+   },
+   "properties": {
+    "id": "seed.sputnik-1-launch",
+    "name": "Sputnik 1 launch",
+    "labels": {
+     "en": "Sputnik 1 launch",
+     "es": "Lanzamiento del Sputnik 1"
+    },
+    "description": {
+     "en": "Launch of the first artificial satellite. The article notes it was already 5 October at the launch site.",
+     "es": "Lanzamiento del primer satélite artificial. La fuente advierte que en el lugar de lanzamiento ya era 5 de octubre."
+    },
+    "layer": "event",
+    "kind": "event",
+    "importance": 1,
+    "evidence": "documentary",
+    "position_uncertainty_m": 300,
+    "time": {
+     "start_ybp": -7.758553059,
+     "end_ybp": -7.758553059,
+     "uncertainty_yr": 3.169e-8,
+     "precision": "second",
+     "iso": "1957-10-04T19:28:34Z",
+     "calendar": "gregorian",
+     "instant": {
+      "jd_ut": 2436116.31150463,
+      "basis": "utc",
+      "clock_text": "19:28:34 UTC",
+      "uncertainty_s": 1
+     }
+    },
+    "scale": {
+     "min_m": 50,
+     "max_m": 20000000
+    },
+    "sources": [
+     {
+      "kind": "url",
+      "id": "https://en.wikipedia.org/wiki/Sputnik_1",
+      "citation": "Wikipedia, «Sputnik 1»: \"4 October 1957\", \"19:28:34 UTC\" (5 October at the launch site), \"Baikonur Cosmodrome Site 1/5\".",
+      "retrieved_at": "2026-11-01T17:30:00Z"
+     },
+     {
+      "kind": "url",
+      "id": "https://en.wikipedia.org/wiki/Baikonur_Cosmodrome",
+      "citation": "Wikipedia, «Baikonur Cosmodrome»: \"Pad 1/5 (Gagarin's Start)\" 45°55′12″N 63°20′31″E / 45.920°N 63.342°E (el Sitio 1/5 del artículo del Sputnik es esa misma rampa).",
+      "retrieved_at": "2026-11-01T17:30:00Z"
+     }
+    ],
+    "status": "community"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -49.94694,
+     41.72556
+    ]
+   },
+   "properties": {
+    "id": "seed.titanic-sinking",
+    "name": "Sinking of the Titanic (completely under)",
+    "labels": {
+     "en": "Sinking of the Titanic",
+     "es": "Hundimiento del Titanic"
+    },
+    "description": {
+     "en": "She sank at 02:20 ship's time on 15 April; the source gives the equivalent 05:18 GMT. The ship's clock zone is not defined by the source, so ±2 min is declared.",
+     "es": "Se hundió a las 02:20 hora de a bordo del 15 de abril; la fuente da el equivalente 05:18 GMT. La fuente no define el huso del reloj del barco, por eso se declara ±2 min."
+    },
+    "layer": "event",
+    "kind": "event",
+    "importance": 1,
+    "evidence": "documentary",
+    "position_uncertainty_m": 2000,
+    "time": {
+     "start_ybp": 37.713289984,
+     "end_ybp": 37.713289984,
+     "uncertainty_yr": 0.000003803,
+     "precision": "minute",
+     "iso": "1912-04-15T05:18:00Z",
+     "calendar": "gregorian",
+     "instant": {
+      "jd_ut": 2419507.72083333,
+      "basis": "utc",
+      "clock_text": "02:20 hora de a bordo = 05:18 GMT",
+      "uncertainty_s": 120
+     }
+    },
+    "scale": {
+     "min_m": 50,
+     "max_m": 20000000
+    },
+    "sources": [
+     {
+      "kind": "url",
+      "id": "https://en.wikipedia.org/wiki/Sinking_of_the_Titanic",
+      "citation": "Wikipedia, «Sinking of the Titanic»: \"She sank two hours and forty minutes later at 02:20 ship's time\"; infobox \"23:40–02:20 (02:38–05:18 GMT)\"; \"41°43′32″N 49°56′49″W\".",
+      "retrieved_at": "2026-11-01T17:30:00Z"
+     }
+    ],
+    "status": "community"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     30.09917,
+     51.38972
+    ]
+   },
+   "properties": {
+    "id": "seed.chernobyl-explosion",
+    "name": "Chernobyl disaster (reactor 4 explosion)",
+    "labels": {
+     "en": "Chernobyl disaster (reactor 4 explosion)",
+     "es": "Desastre de Chernóbil (explosión del reactor 4)"
+    },
+    "description": {
+     "en": "Infobox time 01:23 Moscow Summer Time (UTC+4) on 26 April, i.e. 21:23 UTC on 25 April. The article gives 01:23:04 as the start of the test and 01:23:40 as the AZ-5 press; the explosion followed within seconds, so minute precision is declared.",
+     "es": "Hora del infobox 01:23 hora de verano de Moscú (UTC+4) del 26 de abril, es decir 21:23 UTC del 25 de abril. El artículo da 01:23:04 como inicio de la prueba y 01:23:40 como pulsación del AZ-5; la explosión siguió en segundos, por eso se declara precisión de minuto."
+    },
+    "layer": "event",
+    "kind": "event",
+    "importance": 1,
+    "evidence": "documentary",
+    "position_uncertainty_m": 500,
+    "time": {
+     "start_ybp": -36.314554339,
+     "end_ybp": -36.314554339,
+     "uncertainty_yr": 0.000001901,
+     "precision": "minute",
+     "iso": "1986-04-25T21:23:00Z",
+     "calendar": "gregorian",
+     "instant": {
+      "jd_ut": 2446546.39097222,
+      "basis": "local_civil",
+      "clock_text": "01:23 MSD (UTC+04:00), 26 abril 1986",
+      "uncertainty_s": 60,
+      "utc_offset_minutes": 240
+     }
+    },
+    "scale": {
+     "min_m": 50,
+     "max_m": 20000000
+    },
+    "sources": [
+     {
+      "kind": "url",
+      "id": "https://en.wikipedia.org/wiki/Chernobyl_disaster",
+      "citation": "Wikipedia, «Chernobyl disaster», infobox: \"26 April 1986\", \"01:23 MSD (UTC+04:00)\"; coordenadas \"51°23′23″N 30°05′57″E\".",
+      "retrieved_at": "2026-11-01T17:30:00Z"
+     }
+    ],
+    "status": "community"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.28,
+     28.64
+    ]
+   },
+   "properties": {
+    "id": "seed.challenger-breakup",
+    "name": "Space Shuttle Challenger disaster",
+    "labels": {
+     "en": "Space Shuttle Challenger disaster",
+     "es": "Desastre del transbordador Challenger"
+    },
+    "description": {
+     "en": "Breakup of the shuttle 73 seconds after launch, off the coast of Florida (position as given by the source).",
+     "es": "Rotura del transbordador frente a la costa de Florida (posición tal como la da la fuente)."
+    },
+    "layer": "event",
+    "kind": "event",
+    "importance": 1,
+    "evidence": "documentary",
+    "position_uncertainty_m": 5000,
+    "time": {
+     "start_ybp": -36.075821767,
+     "end_ybp": -36.075821767,
+     "uncertainty_yr": 3.169e-8,
+     "precision": "second",
+     "iso": "1986-01-28T16:39:13Z",
+     "calendar": "gregorian",
+     "instant": {
+      "jd_ut": 2446459.19390046,
+      "basis": "utc",
+      "clock_text": "16:39:13 UTC (11:39:13 EST)",
+      "uncertainty_s": 1
+     }
+    },
+    "scale": {
+     "min_m": 50,
+     "max_m": 20000000
+    },
+    "sources": [
+     {
+      "kind": "url",
+      "id": "https://en.wikipedia.org/wiki/Space_Shuttle_Challenger_disaster",
+      "citation": "Wikipedia, «Space Shuttle Challenger disaster», infobox: \"16:39:13 UTC (11:39:13 EST)\"; \"28°38′24″N 80°16′48″W\".",
+      "retrieved_at": "2026-11-01T17:30:00Z"
+     }
+    ],
+    "status": "community"
+   }
+  }
+ ]
+}

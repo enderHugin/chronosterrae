@@ -33,5 +33,8 @@ jobs:
       - name: Cielo (calendario, precesion, Sol, Luna, planetas)
         run: npm run check:sky
 
+      - name: Sucesos (seleccion, avisos, conversion)
+        run: npm run check:events
+
       - name: Validar registros contra el esquema
         run: npm run validate
