@@ -110,6 +110,60 @@ check('index.html no presenta contornos actuales desplazados como costas reales'
     return /No son las costas reales de la época/.test(html) && /not the real coastlines of that time/i.test(html);
 });
 
+// --- Simplificacion de paleocostas: no debe perder ni deformar datos en silencio ---
+const paleo = require('./build-paleocoastlines.js');
+const square = (n) => {
+    // cuadrado de lado 10 con n puntos colineales intermedios por lado, cerrado
+    const pts = [];
+    for (let i = 0; i < n; i++) pts.push([10 * i / n, 0]);
+    for (let i = 0; i < n; i++) pts.push([10, 10 * i / n]);
+    for (let i = 0; i < n; i++) pts.push([10 - 10 * i / n, 10]);
+    for (let i = 0; i < n; i++) pts.push([0, 10 - 10 * i / n]);
+    pts.push(pts[0].slice());
+    return pts;
+};
+
+check('paleocostas: simplificar quita puntos colineales y conserva las esquinas', () => {
+    const out = paleo.simplifyRing(square(50));
+    if (!out) throw new Error('anillo valido descartado');
+    if (out.length !== 5) throw new Error('esperaba 5 puntos (4 esquinas + cierre), hay ' + out.length);
+    const corners = [[0, 0], [10, 0], [10, 10], [0, 10]];
+    return corners.every((c) => out.some((p) => p[0] === c[0] && p[1] === c[1]));
+});
+
+check('paleocostas: el anillo simplificado sigue cerrado', () => {
+    const out = paleo.simplifyRing(square(30));
+    return out[0][0] === out[out.length - 1][0] && out[0][1] === out[out.length - 1][1] && out.length >= 4;
+});
+
+check('paleocostas: un anillo degenerado se descarta en vez de dejar una linea', () => {
+    const sliver = [[0, 0], [5, 0.0001], [10, 0], [5, -0.0001], [0, 0]];
+    return paleo.simplifyRing(sliver) === null;
+});
+
+check('paleocostas: no se desplaza el contorno mas que la tolerancia', () => {
+    // circulo de radio 5 muestreado finamente
+    const circle = [];
+    for (let i = 0; i < 720; i++) { const a = i * Math.PI / 360; circle.push([5 * Math.cos(a), 5 * Math.sin(a)]); }
+    circle.push(circle[0].slice());
+    const out = paleo.simplifyRing(circle);
+    const tol = paleo.TOLERANCE_DEG + 10 ** -paleo.PRECISION;
+    // cada punto original debe estar a menos de la tolerancia de algun segmento del simplificado
+    const dist = (p, a, b) => {
+        const dx = b[0] - a[0], dy = b[1] - a[1];
+        const t = dx || dy ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy))) : 0;
+        return Math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dy));
+    };
+    return circle.every((p) => out.slice(0, -1).some((a, i) => dist(p, a, out[i + 1]) <= tol * 1.5)) && out.length < circle.length;
+});
+
+check('paleocostas: un poligono sin anillo exterior valido se descarta, un hueco degenerado no arrastra al poligono', () => {
+    const sliver = [[0, 0], [5, 0.0001], [10, 0], [5, -0.0001], [0, 0]];
+    const bad = paleo.simplifyGeometry({ type: 'Polygon', coordinates: [sliver] });
+    const good = paleo.simplifyGeometry({ type: 'Polygon', coordinates: [square(20), sliver] });
+    return bad === null && good && good.type === 'Polygon' && good.coordinates.length === 1;
+});
+
 // --- Esquema de registros: debe rechazar lo que no es verificable ---
 const exampleRecord = () => JSON.parse(fs.readFileSync(path.join(root, 'schemas/examples/chicxulub-impact.json'), 'utf8'));
 

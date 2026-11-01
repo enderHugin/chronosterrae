@@ -1,14 +1,16 @@
 name: Paleocostas (construcción)
 
 # Descarga PaleoMAP PaleoCoastlines (Kocsis y Scotese, CC BY 4.0) desde Zenodo,
-# verifica su md5 y publica el resultado en la rama `paleo-build`, nunca en `main`.
-# Se revisa a mano antes de llevarlo a `main`.
+# verifica su md5, lo convierte a GeoJSON ligero y lo deja en la rama `paleo-build`
+# para revisarlo. Solo se publica en `main` (data/paleocoastlines/) si el mensaje
+# del commit que dispara el workflow incluye [paleo:publish], o si se lanza a mano
+# con mode=publish.
 on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'inspect = volcar la estructura del zip'
-        default: 'inspect'
+        description: 'inspect | convert | publish'
+        default: 'convert'
   push:
     branches: [main]
     paths:
@@ -25,6 +27,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      INPUT_MODE: ${{ github.event.inputs.mode }}
+      COMMIT_MSG: ${{ github.event.head_commit.message }}
     steps:
       - uses: actions/checkout@v4
 
@@ -35,14 +40,49 @@ jobs:
 
       - run: npm ci
 
+      - name: Decidir modo
+        id: mode
+        run: |
+          MODE="${INPUT_MODE:-}"
+          if [ -z "$MODE" ]; then
+            if printf '%s' "$COMMIT_MSG" | grep -qF '[paleo:publish]'; then MODE=publish; else MODE=convert; fi
+          fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "Modo: $MODE"
+
       - name: Ejecutar
-        run: node scripts/build-paleocoastlines.js "${{ github.event.inputs.mode || 'inspect' }}" > /tmp/report.json 2> /tmp/report.log
+        run: |
+          MODE="${{ steps.mode.outputs.mode }}"
+          if [ "$MODE" = inspect ]; then
+            node scripts/build-paleocoastlines.js inspect > /tmp/report.json 2> /tmp/report.log
+          else
+            node scripts/build-paleocoastlines.js convert /tmp/paleo-out > /tmp/report.json 2> /tmp/report.log
+          fi
 
       - name: Resumen en el log
         if: always()
         run: |
-          tail -n 40 /tmp/report.log || true
-          head -c 600 /tmp/report.json || true
+          tail -n 30 /tmp/report.log || true
+          head -c 400 /tmp/report.json || true
+
+      - name: Publicar en main (data/paleocoastlines)
+        if: steps.mode.outputs.mode == 'publish'
+        run: |
+          set -euo pipefail
+          test -f /tmp/paleo-out/manifest.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          rm -rf data/paleocoastlines
+          mkdir -p data
+          cp -r /tmp/paleo-out data/paleocoastlines
+          git add data/paleocoastlines
+          if git diff --staged --quiet; then
+            echo "Sin cambios."
+          else
+            git commit -m "Datos: paleocostas PaleoMAP (CC BY 4.0, doi:10.5281/zenodo.7994000)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
 
       - name: Publicar en la rama paleo-build
         if: always()
@@ -54,6 +94,8 @@ jobs:
           git switch --orphan paleo-build
           cp /tmp/report.json report.json
           cp /tmp/report.log report.log || true
+          if [ -d /tmp/paleo-out ]; then cp -r /tmp/paleo-out paleocoastlines; fi
           git add report.json report.log
+          if [ -d paleocoastlines ]; then git add paleocoastlines; fi
           git commit -m "Informe de construcción $(date -u +%Y-%m-%dT%H:%MZ)"
           git push --force origin paleo-build
