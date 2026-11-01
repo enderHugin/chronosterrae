@@ -816,6 +816,7 @@ function detailBuild(style) {
         const role = l.type === 'background' ? 'bg'
             : l['source-layer'] === 'water' && l.type === 'fill' ? 'water'
             : l['source-layer'] === 'waterway' && l.type === 'line' ? 'waterway'
+            : l['source-layer'] === 'boundary' && l.type === 'line' ? 'boundary'
             : l.type === 'symbol' ? 'symbol' : l.type === 'fill' ? 'fill' : 'other';
         const physical = role === 'bg' || (DETAIL_PHYSICAL_LAYERS.has(l['source-layer']) && l.type !== 'symbol' && l.id !== 'waterway_tunnel');
         const orig = {};
@@ -869,6 +870,13 @@ function detailFade() {
     DETAIL.fadeTimer = setTimeout(reveal, 3000);
 }
 
+// Las fronteras administrativas actuales de OpenStreetMap no se dibujan mientras haya fronteras historicas:
+// serian dos mapas de fronteras superpuestos (y el actual no es el de la epoca).
+function detailVisibility() {
+    const mode = DETAIL.shown;
+    DETAIL.layers.forEach((l) => map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !(l.role === 'boundary' && state.borders) ? 'visible' : 'none'));
+}
+
 async function detailApply() {
     if (!map.getLayer('borders-fill')) return;
     let mode = detailMode();
@@ -879,7 +887,7 @@ async function detailApply() {
     if (mode === DETAIL.shown) return;
     const was = DETAIL.shown;
     DETAIL.shown = mode;
-    DETAIL.layers.forEach((l) => map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) ? 'visible' : 'none'));
+    detailVisibility();
     ['margin-fill', 'land-fill', 'land-line'].forEach((id) => map.setLayoutProperty(id, 'visibility', mode ? 'none' : 'visible'));
     if (mode && !was) detailFade();
     renderStatus();
@@ -924,6 +932,7 @@ function applyBorders(b) {
     if (state.bordersData === data) return;
     map.getSource('borders').setData(data || emptyFC());
     state.bordersData = data;
+    if (DETAIL.built) detailVisibility();
 }
 
 function renderStatus() {
