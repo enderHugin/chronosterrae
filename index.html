@@ -114,6 +114,11 @@
         #events.open { display: block; }
         #events h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
         #events .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #events-verif { margin: 6px 0 4px; font-size: 12.5px; }
+        #events-verif summary { cursor: pointer; font-weight: 600; }
+        #events-verif label { display: flex; gap: 7px; align-items: flex-start; padding: 2px 0; line-height: 1.3; }
+        #events-verif .vf-n { color: var(--muted); }
+        #events-verif .vf-sep { margin: 6px 0 2px; color: var(--muted); font-size: 11.5px; }
         #events-list { list-style: none; margin: 6px 0; padding: 0; }
         #events-list li { display: grid; grid-template-columns: 12px 1fr; gap: 0 8px; padding: 6px 4px; border-top: 1px solid rgba(128, 128, 128, 0.25); cursor: pointer; font-size: 13px; }
         #events-list li:hover, #events-list li:focus { background: rgba(128, 128, 128, 0.12); outline: none; }
@@ -180,6 +185,7 @@
     <div id="events" class="panel" role="region" aria-label="Events">
         <button class="close" id="events-close" type="button" aria-label="Close">&times;</button>
         <h2 data-i18n="events.title"></h2>
+        <details id="events-verif" open><summary data-i18n="events.verif.title"></summary><div id="events-verif-box"></div></details>
         <ul id="events-list"></ul>
         <div id="events-note"></div>
     </div>
@@ -307,6 +313,7 @@ const parsePrefs = (raw) => {
     if (Array.isArray(p.c) && p.c.length === 2 && p.c.every((n) => typeof n === 'number' && Number.isFinite(n)) && Math.abs(p.c[0]) <= 180 && Math.abs(p.c[1]) <= 85) out.c = [p.c[0], p.c[1]];
     if (typeof p.z === 'number' && p.z >= 0 && p.z <= 22) out.z = p.z;
     if (p.sp === 0 || p.sp === 1) out.sp = p.sp === 1;
+    if (Number.isInteger(p.vf) && p.vf >= 0 && p.vf <= 127) out.vf = p.vf;   // filtros de verificacion de sucesos (mascara de bits)
     if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
     return out;
 };
@@ -319,7 +326,7 @@ const readPrefs = () => {
 const prefs = readPrefs();
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), jd: prefs.jd };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), jd: prefs.jd, vf: prefs.vf };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -362,8 +369,11 @@ const i18n = {
         events: {
             button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
             basisUtc: 'UTC/GMT', basisLocal: 'hora oficial del lugar (UTC{off})', noPlace: 'sin lugar', empty: 'No hay sucesos con fuente cerca de este instante a esta escala. Acércate o cambia de año.',
-            none: 'Los sucesos de Wikidata aún no están publicados: solo hay los de hora verificada.', outOfRange: 'Los sucesos con fecha se muestran entre los años 1 y hoy.',
+            none: 'No hay sucesos cargados todavía.', outOfRange: 'Los sucesos con fecha se muestran entre los años 1 y hoy.',
             shown: 'Los más cercanos al reloj ({n}). A esta escala solo los más notorios: al acercarte aparecen más.',
+            verif: { title: 'Verificación: qué mostrar', status: 'Nivel de revisión', evidence: 'Tipo de evidencia', help: 'Tú decides qué mostrar. Lo no revisado sale atenuado en el mapa.',
+                st: { raw: 'Automático, sin revisar', community: 'Aportado, sin revisar', reviewed: 'Revisado por una persona experta', consensus: 'Consenso de varios revisores' },
+                ev: { documentary: 'Medición, documento u objeto', reconstruction: 'Reconstrucción o modelo', speculation: 'Especulación (hipótesis)' } },
             kind: { birth: 'Nacimiento', death: 'Muerte', publication: 'Publicación', composition: 'Composición', discovery: 'Descubrimiento o invención', extinction: 'Extinción', event: 'Suceso' },
             in: 'Dentro de {t}: {text}', now: 'Ahora: {text}', ago: 'Hace {t}: {text}', today: 'Hoy (hora desconocida): {text}',
             say: {
@@ -431,8 +441,11 @@ const i18n = {
         events: {
             button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
             basisUtc: 'UTC/GMT', basisLocal: 'official local time (UTC{off})', noPlace: 'no place', empty: 'No sourced events near this instant at this scale. Zoom in or change the year.',
-            none: 'The Wikidata events are not published yet: only those with a verified time of day exist.', outOfRange: 'Dated events are shown between year 1 and today.',
+            none: 'No events loaded yet.', outOfRange: 'Dated events are shown between year 1 and today.',
             shown: 'The closest to the clock ({n}). At this scale only the most notable: more appear as you zoom in.',
+            verif: { title: 'Verification: what to show', status: 'Review level', evidence: 'Evidence type', help: 'You decide what to show. Unreviewed items are dimmed on the map.',
+                st: { raw: 'Automatic, unreviewed', community: 'Contributed, unreviewed', reviewed: 'Reviewed by an expert', consensus: 'Agreed by several reviewers' },
+                ev: { documentary: 'Measurement, document or object', reconstruction: 'Reconstruction or model', speculation: 'Speculation (hypothesis)' } },
             kind: { birth: 'Birth', death: 'Death', publication: 'Publication', composition: 'Composition', discovery: 'Discovery or invention', extinction: 'Extinction', event: 'Event' },
             in: 'In {t}: {text}', now: 'Now: {text}', ago: '{t} ago: {text}', today: 'Today (time unknown): {text}',
             say: {
@@ -720,7 +733,8 @@ mapReady.then(() => {
         paint: {
             'circle-radius': ['interpolate', ['linear'], ['get', 'importance'], 0.3, 4, 1, 8],
             'circle-color': ['match', ['get', 'kind'], 'birth', KIND_COLORS.birth, 'death', KIND_COLORS.death, 'publication', KIND_COLORS.publication, 'composition', KIND_COLORS.composition, 'discovery', KIND_COLORS.discovery, 'extinction', KIND_COLORS.extinction, KIND_COLORS.event],
-            'circle-stroke-width': 1.5, 'circle-stroke-color': '#ffffff'
+            'circle-opacity': ['match', ['get', 'status'], 'raw', 0.55, 'community', 0.75, 1],
+            'circle-stroke-width': 1.5, 'circle-stroke-color': ['match', ['get', 'status'], 'raw', '#b0b0b0', '#ffffff']
         }
     });
     eventsRefresh();
@@ -1771,15 +1785,33 @@ $('btn-space').addEventListener('click', () => {
 // Los datos son registros ChronosTerrae (data/events/): seed.json (con hora verificada) y un fichero por siglo (solo fecha).
 // Que se dibuja lo decide sky/timed.js segun el instante del reloj y la escala del mapa; de los avisos se ocupa el reloj.
 const KIND_COLORS = { birth: '#43a047', death: '#6d4c41', publication: '#1e88e5', composition: '#8e24aa', discovery: '#f9a825', extinction: '#e53935', event: '#fb8c00' };
-const events = { seed: [], shards: new Map(), index: undefined, loading: new Set(), all: [], timed: [], byId: new Map(), toasts: new Map(), open: false, timer: 0, shown: [] };
+const events = { counts: { status: {}, evidence: {} }, seed: [], shards: new Map(), index: undefined, loading: new Set(), all: [], timed: [], byId: new Map(), toasts: new Map(), open: false, timer: 0, shown: [] };
 const evName = (f) => (f.properties.labels && f.properties.labels[lang]) || f.properties.name;
 const evKind = (f) => f.properties.kind || 'event';
+
+// Filtros de verificacion (mascara de bits, recordada en la cookie): el usuario decide que ver.
+// Bits 1-8: nivel de revision (raw, community, reviewed, consensus). Bits 16/32/64: documental, reconstruccion o modelo, especulacion.
+const VF_STATUS = ['raw', 'community', 'reviewed', 'consensus'];
+const VF_EVIDENCE = { documentary: 16, reconstruction: 32, speculation: 64 };
+const VF_GROUP = { measurement: 'documentary', documentary: 'documentary', artefact: 'documentary', reconstruction: 'reconstruction', model: 'reconstruction', speculation: 'speculation' };
+const VF_DEFAULT = 15 | 16 | 32;     // todo salvo la especulacion, que se activa a proposito
+let vfMask = prefs.vf !== undefined ? prefs.vf : VF_DEFAULT;
+const vfPasses = (f) => {
+    const sb = 1 << Math.max(0, VF_STATUS.indexOf(f.properties.status));
+    return (vfMask & sb) !== 0 && (vfMask & VF_EVIDENCE[VF_GROUP[f.properties.evidence] || 'documentary']) !== 0;
+};
 
 function eventsRebuild() {
     const bulk = [];
     events.shards.forEach((feats) => bulk.push(...feats));
     // el suceso con hora verificada (semilla) sustituye a su gemelo masivo de solo fecha
-    events.all = [...events.seed, ...(window.ChronosTimed ? ChronosTimed.dedupeAgainst(events.seed, bulk) : bulk)];
+    const all = [...events.seed, ...(window.ChronosTimed ? ChronosTimed.dedupeAgainst(events.seed, bulk) : bulk)];
+    events.counts = { status: {}, evidence: {} };
+    all.forEach((f) => {
+        const s = f.properties.status; const g = VF_GROUP[f.properties.evidence] || 'documentary';
+        events.counts.status[s] = (events.counts.status[s] || 0) + 1; events.counts.evidence[g] = (events.counts.evidence[g] || 0) + 1;
+    });
+    events.all = all.filter(vfPasses);
     events.byId = new Map(events.all.map((f) => [f.properties.id, f]));
     events.timed = events.all.filter((f) => window.ChronosTimed && ChronosTimed.isTimed(f));
 }
@@ -1841,7 +1873,7 @@ function eventsDraw() {
     events.shown = sel;
     map.getSource('events').setData({
         type: 'FeatureCollection',
-        features: sel.map((f) => ({ type: 'Feature', geometry: f.geometry, properties: { id: f.properties.id, name: evName(f), kind: evKind(f), importance: f.properties.importance } }))
+        features: sel.map((f) => ({ type: 'Feature', geometry: f.geometry, properties: { id: f.properties.id, name: evName(f), kind: evKind(f), importance: f.properties.importance, status: f.properties.status } }))
     });
     if (events.open) renderEventsPanel();
 }
@@ -1863,7 +1895,7 @@ function showEvent(f) {
         rows.push({ label: t('events.timeBasis'), value: basis + ' · ±' + nf().format(tm.instant.uncertainty_s) + ' s' });
     } else if (['day', 'month', 'year'].includes(tm.precision)) rows.push({ label: t('events.timeOfDay'), value: t('events.noTime') });
     if (p.description && (p.description[lang] || p.description.en)) rows.push({ label: t('events.note'), value: p.description[lang] || p.description.en });
-    rows.push({ label: t('events.status'), value: p.status });
+    rows.push({ label: t('events.status'), value: t('events.verif.st.' + p.status) });
     p.sources.forEach((s) => {
         const href = s.kind === 'wikidata' ? 'https://www.wikidata.org/wiki/' + s.id : s.kind === 'url' ? s.id : null;
         const row = { label: t('source'), value: s.kind === 'wikidata' ? 'Wikidata ' + s.id : s.id };
@@ -1880,7 +1912,27 @@ function eventFocus(f) {
 }
 
 /* ---- panel de lista ---- */
+function renderVerifFilters() {
+    const box = $('events-verif-box');
+    if (box.dataset.lang === lang && box.dataset.n === JSON.stringify(events.counts)) return;
+    box.dataset.lang = lang; box.dataset.n = JSON.stringify(events.counts); box.textContent = '';
+    const add = (label, bit, n) => {
+        const input = el('input', { type: 'checkbox' }); input.checked = (vfMask & bit) !== 0;
+        input.addEventListener('change', () => {
+            vfMask = input.checked ? (vfMask | bit) : (vfMask & ~bit);
+            savePrefs({ vf: vfMask }); eventsRebuild(); eventsRefresh(); renderEventsPanel();
+        });
+        box.appendChild(el('label', {}, [input, el('span', {}, [label + ' ', el('span', { class: 'vf-n', text: n === undefined ? '' : '(' + nf().format(n) + ')' })])]));
+    };
+    box.appendChild(el('div', { class: 'vf-sep', text: t('events.verif.status') }));
+    VF_STATUS.forEach((s, i) => add(t('events.verif.st.' + s), 1 << i, (events.counts && events.counts.status[s]) || 0));
+    box.appendChild(el('div', { class: 'vf-sep', text: t('events.verif.evidence') }));
+    Object.entries(VF_EVIDENCE).forEach(([g, bit]) => add(t('events.verif.ev.' + g), bit, (events.counts && events.counts.evidence[g]) || 0));
+    box.appendChild(el('div', { class: 'vf-sep', text: t('events.verif.help') }));
+}
+
 function renderEventsPanel() {
+    renderVerifFilters();
     const list = $('events-list'); list.textContent = '';
     if (!clockUsable()) { $('events-note').textContent = t('events.outOfRange'); return; }
     const status = events.index === null && !events.seed.length ? t('events.none') : '';
