@@ -1,0 +1,43 @@
+name: Publicar web (Pages)
+
+# Despliegue propio de la web, para poder verlo y relanzarlo desde Actions.
+# Requiere que en Settings > Pages la fuente (Source) sea "GitHub Actions".
+# De momento solo se lanza a mano; cuando la fuente este cambiada se anade el disparo en cada push.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preparar el sitio (solo lo que la web usa)
+        run: |
+          set -euo pipefail
+          mkdir -p _site/data
+          cp index.html latest_harvest.json _site/
+          cp -r data/paleocoastlines _site/data/paleocoastlines
+          touch _site/.nojekyll
+          du -sh _site
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
