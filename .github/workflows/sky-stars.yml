@@ -35,7 +35,7 @@ jobs:
       - name: Instalar d3-celestial (solo para nombres y figuras; no se guarda en el repo)
         run: npm install --no-save d3-celestial@0.7.35
 
-      - name: Conectividad (curl: dice por que falla una red, a diferencia de fetch)
+      - name: 'Conectividad con curl (dice por que falla una red, a diferencia de fetch)'
         continue-on-error: true
         run: |
           for u in https://tapvizier.cds.unistra.fr/TAPVizieR/tap/capabilities \
