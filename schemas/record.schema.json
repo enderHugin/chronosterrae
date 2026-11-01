@@ -18,7 +18,7 @@
     },
     "properties": {
       "type": "object",
-      "required": ["id", "name", "layer", "time", "scale", "sources", "status"],
+      "required": ["id", "name", "layer", "evidence", "time", "scale", "sources", "status"],
       "additionalProperties": false,
       "properties": {
         "id": {
@@ -39,6 +39,15 @@
           "enum": ["paleogeography", "geology", "polity", "biota", "event", "astronomy", "microscale"],
           "description": "Capa temática a la que pertenece el dato."
         },
+        "evidence": {
+          "enum": ["measurement", "documentary", "artefact", "reconstruction", "model", "speculation"],
+          "description": "De qué tipo es la prueba. measurement = medición publicada; documentary = fuente escrita o gráfica de la época; artefact = objeto o resto físico; reconstruction = ilustración, audio o modelo 3D hecho a posteriori a partir de pruebas; model = salida de un modelo numérico (placas, efemérides); speculation = hipótesis sin respaldo directo. La interfaz debe mostrarlo siempre."
+        },
+        "position_uncertainty_m": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Margen de error de la posición, en metros. Imprescindible para uso en AR: sin él no se sabe cuánto fiarse de dónde se dibuja el dato. La altura, si se conoce, va como tercera coordenada (metros sobre el elipsoide WGS84)."
+        },
         "time": {
           "type": "object",
           "required": ["start_ybp", "end_ybp", "uncertainty_yr", "precision"],
@@ -48,8 +57,18 @@
             "end_ybp": { "type": "number", "description": "Fin, en años BP. Para un suceso puntual, igual que start_ybp." },
             "uncertainty_yr": { "type": "number", "minimum": 0, "description": "Margen de error (±) en años. 0 solo si la fecha es exacta." },
             "precision": { "enum": ["exact", "day", "month", "year", "decade", "century", "millennium", "approximate"] },
-            "iso": { "type": "string", "description": "Fecha original en ISO 8601 si la fuente la da así." }
-          }
+            "iso": { "type": "string", "description": "Fecha original en ISO 8601 si la fuente la da así." },
+            "calendar": {
+              "enum": ["gregorian", "julian"],
+              "description": "Calendario en el que la fuente da la fecha. Obligatorio si la precisión es exact, day o month: la misma fecha difiere hasta 13 días entre calendarios y cada país adoptó el gregoriano en un año distinto."
+            }
+          },
+          "allOf": [
+            {
+              "if": { "properties": { "precision": { "enum": ["exact", "day", "month"] } } },
+              "then": { "required": ["calendar"], "properties": { "calendar": true } }
+            }
+          ]
         },
         "scale": {
           "type": "object",

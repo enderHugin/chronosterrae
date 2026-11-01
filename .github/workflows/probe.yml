@@ -1,0 +1,56 @@
+name: Sonda de fuentes
+
+# Comprueba que las fuentes externas siguen respondiendo y permiten uso desde el
+# navegador. El resultado va a la rama `probe-results`, nunca a `main`, para no
+# ensuciar el historial.
+on:
+  schedule:
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/probe.js'
+      - '.github/workflows/probe.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar
+        uses: actions/checkout@v4
+
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Ejecutar sonda
+        run: node scripts/probe.js > /tmp/probe.json 2> /tmp/probe.log
+
+      - name: Mostrar resumen en el log
+        if: always()
+        run: |
+          cat /tmp/probe.log || true
+          jq '.summary' /tmp/probe.json || true
+
+      - name: Publicar resultado en la rama probe-results
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/probe.json || echo '{"summary":{"error":"la sonda no produjo salida"},"results":[]}' > /tmp/probe.json
+          git config user.name "ChronosTerrae-Probe"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan probe-results
+          cp /tmp/probe.json probe.json
+          cp /tmp/probe.log probe.log || true
+          git add probe.json probe.log
+          git commit -m "Resultado de la sonda $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin probe-results

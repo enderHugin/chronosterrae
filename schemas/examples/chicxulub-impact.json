@@ -9,6 +9,7 @@
       "es": "Impacto de un bólido en el límite Cretácico-Paleógeno. REGISTRO DE EJEMPLO para ilustrar el esquema: la datación y las coordenadas deben revisarse contra la fuente citada antes de pasar de 'community'."
     },
     "layer": "event",
+    "evidence": "measurement",
     "time": {
       "start_ybp": 66043000,
       "end_ybp": 66043000,

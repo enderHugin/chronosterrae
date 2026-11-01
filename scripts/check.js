@@ -152,6 +152,30 @@ check('esquema: rechaza escala invertida', () => {
     return runValidator(r) !== 0;
 });
 
+check('esquema: rechaza un registro sin tipo de evidencia', () => {
+    const r = exampleRecord();
+    delete r.properties.evidence;
+    return runValidator(r) !== 0;
+});
+
+check('esquema: rechaza fecha de dia sin calendario', () => {
+    const r = exampleRecord();
+    r.properties.time = { start_ybp: 160, end_ybp: 160, uncertainty_yr: 0, precision: 'day' };
+    return runValidator(r) !== 0;
+});
+
+check('esquema: acepta fecha de dia con calendario', () => {
+    const r = exampleRecord();
+    r.properties.time = { start_ybp: 160, end_ybp: 160, uncertainty_yr: 0, precision: 'day', calendar: 'gregorian' };
+    return runValidator(r) === 0;
+});
+
+check('esquema: rechaza margen de posicion negativo', () => {
+    const r = exampleRecord();
+    r.properties.position_uncertainty_m = -5;
+    return runValidator(r) !== 0;
+});
+
 console.log('\nPASS ' + passes.length);
 passes.forEach(p => console.log('  ok  ' + p));
 if (failures.length) {
