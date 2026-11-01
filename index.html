@@ -355,7 +355,10 @@ const i18n = {
         bordersNote: 'Mapa histórico compilado por su autor y en elaboración: contrástalo antes de citarlo.',
         prec: { 1: 'aproximada', 2: 'moderada', 3: 'fijada por tratado' },
         unnamed: 'Sin nombre en el conjunto de datos', liveTitle: 'Dato reciente', event: 'Fecha del suceso', harvested: 'Recogido', tier: 'Nivel', unknown: 'Desconocida',
-        creditsLand: 'Costas', creditsBorders: 'Fronteras',
+        creditsLand: 'Costas', creditsBorders: 'Fronteras', creditsDetail: 'Detalle',
+        detailFull: 'Detalle: mapa actual de OpenStreetMap, no una reconstrucción.',
+        detailPhysical: 'Detalle: agua y vegetación de hoy como aproximación; no incluye lo que cambió desde entonces (ríos, lagos, bosques).',
+        detailFail: 'No se pudo cargar el detalle del mapa ({err}). Se reintentará.',
         events: {
             button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
             basisUtc: 'UTC/GMT', basisLocal: 'hora oficial del lugar (UTC{off})', noPlace: 'sin lugar', empty: 'No hay sucesos con fuente cerca de este instante a esta escala. Acércate o cambia de año.',
@@ -421,7 +424,10 @@ const i18n = {
         bordersNote: 'Historical map compiled by its author and work in progress: cross-check before citing.',
         prec: { 1: 'approximate', 2: 'moderate', 3: 'set by treaty' },
         unnamed: 'Unnamed in the dataset', liveTitle: 'Recent data', event: 'Event date', harvested: 'Harvested', tier: 'Tier', unknown: 'Unknown',
-        creditsLand: 'Coastlines', creditsBorders: 'Borders',
+        creditsLand: 'Coastlines', creditsBorders: 'Borders', creditsDetail: 'Detail',
+        detailFull: 'Detail: current OpenStreetMap map, not a reconstruction.',
+        detailPhysical: 'Detail: present-day water and vegetation as an approximation; it does not include what has changed since (rivers, lakes, forests).',
+        detailFail: 'Could not load the map detail ({err}). Will retry.',
         events: {
             button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
             basisUtc: 'UTC/GMT', basisLocal: 'official local time (UTC{off})', noPlace: 'no place', empty: 'No sourced events near this instant at this scale. Zoom in or change the year.',
@@ -718,6 +724,7 @@ mapReady.then(() => {
         }
     });
     eventsRefresh();
+    detailApply();
 });
 
 // Doble clic (o doble toque) = centrar el mapa en ese punto, sin cambiar el zoom.
@@ -747,6 +754,122 @@ map.on('error', (e) => {
     console.error('[MAP]', msg);
 });
 
+/* ------------------------------------------------------------------ */
+/* Detalle al acercar: geografía ACTUAL de OpenFreeMap (OpenStreetMap)  */
+/* ------------------------------------------------------------------ */
+// Las costas del modelo son gruesas (~15 000 puntos para todo el mundo). Al acercar se superpone el
+// mapa vectorial de hoy, pero sin hacerlo pasar por reconstrucción de la época:
+//   · hasta hoy y desde 1950: estilo completo (caminos, edificios no, rótulos, relieve);
+//   · de hace 11 000 años a 1950: solo lo físico (agua, ríos, cobertura del suelo), sin obra humana;
+//   · antes: nada, porque el nivel del mar y los hielos eran otros y ese mapa mentiría.
+// El estilo se pide una sola vez y solo cuando hace falta. Si falla, se reintenta con espera creciente.
+const DETAIL = {
+    styleUrl: 'https://tiles.openfreemap.org/styles/liberty',
+    zoomOn: 4.6, zoomOff: 4.2,        // histéresis: evita parpadeo en el umbral
+    physicalMaxYbp: 11000,
+    shown: null,                      // null | 'physical' | 'full'
+    layers: [],                       // { id, role, physical, orig }
+    built: false, building: null, error: null, failedAt: null, backoff: 15000, fadeTimer: null
+};
+const DETAIL_PHYSICAL_LAYERS = new Set(['water', 'waterway', 'landcover']);
+
+function detailMode() {
+    if (state.ybp > DETAIL.physicalMaxYbp) return null;
+    if (map.getZoom() < (DETAIL.shown ? DETAIL.zoomOff : DETAIL.zoomOn)) return null;
+    return state.ybp <= 0 ? 'full' : 'physical';
+}
+
+async function detailFetchStyle() {
+    const res = await fetch(DETAIL.styleUrl);
+    if (!res.ok) throw new Error('OpenFreeMap HTTP ' + res.status);
+    const style = await res.json();
+    if (!style || typeof style !== 'object' || !style.sources || !Array.isArray(style.layers)) throw new Error('estilo de OpenFreeMap con forma inesperada');
+    return style;
+}
+
+function detailBuild(style) {
+    if (style.glyphs) map.setGlyphs(style.glyphs);
+    if (style.sprite) map.setSprite(style.sprite);
+    Object.entries(style.sources).forEach(([name, src]) => map.addSource('ofm-' + name, src));
+    style.layers.forEach((l) => {
+        if (l.type === 'fill-extrusion') return;               // edificios en 3D: pesados y de hoy
+        const clone = { ...l, id: 'ofm-' + l.id, layout: { ...(l.layout || {}), visibility: 'none' } };
+        if (l.source) clone.source = 'ofm-' + l.source;
+        map.addLayer(clone, 'borders-fill');
+        const role = l.type === 'background' ? 'bg'
+            : l['source-layer'] === 'water' && l.type === 'fill' ? 'water'
+            : l['source-layer'] === 'waterway' && l.type === 'line' ? 'waterway'
+            : l.type === 'symbol' ? 'symbol' : l.type === 'fill' ? 'fill' : 'other';
+        const physical = role === 'bg' || (DETAIL_PHYSICAL_LAYERS.has(l['source-layer']) && l.type !== 'symbol' && l.id !== 'waterway_tunnel');
+        const orig = {};
+        if (role === 'fill') orig['fill-opacity'] = map.getPaintProperty(clone.id, 'fill-opacity');
+        if (role === 'symbol') { orig['text-color'] = map.getPaintProperty(clone.id, 'text-color'); orig['text-halo-color'] = map.getPaintProperty(clone.id, 'text-halo-color'); }
+        DETAIL.layers.push({ id: clone.id, role, physical, orig });
+    });
+    detailTheme();
+}
+
+// Mismo color de tierra y agua que el mapa grueso (no hay salto al cruzar el umbral); en oscuro se
+// atenúan las superficies de uso del suelo y se aclaran los rótulos.
+function detailTheme() {
+    if (!DETAIL.built && !DETAIL.layers.length) return;
+    const p = palette();
+    DETAIL.layers.forEach((l) => {
+        if (l.role === 'bg') map.setPaintProperty(l.id, 'background-color', p.land);
+        else if (l.role === 'water') map.setPaintProperty(l.id, 'fill-color', p.ocean);
+        else if (l.role === 'waterway') map.setPaintProperty(l.id, 'line-color', p.ocean);
+        else if (l.role === 'fill') map.setPaintProperty(l.id, 'fill-opacity', state.dark ? 0.28 : l.orig['fill-opacity']);
+        else if (l.role === 'symbol') {
+            map.setPaintProperty(l.id, 'text-color', state.dark ? '#e6e2d8' : l.orig['text-color']);
+            map.setPaintProperty(l.id, 'text-halo-color', state.dark ? '#1b2126' : l.orig['text-halo-color']);
+        }
+    });
+}
+
+function detailEnsure() {
+    if (DETAIL.built) return Promise.resolve(true);
+    if (DETAIL.building) return DETAIL.building;
+    if (DETAIL.failedAt !== null && performance.now() - DETAIL.failedAt < DETAIL.backoff) return Promise.resolve(false);
+    DETAIL.building = detailFetchStyle().then((style) => {
+        detailBuild(style);
+        DETAIL.built = true; DETAIL.error = null; DETAIL.failedAt = null; DETAIL.backoff = 15000;
+        return true;
+    }).catch((err) => {
+        DETAIL.error = err; DETAIL.failedAt = performance.now(); DETAIL.backoff = Math.min(DETAIL.backoff * 2, 300000);
+        console.warn('[DETAIL]', err.message);
+        renderStatus();
+        return false;
+    }).finally(() => { DETAIL.building = null; });
+    return DETAIL.building;
+}
+
+// El fondo de tierra solo se destapa cuando ya hay teselas de agua; si no, se vería tierra sobre el océano.
+function detailFade() {
+    const bgs = DETAIL.layers.filter((l) => l.role === 'bg');
+    bgs.forEach((l) => map.setPaintProperty(l.id, 'background-opacity', 0));
+    const reveal = () => { clearTimeout(DETAIL.fadeTimer); bgs.forEach((l) => map.setPaintProperty(l.id, 'background-opacity', 1)); };
+    map.once('idle', reveal);
+    DETAIL.fadeTimer = setTimeout(reveal, 3000);
+}
+
+async function detailApply() {
+    if (!map.getLayer('borders-fill')) return;
+    let mode = detailMode();
+    if (mode && !DETAIL.built) {
+        if (!(await detailEnsure())) return;
+        mode = detailMode();
+    }
+    if (mode === DETAIL.shown) return;
+    const was = DETAIL.shown;
+    DETAIL.shown = mode;
+    DETAIL.layers.forEach((l) => map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) ? 'visible' : 'none'));
+    ['margin-fill', 'land-fill', 'land-line'].forEach((id) => map.setLayoutProperty(id, 'visibility', mode ? 'none' : 'visible'));
+    if (mode && !was) detailFade();
+    renderStatus();
+}
+map.on('zoom', detailApply);
+map.on('moveend', detailApply);
+
 function applyTheme() {
     document.body.classList.toggle('dark', state.dark);
     $('btn-theme').textContent = state.dark ? 'Light' : 'Dark';
@@ -757,6 +880,7 @@ function applyTheme() {
     map.setPaintProperty('land-fill', 'fill-color', p.land);
     map.setPaintProperty('land-line', 'line-color', p.landLine);
     map.setPaintProperty('borders-line', 'line-color', p.line);
+    detailTheme();
 }
 
 /* ------------------------------------------------------------------ */
@@ -816,6 +940,8 @@ function renderStatus() {
     } else if (ybp <= CFG.bordersMaxYbp) {
         messages.push(t('noBorders'));
     }
+    if (DETAIL.shown) messages.push(t(DETAIL.shown === 'full' ? 'detailFull' : 'detailPhysical'));
+    else if (DETAIL.error && detailMode()) { level = 'warn'; messages.push(fmt('detailFail', { err: DETAIL.error.message })); }
     if (messages.length) setStatus(level, messages.join(' '));
     renderCredits();
 }
@@ -950,6 +1076,7 @@ function setTime(ybp, { fromSlider = false, immediate = false, persist = true, f
     $('time-sub').textContent = f.sub;
     if (immediate) { clearTimeout(sceneTimer); sceneTimer = null; lastScene = performance.now(); updateScene({ immediate: true }); } else scheduleScene();
     if (!fromClock) clockChanged();
+    detailApply();
 }
 
 /* ------------------------------------------------------------------ */
@@ -1087,6 +1214,15 @@ function renderCredits() {
     box.appendChild(document.createTextNode('   |   ' + t('creditsBorders') + ': '));
     box.appendChild(el('a', { href: 'https://github.com/aourednik/historical-basemaps', target: '_blank', rel: 'noopener', text: 'historical-basemaps' }));
     box.appendChild(document.createTextNode(' (A. Ourednik, GPL-3.0)'));
+    if (DETAIL.shown) {
+        box.appendChild(document.createTextNode('   |   ' + t('creditsDetail') + ': '));
+        box.appendChild(el('a', { href: 'https://openfreemap.org', target: '_blank', rel: 'noopener', text: 'OpenFreeMap' }));
+        box.appendChild(document.createTextNode(' © '));
+        box.appendChild(el('a', { href: 'https://www.openmaptiles.org/', target: '_blank', rel: 'noopener', text: 'OpenMapTiles' }));
+        box.appendChild(document.createTextNode(' · '));
+        box.appendChild(el('a', { href: 'https://www.openstreetmap.org/copyright', target: '_blank', rel: 'noopener', text: '© OpenStreetMap' }));
+        box.appendChild(document.createTextNode(' (ODbL)'));
+    }
 }
 
 // Mismo sentido que el slider: de izquierda (pasado remoto) a derecha (hoy).
