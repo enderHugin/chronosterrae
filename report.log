@@ -1,0 +1,8 @@
+OK   commons-geosearch-sol-madrid
+OK   commons-geosearch-santiago
+OK   commons-imageinfo
+OK   commons-thumb-headers
+OK   mapillary-sin-clave
+XX   kartaview-v2 fetch failed [ERR_TLS_CERT_ALTNAME_INVALID Hostname/IP does not match certificate's altnames: Host: api.openstreetcam.org. is not in the cert's altnames: DNS:*.apolloservice.openstreetcam.org, DNS:apolloservice.openstreetcam.org]
+XX   kartaview-photo fetch failed [ERR_TLS_CERT_ALTNAME_INVALID Hostname/IP does not match certificate's altnames: Host: api.openstreetcam.org. is not in the cert's altnames: DNS:*.apolloservice.openstreetcam.org, DNS:apolloservice.openstreetcam.org]
+OK   commons-search-historic
