@@ -205,6 +205,16 @@ check('index.html no ofrece modo plano (siempre globo)', () => {
     return !/mercator/i.test(html) && !/btn-proj/.test(html) && /projection:\s*\{\s*type:\s*'globe'\s*\}/.test(html);
 });
 
+check('pages.yml publica todo recurso local que index.html carga (./map, ./sky, ./vendor, ./data/...)', () => {
+    const html = readIndex();
+    const yml = fs.readFileSync(path.join(__dirname, '..', '.github', 'workflows', 'pages.yml'), 'utf8');
+    const refs = new Set();
+    for (const m of html.matchAll(/(?:src="|url:\s*'|Url:\s*')\.\/([A-Za-z0-9_-]+)\/(?:([A-Za-z0-9_-]+)\/)?/g)) refs.add(m[2] && m[1] === 'data' ? 'data/' + m[2] : m[1]);
+    const missing = [...refs].filter((r) => !new RegExp('cp -r [^\\n]*\\b' + r.replace('/', '\\/') + '\\b').test(yml));
+    if (missing.length) console.log('    sin copiar en pages.yml:', missing.join(', '));
+    return refs.size >= 3 && missing.length === 0;
+});
+
 check('index.html centra con doble clic en vez de hacer zoom', () => {
     const html = readIndex();
     return /map\.doubleClickZoom\.disable\(\)/.test(html) && /map\.easeTo\(\{\s*center:\s*e\.lngLat/.test(html);
