@@ -1,0 +1,41 @@
+name: Sonda de instantes con hora (Wikidata)
+
+# Mira que hay realmente en Wikidata con hora del dia y deja el informe en la rama `timed-build`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: timed-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear Wikidata
+        run: node scripts/probe-timed.js > /tmp/timed.json 2> /tmp/timed.log
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 30 /tmp/timed.log || true
+          head -c 800 /tmp/timed.json || true
+      - name: Informe en la rama timed-build
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/timed.json || echo '{"error":"sin salida"}' > /tmp/timed.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan timed-build
+          cp /tmp/timed.json report.json
+          cp /tmp/timed.log report.log || true
+          git add report.json report.log
+          git commit -m "Sonda de instantes con hora $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin timed-build
