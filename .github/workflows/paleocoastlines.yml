@@ -1,0 +1,59 @@
+name: Paleocostas (construcción)
+
+# Descarga PaleoMAP PaleoCoastlines (Kocsis y Scotese, CC BY 4.0) desde Zenodo,
+# verifica su md5 y publica el resultado en la rama `paleo-build`, nunca en `main`.
+# Se revisa a mano antes de llevarlo a `main`.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'inspect = volcar la estructura del zip'
+        default: 'inspect'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build-paleocoastlines.js'
+      - '.github/workflows/paleocoastlines.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paleo-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Ejecutar
+        run: node scripts/build-paleocoastlines.js "${{ github.event.inputs.mode || 'inspect' }}" > /tmp/report.json 2> /tmp/report.log
+
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 40 /tmp/report.log || true
+          head -c 600 /tmp/report.json || true
+
+      - name: Publicar en la rama paleo-build
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/report.json || echo '{"error":"sin salida"}' > /tmp/report.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan paleo-build
+          cp /tmp/report.json report.json
+          cp /tmp/report.log report.log || true
+          git add report.json report.log
+          git commit -m "Informe de construcción $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin paleo-build
