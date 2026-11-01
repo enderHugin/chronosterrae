@@ -103,6 +103,10 @@ function bindingToFeature(kind, b, retrievedAt) {
     if (!/^Q\d+$/.test(qid)) return { skip: 'sin identificador de Wikidata' };
     const label = bindingValue(b, 'label');
     if (!label || /^Q\d+$/.test(label)) return { skip: 'sin etiqueta' };
+    // Ruido de Wikidata que no es un suceso: los propios años como elemento ("1999") y los asteroides numerados
+    // ("3537 Jürgen", "(5131) 1990 BG", "2000 AB1"), que eran ~9 000 de los ~16 000 "descubrimientos" del siglo XX.
+    if (/^\d{1,4}$/.test(label)) return { skip: 'etiqueta que es solo un año' };
+    if (kind === 'discovery' && (/^\(\d+\)/.test(label) || /^\d+ \S+$/.test(label) || /^\d{4} [A-Z]{1,2}\d*$/.test(label))) return { skip: 'asteroide numerado o provisional' };
     const m = /^(-?\d{4,})-(\d{2})-(\d{2})T/.exec(bindingValue(b, 't') || '');
     if (!m) return { skip: 'fecha ilegible' };
     const year = parseInt(m[1], 10); const month = parseInt(m[2], 10); const day = parseInt(m[3], 10);
