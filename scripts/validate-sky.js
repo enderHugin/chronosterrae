@@ -93,7 +93,7 @@ async function main() {
     const report = {
         generated_at: new Date().toISOString(),
         reference: 'JPL Horizons (https://ssd.jpl.nasa.gov/api/horizons.api), geocentrico, astrometrico J2000, escala TT',
-        engine: 'astronomy-engine ' + require('astronomy-engine/package.json').version,
+        engine: 'astronomy-engine ' + require('../package.json').devDependencies['astronomy-engine'],
         epochs: epochs.map((e) => ({ year: e.year, calendar: e.calendar, jd: e.jd })),
         cases: [],
         errors: []
