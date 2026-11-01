@@ -12,9 +12,10 @@
     "check": "node scripts/check.js",
     "check:sky": "node scripts/check-sky.js",
     "validate": "node scripts/validate-records.js",
-    "test": "npm run check && npm run check:sky && npm run check:events && npm run check:data && npm run validate",
+    "test": "npm run check && npm run check:sky && npm run check:events && npm run check:data && npm run check:gap && npm run validate",
     "check:events": "node scripts/check-events.js",
-    "check:data": "node scripts/check-data.js"
+    "check:data": "node scripts/check-data.js",
+    "check:gap": "node scripts/check-gap.js"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

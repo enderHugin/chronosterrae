@@ -269,6 +269,7 @@
 <script src="./sky/sky.js"></script>
 <script src="./sky/space.js"></script>
 <script src="./sky/timed.js"></script>
+<script src="./map/borders-gap.js"></script>
 <script src="./sky/sky-view.js"></script>
 <script>
 'use strict';
@@ -352,6 +353,7 @@ const i18n = {
         bordersFail: 'No se pudieron cargar las fronteras ({err}).',
         landOk: 'Contornos actuales movidos por el modelo de placas {model}, {age}. No son las costas reales de la época.', seaLevel: 'Costas actuales. El nivel del mar y las glaciaciones no están modelados.',
         noBorders: 'Sin fronteras históricas para esta época (el conjunto cubre desde 123.000 a.C.).',
+        gapNote: 'Las franjas de tierra que el polígono de una frontera deja sin cubrir se rellenan con tinte tenue solo si hay un único país cerca; donde se juntan varios se rayan: frontera no resuelta a esta escala.',
         bordersNE: 'Fronteras vigentes: Natural Earth 10m (dominio público), resolución mediana ~{km} km.',
         neNote: 'Fronteras vigentes según Natural Earth. En zonas en disputa se muestra la convención de esa fuente (campo «Tipo»), sin juicio sobre soberanía.', resolution: 'Resolución de la fuente', typeLabel: 'Tipo según la fuente',
         bordersSnapshot: 'Fronteras: instantánea de {y} ({d}).', exact: 'misma fecha', apart: 'a {n} años',
@@ -426,6 +428,7 @@ const i18n = {
         bordersFail: 'Could not load borders ({err}).',
         landOk: 'Present-day outlines moved by plate model {model}, {age}. Not the real coastlines of that time.', seaLevel: 'Present-day coastlines. Sea level and ice ages are not modelled.',
         noBorders: 'No historical borders for this era (the dataset starts at 123,000 BC).',
+        gapNote: 'Strips of land that a border polygon leaves uncovered are tinted faintly only when a single country is nearby; where several meet they are hatched: border unresolved at this scale.',
         bordersNE: 'Current borders: Natural Earth 10m (public domain), median resolution ~{km} km.',
         neNote: 'Current borders per Natural Earth. In disputed areas the source\'s own convention is shown ("Type" field), with no judgement on sovereignty.', resolution: 'Source resolution', typeLabel: 'Type per the source',
         bordersSnapshot: 'Borders: snapshot of {y} ({d}).', exact: 'same date', apart: '{n} years apart',
@@ -701,6 +704,7 @@ async function loadBorders(ybp, signal) {
 /* ------------------------------------------------------------------ */
 /* Mapa                                                               */
 /* ------------------------------------------------------------------ */
+const GAP_BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 const palette = () => state.dark
     ? { ocean: '#0b1a26', shelf: '#17303f', land: '#2d3338', landLine: '#59636b', line: '#e6e2d8' }
     : { ocean: '#c3dbe9', shelf: '#dbeaf2', land: '#ece4cf', landLine: '#b9ab87', line: '#3a2a1a' };
@@ -734,6 +738,9 @@ mapReady.then(() => {
     map.addLayer({ id: 'land-line', type: 'line', source: 'land', filter: notMargin, paint: { 'line-color': p.landLine, 'line-width': 0.8 } });
     map.addLayer({ id: 'borders-fill', type: 'fill', source: 'borders', paint: { 'fill-color': ['get', '_c'], 'fill-opacity': ['get', '_o'] } });
     map.addLayer({ id: 'borders-line', type: 'line', source: 'borders', paint: { 'line-color': p.line, 'line-width': 0.6, 'line-opacity': 0.55 } });
+    // Franja entre un poligono de frontera demasiado simplificado y la costa real (ver gapDraw): imagen georreferenciada por sus cuatro esquinas.
+    map.addSource('gap', { type: 'image', url: GAP_BLANK, coordinates: [[-1, 1], [1, 1], [1, -1], [-1, -1]] });
+    map.addLayer({ id: 'gap-raster', type: 'raster', source: 'gap', layout: { visibility: 'none' }, paint: { 'raster-opacity': 1, 'raster-fade-duration': 0, 'raster-resampling': 'linear' } }, 'borders-line');
     map.addLayer({ id: 'borders-hl', type: 'line', source: 'borders', filter: ['==', ['get', 'NAME'], '\u0000'], paint: { 'line-color': '#e53935', 'line-width': 3 } });
     map.addLayer({ id: 'live-points', type: 'circle', source: 'live', paint: { 'circle-radius': 6, 'circle-color': '#e53935', 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff' } });
     map.addSource('night', { type: 'geojson', data: emptyFC() });
@@ -889,6 +896,67 @@ function detailVisibility() {
     DETAIL.layers.forEach((l) => map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !(l.role === 'boundary' && state.borders) ? 'visible' : 'none'));
 }
 
+/* ---- franja entre frontera y costa ---- */
+// Los poligonos historicos estan dibujados con muy pocos puntos y quedan tierra adentro; con la costa real al
+// fondo queda una franja sin color. Se rellena SOLO si un unico pais esta a menos de GAP_DIST_M; donde se juntan
+// dos o mas se raya (frontera no resuelta). Es una aproximacion grafica, no un dato: va mas tenue y se declara.
+const GAP_DIST_M = 40000;
+const GAP = { timer: 0, shown: false, ctx: null };
+function gapColor(css) {
+    if (!GAP.ctx) { const c = document.createElement('canvas'); c.width = c.height = 1; GAP.ctx = c.getContext('2d', { willReadFrequently: true }); }
+    GAP.ctx.clearRect(0, 0, 1, 1); GAP.ctx.fillStyle = css; GAP.ctx.fillRect(0, 0, 1, 1);
+    const d = GAP.ctx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]];
+}
+function gapRefresh() {
+    clearTimeout(GAP.timer);
+    GAP.timer = setTimeout(gapDraw, 220);
+}
+function gapHide() { if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visibility', 'none'); GAP.shown = false; renderStatus(); } }
+function gapDraw() {
+    if (!map.getLayer('gap-raster') || !window.ChronosGap) return;
+    const b = state.borders;
+    const want = Boolean(DETAIL.shown && b && b.source !== 'ne' && b.data && b.data.features.length);
+    if (!want) { gapHide(); return; }
+    const bd = map.getBounds(); const padDeg = GAP_DIST_M / 111000 * 1.2;
+    const view = [bd.getWest(), Math.max(-84, bd.getSouth()), bd.getEast(), Math.min(84, bd.getNorth())];
+    if (view[2] - view[0] > 40) { gapHide(); return; }           // vista demasiado ancha: no es zoom de costa
+    const groups = new Map();
+    for (const f of b.data.features) {
+        if (!f.geometry) continue;
+        const polys = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates : f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : [];
+        const key = (f.properties && (f.properties.SUBJECTO || f.properties.NAME)) || '?';
+        for (const poly of polys) {
+            if (!poly._bb) { let a = 180, c = 90, d = -180, e = -90; poly[0].forEach(([x, y]) => { a = Math.min(a, x); d = Math.max(d, x); c = Math.min(c, y); e = Math.max(e, y); }); poly._bb = [a, c, d, e]; }
+            const bb = poly._bb;
+            if (bb[2] < view[0] - padDeg || bb[0] > view[2] + padDeg || bb[3] < view[1] - padDeg || bb[1] > view[3] + padDeg) continue;
+            if (!groups.has(key)) groups.set(key, { key, css: f.properties._c, polys: [] });
+            groups.get(key).polys.push(poly);
+        }
+    }
+    const list = [...groups.values()];
+    if (!list.length) { gapHide(); return; }
+    const res = ChronosGap.classify(list, view, { distM: GAP_DIST_M, maxCells: 640 });
+    const { cols, rows } = res.grid;
+    const cv = document.createElement('canvas'); cv.width = cols; cv.height = rows;
+    const cx = cv.getContext('2d'); const img = cx.createImageData(cols, rows);
+    const rgb = list.map((g) => gapColor(g.css || '#8a8a8a'));
+    let filled = 0;
+    for (let i = 0; i < res.cls.length; i++) {
+        const c = res.cls[i]; if (!c) continue;
+        const o = i * 4;
+        if (c === 255) {
+            const x = i % cols; const y = (i / cols) | 0;
+            if (((x + y) % 7) < 2) { img.data[o] = 110; img.data[o + 1] = 110; img.data[o + 2] = 110; img.data[o + 3] = 120; filled++; }
+        } else { const k = rgb[c - 1]; img.data[o] = k[0]; img.data[o + 1] = k[1]; img.data[o + 2] = k[2]; img.data[o + 3] = 80; filled++; }
+    }
+    cx.putImageData(img, 0, 0);
+    map.getSource('gap').updateImage({ url: cv.toDataURL('image/png'), coordinates: res.grid.corners });
+    const was = GAP.shown; GAP.shown = filled > 0;
+    map.setLayoutProperty('gap-raster', 'visibility', GAP.shown ? 'visible' : 'none');
+    if (was !== GAP.shown) renderStatus();
+}
+map.on('moveend', gapRefresh);
+
 async function detailApply() {
     if (!map.getLayer('borders-fill')) return;
     let mode = detailMode();
@@ -902,6 +970,7 @@ async function detailApply() {
     detailVisibility();
     ['margin-fill', 'land-fill', 'land-line'].forEach((id) => map.setLayoutProperty(id, 'visibility', mode ? 'none' : 'visible'));
     if (mode && !was) detailFade();
+    gapRefresh();
     renderStatus();
 }
 map.on('zoom', detailApply);
@@ -945,6 +1014,7 @@ function applyBorders(b) {
     map.getSource('borders').setData(data || emptyFC());
     state.bordersData = data;
     if (DETAIL.built) detailVisibility();
+    gapRefresh();
 }
 
 function renderStatus() {
@@ -979,6 +1049,7 @@ function renderStatus() {
     } else if (ybp <= CFG.bordersMaxYbp) {
         messages.push(t('noBorders'));
     }
+    if (GAP.shown) messages.push(t('gapNote'));
     if (DETAIL.shown) messages.push(t(DETAIL.shown === 'full' ? 'detailFull' : 'detailPhysical'));
     else if (DETAIL.error && detailMode()) { level = 'warn'; messages.push(fmt('detailFail', { err: DETAIL.error.message })); }
     if (messages.length) setStatus(level, messages.join(' '));
