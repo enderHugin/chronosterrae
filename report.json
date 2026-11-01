@@ -1,0 +1,325 @@
+{
+  "probed_at": "2026-11-01T17:03:29.975Z",
+  "people": [
+    {
+      "name": "Frédéric Chopin",
+      "search_hit": {
+        "id": "Q1268",
+        "label": "Frédéric Chopin",
+        "description": "Polish composer and pianist (1810–1849)"
+      },
+      "qid": "Q1268",
+      "label": "Frédéric Chopin",
+      "birth": [
+        {
+          "time": "+1810-02-22T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        },
+        {
+          "time": "+1810-03-01T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "death": [
+        {
+          "time": "+1849-10-17T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "birth_place": "Q393087",
+      "death_place": "Q90"
+    },
+    {
+      "name": "Edgar Allan Poe",
+      "search_hit": {
+        "id": "Q16867",
+        "label": "Edgar Allan Poe",
+        "description": "American writer and literary critic (1809–1849)"
+      },
+      "qid": "Q16867",
+      "label": "Edgar Allan Poe",
+      "birth": [
+        {
+          "time": "+1809-01-19T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "death": [
+        {
+          "time": "+1849-10-07T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "birth_place": "Q100",
+      "death_place": "Q5092"
+    },
+    {
+      "name": "Pope Pius XII",
+      "search_hit": {
+        "id": "Q2604",
+        "label": "Pius XII",
+        "description": "pope of the Catholic Church from 1939 to 1958"
+      },
+      "qid": "Q2604",
+      "label": "Pius XII",
+      "birth": [
+        {
+          "time": "+1876-03-02T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "death": [
+        {
+          "time": "+1958-10-09T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "birth_place": "Q220",
+      "death_place": "Q242105"
+    },
+    {
+      "name": "Wolfgang Amadeus Mozart",
+      "search_hit": {
+        "id": "Q254",
+        "label": "Wolfgang Amadeus Mozart",
+        "description": "Austrian composer of the Classical period (1756–1791)"
+      },
+      "qid": "Q254",
+      "label": "Wolfgang Amadeus Mozart",
+      "birth": [
+        {
+          "time": "+1756-01-27T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "death": [
+        {
+          "time": "+1791-12-05T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "birth_place": "Q34713",
+      "death_place": "Q1741"
+    },
+    {
+      "name": "Ludwig van Beethoven",
+      "search_hit": {
+        "id": "Q255",
+        "label": "Ludwig van Beethoven",
+        "description": "German composer (1770-1827)"
+      },
+      "qid": "Q255",
+      "label": "Ludwig van Beethoven",
+      "birth": [
+        {
+          "time": "+1770-12-16T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        },
+        {
+          "time": "+1770-12-17T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        },
+        {
+          "time": "+1770-01-01T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 9,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "death": [
+        {
+          "time": "+1827-03-26T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        },
+        {
+          "time": "+1827-03-26T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        },
+        {
+          "time": "+1827-01-01T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 9,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "birth_place": "Q586",
+      "death_place": "Q1741"
+    },
+    {
+      "name": "Neil Armstrong",
+      "search_hit": {
+        "id": "Q1615",
+        "label": "Neil Armstrong",
+        "description": "American astronaut and lunar explorer (1930–2012)"
+      },
+      "qid": "Q1615",
+      "label": "Neil Armstrong",
+      "birth": [
+        {
+          "time": "+1930-08-05T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "death": [
+        {
+          "time": "+2012-08-25T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "birth_place": "Q492796",
+      "death_place": "Q43196"
+    },
+    {
+      "name": "Yuri Gagarin",
+      "search_hit": {
+        "id": "Q7327",
+        "label": "Yuri Gagarin",
+        "description": "Soviet pilot and cosmonaut, first human in space (1934–1968)"
+      },
+      "qid": "Q7327",
+      "label": "Yuri Gagarin",
+      "birth": [
+        {
+          "time": "+1934-03-09T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "death": [
+        {
+          "time": "+1968-03-27T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "birth_place": "Q1010100",
+      "death_place": "Q4325894"
+    },
+    {
+      "name": "Albert Einstein",
+      "search_hit": {
+        "id": "Q937",
+        "label": "Albert Einstein",
+        "description": "German-born theoretical physicist (1879–1955)"
+      },
+      "qid": "Q937",
+      "label": "Albert Einstein",
+      "birth": [
+        {
+          "time": "+1879-03-14T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "death": [
+        {
+          "time": "+1955-04-18T00:00:00Z",
+          "timezone": 0,
+          "before": 0,
+          "after": 0,
+          "precision": 11,
+          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ],
+      "birth_place": "Q3012",
+      "death_place": "Q138518"
+    },
+    {
+      "name": "Wright Flyer",
+      "search_hit": {
+        "id": "Q113164444",
+        "label": "Flyer",
+        "description": "experimental aircraft family by the Wright Brothers"
+      },
+      "qid": "Q113164444",
+      "label": "Flyer"
+    }
+  ],
+  "bulk": {
+    "births_minute": {
+      "error": "HTTP 504: upstream request timeout"
+    },
+    "deaths_minute": {
+      "error": "HTTP 504: upstream request timeout"
+    },
+    "inception_minute": {
+      "error": "HTTP 504: upstream request timeout"
+    },
+    "point_in_time_minute": {
+      "error": "HTTP 504: upstream request timeout"
+    }
+  }
+}
