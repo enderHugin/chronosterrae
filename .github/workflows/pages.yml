@@ -1,9 +1,20 @@
 name: Publicar web (Pages)
 
-# Despliegue propio de la web, para poder verlo y relanzarlo desde Actions.
-# Requiere que en Settings > Pages la fuente (Source) sea "GitHub Actions".
-# De momento solo se lanza a mano; cuando la fuente este cambiada se anade el disparo en cada push.
+# Despliegue propio de la web (Settings > Pages > Source = "GitHub Actions").
+# Se publica en cada push que toque la web o sus datos, tras cada ejecucion de los workflows del bot
+# (sus commits usan GITHUB_TOKEN y no disparan "push") y a mano.
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'latest_harvest.json'
+      - 'data/paleocoastlines/**'
+      - '.github/workflows/pages.yml'
+  workflow_run:
+    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)']
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -17,6 +28,8 @@ concurrency:
 
 jobs:
   deploy:
+    # tras un workflow del bot solo si terminó bien
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
