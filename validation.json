@@ -1,0 +1,1444 @@
+{
+  "generated_at": "2026-11-01T16:48:21.796Z",
+  "reference": "JPL Horizons (https://ssd.jpl.nasa.gov/api/horizons.api), geocentrico, astrometrico J2000, escala TT",
+  "engine": "astronomy-engine 2.1.19",
+  "epochs": [
+    {
+      "year": -2000,
+      "calendar": "julian",
+      "jd": 990730
+    },
+    {
+      "year": -1500,
+      "calendar": "julian",
+      "jd": 1173355
+    },
+    {
+      "year": -1000,
+      "calendar": "julian",
+      "jd": 1355980
+    },
+    {
+      "year": -500,
+      "calendar": "julian",
+      "jd": 1538605
+    },
+    {
+      "year": 0,
+      "calendar": "julian",
+      "jd": 1721230
+    },
+    {
+      "year": 500,
+      "calendar": "julian",
+      "jd": 1903855
+    },
+    {
+      "year": 1000,
+      "calendar": "julian",
+      "jd": 2086480
+    },
+    {
+      "year": 1500,
+      "calendar": "julian",
+      "jd": 2269105
+    },
+    {
+      "year": 1700,
+      "calendar": "gregorian",
+      "jd": 2342144
+    },
+    {
+      "year": 1900,
+      "calendar": "gregorian",
+      "jd": 2415192
+    },
+    {
+      "year": 2000,
+      "calendar": "gregorian",
+      "jd": 2451717
+    },
+    {
+      "year": 2026,
+      "calendar": "gregorian",
+      "jd": 2461213
+    },
+    {
+      "year": 2100,
+      "calendar": "gregorian",
+      "jd": 2488241
+    },
+    {
+      "year": 2300,
+      "calendar": "gregorian",
+      "jd": 2561289
+    },
+    {
+      "year": 2600,
+      "calendar": "gregorian",
+      "jd": 2670862
+    },
+    {
+      "year": 3000,
+      "calendar": "gregorian",
+      "jd": 2816959
+    }
+  ],
+  "cases": [
+    {
+      "body": "Sun",
+      "year": -2000,
+      "horizons_ra": 129.14307,
+      "horizons_dec": 19.05353,
+      "engine_ra": 129.123613,
+      "engine_dec": 18.980941,
+      "error_arcsec": 269.582
+    },
+    {
+      "body": "Sun",
+      "year": -1500,
+      "horizons_ra": 126.06179,
+      "horizons_dec": 19.72904,
+      "engine_ra": 126.047817,
+      "engine_dec": 19.674294,
+      "error_arcsec": 202.696
+    },
+    {
+      "body": "Sun",
+      "year": -1000,
+      "horizons_ra": 122.95498,
+      "horizons_dec": 20.3503,
+      "engine_ra": 122.945481,
+      "engine_dec": 20.310503,
+      "error_arcsec": 146.815
+    },
+    {
+      "body": "Sun",
+      "year": -500,
+      "horizons_ra": 119.82569,
+      "horizons_dec": 20.91474,
+      "engine_ra": 119.82083,
+      "engine_dec": 20.886981,
+      "error_arcsec": 101.26
+    },
+    {
+      "body": "Sun",
+      "year": 0,
+      "horizons_ra": 116.68247,
+      "horizons_dec": 21.41915,
+      "engine_ra": 116.680056,
+      "engine_dec": 21.401266,
+      "error_arcsec": 64.89
+    },
+    {
+      "body": "Sun",
+      "year": 500,
+      "horizons_ra": 113.52057,
+      "horizons_dec": 21.86329,
+      "engine_ra": 113.519177,
+      "engine_dec": 21.853014,
+      "error_arcsec": 37.287
+    },
+    {
+      "body": "Sun",
+      "year": 1000,
+      "horizons_ra": 110.33713,
+      "horizons_dec": 22.24636,
+      "engine_ra": 110.336837,
+      "engine_dec": 22.241325,
+      "error_arcsec": 18.151
+    },
+    {
+      "body": "Sun",
+      "year": 1500,
+      "horizons_ra": 107.13633,
+      "horizons_dec": 22.56649,
+      "engine_ra": 107.13632,
+      "engine_dec": 22.564762,
+      "error_arcsec": 6.22
+    },
+    {
+      "body": "Sun",
+      "year": 1700,
+      "horizons_ra": 94.48418,
+      "horizons_dec": 23.41414,
+      "engine_ra": 94.484259,
+      "engine_dec": 23.413216,
+      "error_arcsec": 3.337
+    },
+    {
+      "body": "Sun",
+      "year": 1900,
+      "horizons_ra": 91.09769,
+      "horizons_dec": 23.44853,
+      "engine_ra": 91.097426,
+      "engine_dec": 23.448153,
+      "error_arcsec": 1.612
+    },
+    {
+      "body": "Sun",
+      "year": 2000,
+      "horizons_ra": 90.44494,
+      "horizons_dec": 23.43847,
+      "engine_ra": 90.444861,
+      "engine_dec": 23.43859,
+      "error_arcsec": 0.505
+    },
+    {
+      "body": "Sun",
+      "year": 2026,
+      "horizons_ra": 89.75556,
+      "horizons_dec": 23.4356,
+      "engine_ra": 89.75505,
+      "engine_dec": 23.435702,
+      "error_arcsec": 1.724
+    },
+    {
+      "body": "Sun",
+      "year": 2100,
+      "horizons_ra": 88.75249,
+      "horizons_dec": 23.42099,
+      "engine_ra": 88.752527,
+      "engine_dec": 23.421452,
+      "error_arcsec": 1.666
+    },
+    {
+      "body": "Sun",
+      "year": 2300,
+      "horizons_ra": 85.36821,
+      "horizons_dec": 23.33192,
+      "engine_ra": 85.368065,
+      "engine_dec": 23.332346,
+      "error_arcsec": 1.608
+    },
+    {
+      "body": "Sun",
+      "year": 2600,
+      "horizons_ra": 81.33972,
+      "horizons_dec": 23.12214,
+      "engine_ra": 81.339862,
+      "engine_dec": 23.123286,
+      "error_arcsec": 4.153
+    },
+    {
+      "body": "Sun",
+      "year": 3000,
+      "horizons_ra": 75.62907,
+      "horizons_dec": 22.65205,
+      "engine_ra": 75.629641,
+      "engine_dec": 22.654002,
+      "error_arcsec": 7.278
+    },
+    {
+      "body": "Moon",
+      "year": -2000,
+      "horizons_ra": 115.26141,
+      "horizons_dec": 19.65759,
+      "engine_ra": 116.542486,
+      "engine_dec": 19.525494,
+      "error_arcsec": 4370.812
+    },
+    {
+      "body": "Moon",
+      "year": -1500,
+      "horizons_ra": 198.51451,
+      "horizons_dec": -6.10509,
+      "engine_ra": 199.207788,
+      "engine_dec": -6.340094,
+      "error_arcsec": 2621.368
+    },
+    {
+      "body": "Moon",
+      "year": -1000,
+      "horizons_ra": 299.71584,
+      "horizons_dec": -16.06302,
+      "engine_ra": 300.159618,
+      "engine_dec": -15.967197,
+      "error_arcsec": 1573.864
+    },
+    {
+      "body": "Moon",
+      "year": -500,
+      "horizons_ra": 36.01681,
+      "horizons_dec": 18.52147,
+      "engine_ra": 36.340031,
+      "engine_dec": 18.610491,
+      "error_arcsec": 1148.65
+    },
+    {
+      "body": "Moon",
+      "year": 0,
+      "horizons_ra": 130.38037,
+      "horizons_dec": 18.30055,
+      "engine_ra": 130.633019,
+      "engine_dec": 18.21529,
+      "error_arcsec": 916.66
+    },
+    {
+      "body": "Moon",
+      "year": 500,
+      "horizons_ra": 207.19411,
+      "horizons_dec": -15.07798,
+      "engine_ra": 207.310246,
+      "engine_dec": -15.12724,
+      "error_arcsec": 440.888
+    },
+    {
+      "body": "Moon",
+      "year": 1000,
+      "horizons_ra": 312.37141,
+      "horizons_dec": -23.01579,
+      "engine_ra": 312.424061,
+      "engine_dec": -23.001758,
+      "error_arcsec": 181.629
+    },
+    {
+      "body": "Moon",
+      "year": 1500,
+      "horizons_ra": 47.69074,
+      "horizons_dec": 15.53949,
+      "engine_ra": 47.699667,
+      "engine_dec": 15.54243,
+      "error_arcsec": 32.721
+    },
+    {
+      "body": "Moon",
+      "year": 1700,
+      "horizons_ra": 156.37837,
+      "horizons_dec": 9.24564,
+      "engine_ra": 156.381144,
+      "engine_dec": 9.244657,
+      "error_arcsec": 10.473
+    },
+    {
+      "body": "Moon",
+      "year": 1900,
+      "horizons_ra": 17.16223,
+      "horizons_dec": 11.77966,
+      "engine_ra": 17.161006,
+      "engine_dec": 11.77887,
+      "error_arcsec": 5.166
+    },
+    {
+      "body": "Moon",
+      "year": 2000,
+      "horizons_ra": 323.19085,
+      "horizons_dec": -16.94099,
+      "engine_ra": 323.194347,
+      "engine_dec": -16.939766,
+      "error_arcsec": 12.824
+    },
+    {
+      "body": "Moon",
+      "year": 2026,
+      "horizons_ra": 174.46052,
+      "horizons_dec": 0.20136,
+      "engine_ra": 174.459661,
+      "engine_dec": 0.20142,
+      "error_arcsec": 3.099
+    },
+    {
+      "body": "Moon",
+      "year": 2100,
+      "horizons_ra": 260.25008,
+      "horizons_dec": -28.05802,
+      "engine_ra": 260.256513,
+      "engine_dec": -28.05844,
+      "error_arcsec": 20.494
+    },
+    {
+      "body": "Moon",
+      "year": 2300,
+      "horizons_ra": 134.74952,
+      "horizons_dec": 21.88064,
+      "engine_ra": 134.748923,
+      "engine_dec": 21.881505,
+      "error_arcsec": 3.699
+    },
+    {
+      "body": "Moon",
+      "year": 2600,
+      "horizons_ra": 294.86794,
+      "horizons_dec": -26.55222,
+      "engine_ra": 294.888662,
+      "engine_dec": -26.548934,
+      "error_arcsec": 67.772
+    },
+    {
+      "body": "Moon",
+      "year": 3000,
+      "horizons_ra": 35.74981,
+      "horizons_dec": 12.71803,
+      "engine_ra": 35.790255,
+      "engine_dec": 12.725905,
+      "error_arcsec": 144.831
+    },
+    {
+      "body": "Mercury",
+      "year": -2000,
+      "horizons_ra": 154.29209,
+      "horizons_dec": 9.30776,
+      "engine_ra": 154.275923,
+      "engine_dec": 9.166801,
+      "error_arcsec": 510.693
+    },
+    {
+      "body": "Mercury",
+      "year": -1500,
+      "horizons_ra": 150.23325,
+      "horizons_dec": 10.44078,
+      "engine_ra": 150.22266,
+      "engine_dec": 10.32258,
+      "error_arcsec": 427.168
+    },
+    {
+      "body": "Mercury",
+      "year": -1000,
+      "horizons_ra": 145.69068,
+      "horizons_dec": 11.63793,
+      "engine_ra": 145.685472,
+      "engine_dec": 11.541503,
+      "error_arcsec": 347.621
+    },
+    {
+      "body": "Mercury",
+      "year": -500,
+      "horizons_ra": 140.60808,
+      "horizons_dec": 12.88089,
+      "engine_ra": 140.609052,
+      "engine_dec": 12.804674,
+      "error_arcsec": 274.397
+    },
+    {
+      "body": "Mercury",
+      "year": 0,
+      "horizons_ra": 134.94766,
+      "horizons_dec": 14.1357,
+      "engine_ra": 134.950599,
+      "engine_dec": 14.079521,
+      "error_arcsec": 202.505
+    },
+    {
+      "body": "Mercury",
+      "year": 500,
+      "horizons_ra": 128.6866,
+      "horizons_dec": 15.35382,
+      "engine_ra": 128.687925,
+      "engine_dec": 15.316133,
+      "error_arcsec": 135.751
+    },
+    {
+      "body": "Mercury",
+      "year": 1000,
+      "horizons_ra": 121.82724,
+      "horizons_dec": 16.47467,
+      "engine_ra": 121.830544,
+      "engine_dec": 16.452177,
+      "error_arcsec": 81.773
+    },
+    {
+      "body": "Mercury",
+      "year": 1500,
+      "horizons_ra": 114.46072,
+      "horizons_dec": 17.41899,
+      "engine_ra": 114.462457,
+      "engine_dec": 17.409129,
+      "error_arcsec": 35.997
+    },
+    {
+      "body": "Mercury",
+      "year": 1700,
+      "horizons_ra": 74.30115,
+      "horizons_dec": 21.12271,
+      "engine_ra": 74.30047,
+      "engine_dec": 21.123701,
+      "error_arcsec": 4.234
+    },
+    {
+      "body": "Mercury",
+      "year": 1900,
+      "horizons_ra": 115.17457,
+      "horizons_dec": 23.22271,
+      "engine_ra": 115.174427,
+      "engine_dec": 23.22307,
+      "error_arcsec": 1.379
+    },
+    {
+      "body": "Mercury",
+      "year": 2000,
+      "horizons_ra": 111.26241,
+      "horizons_dec": 20.71118,
+      "engine_ra": 111.261066,
+      "engine_dec": 20.710929,
+      "error_arcsec": 4.614
+    },
+    {
+      "body": "Mercury",
+      "year": 2026,
+      "horizons_ra": 115.16131,
+      "horizons_dec": 21.31603,
+      "engine_ra": 115.160572,
+      "engine_dec": 21.316862,
+      "error_arcsec": 3.885
+    },
+    {
+      "body": "Mercury",
+      "year": 2100,
+      "horizons_ra": 73.05065,
+      "horizons_dec": 18.03435,
+      "engine_ra": 73.052088,
+      "engine_dec": 18.035968,
+      "error_arcsec": 7.625
+    },
+    {
+      "body": "Mercury",
+      "year": 2300,
+      "horizons_ra": 84.83748,
+      "horizons_dec": 24.27932,
+      "engine_ra": 84.838831,
+      "engine_dec": 24.281417,
+      "error_arcsec": 8.756
+    },
+    {
+      "body": "Mercury",
+      "year": 2600,
+      "horizons_ra": 66.84817,
+      "horizons_dec": 17.30972,
+      "engine_ra": 66.850088,
+      "engine_dec": 17.317087,
+      "error_arcsec": 27.329
+    },
+    {
+      "body": "Mercury",
+      "year": 3000,
+      "horizons_ra": 97.67833,
+      "horizons_dec": 23.21079,
+      "engine_ra": 97.68242,
+      "engine_dec": 23.210876,
+      "error_arcsec": 13.535
+    },
+    {
+      "body": "Venus",
+      "year": -2000,
+      "horizons_ra": 128.88975,
+      "horizons_dec": 19.81204,
+      "engine_ra": 128.870287,
+      "engine_dec": 19.802496,
+      "error_arcsec": 74.34
+    },
+    {
+      "body": "Venus",
+      "year": -1500,
+      "horizons_ra": 88.12879,
+      "horizons_dec": 22.2024,
+      "engine_ra": 88.13176,
+      "engine_dec": 22.117657,
+      "error_arcsec": 305.236
+    },
+    {
+      "body": "Venus",
+      "year": -1000,
+      "horizons_ra": 113.49495,
+      "horizons_dec": 17.50678,
+      "engine_ra": 113.421733,
+      "engine_dec": 17.275316,
+      "error_arcsec": 870.406
+    },
+    {
+      "body": "Venus",
+      "year": -500,
+      "horizons_ra": 157.62815,
+      "horizons_dec": 11.34627,
+      "engine_ra": 157.622969,
+      "engine_dec": 11.346507,
+      "error_arcsec": 18.307
+    },
+    {
+      "body": "Venus",
+      "year": 0,
+      "horizons_ra": 119.96362,
+      "horizons_dec": 21.64862,
+      "engine_ra": 119.960332,
+      "engine_dec": 21.646681,
+      "error_arcsec": 13.03
+    },
+    {
+      "body": "Venus",
+      "year": 500,
+      "horizons_ra": 78.45495,
+      "horizons_dec": 21.72403,
+      "engine_ra": 78.456745,
+      "engine_dec": 21.709573,
+      "error_arcsec": 52.392
+    },
+    {
+      "body": "Venus",
+      "year": 1000,
+      "horizons_ra": 82.74009,
+      "horizons_dec": 18.8301,
+      "engine_ra": 82.741816,
+      "engine_dec": 18.806138,
+      "error_arcsec": 86.463
+    },
+    {
+      "body": "Venus",
+      "year": 1500,
+      "horizons_ra": 148.48208,
+      "horizons_dec": 14.60554,
+      "engine_ra": 148.48183,
+      "engine_dec": 14.605596,
+      "error_arcsec": 0.894
+    },
+    {
+      "body": "Venus",
+      "year": 1700,
+      "horizons_ra": 142.44669,
+      "horizons_dec": 16.59824,
+      "engine_ra": 142.446036,
+      "engine_dec": 16.59857,
+      "error_arcsec": 2.55
+    },
+    {
+      "body": "Venus",
+      "year": 1900,
+      "horizons_ra": 116.84476,
+      "horizons_dec": 20.74284,
+      "engine_ra": 116.843928,
+      "engine_dec": 20.741408,
+      "error_arcsec": 5.867
+    },
+    {
+      "body": "Venus",
+      "year": 2000,
+      "horizons_ra": 93.46021,
+      "horizons_dec": 23.89244,
+      "engine_ra": 93.460112,
+      "engine_dec": 23.892775,
+      "error_arcsec": 1.249
+    },
+    {
+      "body": "Venus",
+      "year": 2026,
+      "horizons_ra": 131.94741,
+      "horizons_dec": 19.9264,
+      "engine_ra": 131.947182,
+      "engine_dec": 19.926676,
+      "error_arcsec": 1.258
+    },
+    {
+      "body": "Venus",
+      "year": 2100,
+      "horizons_ra": 46.50879,
+      "horizons_dec": 14.11536,
+      "engine_ra": 46.509846,
+      "engine_dec": 14.115917,
+      "error_arcsec": 4.198
+    },
+    {
+      "body": "Venus",
+      "year": 2300,
+      "horizons_ra": 40.18948,
+      "horizons_dec": 12.90661,
+      "engine_ra": 40.190301,
+      "engine_dec": 12.907388,
+      "error_arcsec": 4.018
+    },
+    {
+      "body": "Venus",
+      "year": 2600,
+      "horizons_ra": 127.51365,
+      "horizons_dec": 21.1054,
+      "engine_ra": 127.513519,
+      "engine_dec": 21.108717,
+      "error_arcsec": 11.948
+    },
+    {
+      "body": "Venus",
+      "year": 3000,
+      "horizons_ra": 58.96677,
+      "horizons_dec": 18.5759,
+      "engine_ra": 58.97143,
+      "engine_dec": 18.574604,
+      "error_arcsec": 16.573
+    },
+    {
+      "body": "Mars",
+      "year": -2000,
+      "horizons_ra": 168.86464,
+      "horizons_dec": 6.26469,
+      "engine_ra": 168.827836,
+      "engine_dec": 6.274692,
+      "error_arcsec": 136.535
+    },
+    {
+      "body": "Mars",
+      "year": -1500,
+      "horizons_ra": 137.74191,
+      "horizons_dec": 17.78947,
+      "engine_ra": 137.739196,
+      "engine_dec": 17.812307,
+      "error_arcsec": 82.739
+    },
+    {
+      "body": "Mars",
+      "year": -1000,
+      "horizons_ra": 104.11645,
+      "horizons_dec": 23.67934,
+      "engine_ra": 104.104804,
+      "engine_dec": 23.699165,
+      "error_arcsec": 81.043
+    },
+    {
+      "body": "Mars",
+      "year": -500,
+      "horizons_ra": 65.19665,
+      "horizons_dec": 21.0379,
+      "engine_ra": 65.195109,
+      "engine_dec": 21.0265,
+      "error_arcsec": 41.365
+    },
+    {
+      "body": "Mars",
+      "year": 0,
+      "horizons_ra": 12.40374,
+      "horizons_dec": 1.62162,
+      "engine_ra": 12.432836,
+      "engine_dec": 1.586568,
+      "error_arcsec": 163.972
+    },
+    {
+      "body": "Mars",
+      "year": 500,
+      "horizons_ra": 213.20409,
+      "horizons_dec": -14.62601,
+      "engine_ra": 213.197412,
+      "engine_dec": -14.647562,
+      "error_arcsec": 81
+    },
+    {
+      "body": "Mars",
+      "year": 1000,
+      "horizons_ra": 169.3561,
+      "horizons_dec": 5.5921,
+      "engine_ra": 169.355406,
+      "engine_dec": 5.590777,
+      "error_arcsec": 5.373
+    },
+    {
+      "body": "Mars",
+      "year": 1500,
+      "horizons_ra": 137.22391,
+      "horizons_dec": 17.73526,
+      "engine_ra": 137.224015,
+      "engine_dec": 17.735093,
+      "error_arcsec": 0.7
+    },
+    {
+      "body": "Mars",
+      "year": 1700,
+      "horizons_ra": 220.30198,
+      "horizons_dec": -17.59709,
+      "engine_ra": 220.301192,
+      "engine_dec": -17.598693,
+      "error_arcsec": 6.371
+    },
+    {
+      "body": "Mars",
+      "year": 1900,
+      "horizons_ra": 54.97722,
+      "horizons_dec": 19.20826,
+      "engine_ra": 54.976892,
+      "engine_dec": 19.208003,
+      "error_arcsec": 1.449
+    },
+    {
+      "body": "Mars",
+      "year": 2000,
+      "horizons_ra": 93.65977,
+      "horizons_dec": 24.20318,
+      "engine_ra": 93.659923,
+      "engine_dec": 24.202997,
+      "error_arcsec": 0.827
+    },
+    {
+      "body": "Mars",
+      "year": 2026,
+      "horizons_ra": 52.12797,
+      "horizons_dec": 18.46721,
+      "engine_ra": 52.127892,
+      "engine_dec": 18.466532,
+      "error_arcsec": 2.454
+    },
+    {
+      "body": "Mars",
+      "year": 2100,
+      "horizons_ra": 128.42071,
+      "horizons_dec": 20.08196,
+      "engine_ra": 128.420555,
+      "engine_dec": 20.082133,
+      "error_arcsec": 0.814
+    },
+    {
+      "body": "Mars",
+      "year": 2300,
+      "horizons_ra": 229.29469,
+      "horizons_dec": -20.54738,
+      "engine_ra": 229.295878,
+      "engine_dec": -20.545218,
+      "error_arcsec": 8.754
+    },
+    {
+      "body": "Mars",
+      "year": 2600,
+      "horizons_ra": 89.70933,
+      "horizons_dec": 24.21244,
+      "engine_ra": 89.709002,
+      "engine_dec": 24.214047,
+      "error_arcsec": 5.883
+    },
+    {
+      "body": "Mars",
+      "year": 3000,
+      "horizons_ra": 5.34281,
+      "horizons_dec": 0.18016,
+      "engine_ra": 5.343756,
+      "engine_dec": 0.176994,
+      "error_arcsec": 11.896
+    },
+    {
+      "body": "Jupiter",
+      "year": -2000,
+      "horizons_ra": 339.11428,
+      "horizons_dec": -10.21808,
+      "engine_ra": 339.452342,
+      "engine_dec": -10.056368,
+      "error_arcsec": 1331.983
+    },
+    {
+      "body": "Jupiter",
+      "year": -1500,
+      "horizons_ra": 38.86622,
+      "horizons_dec": 13.95417,
+      "engine_ra": 38.693449,
+      "engine_dec": 13.920888,
+      "error_arcsec": 615.439
+    },
+    {
+      "body": "Jupiter",
+      "year": -1000,
+      "horizons_ra": 93.22743,
+      "horizons_dec": 23.29202,
+      "engine_ra": 93.300077,
+      "engine_dec": 23.298865,
+      "error_arcsec": 241.47
+    },
+    {
+      "body": "Jupiter",
+      "year": -500,
+      "horizons_ra": 139.648,
+      "horizons_dec": 16.57593,
+      "engine_ra": 139.596331,
+      "engine_dec": 16.59889,
+      "error_arcsec": 196.498
+    },
+    {
+      "body": "Jupiter",
+      "year": 0,
+      "horizons_ra": 182.20204,
+      "horizons_dec": 0.4844,
+      "engine_ra": 182.207296,
+      "engine_dec": 0.468283,
+      "error_arcsec": 61.029
+    },
+    {
+      "body": "Jupiter",
+      "year": 500,
+      "horizons_ra": 230.1345,
+      "horizons_dec": -17.44312,
+      "engine_ra": 230.133719,
+      "engine_dec": -17.455084,
+      "error_arcsec": 43.152
+    },
+    {
+      "body": "Jupiter",
+      "year": 1000,
+      "horizons_ra": 299.58183,
+      "horizons_dec": -21.11879,
+      "engine_ra": 299.578838,
+      "engine_dec": -21.115926,
+      "error_arcsec": 14.398
+    },
+    {
+      "body": "Jupiter",
+      "year": 1500,
+      "horizons_ra": 5.02767,
+      "horizons_dec": 0.73169,
+      "engine_ra": 5.025496,
+      "engine_dec": 0.733182,
+      "error_arcsec": 9.492
+    },
+    {
+      "body": "Jupiter",
+      "year": 1700,
+      "horizons_ra": 307.28118,
+      "horizons_dec": -19.55886,
+      "engine_ra": 307.279649,
+      "engine_dec": -19.559144,
+      "error_arcsec": 5.294
+    },
+    {
+      "body": "Jupiter",
+      "year": 1900,
+      "horizons_ra": 242.63446,
+      "horizons_dec": -20.22828,
+      "engine_ra": 242.635601,
+      "engine_dec": -20.229784,
+      "error_arcsec": 6.647
+    },
+    {
+      "body": "Jupiter",
+      "year": 2000,
+      "horizons_ra": 56.0652,
+      "horizons_dec": 18.92302,
+      "engine_ra": 56.064647,
+      "engine_dec": 18.924521,
+      "error_arcsec": 5.721
+    },
+    {
+      "body": "Jupiter",
+      "year": 2026,
+      "horizons_ra": 119.96042,
+      "horizons_dec": 21.02235,
+      "engine_ra": 119.959731,
+      "engine_dec": 21.022152,
+      "error_arcsec": 2.423
+    },
+    {
+      "body": "Jupiter",
+      "year": 2100,
+      "horizons_ra": 191.6595,
+      "horizons_dec": -3.53914,
+      "engine_ra": 191.658953,
+      "engine_dec": -3.538445,
+      "error_arcsec": 3.179
+    },
+    {
+      "body": "Jupiter",
+      "year": 2300,
+      "horizons_ra": 149.41861,
+      "horizons_dec": 13.48482,
+      "engine_ra": 149.418065,
+      "engine_dec": 13.484099,
+      "error_arcsec": 3.221
+    },
+    {
+      "body": "Jupiter",
+      "year": 2600,
+      "horizons_ra": 249.33466,
+      "horizons_dec": -21.32997,
+      "engine_ra": 249.333128,
+      "engine_dec": -21.333777,
+      "error_arcsec": 14.636
+    },
+    {
+      "body": "Jupiter",
+      "year": 3000,
+      "horizons_ra": 152.50727,
+      "horizons_dec": 12.41819,
+      "engine_ra": 152.511737,
+      "engine_dec": 12.408584,
+      "error_arcsec": 37.982
+    },
+    {
+      "body": "Saturn",
+      "year": -2000,
+      "horizons_ra": 139.50224,
+      "horizons_dec": 16.31639,
+      "engine_ra": 139.124303,
+      "engine_dec": 16.470888,
+      "error_arcsec": 1418.82
+    },
+    {
+      "body": "Saturn",
+      "year": -1500,
+      "horizons_ra": 131.65915,
+      "horizons_dec": 18.26866,
+      "engine_ra": 132.22823,
+      "engine_dec": 18.047686,
+      "error_arcsec": 2102.933
+    },
+    {
+      "body": "Saturn",
+      "year": -1000,
+      "horizons_ra": 119.06453,
+      "horizons_dec": 20.61754,
+      "engine_ra": 118.859073,
+      "engine_dec": 20.641888,
+      "error_arcsec": 697.745
+    },
+    {
+      "body": "Saturn",
+      "year": -500,
+      "horizons_ra": 110.53518,
+      "horizons_dec": 21.68172,
+      "engine_ra": 110.713378,
+      "engine_dec": 21.61289,
+      "error_arcsec": 645.706
+    },
+    {
+      "body": "Saturn",
+      "year": 0,
+      "horizons_ra": 97.32079,
+      "horizons_dec": 22.40287,
+      "engine_ra": 97.257556,
+      "engine_dec": 22.376863,
+      "error_arcsec": 230.364
+    },
+    {
+      "body": "Saturn",
+      "year": 500,
+      "horizons_ra": 87.71426,
+      "horizons_dec": 22.26144,
+      "engine_ra": 87.71501,
+      "engine_dec": 22.257753,
+      "error_arcsec": 13.505
+    },
+    {
+      "body": "Saturn",
+      "year": 1000,
+      "horizons_ra": 75.49696,
+      "horizons_dec": 21.23471,
+      "engine_ra": 75.488347,
+      "engine_dec": 21.221648,
+      "error_arcsec": 55.195
+    },
+    {
+      "body": "Saturn",
+      "year": 1500,
+      "horizons_ra": 65.62134,
+      "horizons_dec": 19.73639,
+      "engine_ra": 65.622599,
+      "engine_dec": 19.736231,
+      "error_arcsec": 4.304
+    },
+    {
+      "body": "Saturn",
+      "year": 1700,
+      "horizons_ra": 350.21097,
+      "horizons_dec": -6.29349,
+      "engine_ra": 350.210822,
+      "engine_dec": -6.292803,
+      "error_arcsec": 2.531
+    },
+    {
+      "body": "Saturn",
+      "year": 1900,
+      "horizons_ra": 273.55951,
+      "horizons_dec": -22.41211,
+      "engine_ra": 273.556607,
+      "engine_dec": -22.410809,
+      "error_arcsec": 10.735
+    },
+    {
+      "body": "Saturn",
+      "year": 2000,
+      "horizons_ra": 53.76583,
+      "horizons_dec": 17.20814,
+      "engine_ra": 53.767403,
+      "engine_dec": 17.20863,
+      "error_arcsec": 5.688
+    },
+    {
+      "body": "Saturn",
+      "year": 2026,
+      "horizons_ra": 13.18412,
+      "horizons_dec": 3.10657,
+      "engine_ra": 13.181673,
+      "engine_dec": 3.106015,
+      "error_arcsec": 9.019
+    },
+    {
+      "body": "Saturn",
+      "year": 2100,
+      "horizons_ra": 198.05427,
+      "horizons_dec": -4.85418,
+      "engine_ra": 198.054983,
+      "engine_dec": -4.849884,
+      "error_arcsec": 15.675
+    },
+    {
+      "body": "Saturn",
+      "year": 2300,
+      "horizons_ra": 124.79879,
+      "horizons_dec": 20.13836,
+      "engine_ra": 124.797341,
+      "engine_dec": 20.134019,
+      "error_arcsec": 16.378
+    },
+    {
+      "body": "Saturn",
+      "year": 2600,
+      "horizons_ra": 188.55074,
+      "horizons_dec": -0.90578,
+      "engine_ra": 188.552867,
+      "engine_dec": -0.905979,
+      "error_arcsec": 7.69
+    },
+    {
+      "body": "Saturn",
+      "year": 3000,
+      "horizons_ra": 34.18604,
+      "horizons_dec": 11.25807,
+      "engine_ra": 34.175093,
+      "engine_dec": 11.249968,
+      "error_arcsec": 48.421
+    },
+    {
+      "body": "Uranus",
+      "year": -2000,
+      "horizons_ra": 93.45458,
+      "horizons_dec": 23.69846,
+      "engine_ra": 93.45922,
+      "engine_dec": 23.7093,
+      "error_arcsec": 41.916
+    },
+    {
+      "body": "Uranus",
+      "year": -1500,
+      "horizons_ra": 75.2101,
+      "horizons_dec": 22.79561,
+      "engine_ra": 75.225551,
+      "engine_dec": 22.809751,
+      "error_arcsec": 72.257
+    },
+    {
+      "body": "Uranus",
+      "year": -1000,
+      "horizons_ra": 58.16202,
+      "horizons_dec": 20.03115,
+      "engine_ra": 58.178366,
+      "engine_dec": 20.043414,
+      "error_arcsec": 70.751
+    },
+    {
+      "body": "Uranus",
+      "year": -500,
+      "horizons_ra": 41.83619,
+      "horizons_dec": 15.70823,
+      "engine_ra": 41.853699,
+      "engine_dec": 15.717615,
+      "error_arcsec": 69.448
+    },
+    {
+      "body": "Uranus",
+      "year": 0,
+      "horizons_ra": 25.85015,
+      "horizons_dec": 10.07594,
+      "engine_ra": 25.869453,
+      "engine_dec": 10.085379,
+      "error_arcsec": 76.392
+    },
+    {
+      "body": "Uranus",
+      "year": 500,
+      "horizons_ra": 10.11031,
+      "horizons_dec": 3.56576,
+      "engine_ra": 10.121694,
+      "engine_dec": 3.573175,
+      "error_arcsec": 48.844
+    },
+    {
+      "body": "Uranus",
+      "year": 1000,
+      "horizons_ra": 354.49385,
+      "horizons_dec": -3.24817,
+      "engine_ra": 354.494848,
+      "engine_dec": -3.24519,
+      "error_arcsec": 11.31
+    },
+    {
+      "body": "Uranus",
+      "year": 1500,
+      "horizons_ra": 338.80443,
+      "horizons_dec": -9.76421,
+      "engine_ra": 338.804099,
+      "engine_dec": -9.763977,
+      "error_arcsec": 1.444
+    },
+    {
+      "body": "Uranus",
+      "year": 1700,
+      "horizons_ra": 105.82928,
+      "horizons_dec": 23.03057,
+      "engine_ra": 105.831088,
+      "engine_dec": 23.031829,
+      "error_arcsec": 7.513
+    },
+    {
+      "body": "Uranus",
+      "year": 1900,
+      "horizons_ra": 249.4988,
+      "horizons_dec": -22.07355,
+      "engine_ra": 249.499747,
+      "engine_dec": -22.072042,
+      "error_arcsec": 6.281
+    },
+    {
+      "body": "Uranus",
+      "year": 2000,
+      "horizons_ra": 323.1637,
+      "horizons_dec": -15.33013,
+      "engine_ra": 323.161006,
+      "engine_dec": -15.332328,
+      "error_arcsec": 12.251
+    },
+    {
+      "body": "Uranus",
+      "year": 2026,
+      "horizons_ra": 60.828,
+      "horizons_dec": 20.57129,
+      "engine_ra": 60.827424,
+      "engine_dec": 20.572572,
+      "error_arcsec": 5.006
+    },
+    {
+      "body": "Uranus",
+      "year": 2100,
+      "horizons_ra": 22.1106,
+      "horizons_dec": 8.61857,
+      "engine_ra": 22.111443,
+      "engine_dec": 8.618218,
+      "error_arcsec": 3.255
+    },
+    {
+      "body": "Uranus",
+      "year": 2300,
+      "horizons_ra": 158.88859,
+      "horizons_dec": 9.68591,
+      "engine_ra": 158.88538,
+      "engine_dec": 9.684672,
+      "error_arcsec": 12.233
+    },
+    {
+      "body": "Uranus",
+      "year": 2600,
+      "horizons_ra": 7.77726,
+      "horizons_dec": 2.58866,
+      "engine_ra": 7.781091,
+      "engine_dec": 2.590767,
+      "error_arcsec": 15.727
+    },
+    {
+      "body": "Uranus",
+      "year": 3000,
+      "horizons_ra": 289.31821,
+      "horizons_dec": -22.67603,
+      "engine_ra": 289.325278,
+      "engine_dec": -22.67427,
+      "error_arcsec": 24.319
+    },
+    {
+      "body": "Neptune",
+      "year": -2000,
+      "horizons_ra": 203.61076,
+      "horizons_dec": -8.02208,
+      "engine_ra": 203.594797,
+      "engine_dec": -8.007183,
+      "error_arcsec": 78.193
+    },
+    {
+      "body": "Neptune",
+      "year": -1500,
+      "horizons_ra": 214.8573,
+      "horizons_dec": -12.03712,
+      "engine_ra": 214.84744,
+      "engine_dec": -12.027856,
+      "error_arcsec": 48.138
+    },
+    {
+      "body": "Neptune",
+      "year": -1000,
+      "horizons_ra": 226.59591,
+      "horizons_dec": -15.63818,
+      "engine_ra": 226.582371,
+      "engine_dec": -15.630483,
+      "error_arcsec": 54.504
+    },
+    {
+      "body": "Neptune",
+      "year": -500,
+      "horizons_ra": 239.10731,
+      "horizons_dec": -18.67727,
+      "engine_ra": 239.09083,
+      "engine_dec": -18.671038,
+      "error_arcsec": 60.518
+    },
+    {
+      "body": "Neptune",
+      "year": 0,
+      "horizons_ra": 252.44726,
+      "horizons_dec": -20.91936,
+      "engine_ra": 252.436326,
+      "engine_dec": -20.915639,
+      "error_arcsec": 39.132
+    },
+    {
+      "body": "Neptune",
+      "year": 500,
+      "horizons_ra": 266.42188,
+      "horizons_dec": -22.11712,
+      "engine_ra": 266.413755,
+      "engine_dec": -22.115226,
+      "error_arcsec": 27.941
+    },
+    {
+      "body": "Neptune",
+      "year": 1000,
+      "horizons_ra": 280.65072,
+      "horizons_dec": -22.11058,
+      "engine_ra": 280.644977,
+      "engine_dec": -22.109979,
+      "error_arcsec": 19.276
+    },
+    {
+      "body": "Neptune",
+      "year": 1500,
+      "horizons_ra": 294.67409,
+      "horizons_dec": -20.89345,
+      "engine_ra": 294.677318,
+      "engine_dec": -20.891504,
+      "error_arcsec": 12.922
+    },
+    {
+      "body": "Neptune",
+      "year": 1700,
+      "horizons_ra": 11.48122,
+      "horizons_dec": 3.30862,
+      "engine_ra": 11.48097,
+      "engine_dec": 3.309008,
+      "error_arcsec": 1.661
+    },
+    {
+      "body": "Neptune",
+      "year": 1900,
+      "horizons_ra": 88.07989,
+      "horizons_dec": 22.24578,
+      "engine_ra": 88.080399,
+      "engine_dec": 22.245001,
+      "error_arcsec": 3.277
+    },
+    {
+      "body": "Neptune",
+      "year": 2000,
+      "horizons_ra": 308.40067,
+      "horizons_dec": -18.54262,
+      "engine_ra": 308.402968,
+      "engine_dec": -18.539706,
+      "error_arcsec": 13.099
+    },
+    {
+      "body": "Neptune",
+      "year": 2026,
+      "horizons_ra": 4.18905,
+      "horizons_dec": 0.33384,
+      "engine_ra": 4.190974,
+      "engine_dec": 0.337519,
+      "error_arcsec": 14.945
+    },
+    {
+      "body": "Neptune",
+      "year": 2100,
+      "horizons_ra": 165.0191,
+      "horizons_dec": 7.44146,
+      "engine_ra": 165.023309,
+      "engine_dec": 7.440594,
+      "error_arcsec": 15.344
+    },
+    {
+      "body": "Neptune",
+      "year": 2300,
+      "horizons_ra": 238.25242,
+      "horizons_dec": -18.47453,
+      "engine_ra": 238.249717,
+      "engine_dec": -18.475887,
+      "error_arcsec": 10.441
+    },
+    {
+      "body": "Neptune",
+      "year": 2600,
+      "horizons_ra": 176.14653,
+      "horizons_dec": 3.0442,
+      "engine_ra": 176.149562,
+      "engine_dec": 3.041042,
+      "error_arcsec": 15.749
+    },
+    {
+      "body": "Neptune",
+      "year": 3000,
+      "horizons_ra": 332.97349,
+      "horizons_dec": -11.71349,
+      "engine_ra": 332.975707,
+      "engine_dec": -11.71323,
+      "error_arcsec": 7.87
+    }
+  ],
+  "errors": [],
+  "sample_header": "\n\n*******************************************************************************\nEphemeris / API_USER Sun Nov  1 08:48:22 2026 Pasadena, USA      / Horizons    \n*******************************************************************************\nTarget body name: Sun (10)                        {source: DE441}\nCenter body name: Earth (399)                     {source: DE441}\nCenter-site name: GEOCENTRIC\n*******************************************************************************\nStart time      : B.C. 2001-Jun-21 12:00:00.0000 TT      \nStop  time      : A.D. 3000-Jun-21 12:00:00.0000 TT      \nStep-size       : 0 steps\n*******************************************************************************\nTarget pole/equ : IAU_SUN                         {East-longitude positive}\nTarget radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}       \nCenter geodetic : 0.0, 0.0, -6378.137             {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter pole/equ : ITRF93                          {East-longitude positive}\nCenter radii    : 6378.137, 6378.137, 6356.752 km {Equator_a, b, pole_c}       \nTarget primary  : Sun\nVis. interferer : MOON (R_eq= 1737.400) km        {source: DE441}\nRel. light bend : Sun                             {source: DE441}\nRel. lght bnd GM: 1.3271E+11 km^3/s^2                                          \nAtmos refraction: NO (AIRLESS)\nRA format       : DEG\nTime format     : CAL \nCalendar mode   : Mixed Julian/Gregorian\nEOP file        : eop.261030.p270126                                           \nEOP coverage    : DATA-BASED 1962-JAN-20 TO 2026-OCT-30. PREDICTS-> 2027-JAN-25\nUnits conversion: 1 au= 149597870.700 km, c= 299792.458 km/s, 1 day= 86400.0 s ",
+  "summary": {
+    "Sun": {
+      "1700-2200": 3.34,
+      "0-1699": 64.89,
+      "antes de 0": 269.58,
+      "despues de 2200": 7.28
+    },
+    "Moon": {
+      "1700-2200": 20.49,
+      "0-1699": 916.66,
+      "antes de 0": 4370.81,
+      "despues de 2200": 144.83
+    },
+    "Mercury": {
+      "1700-2200": 7.63,
+      "0-1699": 202.5,
+      "antes de 0": 510.69,
+      "despues de 2200": 27.33
+    },
+    "Venus": {
+      "1700-2200": 5.87,
+      "0-1699": 86.46,
+      "antes de 0": 870.41,
+      "despues de 2200": 16.57
+    },
+    "Mars": {
+      "1700-2200": 6.37,
+      "0-1699": 163.97,
+      "antes de 0": 136.53,
+      "despues de 2200": 11.9
+    },
+    "Jupiter": {
+      "1700-2200": 6.65,
+      "0-1699": 61.03,
+      "antes de 0": 1331.98,
+      "despues de 2200": 37.98
+    },
+    "Saturn": {
+      "1700-2200": 15.68,
+      "0-1699": 230.36,
+      "antes de 0": 2102.93,
+      "despues de 2200": 48.42
+    },
+    "Uranus": {
+      "1700-2200": 12.25,
+      "0-1699": 76.39,
+      "antes de 0": 72.26,
+      "despues de 2200": 24.32
+    },
+    "Neptune": {
+      "1700-2200": 15.34,
+      "0-1699": 39.13,
+      "antes de 0": 78.19,
+      "despues de 2200": 15.75
+    }
+  },
+  "units": "segundos de arco; error maximo de la posicion geocentrica astrometrica en cada franja"
+}
