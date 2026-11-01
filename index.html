@@ -795,7 +795,10 @@ function detailBuild(style) {
         if (l.type === 'fill-extrusion') return;               // edificios en 3D: pesados y de hoy
         const clone = { ...l, id: 'ofm-' + l.id, layout: { ...(l.layout || {}), visibility: 'none' } };
         if (l.source) clone.source = 'ofm-' + l.source;
-        map.addLayer(clone, 'borders-fill');
+        // Tierra y suelo van DEBAJO de las fronteras; agua, caminos y rotulos ENCIMA. Asi el agua real
+        // tapa lo que el poligono grueso de una frontera invadia del mar (no se superponen los mapas).
+        const below = l.type === 'background' || l.type === 'raster' || (l.type === 'fill' && ['landcover', 'landuse', 'park'].includes(l['source-layer']));
+        map.addLayer(clone, below ? 'borders-fill' : 'borders-hl');
         const role = l.type === 'background' ? 'bg'
             : l['source-layer'] === 'water' && l.type === 'fill' ? 'water'
             : l['source-layer'] === 'waterway' && l.type === 'line' ? 'waterway'

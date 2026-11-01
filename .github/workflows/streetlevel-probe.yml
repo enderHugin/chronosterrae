@@ -1,0 +1,41 @@
+name: Sonda de imagen a pie de calle y fotos historicas
+
+# Prueba Commons, Mapillary (sin clave) y KartaView desde un runner; informe en la rama `streetlevel-build`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: streetlevel-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear fuentes
+        run: node scripts/probe-streetlevel.js > /tmp/streetlevel.json 2> /tmp/streetlevel.log
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 30 /tmp/streetlevel.log || true
+          head -c 800 /tmp/streetlevel.json || true
+      - name: Informe en la rama streetlevel-build
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/streetlevel.json || echo '{"error":"sin salida"}' > /tmp/streetlevel.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan streetlevel-build
+          cp /tmp/streetlevel.json report.json
+          cp /tmp/streetlevel.log report.log || true
+          git add report.json report.log
+          git commit -m "Sonda a pie de calle $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin streetlevel-build
