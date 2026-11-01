@@ -110,6 +110,66 @@ check('index.html no presenta contornos actuales desplazados como costas reales'
     return /No son las costas reales de la época/.test(html) && /not the real coastlines of that time/i.test(html);
 });
 
+// Funciones del slider evaluadas tal como estan en index.html (sin navegador).
+const sliderFns = () => {
+    const html = readIndex();
+    const cfg = html.match(/const CFG = \{[\s\S]*?\n\};/)[0];
+    const offset = html.match(/const OFFSET = [^\n]*\n/)[0];
+    const toYbp = html.match(/const sliderToYbp = [^\n]*\n/)[0];
+    const toSlider = html.match(/const ybpToSlider = [\s\S]*?\n\};\n/)[0];
+    return new Function(`${cfg}\n${offset}\n${toYbp}\n${toSlider}\nreturn { CFG, OFFSET, sliderToYbp, ybpToSlider };`)();
+};
+
+check('slider: izquierda es el pasado remoto y derecha es hoy', () => {
+    const { CFG, sliderToYbp } = sliderFns();
+    const left = sliderToYbp(0);
+    const right = sliderToYbp(CFG.sliderMax);
+    if (Math.abs(left - CFG.maxYbp) > 1) throw new Error('el extremo izquierdo es ' + left + ' a. AP, se esperaba ' + CFG.maxYbp);
+    if (right !== -(CFG.nowYear - CFG.present)) throw new Error('el extremo derecho es ' + right + ' a. AP, se esperaba hoy');
+    return true;
+});
+
+check('slider: avanzar hacia la derecha nunca aleja del presente', () => {
+    const { CFG, sliderToYbp } = sliderFns();
+    let prev = Infinity;
+    for (let s = 0; s <= CFG.sliderMax; s += 25) {
+        const y = sliderToYbp(s);
+        if (y > prev) throw new Error('no monotono en s=' + s);
+        prev = y;
+    }
+    return true;
+});
+
+check('slider: pasar una fecha al slider y volver no la cambia', () => {
+    // Cerca de hoy varios pasos del slider dan el mismo año (1 paso = ~0,16 años), así que
+    // no se exige recuperar el paso, sino que la fecha no se mueva.
+    const { CFG, sliderToYbp, ybpToSlider } = sliderFns();
+    for (let s = 0; s <= CFG.sliderMax; s += 137) {
+        const y = sliderToYbp(s);
+        const back = sliderToYbp(ybpToSlider(y));
+        if (back !== y) throw new Error('s=' + s + ': ' + y + ' vuelve como ' + back);
+    }
+    return true;
+});
+
+check('index.html no reenvia al mapa una capa que no ha cambiado', () => {
+    const html = readIndex();
+    return /state\.landData === L\.data\)\s*return/.test(html) && /state\.bordersData === data\)\s*return/.test(html);
+});
+
+check('index.html pinta las costas que llegan mientras se arrastra (no solo la ultima peticion)', () => {
+    const html = readIndex();
+    // descartar con "token !== sceneToken" deja el mapa congelado mientras dura el arrastre con red lenta
+    const body = html.slice(html.indexOf('async function updateScene'), html.indexOf('function scheduleBorders'));
+    return /token < appliedToken/.test(body) && !/token !== sceneToken\)\s*return;\s*\/\/ ya hay/.test(body);
+});
+
+check('index.html no hace esperar a las costas por las fronteras pesadas', () => {
+    const html = readIndex();
+    // las costas y las fronteras no se esperan entre si en un mismo Promise.allSettled
+    return !/Promise\.allSettled\(\[\s*loadLand/.test(html) && /function scheduleBorders/.test(html);
+});
+
 // --- Simplificacion de paleocostas: no debe perder ni deformar datos en silencio ---
 const paleo = require('./build-paleocoastlines.js');
 const square = (n) => {

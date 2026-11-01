@@ -138,7 +138,7 @@
             <input id="time-input" type="text" data-i18n-placeholder="timePlaceholder" aria-label="Go to a date" autocomplete="off">
             <a class="kofi" href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" rel="noopener" data-i18n="donate"></a>
         </div>
-        <input id="slider" type="range" min="0" max="10000" value="0" step="1" aria-label="Time">
+        <input id="slider" type="range" min="0" max="10000" value="0" step="1" aria-label="Time" dir="ltr">
         <div id="presets"></div>
         <div id="credits"></div>
     </div>
@@ -163,11 +163,12 @@ const CFG = {
     paleoBase: './data/paleocoastlines/',   // archivo propio: PaleoMAP PaleoCoastlines (CC BY 4.0), 0-535 Ma
     paleoMaxDeltaMa: 10,                 // no se usa una loncha mas lejana que esto
     bordersMaxYbp: 125000,               // las fronteras históricas empiezan en -123000
-    debounceMs: 220,
+    throttleMs: 80,                      // costas: ligeras, se actualizan mientras se arrastra el slider
+    bordersDebounceMs: 300,              // fronteras: archivos de 1-3,6 MB, se piden cuando el slider se detiene
     fetchTimeoutMs: 40000
 };
 CFG.hbBase = 'https://cdn.jsdelivr.net/gh/aourednik/historical-basemaps@' + CFG.hbCommit + '/';
-// offset para que el extremo "ahora" (2026 = 1950 - (-76)) sea el principio del slider
+// offset para que el extremo "ahora" (2026 = 1950 - (-76)) sea el final (derecha) del slider
 const OFFSET = CFG.nowYear - CFG.present + 1;
 
 /* ------------------------------------------------------------------ */
@@ -234,10 +235,11 @@ const fmt = (key, vars) => String(t(key)).replace(/\{(\w+)\}/g, (_, k) => (vars 
 /* ------------------------------------------------------------------ */
 /* Tiempo: escala logarítmica de "ahora" a 1000 Ma                     */
 /* ------------------------------------------------------------------ */
-const sliderToYbp = (s) => Math.round(Math.pow(CFG.maxYbp + OFFSET, s / CFG.sliderMax) - OFFSET);
+// Izquierda = el pasado más remoto (1000 Ma), derecha = hoy. El valor del slider crece hacia el presente.
+const sliderToYbp = (s) => Math.round(Math.pow(CFG.maxYbp + OFFSET, (CFG.sliderMax - s) / CFG.sliderMax) - OFFSET);
 const ybpToSlider = (ybp) => {
     const clamped = Math.min(Math.max(ybp, 1 - OFFSET), CFG.maxYbp);
-    return Math.round(Math.log(clamped + OFFSET) / Math.log(CFG.maxYbp + OFFSET) * CFG.sliderMax);
+    return CFG.sliderMax - Math.round(Math.log(clamped + OFFSET) / Math.log(CFG.maxYbp + OFFSET) * CFG.sliderMax);
 };
 const ybpToYear = (ybp) => CFG.present - ybp;   // año astronómico (el 0 existe)
 const yearToYbp = (year) => CFG.present - year;
@@ -268,7 +270,8 @@ function parseTime(raw) {
 /* Estado de la interfaz                                              */
 /* ------------------------------------------------------------------ */
 const $ = (id) => document.getElementById(id);
-const state = { paleo: null, ybp: 250e6, dark: false, globe: true, land: null, borders: null, live: null, polities: null, selected: null };
+const state = { paleo: null, ybp: 250e6, dark: false, globe: true, land: null, borders: null, live: null, polities: null, selected: null,
+               landData: null, bordersData: null, landError: null, bordersError: null, bordersLoading: false };
 
 let statusTimer = null;
 function setStatus(level, message, autoHideMs) {
@@ -306,17 +309,26 @@ const hideInfo = () => { $('info').style.display = 'none'; clearHighlight(); };
 /* ------------------------------------------------------------------ */
 /* Carga de datos                                                     */
 /* ------------------------------------------------------------------ */
-const cache = new Map();
-let inflight = null;
+const cache = new Map();     // url -> JSON ya descargado (no se vuelve a pedir en toda la sesión)
+const pending = new Map();   // url -> descarga en curso sin señal de cancelación, compartida por quien la pida
 
-async function getJSON(url, signal) {
-    if (cache.has(url)) return cache.get(url);
+function getJSON(url, signal) {
+    if (cache.has(url)) return Promise.resolve(cache.get(url));
+    if (!signal && pending.has(url)) return pending.get(url);
     const timeout = AbortSignal.timeout(CFG.fetchTimeoutMs);
-    const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timeout]) : timeout });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = JSON.parse(await res.text());
-    cache.set(url, data);
-    return data;
+    const p = (async () => {
+        const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timeout]) : timeout });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = JSON.parse(await res.text());
+        cache.set(url, data);
+        return data;
+    })();
+    if (!signal) {
+        pending.set(url, p);
+        const done = () => pending.delete(url);
+        p.then(done, done);
+    }
+    return p;
 }
 
 const emptyFC = () => ({ type: 'FeatureCollection', features: [] });
@@ -387,14 +399,35 @@ function nearestSnapshot(polities, year) {
     return best;
 }
 
+// Instantánea más cercana, o null si no hay ninguna lo bastante próxima:
+// no se muestra una instantánea muy lejana, sería inventar fronteras.
+function pickSnapshot(ybp) {
+    if (ybp > CFG.bordersMaxYbp || !state.polities) return null;
+    const year = ybpToYear(ybp);
+    const best = nearestSnapshot(state.polities, year);
+    if (!best || best.d > Math.max(500, 0.25 * Math.abs(year))) return null;
+    return best;
+}
+
+const snapshotUrl = (best) => CFG.hbBase + 'geojson/' + best.p.file;
+
+// Fronteras ya en memoria: objeto o null (no corresponde mostrar ninguna). undefined = hay que descargar.
+function bordersCached(ybp) {
+    if (ybp > CFG.bordersMaxYbp) return null;
+    if (!state.polities) return undefined;
+    const best = pickSnapshot(ybp);
+    if (!best) return null;
+    const url = snapshotUrl(best);
+    if (!cache.has(url)) return undefined;
+    return { data: colorize(cache.get(url)), year: best.p.year, delta: best.d };
+}
+
 async function loadBorders(ybp, signal) {
     if (ybp > CFG.bordersMaxYbp) return null;
-    const polities = await loadPolities(signal);
-    const year = ybpToYear(ybp);
-    const best = nearestSnapshot(polities, year);
-    // No se muestra una instantánea muy lejana: sería inventar fronteras.
-    if (!best || best.d > Math.max(500, 0.25 * Math.abs(year))) return null;
-    const data = colorize(await getJSON(CFG.hbBase + 'geojson/' + best.p.file, signal));
+    await loadPolities(signal);
+    const best = pickSnapshot(ybp);
+    if (!best) return null;
+    const data = colorize(await getJSON(snapshotUrl(best), signal));
     return { data, year: best.p.year, delta: best.d };
 }
 
@@ -463,30 +496,38 @@ function applyProjection() {
 /* ------------------------------------------------------------------ */
 /* Escena: se recompone al cambiar el tiempo                          */
 /* ------------------------------------------------------------------ */
-let sceneToken = 0;
+let sceneToken = 0;       // numera las peticiones de escena
+let appliedToken = 0;     // la más reciente que ya se ha pintado
 
 // Los datos recientes son de ahora: pintarlos en otra época sería un anacronismo.
 const liveVisible = (ybp) => Boolean(state.live) && Math.abs(ybp - -(CFG.nowYear - CFG.present)) <= 5;
 
-async function updateScene() {
-    const token = ++sceneToken;
-    if (inflight) inflight.abort();
-    inflight = new AbortController();
-    const signal = inflight.signal;
-    const ybp = state.ybp;
-    await mapReady;
+// Solo se reenvía una capa al mapa si cambia de verdad: arrastrar el slider recorre muchos valores
+// que caen en la misma loncha y volver a trocear el GeoJSON cada vez era el grueso del retraso.
+function applyLand(L) {
+    state.land = L;
+    if (state.landData === L.data) return;
+    map.getSource('land').setData(L.data);
+    state.landData = L.data;
+}
 
+function applyBorders(b) {
+    state.borders = b;
+    const data = b ? b.data : null;
+    if (state.bordersData === data) return;
+    map.getSource('borders').setData(data || emptyFC());
+    state.bordersData = data;
+}
+
+function renderStatus() {
+    const ybp = state.ybp;
     const messages = [];
     let level = 'ok';
-    setStatus('warn', t('loadingLand'));
-
-    const [landRes, bordersRes] = await Promise.allSettled([loadLand(ybp, signal), loadBorders(ybp, signal)]);
-    if (token !== sceneToken) return;   // llegó tarde: ya hay otra escena pedida
-
-    if (landRes.status === 'fulfilled') {
-        const L = landRes.value;
-        state.land = L;
-        map.getSource('land').setData(L.data);
+    const L = state.landError ? null : state.land;
+    if (state.landError) {
+        level = 'warn';
+        messages.push(fmt('landFail', { err: state.landError.message }));
+    } else if (L) {
         if (L.type === 'paleo') {
             if (ybp < CFG.deepTimeFrom) messages.push(t('seaLevel'));
             else {
@@ -497,34 +538,135 @@ async function updateScene() {
             if (L.fallbackError) { level = 'warn'; messages.push(fmt('paleoFallback', { err: L.fallbackError.message })); }
             messages.push(L.deep ? fmt('landOk', { model: CFG.model, age: L.ma + ' Ma' }) : t('seaLevel'));
         }
-    } else if (!(landRes.reason && landRes.reason.name === 'AbortError')) {
-        level = 'warn';
-        messages.push(fmt('landFail', { err: landRes.reason && landRes.reason.message }));
     }
-
-    if (bordersRes.status === 'fulfilled') {
-        const b = bordersRes.value;
-        state.borders = b;
-        map.getSource('borders').setData(b ? b.data : emptyFC());
-        if (b) messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
-        else if (ybp <= CFG.bordersMaxYbp) messages.push(t('noBorders'));
-    } else if (!(bordersRes.reason && bordersRes.reason.name === 'AbortError')) {
+    if (state.bordersError) {
         level = 'warn';
-        state.borders = null;
-        map.getSource('borders').setData(emptyFC());
-        messages.push(fmt('bordersFail', { err: bordersRes.reason && bordersRes.reason.message }));
+        messages.push(fmt('bordersFail', { err: state.bordersError.message }));
+    } else if (state.bordersLoading) {
+        messages.push(t('loadingBorders'));
+    } else if (state.borders) {
+        const b = state.borders;
+        messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
+    } else if (ybp <= CFG.bordersMaxYbp) {
+        messages.push(t('noBorders'));
     }
-
-    map.setLayoutProperty('live-points', 'visibility', liveVisible(ybp) ? 'visible' : 'none');
-
-    setStatus(level, messages.join(' '));
+    if (messages.length) setStatus(level, messages.join(' '));
     renderCredits();
-    if (currentFocus) { const f = currentFocus; currentFocus = null; focusPolity(f); }
-    else hideInfo();   // el panel describía otra época
 }
 
-let debounce = null;
-function scheduleScene() { clearTimeout(debounce); debounce = setTimeout(updateScene, CFG.debounceMs); }
+/* Costas: ligeras (~300 KB) y se precargan, así que siguen al slider mientras se arrastra. */
+async function updateScene({ immediate = false } = {}) {
+    const token = ++sceneToken;
+    await mapReady;
+    if (token !== sceneToken) return;   // llegó otra petición mientras el mapa arrancaba
+    const ybp = state.ybp;
+    scheduleBorders(immediate);         // en paralelo: no esperan a las costas
+    const slow = setTimeout(() => { if (token === sceneToken) setStatus('warn', t('loadingLand')); }, 350);
+    try {
+        const L = await loadLand(ybp);
+        // Una respuesta de una petición ya superada se pinta igualmente (así se ve avanzar el mapa
+        // mientras se arrastra), salvo que ya se haya pintado algo más reciente.
+        if (token < appliedToken) return;
+        appliedToken = token;
+        state.landError = null;
+        applyLand(L);
+    } catch (err) {
+        if (token < appliedToken) return;
+        appliedToken = token;
+        state.landError = err;
+    } finally {
+        clearTimeout(slow);
+    }
+    map.setLayoutProperty('live-points', 'visibility', liveVisible(ybp) ? 'visible' : 'none');
+    if (!currentFocus) hideInfo();   // el panel describía otra época
+    renderStatus();
+    prefetchPaleo();
+}
+
+/* Fronteras: 1-3,6 MB por instantánea. Si ya están en memoria se aplican al instante;
+   si hay que descargarlas, se espera a que el slider se detenga. Mientras tanto no se deja en
+   pantalla la instantánea de otra época. */
+let bordersToken = 0;
+let bordersCtl = null;
+let bordersTimer = null;
+
+function scheduleBorders(immediate) {
+    clearTimeout(bordersTimer);
+    if (bordersCached(state.ybp) !== undefined) {
+        state.bordersLoading = false;
+        runBorders();
+        return;
+    }
+    if (state.borders) applyBorders(null);
+    state.bordersLoading = true;
+    bordersTimer = setTimeout(runBorders, immediate ? 0 : CFG.bordersDebounceMs);
+}
+
+async function runBorders() {
+    const token = ++bordersToken;
+    if (bordersCtl) bordersCtl.abort();
+    bordersCtl = new AbortController();
+    try {
+        const b = await loadBorders(state.ybp, bordersCtl.signal);
+        if (token !== bordersToken) return;
+        state.bordersError = null;
+        applyBorders(b);
+    } catch (err) {
+        if (token !== bordersToken || (err && err.name === 'AbortError')) return;
+        state.bordersError = err;
+        applyBorders(null);
+    }
+    state.bordersLoading = false;
+    if (currentFocus) { const f = currentFocus; currentFocus = null; focusPolity(f); }
+    renderStatus();
+    prefetchNeighbours(state.borders);
+}
+
+/* Precarga en segundo plano (sin bloquear nada y respetando "ahorro de datos"). */
+const saveData = () => Boolean(navigator.connection && navigator.connection.saveData);
+const whenIdle = (fn) => (window.requestIdleCallback ? window.requestIdleCallback(fn, { timeout: 4000 }) : setTimeout(fn, 1500));
+let paleoPrefetched = false;
+
+// Las 81 lonchas de costas pesan unos 10 MB en total: tras la primera escena se bajan, de la más
+// cercana a la época actual hacia las más lejanas, y el slider deja de esperar a la red.
+function prefetchPaleo() {
+    if (paleoPrefetched || saveData() || !state.paleo) return;
+    paleoPrefetched = true;
+    whenIdle(async () => {
+        const target = Math.max(0, state.ybp / 1e6);
+        const urls = state.paleo.ages.slice()
+            .sort((x, y) => Math.abs(x.age_ma - target) - Math.abs(y.age_ma - target))
+            .map((a) => CFG.paleoBase + a.file);
+        let i = 0;
+        const worker = async () => {
+            while (i < urls.length) {
+                try { await getJSON(urls[i++]); } catch (err) { /* se pedirá bajo demanda */ }
+            }
+        };
+        await Promise.all([worker(), worker()]);
+    });
+}
+
+// Las dos instantáneas vecinas de la que se está viendo (hay 54 de 1-3,6 MB: no se bajan todas).
+function prefetchNeighbours(b) {
+    if (!b || saveData() || !state.polities) return;
+    const near = state.polities.filter((p) => p.year !== b.year)
+        .sort((x, y) => Math.abs(x.year - b.year) - Math.abs(y.year - b.year)).slice(0, 2);
+    whenIdle(() => near.forEach((p) => {
+        const url = CFG.hbBase + 'geojson/' + p.file;
+        if (!cache.has(url)) getJSON(url).catch(() => {});
+    }));
+}
+
+let sceneTimer = null;
+let lastScene = 0;
+// Aplica el primer cambio de inmediato y, mientras se arrastra, como mucho una vez cada throttleMs
+// con el valor más reciente (antes se esperaba a que el slider se parase).
+function scheduleScene() {
+    if (sceneTimer) return;   // ya hay una actualización en cola y leerá el valor más reciente
+    const wait = Math.max(0, CFG.throttleMs - (performance.now() - lastScene));
+    sceneTimer = setTimeout(() => { sceneTimer = null; lastScene = performance.now(); updateScene(); }, wait);
+}
 
 function setTime(ybp, { fromSlider = false, immediate = false } = {}) {
     state.ybp = Math.min(Math.max(ybp, 1 - OFFSET), CFG.maxYbp);
@@ -533,7 +675,7 @@ function setTime(ybp, { fromSlider = false, immediate = false } = {}) {
     const f = formatTime(state.ybp);
     $('time-label').textContent = f.main;
     $('time-sub').textContent = f.sub;
-    if (immediate) { clearTimeout(debounce); updateScene(); } else scheduleScene();
+    if (immediate) { clearTimeout(sceneTimer); sceneTimer = null; lastScene = performance.now(); updateScene({ immediate: true }); } else scheduleScene();
 }
 
 /* ------------------------------------------------------------------ */
@@ -672,15 +814,16 @@ function renderCredits() {
     box.appendChild(document.createTextNode(' (A. Ourednik, GPL-3.0)'));
 }
 
+// Mismo sentido que el slider: de izquierda (pasado remoto) a derecha (hoy).
 const PRESETS = [
-    { label: () => t('today'), ybp: -(CFG.nowYear - CFG.present) },
-    { label: () => '1945', ybp: yearToYbp(1945) },
-    { label: () => '1492', ybp: yearToYbp(1492) },
-    { label: () => '117', ybp: yearToYbp(117) },
-    { label: () => formatYear(-322), ybp: yearToYbp(-322) },
-    { label: () => '66 Ma', ybp: 66e6 },
+    { label: () => '500 Ma', ybp: 500e6 },
     { label: () => '250 Ma · Pangea', ybp: 250e6 },
-    { label: () => '500 Ma', ybp: 500e6 }
+    { label: () => '66 Ma', ybp: 66e6 },
+    { label: () => formatYear(-322), ybp: yearToYbp(-322) },
+    { label: () => '117', ybp: yearToYbp(117) },
+    { label: () => '1492', ybp: yearToYbp(1492) },
+    { label: () => '1945', ybp: yearToYbp(1945) },
+    { label: () => t('today'), ybp: -(CFG.nowYear - CFG.present) }
 ];
 
 function renderPresets() {
