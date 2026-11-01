@@ -1,0 +1,20 @@
+{
+  "name": "chronosterrae",
+  "version": "0.3.0",
+  "description": "Deep-time cartography: a place to consult, contribute to and explore the history of the Earth.",
+  "private": true,
+  "license": "MIT",
+  "repository": "github:enderHugin/chronosterrae",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "node scripts/check.js",
+    "validate": "node scripts/validate-records.js",
+    "test": "npm run check && npm run validate"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

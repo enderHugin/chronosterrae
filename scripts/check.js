@@ -96,6 +96,62 @@ check('el workflow valida el JSON antes de commitear', () => {
     return /archive-harvest\.js/.test(yml) && /data\/harvests/.test(yml);
 });
 
+// --- Esquema de registros: debe rechazar lo que no es verificable ---
+const exampleRecord = () => JSON.parse(fs.readFileSync(path.join(root, 'schemas/examples/chicxulub-impact.json'), 'utf8'));
+
+const runValidator = (record) => {
+    const dir = fs.mkdtempSync('/tmp/ct-schema-');
+    fs.writeFileSync(path.join(dir, 'r.json'), JSON.stringify(record));
+    let code = 0;
+    let stderr = '';
+    try {
+        execFileSync('node', [path.join(root, 'scripts/validate-records.js'), dir], { stdio: 'pipe' });
+    } catch (err) {
+        code = err.status;
+        stderr = String(err.stderr || '');
+    }
+    fs.rmSync(dir, { recursive: true, force: true });
+    // Un rechazo legitimo sale con codigo 1 y el informe "FAIL n problema(s)".
+    // Cualquier otra salida distinta de 0 es un validador roto, no un rechazo.
+    if (code !== 0 && !(code === 1 && /^FAIL \d+ problema/m.test(stderr))) {
+        throw new Error('el validador se ha roto en vez de rechazar: ' + stderr.split('\n').slice(0, 3).join(' '));
+    }
+    return code;
+};
+
+check('esquema: acepta el registro de ejemplo', () => runValidator(exampleRecord()) === 0);
+
+check('esquema: rechaza un registro sin fuentes', () => {
+    const r = exampleRecord();
+    r.properties.sources = [];
+    return runValidator(r) !== 0;
+});
+
+check('esquema: rechaza un DOI mal formado', () => {
+    const r = exampleRecord();
+    r.properties.sources = [{ kind: 'doi', id: 'no-es-un-doi' }];
+    return runValidator(r) !== 0;
+});
+
+check('esquema: rechaza inicio mas reciente que fin', () => {
+    const r = exampleRecord();
+    r.properties.time.start_ybp = 10;
+    r.properties.time.end_ybp = 5000;
+    return runValidator(r) !== 0;
+});
+
+check('esquema: rechaza status "reviewed" sin revisor', () => {
+    const r = exampleRecord();
+    r.properties.status = 'reviewed';
+    return runValidator(r) !== 0;
+});
+
+check('esquema: rechaza escala invertida', () => {
+    const r = exampleRecord();
+    r.properties.scale = { min_m: 1e7, max_m: 1e3 };
+    return runValidator(r) !== 0;
+});
+
 console.log('\nPASS ' + passes.length);
 passes.forEach(p => console.log('  ok  ' + p));
 if (failures.length) {

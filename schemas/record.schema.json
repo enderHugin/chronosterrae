@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://enderhugin.github.io/chronosterrae/schemas/record.schema.json",
+  "title": "ChronosTerrae record",
+  "description": "Un dato de ChronosTerrae: un Feature GeoJSON que declara cuándo, dónde, a qué escala es válido, de qué fuente sale y cuánta incertidumbre tiene. Sin fuente no hay registro.",
+  "type": "object",
+  "required": ["type", "geometry", "properties"],
+  "additionalProperties": false,
+  "properties": {
+    "type": { "const": "Feature" },
+    "geometry": {
+      "type": "object",
+      "required": ["type", "coordinates"],
+      "properties": {
+        "type": { "enum": ["Point", "MultiPoint", "LineString", "Polygon", "MultiPolygon"] },
+        "coordinates": { "type": "array", "minItems": 1 }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "required": ["id", "name", "layer", "time", "scale", "sources", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{2,80}$",
+          "description": "Identificador estable y único. Nunca se reutiliza."
+        },
+        "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": {
+          "type": "object",
+          "properties": {
+            "en": { "type": "string" },
+            "es": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "layer": {
+          "enum": ["paleogeography", "geology", "polity", "biota", "event", "astronomy", "microscale"],
+          "description": "Capa temática a la que pertenece el dato."
+        },
+        "time": {
+          "type": "object",
+          "required": ["start_ybp", "end_ybp", "uncertainty_yr", "precision"],
+          "additionalProperties": false,
+          "properties": {
+            "start_ybp": { "type": "number", "description": "Inicio, en años antes del presente (BP, presente = 1950). Más antiguo = mayor." },
+            "end_ybp": { "type": "number", "description": "Fin, en años BP. Para un suceso puntual, igual que start_ybp." },
+            "uncertainty_yr": { "type": "number", "minimum": 0, "description": "Margen de error (±) en años. 0 solo si la fecha es exacta." },
+            "precision": { "enum": ["exact", "day", "month", "year", "decade", "century", "millennium", "approximate"] },
+            "iso": { "type": "string", "description": "Fecha original en ISO 8601 si la fuente la da así." }
+          }
+        },
+        "scale": {
+          "type": "object",
+          "required": ["min_m", "max_m"],
+          "additionalProperties": false,
+          "properties": {
+            "min_m": { "type": "number", "exclusiveMinimum": 0, "description": "Escala mínima, en metros, a la que el dato tiene sentido." },
+            "max_m": { "type": "number", "exclusiveMinimum": 0, "description": "Escala máxima, en metros." }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["kind", "id"],
+            "additionalProperties": false,
+            "properties": {
+              "kind": { "enum": ["doi", "url", "wikidata", "dataset", "observation"] },
+              "id": { "type": "string", "minLength": 1 },
+              "citation": { "type": "string" }
+            },
+            "allOf": [
+              { "if": { "properties": { "kind": { "const": "doi" } } }, "then": { "properties": { "id": { "type": "string", "pattern": "^10\\.\\d{4,9}/\\S+$" } } } },
+              { "if": { "properties": { "kind": { "const": "wikidata" } } }, "then": { "properties": { "id": { "type": "string", "pattern": "^Q\\d+$" } } } },
+              { "if": { "properties": { "kind": { "const": "url" } } }, "then": { "properties": { "id": { "type": "string", "pattern": "^https?://\\S+$" } } } }
+            ]
+          }
+        },
+        "status": {
+          "enum": ["raw", "community", "reviewed", "consensus"],
+          "description": "Nivel de revisión: raw = ingesta automática; community = aportado sin revisar; reviewed = revisado por una persona con autoridad en el área; consensus = aceptado por varios revisores independientes."
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "taxon": {
+          "type": "object",
+          "required": ["name"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string" },
+            "rank": { "type": "string" },
+            "gbif_id": { "type": "integer" }
+          }
+        },
+        "contributors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "orcid": { "type": "string", "pattern": "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[\\dX]$" }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "enum": ["reviewed", "consensus"] } } },
+          "then": { "required": ["contributors"], "properties": { "contributors": { "type": "array", "minItems": 1 } } }
+        }
+      ]
+    }
+  }
+}

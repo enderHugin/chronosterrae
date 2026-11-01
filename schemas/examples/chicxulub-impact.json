@@ -1,0 +1,29 @@
+{
+  "type": "Feature",
+  "geometry": { "type": "Point", "coordinates": [-89.52, 21.4] },
+  "properties": {
+    "id": "event.chicxulub-impact",
+    "name": "Chicxulub impact",
+    "description": {
+      "en": "Bolide impact at the Cretaceous-Paleogene boundary. EXAMPLE RECORD to illustrate the schema: dating and coordinates must be reviewed against the cited source before promotion beyond 'community'.",
+      "es": "Impacto de un bólido en el límite Cretácico-Paleógeno. REGISTRO DE EJEMPLO para ilustrar el esquema: la datación y las coordenadas deben revisarse contra la fuente citada antes de pasar de 'community'."
+    },
+    "layer": "event",
+    "time": {
+      "start_ybp": 66043000,
+      "end_ybp": 66043000,
+      "uncertainty_yr": 43000,
+      "precision": "approximate"
+    },
+    "scale": { "min_m": 1000, "max_m": 10000000 },
+    "sources": [
+      {
+        "kind": "doi",
+        "id": "10.1126/science.1230492",
+        "citation": "Renne et al. 2013, Time scales of critical events around the Cretaceous-Paleogene boundary, Science 339(6120)"
+      }
+    ],
+    "status": "community",
+    "confidence": 0.9
+  }
+}
