@@ -37,6 +37,9 @@ jobs:
       - name: Construir
         run: node scripts/build-events.js --out /tmp/events-out --kinds "$KINDS" > /tmp/build.out 2> /tmp/build.log
 
+      - name: Coherencia de los datos (aparta las anomalias, no las corrige)
+        run: node scripts/check-data.js /tmp/events-out --drop --report /tmp/anomalies.json
+
       - name: Resumen en el log
         if: always()
         run: |
@@ -71,6 +74,7 @@ jobs:
           git switch --orphan events-build
           cp /tmp/build.log build.log || true
           if [ -d /tmp/events-out ]; then cp -r /tmp/events-out out; git add out; fi
+          if [ -f /tmp/anomalies.json ]; then cp /tmp/anomalies.json anomalies.json; git add anomalies.json; fi
           git add build.log
           git commit -m "Construccion de sucesos $(date -u +%Y-%m-%dT%H:%MZ)"
           git push --force origin events-build

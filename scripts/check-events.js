@@ -102,6 +102,26 @@ check('wikidata: se descarta, con motivo, lo que no se puede afirmar', () => {
     const why = (o, kind) => B.bindingToFeature(kind || 'birth', row(o), 'x').skip;
     return /etiqueta/.test(why({ label: '' })) && /etiqueta/.test(why({ label: 'Q12345' })) && /anterior al a/.test(why({ t: '-0044-03-15T00:00:00Z' })) && /calendario/.test(why({ cal: 'Q999' })) && /ilegible/.test(why({ t: 'ayer' }));
 });
+const D = require('./check-data.js');
+const mkf = (id, kind, iso, cal = 'gregorian') => {
+    const span = D.isoToSpan(iso, cal); const ybp = (jd) => (2433282.5 - jd) / 365.25;
+    return { feature: { properties: { id, name: id, kind, time: { iso, calendar: cal, start_ybp: ybp(span[0]), end_ybp: ybp(span[1]) } } }, file: null };
+};
+check('coherencia: muerte antes de nacer y edades imposibles se apartan; lo coherente pasa', () => {
+    const r = D.analyze([
+        mkf('wd.q1.birth', 'birth', '1900-05-01'), mkf('wd.q1.death', 'death', '1980-02-03'),        // normal
+        mkf('wd.q2.birth', 'birth', '1900-05-01'), mkf('wd.q2.death', 'death', '1899-01-01'),        // murio antes de nacer
+        mkf('wd.q3.birth', 'birth', '1681-08-05'), mkf('wd.q3.death', 'death', '1741-12-19'), mkf('wd.q3.death.2', 'death', '1909-12-05'),   // una muerte buena y otra erronea
+        mkf('wd.q4.birth', 'birth', '1700'), mkf('wd.q4.death', 'death', '1800')                      // 100 años con precision de año: dentro de lo posible
+    ], 2026);
+    const dropped = [...r.drop].sort().join(',');
+    return r.hard.length === 0 && dropped === 'wd.q2.birth,wd.q2.death,wd.q3.death.2';
+});
+check('coherencia: un iso que no cuadra con los años-antes-del-presente es un error nuestro', () => {
+    const f = mkf('wd.q9.birth', 'birth', '1900-05-01'); f.feature.properties.time.start_ybp += 5; f.feature.properties.time.end_ybp += 5;
+    return D.analyze([f], 2026).hard.length === 1;
+});
+check('coherencia: una fecha futura en un nacimiento es una anomalia', () => D.analyze([mkf('wd.q8.birth', 'birth', '2300-01-01')], 2026).anomalies.length === 1);
 check('semilla: el suceso con hora sustituye a su gemelo masivo de solo fecha, y nada mas', () => {
     const seed = [{ properties: { name: 'Space Shuttle Challenger disaster', time: { iso: '1986-01-28T16:39:13Z' } } }];
     const bulk = [
