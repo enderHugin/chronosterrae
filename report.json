@@ -1,0 +1,337 @@
+{
+  "probed_at": "2026-11-01T17:32:10.988Z",
+  "steps": {
+    "style-liberty": {
+      "status": 200,
+      "ok": true,
+      "bytes": 43311,
+      "ms": 244,
+      "acao": "*",
+      "type": "application/json",
+      "encoding": "gzip",
+      "cache": "max-age=86400, public",
+      "summary": {
+        "sources": {
+          "ne2_shaded": {
+            "maxzoom": 6,
+            "tileSize": 256,
+            "tiles": [
+              "https://tiles.openfreemap.org/natural_earth/ne2sr/{z}/{x}/{y}.png"
+            ],
+            "type": "raster"
+          },
+          "openmaptiles": {
+            "type": "vector",
+            "url": "https://tiles.openfreemap.org/planet"
+          }
+        },
+        "glyphs": "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
+        "sprite": "https://tiles.openfreemap.org/sprites/ofm_f384/ofm",
+        "layers": 111,
+        "byType": {
+          "background": 1,
+          "raster": 1,
+          "fill": 16,
+          "line": 67,
+          "symbol": 25,
+          "fill-extrusion": 1
+        }
+      },
+      "layers": [
+        "background background    ",
+        "natural_earth raster ne2_shaded   7",
+        "park fill openmaptiles park  ",
+        "park_outline line openmaptiles park  ",
+        "landuse_residential fill openmaptiles landuse  12",
+        "landcover_wood fill openmaptiles landcover  ",
+        "landcover_grass fill openmaptiles landcover  ",
+        "landcover_ice fill openmaptiles landcover  ",
+        "landcover_wetland fill openmaptiles landcover 12 ",
+        "landuse_pitch fill openmaptiles landuse  ",
+        "landuse_track fill openmaptiles landuse  ",
+        "landuse_cemetery fill openmaptiles landuse  ",
+        "landuse_hospital fill openmaptiles landuse  ",
+        "landuse_school fill openmaptiles landuse  ",
+        "waterway_tunnel line openmaptiles waterway  ",
+        "waterway_river line openmaptiles waterway  ",
+        "waterway_other line openmaptiles waterway  ",
+        "water fill openmaptiles water  ",
+        "landcover_sand fill openmaptiles landcover  ",
+        "aeroway_fill fill openmaptiles aeroway 11 ",
+        "aeroway_runway line openmaptiles aeroway 11 ",
+        "aeroway_taxiway line openmaptiles aeroway 11 ",
+        "tunnel_motorway_link_casing line openmaptiles transportation  ",
+        "tunnel_service_track_casing line openmaptiles transportation  ",
+        "tunnel_link_casing line openmaptiles transportation  ",
+        "tunnel_street_casing line openmaptiles transportation  ",
+        "tunnel_secondary_tertiary_casing line openmaptiles transportation  ",
+        "tunnel_trunk_primary_casing line openmaptiles transportation  ",
+        "tunnel_motorway_casing line openmaptiles transportation  ",
+        "tunnel_path_pedestrian line openmaptiles transportation  ",
+        "tunnel_motorway_link line openmaptiles transportation  ",
+        "tunnel_service_track line openmaptiles transportation  ",
+        "tunnel_link line openmaptiles transportation  ",
+        "tunnel_minor line openmaptiles transportation  ",
+        "tunnel_secondary_tertiary line openmaptiles transportation  ",
+        "tunnel_trunk_primary line openmaptiles transportation  ",
+        "tunnel_motorway line openmaptiles transportation  ",
+        "tunnel_major_rail line openmaptiles transportation  ",
+        "tunnel_major_rail_hatching line openmaptiles transportation  ",
+        "tunnel_transit_rail line openmaptiles transportation  ",
+        "tunnel_transit_rail_hatching line openmaptiles transportation  ",
+        "road_area_pattern fill openmaptiles transportation  ",
+        "road_motorway_link_casing line openmaptiles transportation 12 ",
+        "road_service_track_casing line openmaptiles transportation  ",
+        "road_link_casing line openmaptiles transportation 13 ",
+        "road_minor_casing line openmaptiles transportation  ",
+        "road_secondary_tertiary_casing line openmaptiles transportation  ",
+        "road_trunk_primary_casing line openmaptiles transportation  ",
+        "road_motorway_casing line openmaptiles transportation 5 ",
+        "road_path_pedestrian line openmaptiles transportation 14 ",
+        "road_motorway_link line openmaptiles transportation 12 ",
+        "road_service_track line openmaptiles transportation  ",
+        "road_link line openmaptiles transportation 13 ",
+        "road_minor line openmaptiles transportation  ",
+        "road_secondary_tertiary line openmaptiles transportation  ",
+        "road_trunk_primary line openmaptiles transportation  ",
+        "road_motorway line openmaptiles transportation 5 ",
+        "road_major_rail line openmaptiles transportation  ",
+        "road_major_rail_hatching line openmaptiles transportation  ",
+        "road_transit_rail line openmaptiles transportation  ",
+        "road_transit_rail_hatching line openmaptiles transportation  ",
+        "road_one_way_arrow symbol openmaptiles transportation 16 ",
+        "road_one_way_arrow_opposite symbol openmaptiles transportation 16 ",
+        "bridge_motorway_link_casing line openmaptiles transportation  ",
+        "bridge_service_track_casing line openmaptiles transportation  ",
+        "bridge_link_casing line openmaptiles transportation  ",
+        "bridge_street_casing line openmaptiles transportation  ",
+        "bridge_path_pedestrian_casing line openmaptiles transportation  ",
+        "bridge_secondary_tertiary_casing line openmaptiles transportation  ",
+        "bridge_trunk_primary_casing line openmaptiles transportation  ",
+        "bridge_motorway_casing line openmaptiles transportation  ",
+        "bridge_path_pedestrian line openmaptiles transportation  ",
+        "bridge_motorway_link line openmaptiles transportation  ",
+        "bridge_service_track line openmaptiles transportation  ",
+        "bridge_link line openmaptiles transportation  ",
+        "bridge_street line openmaptiles transportation  ",
+        "bridge_secondary_tertiary line openmaptiles transportation  ",
+        "bridge_trunk_primary line openmaptiles transportation  ",
+        "bridge_motorway line openmaptiles transportation  ",
+        "bridge_major_rail line openmaptiles transportation  ",
+        "bridge_major_rail_hatching line openmaptiles transportation  ",
+        "bridge_transit_rail line openmaptiles transportation  ",
+        "bridge_transit_rail_hatching line openmaptiles transportation  ",
+        "building fill openmaptiles building 13 14",
+        "building-3d fill-extrusion openmaptiles building 14 ",
+        "boundary_3 line openmaptiles boundary 5 ",
+        "boundary_2 line openmaptiles boundary  ",
+        "boundary_disputed line openmaptiles boundary  ",
+        "waterway_line_label symbol openmaptiles waterway 10 ",
+        "water_name_point_label symbol openmaptiles water_name  ",
+        "water_name_line_label symbol openmaptiles water_name  ",
+        "poi_r20 symbol openmaptiles poi 17 ",
+        "poi_r7 symbol openmaptiles poi 16 ",
+        "poi_r1 symbol openmaptiles poi 15 ",
+        "poi_transit symbol openmaptiles poi  ",
+        "highway-name-path symbol openmaptiles transportation_name 15.5 ",
+        "highway-name-minor symbol openmaptiles transportation_name 15 ",
+        "highway-name-major symbol openmaptiles transportation_name 12.2 ",
+        "highway-shield-non-us symbol openmaptiles transportation_name 8 ",
+        "highway-shield-us-interstate symbol openmaptiles transportation_name 7 ",
+        "road_shield_us symbol openmaptiles transportation_name 9 ",
+        "airport symbol openmaptiles aerodrome_label 10 ",
+        "label_other symbol openmaptiles place 8 ",
+        "label_village symbol openmaptiles place 9 ",
+        "label_town symbol openmaptiles place 6 ",
+        "label_state symbol openmaptiles place 5 8",
+        "label_city symbol openmaptiles place 3 ",
+        "label_city_capital symbol openmaptiles place 3 ",
+        "label_country_3 symbol openmaptiles place 2 9",
+        "label_country_2 symbol openmaptiles place  9",
+        "label_country_1 symbol openmaptiles place  9"
+      ]
+    },
+    "style-positron": {
+      "status": 200,
+      "ok": true,
+      "bytes": 25202,
+      "ms": 155,
+      "acao": "*",
+      "type": "application/json",
+      "encoding": "gzip",
+      "cache": "max-age=86400, public",
+      "summary": {
+        "sources": {
+          "ne2_shaded": {
+            "maxzoom": 6,
+            "tileSize": 256,
+            "tiles": [
+              "https://tiles.openfreemap.org/natural_earth/ne2sr/{z}/{x}/{y}.png"
+            ],
+            "type": "raster"
+          },
+          "openmaptiles": {
+            "type": "vector",
+            "url": "https://tiles.openfreemap.org/planet"
+          }
+        },
+        "glyphs": "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
+        "sprite": "https://tiles.openfreemap.org/sprites/ofm_f384/ofm",
+        "layers": 55,
+        "byType": {
+          "background": 1,
+          "fill": 9,
+          "line": 26,
+          "symbol": 19
+        }
+      }
+    },
+    "style-bright": {
+      "status": 200,
+      "ok": true,
+      "bytes": 48762,
+      "ms": 139,
+      "acao": "*",
+      "type": "application/json",
+      "encoding": "gzip",
+      "cache": "max-age=86400, public",
+      "summary": {
+        "sources": {
+          "ne2_shaded": {
+            "maxzoom": 6,
+            "tileSize": 256,
+            "tiles": [
+              "https://tiles.openfreemap.org/natural_earth/ne2sr/{z}/{x}/{y}.png"
+            ],
+            "type": "raster"
+          },
+          "openmaptiles": {
+            "type": "vector",
+            "url": "https://tiles.openfreemap.org/planet"
+          }
+        },
+        "glyphs": "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
+        "sprite": "https://tiles.openfreemap.org/sprites/ofm_f384/ofm",
+        "layers": 119,
+        "byType": {
+          "background": 1,
+          "fill": 22,
+          "line": 71,
+          "symbol": 25
+        }
+      }
+    },
+    "tilejson": {
+      "status": 200,
+      "ok": true,
+      "bytes": 19254,
+      "ms": 143,
+      "acao": "*",
+      "type": "application/json",
+      "encoding": "gzip",
+      "cache": "max-age=3600, public",
+      "summary": {
+        "tiles": [
+          "https://tiles.openfreemap.org/planet/20261025_080012_pt/{z}/{x}/{y}.pbf"
+        ],
+        "minzoom": 0,
+        "maxzoom": 14,
+        "attribution": "<a href=\"https://openfreemap.org\" target=\"_blank\">OpenFreeMap</a> <a href=\"https://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> Data from <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">OpenStreetMap</a>",
+        "bounds": [
+          -180,
+          -85.05113,
+          180,
+          85.05113
+        ],
+        "vector_layers": [
+          "aerodrome_label",
+          "aeroway",
+          "boundary",
+          "building",
+          "housenumber",
+          "landcover",
+          "landuse",
+          "mountain_peak",
+          "park",
+          "place",
+          "poi",
+          "transportation",
+          "transportation_name",
+          "water",
+          "water_name",
+          "waterway"
+        ]
+      }
+    },
+    "tile": {
+      "europa-z6": {
+        "status": 200,
+        "ok": true,
+        "bytes": 447720,
+        "ms": 249,
+        "acao": "*",
+        "type": "application/vnd.mapbox-vector-tile",
+        "encoding": "gzip",
+        "cache": "max-age=315360000, public"
+      },
+      "madrid-z12": {
+        "status": 200,
+        "ok": true,
+        "bytes": 224885,
+        "ms": 186,
+        "acao": "*",
+        "type": "application/vnd.mapbox-vector-tile",
+        "encoding": "gzip",
+        "cache": "max-age=315360000, public"
+      },
+      "madrid-z14": {
+        "status": 200,
+        "ok": true,
+        "bytes": 746088,
+        "ms": 271,
+        "acao": "*",
+        "type": "application/vnd.mapbox-vector-tile",
+        "encoding": "gzip",
+        "cache": "max-age=315360000, public"
+      }
+    },
+    "glyph": {
+      "status": 200,
+      "ok": true,
+      "bytes": 76580,
+      "ms": 155,
+      "acao": "*",
+      "type": "application/x-protobuf",
+      "encoding": "gzip",
+      "cache": "max-age=604800, public"
+    },
+    "sprite": {
+      "status": 200,
+      "ok": true,
+      "bytes": 27737,
+      "ms": 146,
+      "acao": "*",
+      "type": "application/json",
+      "encoding": "gzip",
+      "cache": "max-age=315360000, public"
+    },
+    "terms-page": {
+      "status": 200,
+      "ok": true,
+      "bytes": 12268,
+      "ms": 53,
+      "acao": null,
+      "type": "text/html",
+      "encoding": "br",
+      "cache": "public, max-age=0, must-revalidate",
+      "mentions": [
+        "free",
+        "attribution",
+        "commercial",
+        "no limits",
+        "OpenMapTiles"
+      ],
+      "excerpt": " OpenFreeMap OpenFreeMap What is OpenFreeMap? OpenFreeMap lets you display custom maps on your website and apps for free. You can either self-host or use our public instance. Everything is open-source , including the full production setup — there’s no ‘open-core’ model here. Check out our GitHub . The map data comes from OpenStreetMap. Using our public instance is completely free: there are no limits on the number of map views or requests. There’s no registration, no user database, no API keys, and no cookies. We aim to cover the running costs of our public instance through donations. We also provide weekly full planet downloads both in Btrfs and MBTiles formats. How can I use it? OpenFreeMap © OpenMapTiles Data from OpenStreetMap Positron Bright Liberty Dark Fiord 3D Have a look at the default styles and read more about how to integrate it to your website or app: Quick Start Guide Who is behind this project and how can I follow it? I’m Zsolt Ero ( blog , email ). After 9 years of running my own map tile infrastructure for MapHub , I’ve open-sourced it and launched OpenFreeMap. X: @hyperknot (details) X: @OpenFreeMapOrg (announcements) bsky: @hyperknot.com GitHub: openfreemap and openfreemap-styles Why did you build this project? OpenStreetMap is one of the most important collective projects in history. It began 20 years ago, and today, 3 million edits are made each day! For a long time, when you wanted to use the map on your website or app, you had to look for a commercial map tile provider and hope your site didn’t become too popular. Otherwise, you might end up with a $10,000 bill in a single day, as Hoodmaps did . Self-hosting was an option, but it required a big server and a lot of time to get it right. Since I’ve spent many years developing the map tile infrastruc"
+    }
+  }
+}
