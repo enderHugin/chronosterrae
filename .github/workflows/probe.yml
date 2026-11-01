@@ -33,6 +33,8 @@ jobs:
           node-version: '22'
 
       - name: Ejecutar sonda
+        env:
+          PROBE_SAMPLES_DIR: /tmp/samples
         run: node scripts/probe.js > /tmp/probe.json 2> /tmp/probe.log
 
       - name: Mostrar resumen en el log
@@ -51,6 +53,8 @@ jobs:
           git switch --orphan probe-results
           cp /tmp/probe.json probe.json
           cp /tmp/probe.log probe.log || true
+          if [ -d /tmp/samples ]; then cp -r /tmp/samples samples; fi
           git add probe.json probe.log
+          if [ -d samples ]; then git add samples; fi
           git commit -m "Resultado de la sonda $(date -u +%Y-%m-%dT%H:%MZ)"
           git push --force origin probe-results

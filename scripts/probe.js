@@ -32,13 +32,18 @@ const jsonHas = (...keys) => (text) => {
 };
 
 const targets = [
-    { id: 'gplates-coastlines', area: 'paleogeografia', url: 'https://gws.gplates.org/reconstruct/coastlines/?time=250&model=MERDITH2021', expect: jsonHas('features') },
-    { id: 'gplates-coastlines-default-model', area: 'paleogeografia', url: 'https://gws.gplates.org/reconstruct/coastlines/?time=250', expect: jsonHas('features') },
+    { id: 'gplates-coastlines', area: 'paleogeografia', url: 'https://gws.gplates.org/reconstruct/coastlines/?time=250&model=MERDITH2021', full: true, expect: jsonHas('features') },
+    { id: 'gplates-coastlines-default-model', area: 'paleogeografia', url: 'https://gws.gplates.org/reconstruct/coastlines/?time=250', full: true, expect: jsonHas('features') },
+    { id: 'gplates-coastlines-0ma', area: 'paleogeografia', url: 'https://gws.gplates.org/reconstruct/coastlines/?time=0', full: true, expect: jsonHas('features') },
+    { id: 'gplates-coastlines-merdith-500ma', area: 'paleogeografia', url: 'https://gws.gplates.org/reconstruct/coastlines/?time=500&model=MERDITH2021', full: true, expect: jsonHas('features') },
+    { id: 'gplates-model-list', area: 'paleogeografia', url: 'https://gws.gplates.org/info/model_list', expect: (t) => t.length > 2 },
+    { id: 'gplates-static-polygons-250ma', area: 'paleogeografia', url: 'https://gws.gplates.org/reconstruct/static_polygons/?time=250&model=MERDITH2021', expect: jsonHas('features') },
     { id: 'macrostrat-intervals', area: 'geologia', url: 'https://macrostrat.org/api/v2/defs/intervals?name=Permian', expect: jsonHas('success') },
     { id: 'pbdb-occurrences', area: 'fosiles', url: 'https://paleobiodb.org/data1.2/occs/list.json?base_name=Dinosauria&interval=Maastrichtian&limit=3&show=coords', expect: jsonHas('records') },
     { id: 'gbif-occurrences', area: 'vida-actual', url: 'https://api.gbif.org/v1/occurrence/search?limit=1', expect: jsonHas('results') },
     { id: 'inaturalist-observations', area: 'vida-actual', url: 'https://api.inaturalist.org/v1/observations?per_page=1', expect: jsonHas('results') },
     { id: 'opentree-about', area: 'taxonomia', url: 'https://api.opentreeoflife.org/v3/tree_of_life/about', method: 'POST', body: '{}', expect: jsonHas('root') },
+    { id: 'wikidata-sparql-trivial', area: 'personas', url: 'https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent('SELECT ?b WHERE { wd:Q254 wdt:P569 ?b }'), expect: jsonHas('results') },
     { id: 'wikidata-sparql-births', area: 'personas', url: 'https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent(wikidataQuery), expect: jsonHas('results') },
     { id: 'wikipedia-onthisday', area: 'efemerides', url: 'https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/12/05', expect: jsonHas('events') },
     { id: 'commons-api', area: 'imagenes', url: 'https://commons.wikimedia.org/w/api.php?action=query&meta=siteinfo&format=json&origin=*', expect: jsonHas('query') },
@@ -54,6 +59,17 @@ const targets = [
 ];
 
 const log = (...args) => console.error(...args);
+
+// Si PROBE_SAMPLES_DIR esta definido, se guarda el cuerpo de cada respuesta
+// (completo si t.full, recortado si no) para poder inspeccionar el formato real.
+const SAMPLES_DIR = process.env.PROBE_SAMPLES_DIR || '';
+const SAMPLE_CHARS = 8000;
+const saveSample = (t, text) => {
+    if (!SAMPLES_DIR) return;
+    const fs = require('fs');
+    fs.mkdirSync(SAMPLES_DIR, { recursive: true });
+    fs.writeFileSync(`${SAMPLES_DIR}/${t.id}.txt`, t.full ? text : text.slice(0, SAMPLE_CHARS));
+};
 
 const probe = async (t) => {
     const started = Date.now();
@@ -73,6 +89,7 @@ const probe = async (t) => {
             }
         });
         const text = await res.text();
+        saveSample(t, text);
         const acao = res.headers.get('access-control-allow-origin');
         out.status = res.status;
         out.ok = res.ok;
