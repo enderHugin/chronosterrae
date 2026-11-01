@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-11-01T17:05:04.659Z",
+  "sources": [
+    {
+      "id": "hyg-v4.1",
+      "url": "https://github.com/astronexus/HYG-Database",
+      "commit": "c7f7f883fe678cc7680169a50ccd7dcc49b060ce",
+      "file": "hyg/CURRENT/hygdata_v41.csv",
+      "sha256": "d9f69fd86bbf90a4e4d52b4c5c53eacfa6dfc0bfdef85bfd94f095e0bebe4ebd",
+      "license": "CC-BY-SA-4.0"
+    },
+    {
+      "id": "d3-celestial-0.7.35",
+      "url": "https://github.com/ofrohn/d3-celestial",
+      "files": {
+        "constellations.lines.json": "294f66bef5d5cf50b1e17f16d2efa1d97a15131612c68dd935adef6e7373e13c",
+        "constellations.json": "11e14f1ee19b71bff5ca8af3f6e6a20596c4609dd86d43c9a796054fce88030c"
+      },
+      "license": "BSD-3-Clause"
+    }
+  ],
+  "mag_limit": 6.5,
+  "match_deg": 0.02,
+  "epoch_jyear": 2000,
+  "files": {
+    "stars.json": {
+      "bytes": 569192,
+      "sha256": "f51128adf6556dc40dafb0f761afdcacfccfeb7390874f7fe5c2798f6259d67a"
+    },
+    "constellations.json": {
+      "bytes": 16845,
+      "sha256": "ff58630ca31e44543d7248a514deb37d59d9f2f9b042726cf17a169dbd7e3730"
+    }
+  },
+  "stars": {
+    "hyg_rows": 119626,
+    "mag_le_limit": 8920,
+    "without_hip": 50,
+    "bad_proper_motion": 0,
+    "kept": 8870,
+    "duplicate_hip": 0
+  },
+  "constellations": {
+    "vertices": 893,
+    "unmatched": 1,
+    "segments": 742,
+    "dropped_segments": 0
+  },
+  "unmatched_vertices": [
+    "UMa 169.5468,31.5308"
+  ]
+}
