@@ -1,0 +1,42 @@
+name: Sonda de consultas masivas (Wikidata y QLever)
+
+# Mide tiempo y filas de consultas masivas por banda de notoriedad; informe en la rama `bulk-build`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bulk-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear consultas
+        run: node scripts/probe-bulk.js > /tmp/bulk.json 2> /tmp/bulk.log
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 30 /tmp/bulk.log || true
+          head -c 800 /tmp/bulk.json || true
+      - name: Informe en la rama bulk-build
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/bulk.json || echo '{"error":"sin salida"}' > /tmp/bulk.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan bulk-build
+          cp /tmp/bulk.json report.json
+          cp /tmp/bulk.log report.log || true
+          git add report.json report.log
+          git commit -m "Sonda masiva $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin bulk-build
