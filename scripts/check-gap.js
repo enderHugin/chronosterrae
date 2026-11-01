@@ -22,6 +22,10 @@ check('dos paises lejanos: cada uno rellena solo su lado', () => {
     const res = G.classify([{ key: 'A', polys: [sq(0, 0, 0.5)] }, { key: 'B', polys: [sq(3, 0, 0.5)] }], bbox, { distM: 40000 });
     return at(res, 0.6, 0.25) === 1 && at(res, 2.9, 0.25) === 2 && at(res, 1.75, 0.25) === 0;
 });
+check('golfo: un pais al otro lado del mar (mucho mas lejos) NO vuelve ambigua una costa claramente de otro', () => {
+    const res = G.classify([{ key: 'A', polys: [sq(0, 0, 1)] }, { key: 'B', polys: [sq(1.3, 0, 1)] }], bbox, { distM: 40000 });
+    return at(res, 1.03, 0.5) === 1 /* ~3 km de A, ~30 km de B */ && at(res, 1.27, 0.5) === 2 && at(res, 1.15, 0.5) === 255 /* a mitad */;
+});
 check('un hueco (lago o enclave sin dibujar) dentro de un poligono no se rellena: no es franja de costa', () => {
     const donut = [[[0, 0], [2, 0], [2, 2], [0, 2], [0, 0]], [[0.8, 0.8], [1.2, 0.8], [1.2, 1.2], [0.8, 1.2], [0.8, 0.8]]];
     const res = G.classify([{ key: 'A', polys: [donut] }], [-1, -1, 3, 3], { distM: 40000 });

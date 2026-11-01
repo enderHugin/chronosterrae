@@ -50,7 +50,7 @@ sale y cuánto se puede fiar de él.
 - De 535 a 1.000 Ma solo hay **contornos actuales movidos como bloques rígidos** (GPlates,
   modelo Merdith 2021). La web lo rotula; no son las costas reales de esa época.
 - Las fronteras históricas son un mapa compilado y en elaboración: su precisión legal es alta, pero están dibujadas con muy pocos vértices (mediana de 10 a 30 km entre puntos), así que a zoom alto no encajan con la costa real. Contrástalas antes de citarlas.
-  Para que no queden franjas sin color junto a la costa, con el detalle activo se rellena **solo lo claro**: la tierra a menos de 40 km de un único país se pinta con su color, más suave; donde se juntan dos o más queda con un rayado neutro y la web avisa «frontera no resuelta a esta escala». Es un relleno gráfico aproximado, no un dato de frontera (`map/borders-gap.js`).
+  Para que no queden franjas sin color junto a la costa, con el detalle activo se rellena **solo lo claro**: la tierra a menos de 40 km se pinta, más suave, con el color del país claramente más cercano (el otro debe estar a más del doble de distancia más 10 km); donde dos países están a distancias parecidas queda con un rayado neutro y la web avisa «frontera no resuelta a esta escala». Es un relleno gráfico aproximado, no un dato de frontera (`map/borders-gap.js`).
 - Las estrellas vienen de HYG (CC BY-SA 4.0): los datos derivados se atribuyen y comparten igual
   (`data/sky/NOTICE.md`). El catálogo llega a magnitud ~6,5 y las posiciones se extrapolan con movimiento propio.
 - Los sucesos con hora son pocos todavía y los anteriores al año 1 no están (la numeración a. C. de
@@ -123,7 +123,7 @@ repository; historical borders from 123,000 BC to 2010; an evidence-type label o
 recent data from a daily harvester, shown only at the present day; stars, planets, Sun and Moon behind the globe at their real position for the chosen instant (HYG catalogue, CC BY-SA 4.0), a running clock, timed events with advance notices only where the time of day is documented (never invented), and present-day OpenStreetMap detail when zooming in (labelled as an approximation, not a reconstruction). Language, theme, time and camera are remembered in a single first-party cookie (`ct_prefs`, one year, no tracking).
 
 **Known limits:** from 535 to 1,000 Ma only rigidly moved present-day outlines are available (and
-labelled as such); historical borders are a work-in-progress compilation (coastal gaps are filled conservatively: single-country strips within 40 km are tinted, multi-country ones hatched and flagged as unresolved); people, works,
+labelled as such); historical borders are a work-in-progress compilation (coastal gaps are filled conservatively: strips within 40 km are tinted with the clearly nearest country, those where two countries are at similar distances are hatched and flagged as unresolved); people, works,
 fauna or flora yet; timed events are few so far (the bulk Wikidata load is being built).
 
 **Development:** `npm ci && npm test`. Code is MIT; each data source keeps its own licence,
