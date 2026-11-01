@@ -1,0 +1,629 @@
+{
+  "probed_at": "2026-11-01T21:21:18.113Z",
+  "steps": {
+    "naturalearth-listing": {
+      "status": 200,
+      "ok": true,
+      "bytes": 216657,
+      "ms": 199,
+      "acao": "*",
+      "type": "application/json; charset=utf-8",
+      "matching": [
+        "ne_10m_admin_0_boundary_lines_disputed_areas.geojson 183831",
+        "ne_10m_admin_0_boundary_lines_land.geojson 2284669",
+        "ne_10m_admin_0_boundary_lines_map_units.geojson 61249",
+        "ne_10m_admin_0_boundary_lines_maritime_indicator.geojson 284392",
+        "ne_10m_admin_0_boundary_lines_maritime_indicator_chn.geojson 14655",
+        "ne_10m_admin_0_countries.geojson 13287234",
+        "ne_10m_admin_0_countries_arg.geojson 13212970",
+        "ne_10m_admin_0_countries_bdg.geojson 13219102",
+        "ne_10m_admin_0_countries_bra.geojson 13229096",
+        "ne_10m_admin_0_countries_chn.geojson 13205107",
+        "ne_10m_admin_0_countries_deu.geojson 13232694",
+        "ne_10m_admin_0_countries_egy.geojson 13229953",
+        "ne_10m_admin_0_countries_esp.geojson 13222717",
+        "ne_10m_admin_0_countries_fra.geojson 13225891",
+        "ne_10m_admin_0_countries_gbr.geojson 13236144",
+        "ne_10m_admin_0_countries_grc.geojson 13222986",
+        "ne_10m_admin_0_countries_idn.geojson 13202902",
+        "ne_10m_admin_0_countries_ind.geojson 13242091",
+        "ne_10m_admin_0_countries_iso.geojson 13171050",
+        "ne_10m_admin_0_countries_isr.geojson 13232084",
+        "ne_10m_admin_0_countries_ita.geojson 13232383",
+        "ne_10m_admin_0_countries_jpn.geojson 13232502",
+        "ne_10m_admin_0_countries_kor.geojson 13233357",
+        "ne_10m_admin_0_countries_lakes.geojson 13581824",
+        "ne_10m_admin_0_countries_mar.geojson 13213047",
+        "ne_10m_admin_0_countries_nep.geojson 13242878",
+        "ne_10m_admin_0_countries_nld.geojson 13225580",
+        "ne_10m_admin_0_countries_pak.geojson 13222725",
+        "ne_10m_admin_0_countries_pol.geojson 13225580",
+        "ne_10m_admin_0_countries_prt.geojson 13232291",
+        "ne_10m_admin_0_countries_pse.geojson 13247652",
+        "ne_10m_admin_0_countries_rus.geojson 13296060",
+        "ne_10m_admin_0_countries_sau.geojson 13220358",
+        "ne_10m_admin_0_countries_swe.geojson 13232383",
+        "ne_10m_admin_0_countries_tlc.geojson 13635147",
+        "ne_10m_admin_0_countries_tur.geojson 13238246",
+        "ne_10m_admin_0_countries_twn.geojson 13224274",
+        "ne_10m_admin_0_countries_ukr.geojson 13223297",
+        "ne_10m_admin_0_countries_usa.geojson 13245274",
+        "ne_10m_admin_0_countries_vnm.geojson 13221654",
+        "ne_10m_admin_0_disputed_areas.geojson 701323",
+        "ne_10m_admin_0_disputed_areas_scale_rank_minor_islands.geojson 425664",
+        "ne_10m_admin_0_map_units.geojson 13526439",
+        "ne_10m_admin_0_sovereignty.geojson 13094397",
+        "ne_110m_admin_0_boundary_lines_land.geojson 340010",
+        "ne_110m_admin_0_countries.geojson 838726",
+        "ne_110m_admin_0_countries_lakes.geojson 841474",
+        "ne_110m_admin_0_map_units.geojson 861911",
+        "ne_110m_admin_0_sovereignty.geojson 817064",
+        "ne_50m_admin_0_boundary_lines_disputed_areas.geojson 51158",
+        "ne_50m_admin_0_boundary_lines_land.geojson 760189",
+        "ne_50m_admin_0_boundary_lines_maritime_indicator.geojson 198113",
+        "ne_50m_admin_0_boundary_lines_maritime_indicator_chn.geojson 14403",
+        "ne_50m_admin_0_boundary_map_units.geojson 14493",
+        "ne_50m_admin_0_countries.geojson 3083490",
+        "ne_50m_admin_0_countries_lakes.geojson 3138521",
+        "ne_50m_admin_0_map_units.geojson 3179420",
+        "ne_50m_admin_0_sovereignty.geojson 2930824"
+      ]
+    },
+    "naturalearth-license": {
+      "status": 200,
+      "ok": true,
+      "bytes": 5756,
+      "ms": 172,
+      "acao": "*",
+      "type": "application/json; charset=utf-8",
+      "repo_license": {
+        "key": "other",
+        "name": "Other",
+        "spdx_id": "NOASSERTION",
+        "url": null,
+        "node_id": "MDc6TGljZW5zZTA="
+      },
+      "description": "A global, public domain map dataset available at three scales and featuring tightly integrated vector and raster data.",
+      "readme_terms": "_\n\n# About Natural Earth Vector\n\nNatural Earth is a public domain map dataset available at 1:10m, 1:50m, and 1:110 million scales."
+    },
+    "naturalearth-ne_10m_admin_0_countries.geojson": {
+      "status": 200,
+      "ok": true,
+      "bytes": 13248815,
+      "ms": 191,
+      "acao": "*",
+      "type": "text/plain; charset=utf-8",
+      "features": 258,
+      "property_keys": [
+        "featurecla",
+        "scalerank",
+        "LABELRANK",
+        "SOVEREIGNT",
+        "SOV_A3",
+        "ADM0_DIF",
+        "LEVEL",
+        "TYPE",
+        "TLC",
+        "ADMIN",
+        "ADM0_A3",
+        "GEOU_DIF",
+        "GEOUNIT",
+        "GU_A3",
+        "SU_DIF",
+        "SUBUNIT",
+        "SU_A3",
+        "BRK_DIFF",
+        "NAME",
+        "NAME_LONG",
+        "BRK_A3",
+        "BRK_NAME",
+        "BRK_GROUP",
+        "ABBREV",
+        "POSTAL",
+        "FORMAL_EN",
+        "FORMAL_FR",
+        "NAME_CIAWF",
+        "NOTE_ADM0",
+        "NOTE_BRK",
+        "NAME_SORT",
+        "NAME_ALT",
+        "MAPCOLOR7",
+        "MAPCOLOR8",
+        "MAPCOLOR9",
+        "MAPCOLOR13",
+        "POP_EST",
+        "POP_RANK",
+        "POP_YEAR",
+        "GDP_MD"
+      ],
+      "countries": {
+        "Luxembourg": {
+          "vertices": 197,
+          "segment_median_km": 1.03,
+          "segment_p90_km": 2.71,
+          "segment_max_km": 6.3,
+          "geometry": "Polygon"
+        },
+        "Spain": {
+          "vertices": 2978,
+          "segment_median_km": 1.72,
+          "segment_p90_km": 4.4,
+          "segment_max_km": 26.8,
+          "geometry": "MultiPolygon"
+        },
+        "El Salvador": {
+          "vertices": 380,
+          "segment_median_km": 1.65,
+          "segment_p90_km": 4.72,
+          "segment_max_km": 29.6,
+          "geometry": "MultiPolygon"
+        },
+        "Honduras": {
+          "vertices": 1184,
+          "segment_median_km": 1.73,
+          "segment_p90_km": 4.61,
+          "segment_max_km": 24.9,
+          "geometry": "MultiPolygon"
+        }
+      },
+      "points": {
+        "Ceuta": [
+          "Spain"
+        ],
+        "Melilla": [
+          "Spain"
+        ],
+        "Madrid": [
+          "Spain"
+        ],
+        "Tegucigalpa": [
+          "Honduras"
+        ]
+      }
+    },
+    "naturalearth-ne_10m_admin_0_map_units.geojson": {
+      "status": 200,
+      "ok": true,
+      "bytes": 13481642,
+      "ms": 2119,
+      "acao": "*",
+      "type": "text/plain; charset=utf-8",
+      "features": 298,
+      "property_keys": [
+        "featurecla",
+        "scalerank",
+        "LABELRANK",
+        "SOVEREIGNT",
+        "SOV_A3",
+        "ADM0_DIF",
+        "LEVEL",
+        "TYPE",
+        "TLC",
+        "ADMIN",
+        "ADM0_A3",
+        "GEOU_DIF",
+        "GEOUNIT",
+        "GU_A3",
+        "SU_DIF",
+        "SUBUNIT",
+        "SU_A3",
+        "BRK_DIFF",
+        "NAME",
+        "NAME_LONG",
+        "BRK_A3",
+        "BRK_NAME",
+        "BRK_GROUP",
+        "ABBREV",
+        "POSTAL",
+        "FORMAL_EN",
+        "FORMAL_FR",
+        "NAME_CIAWF",
+        "NOTE_ADM0",
+        "NOTE_BRK",
+        "NAME_SORT",
+        "NAME_ALT",
+        "MAPCOLOR7",
+        "MAPCOLOR8",
+        "MAPCOLOR9",
+        "MAPCOLOR13",
+        "POP_EST",
+        "POP_RANK",
+        "POP_YEAR",
+        "GDP_MD"
+      ],
+      "countries": {
+        "Luxembourg": {
+          "vertices": 197,
+          "segment_median_km": 1.03,
+          "segment_p90_km": 2.71,
+          "segment_max_km": 6.3,
+          "geometry": "Polygon"
+        },
+        "Spain": {
+          "vertices": 2978,
+          "segment_median_km": 1.72,
+          "segment_p90_km": 4.4,
+          "segment_max_km": 26.8,
+          "geometry": "MultiPolygon"
+        },
+        "El Salvador": {
+          "vertices": 380,
+          "segment_median_km": 1.65,
+          "segment_p90_km": 4.72,
+          "segment_max_km": 29.6,
+          "geometry": "MultiPolygon"
+        },
+        "Honduras": {
+          "vertices": 1184,
+          "segment_median_km": 1.73,
+          "segment_p90_km": 4.61,
+          "segment_max_km": 24.9,
+          "geometry": "MultiPolygon"
+        }
+      },
+      "points": {
+        "Ceuta": [
+          "Spain"
+        ],
+        "Melilla": [
+          "Spain"
+        ],
+        "Madrid": [
+          "Spain"
+        ],
+        "Tegucigalpa": [
+          "Honduras"
+        ]
+      }
+    },
+    "naturalearth-ne_50m_admin_0_countries.geojson": {
+      "status": 200,
+      "ok": true,
+      "bytes": 3048728,
+      "ms": 41,
+      "acao": "*",
+      "type": "text/plain; charset=utf-8",
+      "features": 242,
+      "property_keys": [
+        "featurecla",
+        "scalerank",
+        "LABELRANK",
+        "SOVEREIGNT",
+        "SOV_A3",
+        "ADM0_DIF",
+        "LEVEL",
+        "TYPE",
+        "TLC",
+        "ADMIN",
+        "ADM0_A3",
+        "GEOU_DIF",
+        "GEOUNIT",
+        "GU_A3",
+        "SU_DIF",
+        "SUBUNIT",
+        "SU_A3",
+        "BRK_DIFF",
+        "NAME",
+        "NAME_LONG",
+        "BRK_A3",
+        "BRK_NAME",
+        "BRK_GROUP",
+        "ABBREV",
+        "POSTAL",
+        "FORMAL_EN",
+        "FORMAL_FR",
+        "NAME_CIAWF",
+        "NOTE_ADM0",
+        "NOTE_BRK",
+        "NAME_SORT",
+        "NAME_ALT",
+        "MAPCOLOR7",
+        "MAPCOLOR8",
+        "MAPCOLOR9",
+        "MAPCOLOR13",
+        "POP_EST",
+        "POP_RANK",
+        "POP_YEAR",
+        "GDP_MD"
+      ],
+      "countries": {
+        "Spain": {
+          "vertices": 538,
+          "segment_median_km": 8.18,
+          "segment_p90_km": 19.85,
+          "segment_max_km": 66.7,
+          "geometry": "MultiPolygon"
+        },
+        "Luxembourg": {
+          "vertices": 46,
+          "segment_median_km": 4.73,
+          "segment_p90_km": 8.52,
+          "segment_max_km": 12.2,
+          "geometry": "Polygon"
+        },
+        "Honduras": {
+          "vertices": 207,
+          "segment_median_km": 8.17,
+          "segment_p90_km": 19.48,
+          "segment_max_km": 67.3,
+          "geometry": "MultiPolygon"
+        },
+        "El Salvador": {
+          "vertices": 74,
+          "segment_median_km": 7.88,
+          "segment_p90_km": 18.89,
+          "segment_max_km": 49.4,
+          "geometry": "Polygon"
+        }
+      },
+      "points": {
+        "Ceuta": [
+          "Morocco"
+        ],
+        "Melilla": [
+          "Morocco"
+        ],
+        "Madrid": [
+          "Spain"
+        ],
+        "Tegucigalpa": [
+          "Honduras"
+        ]
+      }
+    },
+    "geoboundaries-api-ESP": {
+      "status": 200,
+      "ok": true,
+      "bytes": 1769,
+      "ms": 252,
+      "acao": "*",
+      "type": "application/json",
+      "keys": [
+        "boundaryID",
+        "boundaryName",
+        "boundaryISO",
+        "boundaryYearRepresented",
+        "boundaryType",
+        "boundaryCanonical",
+        "boundarySource",
+        "boundaryLicense",
+        "licenseDetail",
+        "licenseSource",
+        "boundarySourceURL",
+        "sourceDataUpdateDate",
+        "buildDate",
+        "Continent",
+        "UNSDG-region",
+        "UNSDG-subregion",
+        "worldBankIncomeGroup",
+        "admUnitCount",
+        "meanVertices",
+        "minVertices",
+        "maxVertices",
+        "meanPerimeterLengthKM",
+        "minPerimeterLengthKM",
+        "maxPerimeterLengthKM",
+        "meanAreaSqKM",
+        "minAreaSqKM",
+        "maxAreaSqKM",
+        "staticDownloadLink",
+        "gjDownloadURL",
+        "tjDownloadURL",
+        "imagePreview",
+        "simplifiedGeometryGeoJSON"
+      ],
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "license_detail": "CC-BY 4.0",
+      "source": "Instituto de Geografico Nacional",
+      "year": "2017",
+      "canonical": "Unknown",
+      "download_keys": [
+        "staticDownloadLink",
+        "gjDownloadURL",
+        "tjDownloadURL"
+      ],
+      "geojson": {
+        "url": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/ESP/ADM0/geoBoundaries-ESP-ADM0.geojson",
+        "status": 200,
+        "ok": true,
+        "bytes": 25576134,
+        "ms": 3540,
+        "acao": "*",
+        "type": "application/octet-stream",
+        "features": 1,
+        "property_keys": [
+          "shapeName",
+          "shapeISO",
+          "shapeID",
+          "shapeGroup",
+          "shapeType"
+        ],
+        "countries": {
+          "Spain": {
+            "vertices": 664672,
+            "segment_median_km": 0.01,
+            "segment_p90_km": 0.03,
+            "segment_max_km": 3,
+            "geometry": "MultiPolygon"
+          }
+        },
+        "points": {
+          "Ceuta": [
+            "Spain"
+          ],
+          "Melilla": [
+            "Spain"
+          ],
+          "Madrid": [
+            "Spain"
+          ],
+          "Tegucigalpa": []
+        }
+      }
+    },
+    "github-search-cshapes": {
+      "status": 200,
+      "ok": true,
+      "bytes": 42355,
+      "ms": 392,
+      "acao": "*",
+      "type": "application/json; charset=utf-8",
+      "items": [
+        {
+          "full_name": "rsilvabenevides/cshapes-genalg",
+          "license": null,
+          "description": "Matlab files to generate Comsol simulation with genetic algorith optimization for a bidimensional optomechanical cavity",
+          "stars": 4,
+          "pushed_at": "2021-07-08T12:37:01Z"
+        },
+        {
+          "full_name": "geohacker/international-border-history",
+          "license": null,
+          "description": "Map visualising the history of international borders based on the data from CShapes",
+          "stars": 3,
+          "pushed_at": "2020-09-14T05:31:35Z"
+        },
+        {
+          "full_name": "robbinpeng8/cshape",
+          "license": null,
+          "description": "cshape",
+          "stars": 0,
+          "pushed_at": "2020-04-06T08:29:01Z"
+        },
+        {
+          "full_name": "r-forge/cshapes",
+          "license": null,
+          "description": "Read-only mirror of \"cshapes\" from r-forge SVN.",
+          "stars": 0,
+          "pushed_at": "2022-02-17T06:40:06Z"
+        },
+        {
+          "full_name": "MineClever/CShaperScriptCollection",
+          "license": null,
+          "description": "Collect CShape Script or CShape code snipes",
+          "stars": 0,
+          "pushed_at": "2025-04-04T17:23:28Z"
+        },
+        {
+          "full_name": "cran/cshapes",
+          "license": null,
+          "description": ":exclamation: This is a read-only mirror of the CRAN R package repository.  cshapes — The CShapes 2.0 Dataset and Utilities  ",
+          "stars": 0,
+          "pushed_at": "2021-06-05T15:59:37Z"
+        },
+        {
+          "full_name": "nexlldd/CShapes",
+          "license": null,
+          "description": "FOPR Final Project",
+          "stars": 0,
+          "pushed_at": "2025-11-06T10:50:33Z"
+        },
+        {
+          "full_name": "adrielmorales/cshapes",
+          "license": "MIT",
+          "description": "Shapes that I have created under C.",
+          "stars": 0,
+          "pushed_at": "2023-01-03T04:06:08Z"
+        }
+      ]
+    },
+    "github-search-historical-borders": {
+      "status": 200,
+      "ok": true,
+      "bytes": 5942,
+      "ms": 181,
+      "acao": "*",
+      "type": "application/json; charset=utf-8",
+      "items": [
+        {
+          "full_name": "aourednik/historical-basemaps",
+          "license": "GPL-3.0",
+          "description": "Collection of georeferenced boundaries of world countries and cultural regions for use in mapping historical data on global or continental s",
+          "stars": 866
+        }
+      ]
+    },
+    "ohm-site": {
+      "status": 200,
+      "ok": true,
+      "bytes": 36222,
+      "ms": 1068,
+      "acao": null,
+      "type": "text/html; charset=utf-8",
+      "head": "\n\n\n\n<!DOCTYPE html>\n<html lang=\"en\" dir=\"ltr\">\n  \n<head data-locale=\"en\" data-preferred-editor=\"id\" data-preferred-languages=\"[]\">\n  \n<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link rel=\"apple-touch-icon\" type=\"image/png\" href=\"/assets/apple-touch-icon-57x57-0af2b52ac2b1a8cb0aba42f17aa901bfdedb9174bd978f838e3b3e1dd8602f52.png\" sizes=\"57x57\" />\n<link rel=\"apple-touch-icon\" type=\"image/png\" href=\"/assets/apple-touch-i"
+    },
+    "ohm-api-capabilities": {
+      "status": 200,
+      "ok": true,
+      "bytes": 995,
+      "ms": 195,
+      "acao": null,
+      "type": "application/xml; charset=utf-8",
+      "head": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<osm version=\"0.6\" generator=\"OpenHistoricalMap server\" copyright=\"OpenHistoricalMap is dedicated to the public domain except where otherwise noted.\" attribution=\"http://www.openhistoricalmap.org/copyright\" license=\"https://creativecommons.org/public-domain/cc0/\">\n  <api>\n    <version minimum=\"0.6\" maximum=\"0.6\"/>\n    <area maximum=\"0.25\"/>\n    <note_area maximum=\"25\"/>\n    <tracepoints per_page=\"5000\"/>\n    <waynodes maximum=\"2000\"/>\n    <relationmembers m"
+    },
+    "ohm-vtiles-tilejson": {
+      "status": 404,
+      "ok": false,
+      "bytes": 0,
+      "ms": 567,
+      "acao": "*",
+      "type": null,
+      "head": ""
+    },
+    "nominatim-Ceuta": {
+      "status": 200,
+      "ok": true,
+      "bytes": 1090,
+      "ms": 519,
+      "acao": null,
+      "type": "application/json; charset=utf-8",
+      "results": [
+        {
+          "name": "Ceuta, España",
+          "class": "boundary",
+          "type": "administrative",
+          "country": "España",
+          "country_code": "es"
+        },
+        {
+          "name": "Ceuta, Plazas de Soberanía, España",
+          "class": "boundary",
+          "type": "administrative",
+          "country": "España",
+          "country_code": "es"
+        }
+      ]
+    },
+    "nominatim-Melilla": {
+      "status": 200,
+      "ok": true,
+      "bytes": 1557,
+      "ms": 527,
+      "acao": null,
+      "type": "application/json; charset=utf-8",
+      "results": [
+        {
+          "name": "Melilla, España",
+          "class": "boundary",
+          "type": "administrative",
+          "country": "España",
+          "country_code": "es"
+        },
+        {
+          "name": "Melilla, España",
+          "class": "boundary",
+          "type": "administrative",
+          "country": "España",
+          "country_code": "es"
+        },
+        {
+          "name": "Melilla, 52001, España",
+          "class": "place",
+          "type": "city",
+          "country": "España",
+          "country_code": "es"
+        }
+      ]
+    }
+  }
+}
