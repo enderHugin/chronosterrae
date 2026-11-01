@@ -18,7 +18,7 @@
     "md5": "acf1a1416a8026511d003220b646f904",
     "sha256": "c3b1edd43385f99eb99e60544bd4b14bc89cf54d66029a76910a1be08af4ec61",
     "downloaded_from": "https://zenodo.org/api/records/7994000/files/paleocoastlines_v7_shapefiles.zip/content",
-    "retrieved_at": "2026-11-01T14:55:39.002Z"
+    "retrieved_at": "2026-11-01T15:09:00.224Z"
   },
   "related_article_doi": "10.1016/j.earscirev.2020.103463",
   "related_article_note": "DOI tomado de la descripcion del registro de Zenodo; pendiente de verificar en Crossref.",
@@ -33,7 +33,7 @@
     "coordinate_decimals": 3,
     "note": "Douglas-Peucker por anillo; anillos degenerados descartados"
   },
-  "built_at": "2026-11-01T14:55:40.097Z",
+  "built_at": "2026-11-01T15:09:01.309Z",
   "total_bytes": 10227408,
   "ages": [
     {
