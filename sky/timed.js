@@ -122,11 +122,24 @@
     }
 
     /** Claves de los ficheros por siglo (c<N>; el siglo 0 son los años 1-99) que cubren [year0, year1]. */
+    // Un suceso masivo (solo fecha) que es el MISMO que uno de la semilla con hora verificada se descarta:
+    // misma fecha (la del masivo puede ser mas gruesa: año o mes) y alguna palabra significativa en comun.
+    function dedupeAgainst(timed, others) {
+        const words = (s) => new Set(String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/[^a-z0-9]+/).filter((w) => w.length >= 5));
+        const twins = timed.map((f) => ({ iso: f.properties.time.iso || '', words: words(f.properties.name) }));
+        return others.filter((o) => {
+            const iso = o.properties.time.iso || '';
+            if (!iso) return true;
+            const w = words(o.properties.name);
+            return !twins.some((t) => t.iso.startsWith(iso) && [...w].some((x) => t.words.has(x)));
+        });
+    }
+
     function shardKeys(year0, year1) {
         const keys = [];
         for (let c = Math.floor(Math.max(1, year0) / 100); c <= Math.floor(year1 / 100); c++) keys.push('c' + c);
         return keys;
     }
 
-    return { span, isTimed, importanceFloor, selectVisible, notices, formatCountdown, shardKeys, LEADS_S };
+    return { span, isTimed, importanceFloor, selectVisible, notices, formatCountdown, shardKeys, dedupeAgainst, LEADS_S };
 });

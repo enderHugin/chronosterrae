@@ -102,6 +102,17 @@ check('wikidata: se descarta, con motivo, lo que no se puede afirmar', () => {
     const why = (o, kind) => B.bindingToFeature(kind || 'birth', row(o), 'x').skip;
     return /etiqueta/.test(why({ label: '' })) && /etiqueta/.test(why({ label: 'Q12345' })) && /anterior al a/.test(why({ t: '-0044-03-15T00:00:00Z' })) && /calendario/.test(why({ cal: 'Q999' })) && /ilegible/.test(why({ t: 'ayer' }));
 });
+check('semilla: el suceso con hora sustituye a su gemelo masivo de solo fecha, y nada mas', () => {
+    const seed = [{ properties: { name: 'Space Shuttle Challenger disaster', time: { iso: '1986-01-28T16:39:13Z' } } }];
+    const bulk = [
+        { properties: { name: 'Space Shuttle Challenger disaster', time: { iso: '1986-01-28' } } },   // mismo
+        { properties: { name: 'Challenger Deep expedition', time: { iso: '1986' } } },                 // palabra comun, año que contiene la fecha: gemelo dudoso
+        { properties: { name: 'Challenger disaster inquiry', time: { iso: '1986-06-09' } } },          // otra fecha: se conserva
+        { properties: { name: 'Apollo launch', time: { iso: '1986-01-28' } } }                         // misma fecha, otro asunto: se conserva
+    ];
+    const kept = T.dedupeAgainst(seed, bulk).map((f) => f.properties.name);
+    return !kept.includes('Space Shuttle Challenger disaster') && kept.includes('Challenger disaster inquiry') && kept.includes('Apollo launch');
+});
 check('wikidata: no entran años sueltos ni asteroides numerados, pero si sucesos con cifras en el nombre', () => {
     const sk = (label, kind) => B.bindingToFeature(kind, row({ label }), 'x').skip;
     return /a.o/.test(sk('1999', 'event')) && /asteroide/.test(sk('3537 Jürgen', 'discovery')) && /asteroide/.test(sk('(5131) 1990 BG', 'discovery')) && /asteroide/.test(sk('2000 AB1', 'discovery'))

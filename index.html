@@ -1776,8 +1776,10 @@ const evName = (f) => (f.properties.labels && f.properties.labels[lang]) || f.pr
 const evKind = (f) => f.properties.kind || 'event';
 
 function eventsRebuild() {
-    events.all = [...events.seed];
-    events.shards.forEach((feats) => events.all.push(...feats));
+    const bulk = [];
+    events.shards.forEach((feats) => bulk.push(...feats));
+    // el suceso con hora verificada (semilla) sustituye a su gemelo masivo de solo fecha
+    events.all = [...events.seed, ...(window.ChronosTimed ? ChronosTimed.dedupeAgainst(events.seed, bulk) : bulk)];
     events.byId = new Map(events.all.map((f) => [f.properties.id, f]));
     events.timed = events.all.filter((f) => window.ChronosTimed && ChronosTimed.isTimed(f));
 }
