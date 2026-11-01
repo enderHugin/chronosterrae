@@ -1,0 +1,769 @@
+{
+  "dataset": "PaleoMAP PaleoCoastlines",
+  "creators": [
+    "Kocsis, A. T.",
+    "Scotese, C. R."
+  ],
+  "license": "CC-BY-4.0",
+  "attribution": "PaleoMAP PaleoCoastlines (Kocsis & Scotese), CC BY 4.0, doi:10.5281/zenodo.7994000. Simplificado y convertido a GeoJSON por ChronosTerrae.",
+  "source": {
+    "record": "https://doi.org/10.5281/zenodo.7994000",
+    "title": "PaleoMAP PaleoCoastlines data",
+    "license": {
+      "id": "cc-by-4.0"
+    },
+    "publication_date": "2023-09-08",
+    "file": "paleocoastlines_v7_shapefiles.zip",
+    "bytes": 17481632,
+    "md5": "acf1a1416a8026511d003220b646f904",
+    "sha256": "c3b1edd43385f99eb99e60544bd4b14bc89cf54d66029a76910a1be08af4ec61",
+    "downloaded_from": "https://zenodo.org/api/records/7994000/files/paleocoastlines_v7_shapefiles.zip/content",
+    "retrieved_at": "2026-11-01T15:09:40.120Z"
+  },
+  "related_article_doi": "10.1016/j.earscirev.2020.103463",
+  "related_article_note": "DOI tomado de la descripcion del registro de Zenodo; pendiente de verificar en Crossref.",
+  "layers": {
+    "coastline": "Costas paleogeograficas derivadas de los PaleoDEM (capa CS)",
+    "margin": "Margenes continentales, isobata de -1400 m de los PaleoDEM (capa CM)"
+  },
+  "evidence": "reconstruction",
+  "processing": {
+    "script": "scripts/build-paleocoastlines.js",
+    "simplify_tolerance_deg": 0.01,
+    "coordinate_decimals": 3,
+    "note": "Douglas-Peucker por anillo; anillos degenerados descartados"
+  },
+  "built_at": "2026-11-01T15:09:41.209Z",
+  "total_bytes": 10227408,
+  "ages": [
+    {
+      "age_ma": 0,
+      "file": "0.json",
+      "bytes": 285708,
+      "sha256": "085195a15f6df85470e6654d20d22753d9da17b807a69ddd20c4aea4a7bf0a31",
+      "coastlines": 106,
+      "margins": 127,
+      "dropped": 0
+    },
+    {
+      "age_ma": 5,
+      "file": "5.json",
+      "bytes": 176056,
+      "sha256": "264c6ca2191ea42839f373adcbb563e827cea6a7f3f5b837c9626b9bad9e6a61",
+      "coastlines": 78,
+      "margins": 79,
+      "dropped": 0
+    },
+    {
+      "age_ma": 10,
+      "file": "10.json",
+      "bytes": 217515,
+      "sha256": "81fdf7b5638db8cc3e72032ab81b772b500fb87ba0bead071af73c3357bf62cd",
+      "coastlines": 70,
+      "margins": 107,
+      "dropped": 0
+    },
+    {
+      "age_ma": 15,
+      "file": "15.json",
+      "bytes": 257968,
+      "sha256": "15baff64cce32386a9266b8a25a2a8f88ecdb020781adadab413e0532eda09eb",
+      "coastlines": 89,
+      "margins": 68,
+      "dropped": 0
+    },
+    {
+      "age_ma": 20,
+      "file": "20.json",
+      "bytes": 270797,
+      "sha256": "df10a2a7f883353558c91c675012ef67b250d3a4efb720422b2054c2d5a242bc",
+      "coastlines": 68,
+      "margins": 179,
+      "dropped": 1
+    },
+    {
+      "age_ma": 25,
+      "file": "25.json",
+      "bytes": 246400,
+      "sha256": "a0ac519c6662436da188aa7a5dbfe085a77aee60fa77e6e79be36a654cd9d249",
+      "coastlines": 56,
+      "margins": 78,
+      "dropped": 0
+    },
+    {
+      "age_ma": 30,
+      "file": "30.json",
+      "bytes": 244463,
+      "sha256": "f018bb6c6fc09c1c0a812151c2ea875fb2d4d01cbb59e28cefe7aa90a7ebbee6",
+      "coastlines": 63,
+      "margins": 116,
+      "dropped": 0
+    },
+    {
+      "age_ma": 35,
+      "file": "35.json",
+      "bytes": 348524,
+      "sha256": "039749de605555d3d72328478d8c84fe31534e833a2decbee22135e432506eea",
+      "coastlines": 96,
+      "margins": 123,
+      "dropped": 0
+    },
+    {
+      "age_ma": 40,
+      "file": "40.json",
+      "bytes": 322976,
+      "sha256": "7604ea6dfc0a6261907fec77bb2cee50e409b2b958fc6300705b7252935726d5",
+      "coastlines": 123,
+      "margins": 128,
+      "dropped": 0
+    },
+    {
+      "age_ma": 45,
+      "file": "45.json",
+      "bytes": 295419,
+      "sha256": "2f3041e2af5ce39f5fdd2b4c685224a34a5272847c4ed9ec59e25a1b0e6c3018",
+      "coastlines": 119,
+      "margins": 86,
+      "dropped": 0
+    },
+    {
+      "age_ma": 50,
+      "file": "50.json",
+      "bytes": 358118,
+      "sha256": "b864004ab509c60f07f26fd927707fd1b3f84ef1b44249be03fb6976986c1e4f",
+      "coastlines": 140,
+      "margins": 96,
+      "dropped": 0
+    },
+    {
+      "age_ma": 60,
+      "file": "60.json",
+      "bytes": 352931,
+      "sha256": "9cdb15979380ff3692c8f9fdeaaefa173bc479c77caefc40e09b5cad19dcfca0",
+      "coastlines": 105,
+      "margins": 93,
+      "dropped": 2
+    },
+    {
+      "age_ma": 65,
+      "file": "65.json",
+      "bytes": 231033,
+      "sha256": "424e6d2af90fcd5dc4734c86b7d620a86f3d830ae6182e0df49e7a7760873347",
+      "coastlines": 46,
+      "margins": 89,
+      "dropped": 1
+    },
+    {
+      "age_ma": 70,
+      "file": "70.json",
+      "bytes": 256910,
+      "sha256": "10d091ee5d1f211674c75c918bf6bf4c3a46ab2d2e0f571d2119379eb9caed54",
+      "coastlines": 94,
+      "margins": 95,
+      "dropped": 0
+    },
+    {
+      "age_ma": 80,
+      "file": "80.json",
+      "bytes": 259882,
+      "sha256": "a8474e1af81c8dbe0da288b22a1f634dd97abe11221a43dbab1c12c83052c23e",
+      "coastlines": 77,
+      "margins": 63,
+      "dropped": 0
+    },
+    {
+      "age_ma": 85,
+      "file": "85.json",
+      "bytes": 274200,
+      "sha256": "5acfd44792742e64060a55a2f5cf881fd6067d64191f80306aa59671c0feaab9",
+      "coastlines": 84,
+      "margins": 25,
+      "dropped": 0
+    },
+    {
+      "age_ma": 90,
+      "file": "90.json",
+      "bytes": 209940,
+      "sha256": "ed85f4e7783708771685429465e5be8fcafe7f129d0b8d0fc951baa34a98ca58",
+      "coastlines": 54,
+      "margins": 37,
+      "dropped": 0
+    },
+    {
+      "age_ma": 95,
+      "file": "95.json",
+      "bytes": 246802,
+      "sha256": "96d32eb13d69995e613fb41e05c1af45cfdf48dc015a646229c515d20e93f583",
+      "coastlines": 53,
+      "margins": 45,
+      "dropped": 1
+    },
+    {
+      "age_ma": 105,
+      "file": "105.json",
+      "bytes": 229546,
+      "sha256": "5813193143db5912f37fc39bf9b07b7e6285e70ef28e770566f908a057a9b5cc",
+      "coastlines": 50,
+      "margins": 50,
+      "dropped": 0
+    },
+    {
+      "age_ma": 120,
+      "file": "120.json",
+      "bytes": 210983,
+      "sha256": "0426c83c3c89f9ae008339bd4d5b0d8fdc881f031f7c68c8d04fba368ba52808",
+      "coastlines": 77,
+      "margins": 40,
+      "dropped": 0
+    },
+    {
+      "age_ma": 125,
+      "file": "125.json",
+      "bytes": 250030,
+      "sha256": "70aeaad397d512a94b5ccff0f5d2bd9b8acfd020d8bf70e7f6db4189842dddf2",
+      "coastlines": 71,
+      "margins": 25,
+      "dropped": 0
+    },
+    {
+      "age_ma": 130,
+      "file": "130.json",
+      "bytes": 221234,
+      "sha256": "c23cc30c4928f97021b78ffbdfa698449d5c47fc14c08fce1d2872273fb41443",
+      "coastlines": 84,
+      "margins": 27,
+      "dropped": 0
+    },
+    {
+      "age_ma": 135,
+      "file": "135.json",
+      "bytes": 216421,
+      "sha256": "450c8b8faa00abed3c930e36a16c603524a2e3f45d9c498c4dc428780ed5cbfb",
+      "coastlines": 58,
+      "margins": 26,
+      "dropped": 0
+    },
+    {
+      "age_ma": 140,
+      "file": "140.json",
+      "bytes": 185781,
+      "sha256": "fe307b80ab8ccb8d40c64ed65194f8d23527a3cfeeac85ceb8860a347896a962",
+      "coastlines": 61,
+      "margins": 46,
+      "dropped": 0
+    },
+    {
+      "age_ma": 150,
+      "file": "150.json",
+      "bytes": 136136,
+      "sha256": "3a1630274fb5a9ff63b53be59af6e39cafd0d60dd9ca5b2b51a5331c9b262914",
+      "coastlines": 40,
+      "margins": 36,
+      "dropped": 0
+    },
+    {
+      "age_ma": 155,
+      "file": "155.json",
+      "bytes": 134699,
+      "sha256": "9a5a9371c24295d6ece9dd9ddd39d6d60840428675ba88e9a48e0cb169a7ff48",
+      "coastlines": 53,
+      "margins": 18,
+      "dropped": 2
+    },
+    {
+      "age_ma": 160,
+      "file": "160.json",
+      "bytes": 187346,
+      "sha256": "227355daedd3e4eb0e59aeed37b21b8dc50d888295e08328fa7d716d177166b7",
+      "coastlines": 59,
+      "margins": 38,
+      "dropped": 0
+    },
+    {
+      "age_ma": 165,
+      "file": "165.json",
+      "bytes": 149164,
+      "sha256": "9639b602fcaca5ebe7d5457c1ca9fd94097187e823acc8fabcc647a8df034bc1",
+      "coastlines": 54,
+      "margins": 16,
+      "dropped": 1
+    },
+    {
+      "age_ma": 170,
+      "file": "170.json",
+      "bytes": 175407,
+      "sha256": "b2299cf28b55dc9301c7ed54b3366a3b8b29e8346655cf5f32412be5c12c19b0",
+      "coastlines": 58,
+      "margins": 15,
+      "dropped": 1
+    },
+    {
+      "age_ma": 180,
+      "file": "180.json",
+      "bytes": 71225,
+      "sha256": "496d1ddf59c256320d10d7e8f503c9fbc7d49cb80884f8bc6c73e65706d4829f",
+      "coastlines": 50,
+      "margins": 8,
+      "dropped": 0
+    },
+    {
+      "age_ma": 185,
+      "file": "185.json",
+      "bytes": 80760,
+      "sha256": "b855ca8621b4019c17c0546446affb698b06c965c2e378025ba97d75924cc2fc",
+      "coastlines": 34,
+      "margins": 7,
+      "dropped": 0
+    },
+    {
+      "age_ma": 195,
+      "file": "195.json",
+      "bytes": 66399,
+      "sha256": "1c1ed0c4c99cfc6bd36faaa1d45498b0d4f47523e19c95f5790f7f4369e94d7f",
+      "coastlines": 24,
+      "margins": 3,
+      "dropped": 0
+    },
+    {
+      "age_ma": 200,
+      "file": "200.json",
+      "bytes": 67691,
+      "sha256": "53cfc1ea1aa9d2f9fba7634f3958d8f22a53a8abf953876bcb3c67eb5d819f52",
+      "coastlines": 22,
+      "margins": 6,
+      "dropped": 0
+    },
+    {
+      "age_ma": 205,
+      "file": "205.json",
+      "bytes": 39882,
+      "sha256": "afa89316057e8a1153cb767b4f61241e113929464065e06e29eb5d0b3ec3b025",
+      "coastlines": 21,
+      "margins": 6,
+      "dropped": 0
+    },
+    {
+      "age_ma": 220,
+      "file": "220.json",
+      "bytes": 67117,
+      "sha256": "998e180844b2264383614a6dd8d5bcb00d68b4d47711781904d5216769063109",
+      "coastlines": 30,
+      "margins": 5,
+      "dropped": 0
+    },
+    {
+      "age_ma": 230,
+      "file": "230.json",
+      "bytes": 59551,
+      "sha256": "58303cf74b6ecfde1b3d863017e2f55419da4797c3f93ec6b1abd5fec9fd195a",
+      "coastlines": 15,
+      "margins": 40,
+      "dropped": 0
+    },
+    {
+      "age_ma": 240,
+      "file": "240.json",
+      "bytes": 49474,
+      "sha256": "342a307a6325c4b07680fbf4df0043a41c70ab46681af734be29b79f6010bd3b",
+      "coastlines": 20,
+      "margins": 2,
+      "dropped": 0
+    },
+    {
+      "age_ma": 245,
+      "file": "245.json",
+      "bytes": 50816,
+      "sha256": "9134384628ef05e13340691b85e5ce91e3a9d942edbee585a5fc1acf76a8c686",
+      "coastlines": 19,
+      "margins": 2,
+      "dropped": 0
+    },
+    {
+      "age_ma": 250,
+      "file": "250.json",
+      "bytes": 52358,
+      "sha256": "3854bab0813740beb6f2e4f8964814fe7af9963db4840d293e501781fae322cb",
+      "coastlines": 21,
+      "margins": 10,
+      "dropped": 0
+    },
+    {
+      "age_ma": 255,
+      "file": "255.json",
+      "bytes": 60653,
+      "sha256": "c3acf7447800548f67bfc15860a79badfc6ca67e38e7f2a9216828ed9a15f7f0",
+      "coastlines": 10,
+      "margins": 2,
+      "dropped": 0
+    },
+    {
+      "age_ma": 260,
+      "file": "260.json",
+      "bytes": 93461,
+      "sha256": "dbab12bfd51e239178a5d22da23db6f28bf806519ce76166e499a5b10626b30b",
+      "coastlines": 15,
+      "margins": 1,
+      "dropped": 0
+    },
+    {
+      "age_ma": 265,
+      "file": "265.json",
+      "bytes": 42661,
+      "sha256": "5b80a4542f753475ae6408a6cf5cac6de8000845d54f149d89c975a60c01634c",
+      "coastlines": 12,
+      "margins": 1,
+      "dropped": 0
+    },
+    {
+      "age_ma": 270,
+      "file": "270.json",
+      "bytes": 48557,
+      "sha256": "143c10728c5b6955262de4989558cec97cf8f2190f5be060340b1b3bc18cb036",
+      "coastlines": 14,
+      "margins": 3,
+      "dropped": 0
+    },
+    {
+      "age_ma": 275,
+      "file": "275.json",
+      "bytes": 51852,
+      "sha256": "61ccd14b455c18c3e47744706b711343ab75487ed0dcd470b1fc0d83d4322008",
+      "coastlines": 17,
+      "margins": 2,
+      "dropped": 0
+    },
+    {
+      "age_ma": 285,
+      "file": "285.json",
+      "bytes": 46238,
+      "sha256": "56e3f24cc59ad0fd490975d724736b16797ca387acbea9ce12f6c982c8d7e2b8",
+      "coastlines": 17,
+      "margins": 3,
+      "dropped": 0
+    },
+    {
+      "age_ma": 295,
+      "file": "295.json",
+      "bytes": 67679,
+      "sha256": "c972c64cd8902a374b96b645faa5e9a4281fade6721c9d728217bd25bba5c731",
+      "coastlines": 12,
+      "margins": 1,
+      "dropped": 0
+    },
+    {
+      "age_ma": 300,
+      "file": "300.json",
+      "bytes": 61188,
+      "sha256": "5ac19725ffd146c32f77718bcef15b7e58bb15e9e094bfcf738294768808e82b",
+      "coastlines": 14,
+      "margins": 1,
+      "dropped": 0
+    },
+    {
+      "age_ma": 305,
+      "file": "305.json",
+      "bytes": 73678,
+      "sha256": "af3f8256f3b36c73072c749b3251703582e2f0e23c484eea55a7ffb44b2ace4b",
+      "coastlines": 13,
+      "margins": 1,
+      "dropped": 0
+    },
+    {
+      "age_ma": 310,
+      "file": "310.json",
+      "bytes": 61472,
+      "sha256": "764b8dda54692e0d365f2db1718e83d384b94da8005e08a2cc7992b9026054a6",
+      "coastlines": 10,
+      "margins": 1,
+      "dropped": 0
+    },
+    {
+      "age_ma": 320,
+      "file": "320.json",
+      "bytes": 55966,
+      "sha256": "83e0da9c65c47d0b7d1b841e33b1ef0ab56aacc2ef97e387b8452223487b46b3",
+      "coastlines": 11,
+      "margins": 1,
+      "dropped": 0
+    },
+    {
+      "age_ma": 325,
+      "file": "325.json",
+      "bytes": 62470,
+      "sha256": "22e5e6242e8c3f8fdfa4c3b5680dc67306860411da526334b70ef25725a97e17",
+      "coastlines": 16,
+      "margins": 1,
+      "dropped": 0
+    },
+    {
+      "age_ma": 340,
+      "file": "340.json",
+      "bytes": 63305,
+      "sha256": "cc8fdd6e43fc800c7cd3f20878f7c8505305e8c87b7a7aec726db32da92266a6",
+      "coastlines": 16,
+      "margins": 2,
+      "dropped": 0
+    },
+    {
+      "age_ma": 355,
+      "file": "355.json",
+      "bytes": 67990,
+      "sha256": "72ca8599949bee8ce46e162e5dbf5e8b8f6ace6966c333666981f7c4548aaf54",
+      "coastlines": 21,
+      "margins": 7,
+      "dropped": 0
+    },
+    {
+      "age_ma": 365,
+      "file": "365.json",
+      "bytes": 68565,
+      "sha256": "f8cd6232029cc87280b2d047102e2fc6681988318da4901b5105495f250b399d",
+      "coastlines": 25,
+      "margins": 10,
+      "dropped": 0
+    },
+    {
+      "age_ma": 375,
+      "file": "375.json",
+      "bytes": 100924,
+      "sha256": "e2ab5146683bafa8a2c4480301e06e78998dd79be52c6544ec54294818580d66",
+      "coastlines": 28,
+      "margins": 10,
+      "dropped": 0
+    },
+    {
+      "age_ma": 385,
+      "file": "385.json",
+      "bytes": 84026,
+      "sha256": "f60b4f0bc2ad734499f1182bdc040ab5c47044f5060ee754643ddd9938ec0b25",
+      "coastlines": 29,
+      "margins": 9,
+      "dropped": 0
+    },
+    {
+      "age_ma": 390,
+      "file": "390.json",
+      "bytes": 94705,
+      "sha256": "4a829bfab9a736da4b73d01903e59bf719ea7d3d793d4da13736cf5cc97f97cd",
+      "coastlines": 29,
+      "margins": 13,
+      "dropped": 0
+    },
+    {
+      "age_ma": 400,
+      "file": "400.json",
+      "bytes": 78093,
+      "sha256": "2868dd6d65fb645fddebfbc961338155911bbe225aca96c20651d4aa1ad60f40",
+      "coastlines": 30,
+      "margins": 12,
+      "dropped": 0
+    },
+    {
+      "age_ma": 410,
+      "file": "410.json",
+      "bytes": 89344,
+      "sha256": "e6ee8365395854c6dbfd875be7bd8b05a14833e7e59217b902e353f51c576205",
+      "coastlines": 36,
+      "margins": 14,
+      "dropped": 0
+    },
+    {
+      "age_ma": 415,
+      "file": "415.json",
+      "bytes": 92351,
+      "sha256": "1ef4f59352c9d107f1a6f3bde4244f50c9e175b3c8bf7c4cff46cc10d486b4f6",
+      "coastlines": 38,
+      "margins": 15,
+      "dropped": 0
+    },
+    {
+      "age_ma": 420,
+      "file": "420.json",
+      "bytes": 72610,
+      "sha256": "4e5548f3ec8e0a68288bb92c4535fa24ee4dd671e6be855f52dd95fcc8928d22",
+      "coastlines": 34,
+      "margins": 14,
+      "dropped": 0
+    },
+    {
+      "age_ma": 425,
+      "file": "425.json",
+      "bytes": 98801,
+      "sha256": "0150d34793d505610289ce72f1ea230edd1697949dec0c33f8060dc3749bf6ef",
+      "coastlines": 41,
+      "margins": 16,
+      "dropped": 0
+    },
+    {
+      "age_ma": 430,
+      "file": "430.json",
+      "bytes": 86760,
+      "sha256": "08b0c1cbda144687dd5bdd0331b8cb2cd359f941fbe80c8b871e7c69b2b114e8",
+      "coastlines": 36,
+      "margins": 16,
+      "dropped": 0
+    },
+    {
+      "age_ma": 435,
+      "file": "435.json",
+      "bytes": 81927,
+      "sha256": "b8d6a679eaa258265139d39886fa0531f9b558213a00c05c33e0748c08bab4c3",
+      "coastlines": 35,
+      "margins": 19,
+      "dropped": 0
+    },
+    {
+      "age_ma": 440,
+      "file": "440.json",
+      "bytes": 67268,
+      "sha256": "4f4f883f78bdb0ceead200d0b5459c2b2af85f2a7cf76ff7a7b4aad4ff989c7c",
+      "coastlines": 33,
+      "margins": 20,
+      "dropped": 0
+    },
+    {
+      "age_ma": 445,
+      "file": "445.json",
+      "bytes": 68642,
+      "sha256": "fc7acc3f83b48a3ccd05fb6481bc0f16158cc18676f150ba48a9c5fd9f72d515",
+      "coastlines": 33,
+      "margins": 18,
+      "dropped": 0
+    },
+    {
+      "age_ma": 450,
+      "file": "450.json",
+      "bytes": 71895,
+      "sha256": "d9038190e71b79d935f9827899249013a8bbd41f409ecc579547dd230fcb6006",
+      "coastlines": 41,
+      "margins": 20,
+      "dropped": 0
+    },
+    {
+      "age_ma": 455,
+      "file": "455.json",
+      "bytes": 80506,
+      "sha256": "13f53ced9c2e1569746e84bbe1a93a13d4b9883be0e2f79bcdd81d9a25b3b8f6",
+      "coastlines": 32,
+      "margins": 20,
+      "dropped": 0
+    },
+    {
+      "age_ma": 465,
+      "file": "465.json",
+      "bytes": 80055,
+      "sha256": "1bacd9f47b174940e6aba88261990f56dbee755d3b358db9ebef25929f26535f",
+      "coastlines": 32,
+      "margins": 22,
+      "dropped": 0
+    },
+    {
+      "age_ma": 470,
+      "file": "470.json",
+      "bytes": 79136,
+      "sha256": "a0596602a3dc217625f7a2e53193cb84bfc143e427728d06a67c1d663fb880b1",
+      "coastlines": 34,
+      "margins": 28,
+      "dropped": 0
+    },
+    {
+      "age_ma": 475,
+      "file": "475.json",
+      "bytes": 47318,
+      "sha256": "5014ab19de958313083868dc7d86f95e4759764449bd513fd0f91c82748439ae",
+      "coastlines": 7,
+      "margins": 26,
+      "dropped": 0
+    },
+    {
+      "age_ma": 480,
+      "file": "480.json",
+      "bytes": 79364,
+      "sha256": "63fe64d0907019ed3dc7b3205ce227fbb271025db13343d38005e662728770e8",
+      "coastlines": 38,
+      "margins": 25,
+      "dropped": 0
+    },
+    {
+      "age_ma": 485,
+      "file": "485.json",
+      "bytes": 38382,
+      "sha256": "ab85bcc6f73230f16a22fb1fcbd102868d3e7ce9b7cc4abd5a9e5a960f86c916",
+      "coastlines": 38,
+      "margins": 25,
+      "dropped": 0
+    },
+    {
+      "age_ma": 490,
+      "file": "490.json",
+      "bytes": 37689,
+      "sha256": "557229794d4cb63bebbf0d6e24be80e133d2407526f6864e439e73cfb0e9ee28",
+      "coastlines": 35,
+      "margins": 25,
+      "dropped": 0
+    },
+    {
+      "age_ma": 495,
+      "file": "495.json",
+      "bytes": 33753,
+      "sha256": "8834f166de1a8f9521d42b2de302c7f39144adcdcb74b516dcd94f0ed1bf2972",
+      "coastlines": 31,
+      "margins": 25,
+      "dropped": 0
+    },
+    {
+      "age_ma": 500,
+      "file": "500.json",
+      "bytes": 32950,
+      "sha256": "5b2df295540c7b48d5e7bad0d7cf310fa19cf421f212d662be7705d2f518a38b",
+      "coastlines": 35,
+      "margins": 23,
+      "dropped": 0
+    },
+    {
+      "age_ma": 505,
+      "file": "505.json",
+      "bytes": 30413,
+      "sha256": "6b8793d7147725883816aefcc65c1f54f841f6fd164e723a46e97d4382cb6d1d",
+      "coastlines": 24,
+      "margins": 23,
+      "dropped": 0
+    },
+    {
+      "age_ma": 510,
+      "file": "510.json",
+      "bytes": 30240,
+      "sha256": "8afc41efb1425f789d7f78ae84cc30b28ce9130a3d2eb3378d5b1e46c74e7d00",
+      "coastlines": 18,
+      "margins": 24,
+      "dropped": 0
+    },
+    {
+      "age_ma": 515,
+      "file": "515.json",
+      "bytes": 30212,
+      "sha256": "b5827d140bdfed002efe20c7e1d2ee43c853b91bfef0589ed9633cf1fe993ef0",
+      "coastlines": 25,
+      "margins": 17,
+      "dropped": 0
+    },
+    {
+      "age_ma": 525,
+      "file": "525.json",
+      "bytes": 28615,
+      "sha256": "199dddaf6decf0e1dafffb68d1241f5fd37b10d5c2a8ee15f79d5c0ebc80b8a2",
+      "coastlines": 17,
+      "margins": 17,
+      "dropped": 0
+    },
+    {
+      "age_ma": 535,
+      "file": "535.json",
+      "bytes": 28032,
+      "sha256": "c36d14e32efd662ee0933d87153b5360c6576786f96a28a629d96e407bdb6b03",
+      "coastlines": 19,
+      "margins": 16,
+      "dropped": 0
+    }
+  ]
+}
