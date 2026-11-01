@@ -28,6 +28,8 @@ realista: poder entrar en otra época y ver cómo era.
   musicales, inventos…**
 - **Futuro con gafas de VR.** Mucho más adelante, **con AR**: estar en cualquier lugar del
   planeta, ponerse las gafas y **mirar cómo se veía ese lugar en aquel entonces**.
+- **A largo plazo, algo parecido a un videojuego**, con VR y AR: moverse por el mundo y por las
+  épocas, con las especies, la gente y los sucesos de cada lugar y momento.
 - **Comunidad, y ahí entran las IAs:** la gente podría aportar su IA (quizá su cuenta) para
   dedicar recursos a la investigación, recopilación e implementación de datos, **de forma
   libre según especialización y según las solicitudes de búsqueda de usuarios y clientes.**
