@@ -35,6 +35,17 @@ jobs:
       - name: Instalar d3-celestial (solo para nombres y figuras; no se guarda en el repo)
         run: npm install --no-save d3-celestial@0.7.35
 
+      - name: Conectividad (curl: dice por que falla una red, a diferencia de fetch)
+        continue-on-error: true
+        run: |
+          for u in https://tapvizier.cds.unistra.fr/TAPVizieR/tap/capabilities \
+                   https://vizier.cds.unistra.fr/ \
+                   https://vizier.cfa.harvard.edu/ \
+                   https://simbad.cds.unistra.fr/simbad/sim-tap/capabilities \
+                   https://raw.githubusercontent.com/astronexus/HYG-Database/main/README.md; do
+            echo "== $u"; curl -sS -m 25 -o /dev/null -w "http=%{http_code} ip=%{remote_ip} t=%{time_total}s\n" "$u" 2>&1 | tail -2
+          done 2>&1 | tee /tmp/net.log
+
       - name: Ejecutar
         run: |
           if [ "$MODE" = inspect ]; then
@@ -78,8 +89,10 @@ jobs:
           git switch --orphan sky-build
           cp /tmp/report.json report.json
           cp /tmp/report.log report.log || true
+          cp /tmp/net.log net.log 2>/dev/null || true
           if [ -d /tmp/sky-out ]; then cp -r /tmp/sky-out sky; fi
           git add report.json report.log
+          [ -f net.log ] && git add net.log || true
           if [ -d sky ]; then git add sky; fi
           git commit -m "Informe de construccion del cielo $(date -u +%Y-%m-%dT%H:%MZ)"
           git push --force origin sky-build

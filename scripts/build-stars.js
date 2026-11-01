@@ -20,7 +20,13 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const TAP = 'https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync';
+// Servidores TAP de VizieR (CDS y espejos). Se prueban en orden; el primero que responde se usa.
+const TAP_SERVERS = [
+    'https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync',
+    'https://vizier.cfa.harvard.edu/TAPVizieR/tap/sync',
+    'https://vizier.china-vo.org/TAPVizieR/tap/sync'
+];
+let TAP = TAP_SERVERS[0];
 const USER_AGENT = 'ChronosTerrae-Build/0.1 (https://github.com/enderHugin/chronosterrae)';
 const TIMEOUT_MS = 120000;
 const MAG_LIMIT = 6.5;
@@ -38,12 +44,37 @@ const tap = async (query, format = 'json') => {
     return format === 'json' ? JSON.parse(text) : text;
 };
 
+// "fetch failed" no dice nada: la causa real esta en err.cause (DNS, conexion rechazada, TLS, tiempo...).
+const describe = (err) => {
+    const c = err && err.cause;
+    return err.message + (c ? ' [' + (c.code || c.name || '') + ' ' + (c.message || '') + ']' : '');
+};
 const safe = async (label, fn) => {
-    try { return await fn(); } catch (err) { return { error: label + ': ' + err.message }; }
+    try { return await fn(); } catch (err) { return { error: label + ': ' + describe(err) }; }
 };
 
+// Comprueba cada servidor con una consulta trivial y se queda con el primero que responde.
+async function pickServer() {
+    const tried = [];
+    for (const url of TAP_SERVERS) {
+        TAP = url;
+        try {
+            const r = await tap('SELECT TOP 1 HIP FROM "I/239/hip_main"');
+            tried.push({ url, ok: true, rows: r.data ? r.data.length : null });
+            return { chosen: url, tried };
+        } catch (err) {
+            tried.push({ url, ok: false, error: describe(err) });
+        }
+    }
+    TAP = null;
+    return { chosen: null, tried };
+}
+
 async function inspect() {
-    const out = { probed_at: new Date().toISOString(), tap: TAP };
+    const out = { probed_at: new Date().toISOString() };
+    out.servers = await pickServer();
+    out.tap = TAP;
+    if (!TAP) { process.stdout.write(JSON.stringify(out, null, 2) + '\n'); return; }
     for (const table of ['I/239/hip_main', 'I/311/hip2']) {
         out[table] = {};
         out[table].columns = await safe('columns', async () => {
