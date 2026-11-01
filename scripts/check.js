@@ -96,6 +96,20 @@ check('el workflow valida el JSON antes de commitear', () => {
     return /archive-harvest\.js/.test(yml) && /data\/harvests/.test(yml);
 });
 
+// --- Cliente web: reglas que evitan errores ya vistos ---
+check('index.html fija una version exacta de MapLibre', () => /maplibre-gl@\d+\.\d+\.\d+\//.test(readIndex()));
+
+check('index.html no pinta datos recientes fuera del presente (anacronismo)', () => {
+    const html = readIndex();
+    return /const liveVisible\s*=/.test(html) && !/visibility',\s*state\.ybp\s*<\s*\d+/.test(html);
+});
+
+check('index.html no presenta contornos actuales desplazados como costas reales', () => {
+    const html = readIndex();
+    // el texto de la capa de placas debe advertir que no son las costas reales de la epoca
+    return /No son las costas reales de la época/.test(html) && /not the real coastlines of that time/i.test(html);
+});
+
 // --- Esquema de registros: debe rechazar lo que no es verificable ---
 const exampleRecord = () => JSON.parse(fs.readFileSync(path.join(root, 'schemas/examples/chicxulub-impact.json'), 'utf8'));
 

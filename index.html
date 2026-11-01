@@ -5,593 +5,676 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChronosTerrae | Evolutionary Cartography</title>
-    
-    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
-    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <meta name="description" content="Deep-time cartography: travel the Earth from 1,000 million years ago to today.">
+
+    <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet" />
 
     <style>
         :root {
-            /* Tema Claro (Base) */
-            --bg-color: #e6dabd;
-            --ui-bg: rgba(230, 218, 189, 0.85);
-            --text-color: #3e2723;
+            --bg: #f3efe4;
+            --panel: rgba(250, 246, 235, 0.92);
+            --text: #2b2118;
+            --muted: #6b5d4d;
             --accent: #8b5a2b;
-            --font-main: 'Georgia', serif;
-            --map-filter: sepia(0.5) contrast(1.1) brightness(0.9);
+            --ok: #2e7d32;
+            --warn: #b7791f;
+            --err: #c62828;
+            --font: 'Georgia', serif;
+            --font-ui: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        }
+        body.dark {
+            --bg: #101418;
+            --panel: rgba(20, 24, 29, 0.92);
+            --text: #e6e2d8;
+            --muted: #9a9486;
+            --accent: #d9a566;
         }
 
-        body.modern-era {
-            --bg-color: #d4e6f1;
-            --ui-bg: rgba(255, 255, 255, 0.9);
-            --text-color: #1a252f;
-            --accent: #2980b9;
-            --font-main: system-ui, sans-serif;
-            --map-filter: saturate(1.2) contrast(1.05);
-        }
-
-        /* Variables Modo Oscuro Global */
-        body.dark-mode {
-            --bg-color: #121212;
-            --ui-bg: rgba(18, 18, 18, 0.85);
-            --text-color: #e0e0e0;
-            --accent: #bb86fc;
-            --map-filter: contrast(1.2) brightness(0.8);
-        }
-
-        html, body { width: 100%; height: 100%; }
-
+        html, body { width: 100%; height: 100%; margin: 0; }
         body {
-            margin: 0; padding: 0;
-            background-color: var(--bg-color);
-            font-family: var(--font-main);
-            color: var(--text-color);
-            overflow: hidden;
-            transition: all 0.8s ease;
+            background: var(--bg); color: var(--text); font-family: var(--font-ui);
+            overflow: hidden; transition: background 0.4s ease, color 0.4s ease;
         }
 
-        /* FIX W1: sin alto explicito el contenedor colapsaba a 0x0 y el mapa no se veia */
-        #map {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%;
-            transition: filter 0.8s ease;
-        }
+        /* El contenedor necesita alto explícito o colapsa a 0x0 y el mapa no se ve */
+        #map { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-        .glass-panel {
-            background: var(--ui-bg);
+        .panel {
+            background: var(--panel); color: var(--text);
+            border: 1px solid var(--accent); border-radius: 8px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
             backdrop-filter: blur(8px);
-            border: 1px solid var(--accent);
-            border-radius: 6px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.8s ease;
         }
 
-        /* Panel Superior: Controles del Sistema */
-        #system-controls {
-            position: absolute; top: 20px; right: 20px; z-index: 10;
-            display: flex; gap: 10px;
+        #top-left { position: absolute; top: 14px; left: 14px; z-index: 10; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 200px); }
+        #top-right { position: absolute; top: 14px; right: 14px; z-index: 10; display: flex; gap: 6px; }
+
+        .btn {
+            background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 6px;
+            padding: 8px 11px; cursor: pointer; font: 600 13px var(--font-ui);
+        }
+        .btn:hover { background: var(--accent); color: var(--bg); }
+        .btn:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+        #search {
+            width: 260px; max-width: 100%; padding: 8px 12px; border: 1px solid var(--accent); border-radius: 6px;
+            background: var(--panel); color: var(--text); font: 600 13px var(--font-ui);
         }
 
-        .sys-btn {
-            background: var(--ui-bg); color: var(--text-color);
-            border: 1px solid var(--accent); border-radius: 4px;
-            padding: 8px 12px; cursor: pointer; font-family: sans-serif;
-            font-weight: bold; backdrop-filter: blur(4px);
-            transition: transform 0.2s ease;
+        #status {
+            position: absolute; left: 14px; bottom: 168px; z-index: 12; max-width: 360px; padding: 8px 12px;
+            font-size: 12px; line-height: 1.4; border-left: 4px solid var(--muted); display: none;
         }
-        .sys-btn:active { transform: scale(0.95); }
+        #status.visible { display: block; }
+        #status.ok { border-left-color: var(--ok); }
+        #status.warn { border-left-color: var(--warn); }
+        #status.error { border-left-color: var(--err); }
 
-        /* Estado del sistema: nunca fallar en silencio */
-        #system-status {
-            position: absolute; left: 20px; bottom: 20px; z-index: 12;
-            max-width: 340px; padding: 8px 12px;
-            font-family: sans-serif; font-size: 12px; line-height: 1.4;
-            border-left: 3px solid var(--accent);
-            display: none;
+        #info {
+            position: absolute; top: 60px; right: 14px; width: 310px; max-width: calc(100% - 28px);
+            max-height: calc(100% - 260px); overflow: auto; padding: 14px 16px; z-index: 10; display: none;
         }
-        #system-status.visible { display: block; }
-        #system-status.state-ok { border-left-color: #2e7d32; }
-        #system-status.state-warn { border-left-color: #e6a700; }
-        #system-status.state-error { border-left-color: #c62828; }
+        #info h2 { margin: 0 0 6px; font: 700 18px var(--font); color: var(--accent); }
+        #info .row { margin-top: 7px; font-size: 13px; line-height: 1.4; word-break: break-word; }
+        #info .row b { color: var(--accent); }
+        #info a { color: var(--accent); }
+        #info .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
 
-        /* Controles Inferiores */
-        #timeline-control {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: 85%; max-width: 900px; padding: 15px 25px; z-index: 10;
-            display: flex; flex-direction: column; gap: 10px;
-        }
+        .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; color: #fff; }
+        .badge.measurement, .badge.documentary, .badge.artefact { background: #2e7d32; }
+        .badge.model { background: #1565c0; }
+        .badge.reconstruction { background: #b7791f; }
+        .badge.speculation { background: #8e24aa; }
 
-        .top-bar { display: flex; justify-content: space-between; align-items: center; }
-        #year-display { font-size: 24px; font-weight: bold; min-width: 200px; }
-        
-        #timeline {
-            width: 100%; appearance: none; height: 6px;
-            background: var(--text-color); opacity: 0.6; border-radius: 3px; outline: none;
-        }
-        #timeline::-webkit-slider-thumb {
-            appearance: none; width: 20px; height: 20px;
-            background: var(--accent); border-radius: 50%; cursor: pointer;
-        }
+        #timeline { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); width: min(94%, 980px); padding: 12px 18px 8px; z-index: 10; box-sizing: border-box; }
+        #time-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        #time-label { font: 700 24px var(--font); min-width: 190px; }
+        #time-sub { font-size: 12px; color: var(--muted); }
+        #time-input { width: 130px; padding: 6px 9px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); font: 600 13px var(--font-ui); }
+        #slider { width: 100%; margin: 8px 0 2px; accent-color: var(--accent); }
+        #presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+        #presets .btn { padding: 4px 9px; font-size: 12px; }
+        #credits { font-size: 10.5px; color: var(--muted); line-height: 1.35; margin-top: 4px; }
+        #credits a { color: var(--muted); }
+        .kofi { background: #29abe0; color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font: 700 13px var(--font-ui); }
 
-        #era-ticks {
-            display: flex; justify-content: space-between;
-            font-family: sans-serif; font-size: 11px; opacity: 0.75;
+        @media (max-width: 640px) {
+            #top-left { max-width: 100%; top: 56px; }
+            #time-label { font-size: 19px; min-width: 0; }
+            #info { top: 108px; max-height: calc(100% - 330px); }
+            #status { bottom: 222px; }
         }
-
-        /* Brújula SVG Dinámica */
-        #compass {
-            position: absolute; top: 20px; left: 20px; z-index: 10;
-            width: 80px; height: 80px; transition: transform 1.2s ease-in-out;
-            pointer-events: none;
-        }
-
-        /* Info Panel */
-        #info-panel {
-            position: absolute; top: 70px; right: 20px; width: 300px;
-            padding: 20px; z-index: 10; display: none;
-        }
-
-        .info-row { margin-top: 8px; font-family: sans-serif; font-size: 13px; word-break: break-word; }
-        .info-row b { color: var(--accent); }
-        .info-row a { color: var(--accent); }
-
-        .kofi-btn {
-            background-color: #29abe0; color: white; padding: 8px 15px;
-            text-decoration: none; border-radius: 4px; font-weight: bold; font-family: sans-serif;
-            font-size: 14px; display: inline-flex; align-items: center; border: none;
-        }
-        .kofi-btn img { height: 16px; margin-right: 8px; }
     </style>
 </head>
-<body class="ancient-era">
+<body>
 
     <div id="map"></div>
 
-    <div id="compass">
-        <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
-            <path d="M50 5 L60 50 L50 95 L40 50 Z" fill="currentColor" opacity="0.8"/>
-            <text x="43" y="24" fill="var(--bg-color)" font-weight="bold" font-family="sans-serif">N</text>
-        </svg>
+    <div id="top-left">
+        <input id="search" type="search" data-i18n-placeholder="searchPlaceholder" aria-label="Search" autocomplete="off">
     </div>
 
-    <!-- Controles de Configuración -->
-    <div id="search-container" style="position: absolute; top: 20px; left: 120px; z-index: 10;">
-        <input type="text" id="universal-search" placeholder="Búsqueda espacio-temporal..." style="padding: 8px 15px; width: 280px; border-radius: 4px; border: 1px solid var(--accent); background: var(--ui-bg); color: var(--text-color); font-family: var(--font-main); font-weight: bold; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); outline: none; transition: all 0.3s ease;">
+    <div id="top-right">
+        <button class="btn" id="btn-proj" type="button"></button>
+        <button class="btn" id="btn-lang" type="button">EN / ES</button>
+        <button class="btn" id="btn-theme" type="button">Dark</button>
     </div>
 
-    <div id="system-controls">
-        <button class="sys-btn" id="btn-lang">EN / ES</button>
-        <button class="sys-btn" id="btn-theme">🌙 / ☀️</button>
+    <div id="info" class="panel" role="region" aria-live="polite">
+        <button class="close" id="info-close" type="button" aria-label="Close">×</button>
+        <h2 id="info-title"></h2>
+        <div id="info-body"></div>
     </div>
 
-    <div id="info-panel" class="glass-panel">
-        <h2 id="entity-title" style="margin-top: 0; color: var(--accent);">--</h2>
-        <div id="entity-data">--</div>
-    </div>
+    <div id="status" class="panel" role="status"></div>
 
-    <div id="system-status" class="glass-panel"></div>
-
-    <div id="timeline-control" class="glass-panel">
-        <div class="top-bar">
-            <div id="year-display">Year: -250,000,000</div>
-            <a href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" rel="noopener" class="kofi-btn" id="ui-donate">
-                <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-fi">
-                <span id="donate-label">Support Project</span>
-            </a>
+    <div id="timeline" class="panel">
+        <div id="time-row">
+            <div>
+                <div id="time-label">--</div>
+                <div id="time-sub"></div>
+            </div>
+            <input id="time-input" type="text" data-i18n-placeholder="timePlaceholder" aria-label="Go to a date" autocomplete="off">
+            <a class="kofi" href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" rel="noopener" data-i18n="donate"></a>
         </div>
-        <input type="range" id="timeline" min="0" max="2" value="0" step="1">
-        <div id="era-ticks"></div>
+        <input id="slider" type="range" min="0" max="10000" value="0" step="1" aria-label="Time">
+        <div id="presets"></div>
+        <div id="credits"></div>
     </div>
 
-    <script>
-        // Diccionario de Interfaz
-        const i18n = {
-            en: {
-                donate: "Support Project",
-                yearPrefix: "Year",
-                clickPrompt: "Click a region on the map.",
-                dataLabel: "Data",
-                tierLabel: "Tier",
-                eventLabel: "Event date",
-                harvestLabel: "Harvested",
-                sourceLabel: "Source",
-                unknownDate: "Unknown",
-                noResults: "No records found for that search.",
-                liveOk: "Live intake loaded: {n} records.",
-                liveBad: "Live intake unreadable: {err}",
-                mapBad: "Map error: {err}"
-            },
-            es: {
-                donate: "Financiar Proyecto",
-                yearPrefix: "Año",
-                clickPrompt: "Haz clic en una región en el mapa.",
-                dataLabel: "Dato",
-                tierLabel: "Capa",
-                eventLabel: "Fecha del suceso",
-                harvestLabel: "Cosechado",
-                sourceLabel: "Fuente",
-                unknownDate: "Desconocida",
-                noResults: "Ningún registro coincide con esa búsqueda.",
-                liveOk: "Ingesta viva cargada: {n} registros.",
-                liveBad: "Ingesta viva ilegible: {err}",
-                mapBad: "Error de mapa: {err}"
-            }
-        };
+    <noscript>ChronosTerrae needs JavaScript.</noscript>
 
-        // Base de Datos Semilla con Traducciones (Mock del Agente)
-        const mockDatabase = {
-            0: {
-                yearStr: { es: "-250.000.000 (Pérmico)", en: "-250,000,000 (Permian)" },
-                theme: 'ancient-era',
-                data: {
-                    type: "FeatureCollection",
-                    features: [{
-                        type: "Feature",
-                        properties: { 
-                            name: { es: "Supercontinente Pangea", en: "Pangaea Supercontinent" }, 
-                            desc: { es: "Masa de tierra única antes de la deriva continental. Flora dominada por helechos.", en: "Single landmass before continental drift. Flora dominated by giant ferns." } 
-                        },
-                        geometry: { type: "Polygon", coordinates: [[[-40, -40], [40, -40], [60, 20], [10, 60], [-50, 40], [-40, -40]]] }
-                    }]
-                }
-            },
-            1: {
-                yearStr: { es: "117 d.C.", en: "117 AD" },
-                theme: 'ancient-era',
-                data: {
-                    type: "FeatureCollection",
-                    features: [{
-                        type: "Feature",
-                        properties: { 
-                            name: { es: "Imperio Romano", en: "Roman Empire" }, 
-                            desc: { es: "Gobernante: Trajano. Población est.: 50-90 millones.", en: "Ruler: Trajan. Est. population: 50-90 million." } 
-                        },
-                        geometry: { type: "Polygon", coordinates: [[[-9, 38], [35, 31], [40, 41], [0, 52], [-9, 38]]] }
-                    }]
-                }
-            },
-            2: {
-                yearStr: { es: "1945 d.C.", en: "1945 AD" },
-                theme: 'modern-era',
-                data: {
-                    type: "FeatureCollection",
-                    features: [{
-                        type: "Feature",
-                        properties: { 
-                            name: { es: "República Francesa", en: "French Republic" }, 
-                            desc: { es: "Inicio de la reconstrucción europea tras la guerra.", en: "Start of European post-war reconstruction." } 
-                        },
-                        geometry: { type: "Polygon", coordinates: [[[-4, 43], [7, 43], [8, 49], [-4, 49], [-4, 43]]] }
-                    }]
-                }
-            }
-        };
+<script>
+'use strict';
 
-        let currentLang = 'en'; // Inglés por defecto para tráfico internacional
-        let isDarkMode = false;
-        let activePolygonProps = null;
-        let liveData = null;
+/* ------------------------------------------------------------------ */
+/* Configuración                                                      */
+/* ------------------------------------------------------------------ */
+const CFG = {
+    gplates: 'https://gws.gplates.org/reconstruct/coastlines/',
+    model: 'MERDITH2021',               // el servicio no devuelve el modelo: lo fijamos y lo mostramos nosotros
+    hbCommit: 'da7a4b735ecef70aebdc9c73e409d8a2500d50f3',
+    present: 1950,                       // convención BP: el "presente" es 1950
+    nowYear: 2026,
+    maxYbp: 1e9,                         // límite del modelo de placas (1000 Ma)
+    sliderMax: 10000,
+    deepTimeFrom: 1e6,                   // desde 1 Ma las costas son las del modelo de placas
+    bordersMaxYbp: 125000,               // las fronteras históricas empiezan en -123000
+    debounceMs: 220,
+    fetchTimeoutMs: 40000
+};
+CFG.hbBase = 'https://cdn.jsdelivr.net/gh/aourednik/historical-basemaps@' + CFG.hbCommit + '/';
+// offset para que el extremo "ahora" (2026 = 1950 - (-76)) sea el principio del slider
+const OFFSET = CFG.nowYear - CFG.present + 1;
 
-        const t = (key) => i18n[currentLang][key];
-        const formatTemplate = (key, vars) => t(key).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : ''));
+/* ------------------------------------------------------------------ */
+/* Textos                                                             */
+/* ------------------------------------------------------------------ */
+const i18n = {
+    es: {
+        donate: 'Apoyar el proyecto', searchPlaceholder: 'Buscar un imperio, pueblo o lugar…', timePlaceholder: '1789 · 44 a.C. · 250 Ma',
+        flat: 'Plano', globe: 'Globo', today: 'Hoy', yearsAgo: 'hace {n} años', approxYear: '≈ año {y}',
+        ce: 'd.C.', bce: 'a.C.',
+        loadingLand: 'Cargando costas del modelo de placas…', loadingBorders: 'Cargando fronteras históricas…',
+        landFail: 'No se pudieron cargar las costas ({err}). Se conservan las anteriores.',
+        bordersFail: 'No se pudieron cargar las fronteras ({err}).',
+        landOk: 'Contornos actuales movidos por el modelo de placas {model}, {age}. No son las costas reales de la época.', seaLevel: 'Costas actuales. El nivel del mar y las glaciaciones no están modelados.',
+        noBorders: 'Sin fronteras históricas para esta época (el conjunto cubre desde 123.000 a.C.).',
+        bordersSnapshot: 'Fronteras: instantánea de {y} ({d}).', exact: 'misma fecha', apart: 'a {n} años',
+        noResults: 'Sin resultados para «{q}». Pronto una búsqueda sin resultado podrá convertirse en una petición de datos.',
+        found: '«{n}» aparece en {c} épocas. Mostrando {y}.', badTime: 'No entiendo esa fecha. Prueba: 1789, 44 a.C., 12 ka, 250 Ma.',
+        liveOk: 'Datos recientes cargados: {n}.',
+        evidence: 'Tipo de evidencia', source: 'Fuente', snapshotLabel: 'Instantánea', precision: 'Precisión de la frontera',
+        parent: 'Parte de', power: 'Bajo autoridad de', model: 'Modelo', age: 'Edad',
+        ev: { measurement: 'Medición', documentary: 'Documento', artefact: 'Artefacto', model: 'Modelo', reconstruction: 'Reconstrucción', speculation: 'Especulación' },
+        coastTitle: 'Contorno continental (modelo de placas)', coastNote: 'Los contornos ACTUALES de los continentes, desplazados como bloques rígidos según un modelo de placas. No son las costas reales de esa época: no incluyen mares someros, nivel del mar ni deformación. Las costas paleogeográficas reales aún no están disponibles.',
+        bordersNote: 'Mapa histórico compilado por su autor y en elaboración: contrástalo antes de citarlo.',
+        prec: { 1: 'aproximada', 2: 'moderada', 3: 'fijada por tratado' },
+        unnamed: 'Sin nombre en el conjunto de datos', liveTitle: 'Dato reciente', event: 'Fecha del suceso', harvested: 'Recogido', tier: 'Nivel', unknown: 'Desconocida',
+        creditsLand: 'Contornos', creditsBorders: 'Fronteras'
+    },
+    en: {
+        donate: 'Support the project', searchPlaceholder: 'Search an empire, people or place…', timePlaceholder: '1789 · 44 BC · 250 Ma',
+        flat: 'Flat', globe: 'Globe', today: 'Today', yearsAgo: '{n} years ago', approxYear: '≈ year {y}',
+        ce: 'AD', bce: 'BC',
+        loadingLand: 'Loading plate-model coastlines…', loadingBorders: 'Loading historical borders…',
+        landFail: 'Could not load coastlines ({err}). Keeping the previous ones.',
+        bordersFail: 'Could not load borders ({err}).',
+        landOk: 'Present-day outlines moved by plate model {model}, {age}. Not the real coastlines of that time.', seaLevel: 'Present-day coastlines. Sea level and ice ages are not modelled.',
+        noBorders: 'No historical borders for this era (the dataset starts at 123,000 BC).',
+        bordersSnapshot: 'Borders: snapshot of {y} ({d}).', exact: 'same date', apart: '{n} years apart',
+        noResults: 'No results for "{q}". Soon an empty search will be able to become a data request.',
+        found: '"{n}" appears in {c} eras. Showing {y}.', badTime: "I can't read that date. Try: 1789, 44 BC, 12 ka, 250 Ma.",
+        liveOk: 'Recent data loaded: {n}.',
+        evidence: 'Evidence type', source: 'Source', snapshotLabel: 'Snapshot', precision: 'Border precision',
+        parent: 'Part of', power: 'Under authority of', model: 'Model', age: 'Age',
+        ev: { measurement: 'Measurement', documentary: 'Documentary', artefact: 'Artefact', model: 'Model', reconstruction: 'Reconstruction', speculation: 'Speculation' },
+        coastTitle: 'Continental outline (plate model)', coastNote: 'The PRESENT-DAY outlines of the continents, moved as rigid blocks by a plate model. They are not the real coastlines of that time: no shallow seas, sea level or deformation. Real palaeogeographic coastlines are not available yet.',
+        bordersNote: 'Historical map compiled by its author and work in progress: cross-check before citing.',
+        prec: { 1: 'approximate', 2: 'moderate', 3: 'set by treaty' },
+        unnamed: 'Unnamed in the dataset', liveTitle: 'Recent data', event: 'Event date', harvested: 'Harvested', tier: 'Tier', unknown: 'Unknown',
+        creditsLand: 'Outlines', creditsBorders: 'Borders'
+    }
+};
+let lang = (navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en';
+const t = (key) => key.split('.').reduce((o, k) => (o ? o[k] : undefined), i18n[lang]);
+const fmt = (key, vars) => String(t(key)).replace(/\{(\w+)\}/g, (_, k) => (vars && vars[k] !== undefined ? vars[k] : ''));
 
-        const getCssVar = (name, fallback) => {
-            const value = getComputedStyle(document.body).getPropertyValue(name).trim();
-            return value || fallback;
-        };
+/* ------------------------------------------------------------------ */
+/* Tiempo: escala logarítmica de "ahora" a 1000 Ma                     */
+/* ------------------------------------------------------------------ */
+const sliderToYbp = (s) => Math.round(Math.pow(CFG.maxYbp + OFFSET, s / CFG.sliderMax) - OFFSET);
+const ybpToSlider = (ybp) => {
+    const clamped = Math.min(Math.max(ybp, 1 - OFFSET), CFG.maxYbp);
+    return Math.round(Math.log(clamped + OFFSET) / Math.log(CFG.maxYbp + OFFSET) * CFG.sliderMax);
+};
+const ybpToYear = (ybp) => CFG.present - ybp;   // año astronómico (el 0 existe)
+const yearToYbp = (year) => CFG.present - year;
+const effectiveMa = (ybp) => Math.min(CFG.maxYbp / 1e6, Math.max(1, Math.round(ybp / 1e6)));
 
-        const getAccentColor = () => getCssVar('--accent', '#8b5a2b');
+const formatYear = (year) => (year >= 1 ? year + ' ' + t('ce') : (1 - year) + ' ' + t('bce'));
+const nf = () => new Intl.NumberFormat(lang === 'es' ? 'es-ES' : 'en-GB', { maximumFractionDigits: 1 });
 
-        const setStatus = (state, message) => {
-            const el = document.getElementById('system-status');
-            el.className = 'glass-panel visible state-' + state;
-            el.textContent = message;
-        };
+function formatTime(ybp) {
+    if (ybp >= CFG.deepTimeFrom) return { main: effectiveMa(ybp) + ' Ma', sub: '' };
+    if (ybp > 11000) return { main: nf().format(ybp / 1000) + ' ka', sub: fmt('yearsAgo', { n: nf().format(ybp) }) + ' · ' + fmt('approxYear', { y: formatYear(ybpToYear(ybp)) }) };
+    return { main: formatYear(ybpToYear(ybp)), sub: '' };
+}
 
-        const formatDate = (value) => {
-            if (!value || value === 'Indeterminado') return t('unknownDate');
-            const parsed = new Date(value);
-            if (isNaN(parsed.getTime())) return String(value);
-            return parsed.toISOString().slice(0, 10);
-        };
+// Acepta: 1789, 44 a.C., 44 BC, 117 d.C., 12 ka, 250 Ma. Un número negativo suelto se lee como a.C.
+function parseTime(raw) {
+    const s = String(raw || '').trim().toLowerCase().replace(/\./g, '').replace(',', '.').replace(/\s+/g, ' ');
+    let m;
+    if ((m = s.match(/^(-?\d+(?:\.\d+)?)\s*(ma|myr|mya)$/))) return Math.abs(parseFloat(m[1])) * 1e6;
+    if ((m = s.match(/^(-?\d+(?:\.\d+)?)\s*(ka|kyr|kya)$/))) return Math.abs(parseFloat(m[1])) * 1e3;
+    if ((m = s.match(/^(\d+)\s*(bc|bce|ac|a de c|antes de cristo)$/))) return yearToYbp(1 - parseInt(m[1], 10));
+    if ((m = s.match(/^(\d+)\s*(ad|ce|dc|d de c)?$/))) return yearToYbp(parseInt(m[1], 10));
+    if ((m = s.match(/^-(\d+)$/))) return yearToYbp(1 - parseInt(m[1], 10));
+    return null;
+}
 
-        const clearInfo = (content) => {
-            const data = document.getElementById('entity-data');
-            data.textContent = content;
-        };
+/* ------------------------------------------------------------------ */
+/* Estado de la interfaz                                              */
+/* ------------------------------------------------------------------ */
+const $ = (id) => document.getElementById(id);
+const state = { ybp: 250e6, dark: false, globe: true, land: null, borders: null, live: null, polities: null, selected: null };
 
-        const addInfoRow = (label, value) => {
-            const data = document.getElementById('entity-data');
-            const row = document.createElement('div');
-            row.className = 'info-row';
-            const strong = document.createElement('b');
-            strong.textContent = label + ': ';
-            row.appendChild(strong);
-            row.appendChild(document.createTextNode(String(value)));
-            data.appendChild(row);
-            return row;
-        };
+let statusTimer = null;
+function setStatus(level, message, autoHideMs) {
+    const el = $('status');
+    el.className = 'panel visible ' + level;
+    el.textContent = message;
+    clearTimeout(statusTimer);
+    if (autoHideMs) statusTimer = setTimeout(() => { el.className = 'panel'; }, autoHideMs);
+}
+const clearStatus = () => { $('status').className = 'panel'; };
 
-        const mapStyles = {
-            light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-            dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
-        };
+function el(tag, props, children) {
+    const node = document.createElement(tag);
+    Object.entries(props || {}).forEach(([k, v]) => { if (k === 'text') node.textContent = v; else if (k === 'class') node.className = v; else node.setAttribute(k, v); });
+    (children || []).forEach((c) => node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+    return node;
+}
 
-        const map = new maplibregl.Map({
-            container: 'map',
-            style: mapStyles.light,
-            center: [10, 30], zoom: 2,
-            renderWorldCopies: false
-        });
+function showInfo(title, rows) {
+    $('info-title').textContent = title;
+    const body = $('info-body');
+    body.textContent = '';
+    rows.forEach((r) => {
+        const row = el('div', { class: 'row' }, [el('b', { text: r.label + ': ' })]);
+        if (r.badge) row.appendChild(el('span', { class: 'badge ' + r.badge, text: t('ev.' + r.badge) }));
+        else if (r.href) row.appendChild(el('a', { href: r.href, target: '_blank', rel: 'noopener', text: r.value }));
+        else row.appendChild(document.createTextNode(String(r.value)));
+        if (r.note) body.appendChild(row), body.appendChild(el('div', { class: 'row', text: r.note, style: 'color:var(--muted);font-size:12px' }));
+        else body.appendChild(row);
+    });
+    $('info').style.display = 'block';
+}
+const hideInfo = () => { $('info').style.display = 'none'; clearHighlight(); };
 
-        const applyAccentColor = () => {
-            const color = getAccentColor();
-            if (map.getLayer('chronos-fill')) map.setPaintProperty('chronos-fill', 'fill-color', color);
-            if (map.getLayer('chronos-line')) map.setPaintProperty('chronos-line', 'line-color', color);
-        };
+/* ------------------------------------------------------------------ */
+/* Carga de datos                                                     */
+/* ------------------------------------------------------------------ */
+const cache = new Map();
+let inflight = null;
 
-        const renderChronosLayer = () => {
-            const currentIndex = document.getElementById('timeline').value;
-            const era = mockDatabase[currentIndex];
-            if (!era) return;
+async function getJSON(url, signal) {
+    if (cache.has(url)) return cache.get(url);
+    const timeout = AbortSignal.timeout(CFG.fetchTimeoutMs);
+    const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timeout]) : timeout });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = JSON.parse(await res.text());
+    cache.set(url, data);
+    return data;
+}
 
-            // FIX W1: MapLibre no resuelve var(--accent) en paint; hay que pasar un color literal
-            if (!map.getSource('chronos-source')) {
-                map.addSource('chronos-source', { type: 'geojson', data: era.data });
-                map.addLayer({
-                    id: 'chronos-fill', type: 'fill', source: 'chronos-source',
-                    paint: { 'fill-color': getAccentColor(), 'fill-opacity': 0.3 }
-                });
-                map.addLayer({
-                    id: 'chronos-line', type: 'line', source: 'chronos-source',
-                    paint: { 'line-color': getAccentColor(), 'line-width': 2 }
-                });
-            } else {
-                map.getSource('chronos-source').setData(era.data);
-                applyAccentColor();
-            }
-        };
+const emptyFC = () => ({ type: 'FeatureCollection', features: [] });
 
-        // FIX W1: filtro por id explicito y verificacion de lo realmente oculto
-        const purifyMapStyle = () => {
-            const style = map.getStyle();
-            if (!style || !style.layers) return [];
-            const modernEra = document.body.classList.contains('modern-era');
-            const hidden = [];
+async function loadLand(ybp, signal) {
+    const deep = ybp >= CFG.deepTimeFrom;
+    const ma = deep ? effectiveMa(ybp) : 0;
+    // Mismas formas de URL que se comprobaron con la sonda: ma=0 sin modelo, el resto con modelo.
+    const url = CFG.gplates + '?time=' + ma + (ma > 0 ? '&model=' + CFG.model : '');
+    const data = await getJSON(url, signal);
+    if (!data || !Array.isArray(data.features)) throw new Error('sin features');
+    return { data, ma, deep };
+}
 
-            style.layers.forEach(layer => {
-                const id = layer.id || '';
-                const isModernSovereignty = /admin|boundary/i.test(id);
-                const isPlaceLabel = /place[-_]?label/i.test(id);
-                const shouldHide = isModernSovereignty || (isPlaceLabel && !modernEra);
-                if (shouldHide && map.getLayer(id)) {
-                    map.setLayoutProperty(id, 'visibility', 'none');
-                    hidden.push(id);
-                }
-            });
+function hue(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+    return h % 360;
+}
 
-            console.log('[MAP] Capas deReferencia moderna ocultas: ' + hidden.length + (hidden.length ? ' -> ' + hidden.join(', ') : ''));
-            return hidden;
-        };
+function colorize(fc) {
+    if (fc._colored) return fc;
+    fc.features.forEach((f) => {
+        const p = f.properties || (f.properties = {});
+        const key = p.SUBJECTO || p.NAME;
+        p._c = key ? 'hsl(' + hue(key) + ', 55%, 52%)' : '#8a8a8a';
+        p._o = key ? 0.5 : 0.12;
+    });
+    fc._colored = true;
+    return fc;
+}
 
-        const applyMapFilter = () => {
-            document.getElementById('map').style.filter = getComputedStyle(document.body).getPropertyValue('--map-filter');
-        };
+async function loadPolities(signal) {
+    if (state.polities) return state.polities;
+    const index = await getJSON(CFG.hbBase + 'index.json', signal);
+    state.polities = index.years.map((y) => ({ year: y.year, file: y.filename, names: y.countries || [] }));
+    return state.polities;
+}
 
-        map.on('error', (e) => {
-            const message = e && e.error ? e.error.message : 'desconocido';
-            setStatus('error', formatTemplate('mapBad', { err: message }));
-        });
+function nearestSnapshot(polities, year) {
+    let best = null;
+    polities.forEach((p) => { const d = Math.abs(p.year - year); if (!best || d < best.d) best = { p, d }; });
+    return best;
+}
 
-        map.on('style.load', () => {
-            try {
-                purifyMapStyle();
-                renderChronosLayer();
-                applyMapFilter();
-            } catch (err) {
-                setStatus('error', formatTemplate('mapBad', { err: err.message }));
-                throw err;
-            }
-        });
+async function loadBorders(ybp, signal) {
+    if (ybp > CFG.bordersMaxYbp) return null;
+    const polities = await loadPolities(signal);
+    const year = ybpToYear(ybp);
+    const best = nearestSnapshot(polities, year);
+    // No se muestra una instantánea muy lejana: sería inventar fronteras.
+    if (!best || best.d > Math.max(500, 0.25 * Math.abs(year))) return null;
+    const data = colorize(await getJSON(CFG.hbBase + 'geojson/' + best.p.file, signal));
+    return { data, year: best.p.year, delta: best.d };
+}
 
-        map.on('click', 'chronos-fill', (e) => {
-            activePolygonProps = e.features[0].properties;
-            updateInfoPanel();
-            document.getElementById('info-panel').style.display = 'block';
-        });
+/* ------------------------------------------------------------------ */
+/* Mapa                                                               */
+/* ------------------------------------------------------------------ */
+const palette = () => state.dark
+    ? { ocean: '#0b1a26', land: '#2d3338', landLine: '#59636b', line: '#e6e2d8' }
+    : { ocean: '#cfe3ee', land: '#ece4cf', landLine: '#b9ab87', line: '#3a2a1a' };
 
-        const renderEraTicks = () => {
-            const container = document.getElementById('era-ticks');
-            container.textContent = '';
-            Object.keys(mockDatabase).forEach(key => {
-                const span = document.createElement('span');
-                span.textContent = mockDatabase[key].yearStr[currentLang];
-                container.appendChild(span);
-            });
-        };
+const map = new maplibregl.Map({
+    container: 'map',
+    center: [15, 12],     // Pangea (250 Ma) queda centrada en el hemisferio visible
+    zoom: 2.1,
+    attributionControl: false,
+    style: {
+        version: 8,
+        projection: { type: 'globe' },
+        sources: {},
+        layers: [{ id: 'ocean', type: 'background', paint: { 'background-color': palette().ocean } }]
+    }
+});
+map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right');
 
-        const updateUIStrings = () => {
-            document.documentElement.lang = currentLang;
-            document.getElementById('donate-label').textContent = t('donate');
+const mapReady = new Promise((resolve) => map.on('load', resolve));
+let currentFocus = null;
 
-            const index = document.getElementById('timeline').value;
-            const currentEra = mockDatabase[index];
-            document.getElementById('year-display').innerText = `${t('yearPrefix')}: ${currentEra.yearStr[currentLang]}`;
+mapReady.then(() => {
+    const p = palette();
+    map.addSource('land', { type: 'geojson', data: emptyFC() });
+    map.addSource('borders', { type: 'geojson', data: emptyFC() });
+    map.addSource('live', { type: 'geojson', data: emptyFC() });
+    map.addLayer({ id: 'land-fill', type: 'fill', source: 'land', paint: { 'fill-color': p.land, 'fill-opacity': 1 } });
+    map.addLayer({ id: 'land-line', type: 'line', source: 'land', paint: { 'line-color': p.landLine, 'line-width': 0.8 } });
+    map.addLayer({ id: 'borders-fill', type: 'fill', source: 'borders', paint: { 'fill-color': ['get', '_c'], 'fill-opacity': ['get', '_o'] } });
+    map.addLayer({ id: 'borders-line', type: 'line', source: 'borders', paint: { 'line-color': p.line, 'line-width': 0.6, 'line-opacity': 0.55 } });
+    map.addLayer({ id: 'borders-hl', type: 'line', source: 'borders', filter: ['==', ['get', 'NAME'], '\u0000'], paint: { 'line-color': '#e53935', 'line-width': 3 } });
+    map.addLayer({ id: 'live-points', type: 'circle', source: 'live', paint: { 'circle-radius': 6, 'circle-color': '#e53935', 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff' } });
+});
 
-            renderEraTicks();
+map.on('error', (e) => {
+    const msg = e && e.error && e.error.message ? e.error.message : 'unknown';
+    console.error('[MAP]', msg);
+});
 
-            if (activePolygonProps) {
-                updateInfoPanel();
-            } else {
-                document.getElementById('entity-title').innerText = '';
-                clearInfo(t('clickPrompt'));
-            }
-        };
+function applyTheme() {
+    document.body.classList.toggle('dark', state.dark);
+    $('btn-theme').textContent = state.dark ? 'Light' : 'Dark';
+    if (!map.getLayer('land-fill')) return;
+    const p = palette();
+    map.setPaintProperty('ocean', 'background-color', p.ocean);
+    map.setPaintProperty('land-fill', 'fill-color', p.land);
+    map.setPaintProperty('land-line', 'line-color', p.landLine);
+    map.setPaintProperty('borders-line', 'line-color', p.line);
+}
 
-        const localize = (value) => {
-            if (typeof value === 'string') {
-                try { return JSON.parse(value); } catch (err) { return value; }
-            }
-            return value;
-        };
+function applyProjection() {
+    map.setProjection({ type: state.globe ? 'globe' : 'mercator' });
+    $('btn-proj').textContent = state.globe ? t('flat') : t('globe');
+}
 
-        const updateInfoPanel = () => {
-            if (!activePolygonProps) return;
-            const data = document.getElementById('entity-data');
-            data.textContent = '';
+/* ------------------------------------------------------------------ */
+/* Escena: se recompone al cambiar el tiempo                          */
+/* ------------------------------------------------------------------ */
+let sceneToken = 0;
 
-            try {
-                const nameObj = localize(activePolygonProps.name) || {};
-                const descObj = localize(activePolygonProps.desc) || {};
-                document.getElementById('entity-title').innerText = nameObj[currentLang] || nameObj.en || '';
+// Los datos recientes son de ahora: pintarlos en otra época sería un anacronismo.
+const liveVisible = (ybp) => Boolean(state.live) && Math.abs(ybp - -(CFG.nowYear - CFG.present)) <= 5;
 
-                addInfoRow(t('dataLabel'), descObj[currentLang] || descObj.en || t('unknownDate'));
+async function updateScene() {
+    const token = ++sceneToken;
+    if (inflight) inflight.abort();
+    inflight = new AbortController();
+    const signal = inflight.signal;
+    const ybp = state.ybp;
+    await mapReady;
 
-                if (activePolygonProps.timestamp) addInfoRow(t('eventLabel'), formatDate(activePolygonProps.timestamp));
-                if (activePolygonProps.harvest_date) addInfoRow(t('harvestLabel'), formatDate(activePolygonProps.harvest_date));
-            } catch (err) {
-                document.getElementById('entity-title').innerText = '—';
-                clearInfo(t('unknownDate'));
-            }
-        };
+    const messages = [];
+    let level = 'ok';
+    setStatus('warn', t('loadingLand'));
 
-        const applyEraTheme = () => {
-            const index = document.getElementById('timeline').value;
-            const currentEra = mockDatabase[index];
-            document.body.className = isDarkMode ? `${currentEra.theme} dark-mode` : currentEra.theme;
-        };
+    const [landRes, bordersRes] = await Promise.allSettled([loadLand(ybp, signal), loadBorders(ybp, signal)]);
+    if (token !== sceneToken) return;   // llegó tarde: ya hay otra escena pedida
 
-        // Controladores de Eventos
-        document.getElementById('timeline').addEventListener('input', (e) => {
-            applyEraTheme();
-            document.getElementById('info-panel').style.display = 'none';
-            activePolygonProps = null;
+    if (landRes.status === 'fulfilled') {
+        state.land = landRes.value;
+        map.getSource('land').setData(landRes.value.data);
+        const age = landRes.value.deep ? landRes.value.ma + ' Ma' : t('today').toLowerCase();
+        messages.push(landRes.value.deep ? fmt('landOk', { model: CFG.model, age }) : t('seaLevel'));
+    } else if (!(landRes.reason && landRes.reason.name === 'AbortError')) {
+        level = 'warn';
+        messages.push(fmt('landFail', { err: landRes.reason && landRes.reason.message }));
+    }
 
-            renderChronosLayer();
-            updateUIStrings();
-            applyMapFilter();
-            purifyMapStyle();
-        });
+    if (bordersRes.status === 'fulfilled') {
+        const b = bordersRes.value;
+        state.borders = b;
+        map.getSource('borders').setData(b ? b.data : emptyFC());
+        if (b) messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
+        else if (ybp <= CFG.bordersMaxYbp) messages.push(t('noBorders'));
+    } else if (!(bordersRes.reason && bordersRes.reason.name === 'AbortError')) {
+        level = 'warn';
+        state.borders = null;
+        map.getSource('borders').setData(emptyFC());
+        messages.push(fmt('bordersFail', { err: bordersRes.reason && bordersRes.reason.message }));
+    }
 
-        document.getElementById('btn-lang').addEventListener('click', () => {
-            currentLang = currentLang === 'en' ? 'es' : 'en';
-            updateUIStrings();
-        });
+    map.setLayoutProperty('live-points', 'visibility', liveVisible(ybp) ? 'visible' : 'none');
 
-        document.getElementById('btn-theme').addEventListener('click', () => {
-            isDarkMode = !isDarkMode;
-            applyEraTheme();
-            map.setStyle(isDarkMode ? mapStyles.dark : mapStyles.light);
-        });
+    setStatus(level, messages.join(' '));
+    renderCredits();
+    if (currentFocus) { const f = currentFocus; currentFocus = null; focusPolity(f); }
+    else hideInfo();   // el panel describía otra época
+}
 
-        async function loadLiveAnomalies() {
-            try {
-                const response = await fetch('./latest_harvest.json', { cache: 'no-store' });
-                if (!response.ok) throw new Error('HTTP ' + response.status);
-                const parsed = JSON.parse(await response.text());
-                if (!parsed || !Array.isArray(parsed.features)) throw new Error('sin array features');
+let debounce = null;
+function scheduleScene() { clearTimeout(debounce); debounce = setTimeout(updateScene, CFG.debounceMs); }
 
-                liveData = parsed;
-                setStatus('ok', formatTemplate('liveOk', { n: parsed.features.length }));
-            } catch (err) {
-                liveData = null;
-                setStatus('warn', formatTemplate('liveBad', { err: err.message }));
-            }
+function setTime(ybp, { fromSlider = false, immediate = false } = {}) {
+    state.ybp = Math.min(Math.max(ybp, 1 - OFFSET), CFG.maxYbp);
+    if (!fromSlider) $('slider').value = ybpToSlider(state.ybp);
+    if (document.activeElement !== $('time-input')) $('time-input').value = '';
+    const f = formatTime(state.ybp);
+    $('time-label').textContent = f.main;
+    $('time-sub').textContent = f.sub;
+    if (immediate) { clearTimeout(debounce); updateScene(); } else scheduleScene();
+}
+
+/* ------------------------------------------------------------------ */
+/* Selección y búsqueda                                               */
+/* ------------------------------------------------------------------ */
+function clearHighlight() {
+    if (map.getLayer('borders-hl')) map.setFilter('borders-hl', ['==', ['get', 'NAME'], '\u0000']);
+}
+
+function bboxOf(features) {
+    let minX = 180, minY = 90, maxX = -180, maxY = -90;
+    const walk = (c) => { if (typeof c[0] === 'number') { minX = Math.min(minX, c[0]); maxX = Math.max(maxX, c[0]); minY = Math.min(minY, c[1]); maxY = Math.max(maxY, c[1]); } else c.forEach(walk); };
+    features.forEach((f) => f.geometry && walk(f.geometry.coordinates));
+    return minX <= maxX ? [[minX, minY], [maxX, maxY]] : null;
+}
+
+function focusPolity(name) {
+    if (!state.borders) return;
+    const feats = state.borders.data.features.filter((f) => f.properties.NAME === name);
+    if (!feats.length) return;
+    map.setFilter('borders-hl', ['==', ['get', 'NAME'], name]);
+    const box = bboxOf(feats);
+    if (box) map.fitBounds(box, { padding: 120, maxZoom: 6, duration: 1400 });
+    showPolity(feats[0].properties);
+}
+
+function showPolity(p) {
+    const rows = [{ label: t('evidence'), badge: 'reconstruction', note: t('bordersNote') }];
+    if (p.SUBJECTO && p.SUBJECTO !== p.NAME) rows.push({ label: t('power'), value: p.SUBJECTO });
+    if (p.PARTOF) rows.push({ label: t('parent'), value: p.PARTOF });
+    if (p.BORDERPRECISION) rows.push({ label: t('precision'), value: t('prec.' + p.BORDERPRECISION) || p.BORDERPRECISION });
+    if (state.borders) rows.push({ label: t('snapshotLabel'), value: formatYear(state.borders.year) });
+    rows.push({ label: t('source'), value: 'historical-basemaps', href: 'https://github.com/aourednik/historical-basemaps' });
+    showInfo(p.NAME || t('unnamed'), rows);
+}
+
+function showCoast() {
+    const ma = state.land && state.land.deep ? state.land.ma + ' Ma' : t('today');
+    showInfo(t('coastTitle'), [
+        { label: t('evidence'), badge: 'model', note: t('coastNote') },
+        { label: t('model'), value: CFG.model },
+        { label: t('age'), value: ma },
+        { label: t('source'), value: 'GPlates Web Service', href: 'https://www.gplates.org/' }
+    ]);
+}
+
+function showLive(p) {
+    const rows = [{ label: t('evidence'), badge: 'documentary' }];
+    rows.push({ label: t('tier'), value: p.tier || t('unknown') });
+    rows.push({ label: t('event'), value: p.timestamp && p.timestamp !== 'Indeterminado' ? String(p.timestamp).slice(0, 10) : t('unknown') });
+    if (p.harvest_date) rows.push({ label: t('harvested'), value: String(p.harvest_date).slice(0, 10) });
+    const q = String(p.source || '').split(':')[1] || '';
+    if (/^Q\d+$/.test(q)) rows.push({ label: t('source'), value: p.source, href: 'https://www.wikidata.org/wiki/' + q });
+    showInfo(p.name || t('liveTitle'), rows);
+}
+
+map.on('click', (e) => {
+    if (!map.getLayer('borders-fill')) return;
+    const hit = map.queryRenderedFeatures(e.point, { layers: ['live-points', 'borders-fill', 'land-fill'] })[0];
+    clearHighlight();
+    if (!hit) { hideInfo(); return; }
+    if (hit.layer.id === 'live-points') showLive(hit.properties);
+    else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { map.setFilter('borders-hl', ['==', ['get', 'NAME'], hit.properties.NAME]); showPolity(hit.properties); }
+    else if (hit.layer.id === 'borders-fill') showPolity(hit.properties);
+    else showCoast();
+});
+['live-points', 'borders-fill'].forEach((id) => {
+    map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
+});
+
+async function runSearch(raw) {
+    const q = raw.trim().toLowerCase();
+    if (!q) return;
+    try {
+        const polities = await loadPolities();
+        const hits = [];
+        const matches = new Map();
+        polities.forEach((p) => p.names.forEach((n) => {
+            if (n && n.toLowerCase().includes(q)) { hits.push({ p, n }); matches.set(n, (matches.get(n) || 0) + 1); }
+        }));
+        if (hits.length) {
+            // Mejor coincidencia: nombre exacto, si no el más corto
+            const names = [...matches.keys()].sort((a, b) => (a.toLowerCase() === q ? -1 : b.toLowerCase() === q ? 1 : a.length - b.length));
+            const name = names[0];
+            const candidates = hits.filter((h) => h.n === name).map((h) => h.p);
+            const here = ybpToYear(state.ybp);
+            const best = candidates.reduce((a, b) => (Math.abs(a.year - here) <= Math.abs(b.year - here) ? a : b));
+            setStatus('ok', fmt('found', { n: name, c: candidates.length, y: formatYear(best.year) }));
+            currentFocus = name;
+            setTime(yearToYbp(best.year), { immediate: true });
+            return;
         }
+    } catch (err) {
+        setStatus('warn', fmt('bordersFail', { err: err.message }));
+        return;
+    }
+    const live = state.live && state.live.features.find((f) => String(f.properties.name || '').toLowerCase().includes(q));
+    if (live) {
+        setTime(0 - (CFG.nowYear - CFG.present), { immediate: true });
+        map.flyTo({ center: live.geometry.coordinates, zoom: 5 });
+        showLive(live.properties);
+        return;
+    }
+    setStatus('warn', fmt('noResults', { q: raw.trim() }));
+}
 
-        const showLiveFeature = (feature) => {
-            const props = feature.properties || {};
-            const coords = feature.geometry && feature.geometry.coordinates;
-            map.flyTo({ center: coords, zoom: 6 });
+/* ------------------------------------------------------------------ */
+/* Textos, créditos, presets                                          */
+/* ------------------------------------------------------------------ */
+function renderCredits() {
+    const box = $('credits');
+    box.textContent = '';
+    box.appendChild(document.createTextNode(t('creditsLand') + ': '));
+    box.appendChild(el('a', { href: 'https://www.gplates.org/', target: '_blank', rel: 'noopener', text: 'GPlates Web Service' }));
+    box.appendChild(document.createTextNode(' · ' + CFG.model + '   |   ' + t('creditsBorders') + ': '));
+    box.appendChild(el('a', { href: 'https://github.com/aourednik/historical-basemaps', target: '_blank', rel: 'noopener', text: 'historical-basemaps' }));
+    box.appendChild(document.createTextNode(' (A. Ourednik, GPL-3.0)'));
+}
 
-            if (map.getSource('search-source')) {
-                map.getSource('search-source').setData(feature);
-            } else {
-                map.addSource('search-source', { type: 'geojson', data: feature });
-                map.addLayer({
-                    id: 'search-point', type: 'circle', source: 'search-source',
-                    paint: {
-                        'circle-radius': 10,
-                        'circle-color': '#ff3333',
-                        'circle-stroke-width': 2,
-                        'circle-stroke-color': '#ffffff'
-                    }
-                });
-            }
+const PRESETS = [
+    { label: () => t('today'), ybp: -(CFG.nowYear - CFG.present) },
+    { label: () => '1945', ybp: yearToYbp(1945) },
+    { label: () => '1492', ybp: yearToYbp(1492) },
+    { label: () => '117', ybp: yearToYbp(117) },
+    { label: () => formatYear(-322), ybp: yearToYbp(-322) },
+    { label: () => '66 Ma', ybp: 66e6 },
+    { label: () => '250 Ma · Pangea', ybp: 250e6 },
+    { label: () => '500 Ma', ybp: 500e6 }
+];
 
-            document.getElementById('entity-title').innerText = props.name || '';
-            const data = document.getElementById('entity-data');
-            data.textContent = '';
-            addInfoRow(t('tierLabel'), props.tier || t('unknownDate'));
-            addInfoRow(t('eventLabel'), formatDate(props.timestamp));
-            if (props.harvest_date) addInfoRow(t('harvestLabel'), formatDate(props.harvest_date));
+function renderPresets() {
+    const box = $('presets');
+    box.textContent = '';
+    PRESETS.forEach((p) => {
+        const b = el('button', { class: 'btn', type: 'button', text: p.label() });
+        b.addEventListener('click', () => setTime(p.ybp, { immediate: true }));
+        box.appendChild(b);
+    });
+}
 
-            const entityId = String(props.source || '').split(':')[1] || '';
-            if (/^Q\d+$/.test(entityId)) {
-                const row = addInfoRow(t('sourceLabel'), props.source);
-                const link = document.createElement('a');
-                link.href = 'https://www.wikidata.org/wiki/' + entityId;
-                link.target = '_blank';
-                link.rel = 'noopener';
-                link.textContent = props.source;
-                row.textContent = '';
-                const strong = document.createElement('b');
-                strong.textContent = t('sourceLabel') + ': ';
-                row.appendChild(strong);
-                row.appendChild(link);
-            } else {
-                addInfoRow(t('sourceLabel'), props.source || t('unknownDate'));
-            }
+function applyStrings() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach((n) => { n.textContent = t(n.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((n) => { n.placeholder = t(n.dataset.i18nPlaceholder); });
+    $('btn-proj').textContent = state.globe ? t('flat') : t('globe');
+    renderPresets();
+    renderCredits();
+    setTime(state.ybp, { immediate: false });
+}
 
-            document.getElementById('info-panel').style.display = 'block';
-        };
+/* ------------------------------------------------------------------ */
+/* Eventos                                                            */
+/* ------------------------------------------------------------------ */
+$('slider').addEventListener('input', (e) => setTime(sliderToYbp(parseInt(e.target.value, 10)), { fromSlider: true }));
+$('time-input').addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const ybp = parseTime(e.target.value);
+    if (ybp === null) { setStatus('warn', t('badTime')); return; }
+    setTime(ybp, { immediate: true });
+    e.target.blur();
+});
+$('search').addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(e.target.value); });
+$('btn-lang').addEventListener('click', () => { lang = lang === 'es' ? 'en' : 'es'; applyStrings(); });
+$('btn-theme').addEventListener('click', () => { state.dark = !state.dark; applyTheme(); });
+$('btn-proj').addEventListener('click', () => { state.globe = !state.globe; applyProjection(); });
+$('info-close').addEventListener('click', hideInfo);
 
-        document.getElementById('universal-search').addEventListener('keydown', (e) => {
-            if (e.key !== 'Enter') return;
+/* Datos recientes del harvester (se muestran solo cerca del presente) */
+async function loadLive() {
+    try {
+        const res = await fetch('./latest_harvest.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const parsed = JSON.parse(await res.text());
+        if (!parsed || !Array.isArray(parsed.features)) throw new Error('no features');
+        state.live = parsed;
+        await mapReady;
+        map.getSource('live').setData(parsed);
+        map.setLayoutProperty('live-points', 'visibility', liveVisible(state.ybp) ? 'visible' : 'none');
+    } catch (err) {
+        state.live = null;
+        console.warn('[LIVE]', err.message);
+    }
+}
 
-            const query = e.target.value.toLowerCase().trim();
-            if (!query) return;
-
-            let found = false;
-
-            for (const key in mockDatabase) {
-                const era = mockDatabase[key];
-                const feature = era.data.features.find(f => {
-                    const name = (f.properties.name[currentLang] || f.properties.name.en || '').toLowerCase();
-                    const desc = (f.properties.desc[currentLang] || f.properties.desc.en || '').toLowerCase();
-                    return name.includes(query) || desc.includes(query);
-                });
-                if (feature) {
-                    document.getElementById('timeline').value = key;
-                    document.getElementById('timeline').dispatchEvent(new Event('input'));
-                    const coords = feature.geometry.coordinates[0][0];
-                    map.flyTo({ center: coords, zoom: 4 });
-                    activePolygonProps = feature.properties;
-                    updateInfoPanel();
-                    document.getElementById('info-panel').style.display = 'block';
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found && liveData && liveData.features) {
-                const feature = liveData.features.find(f => {
-                    const name = String(f.properties.name || '').toLowerCase();
-                    const timestamp = String(f.properties.timestamp || '').toLowerCase();
-                    return name.includes(query) || timestamp.includes(query);
-                });
-                if (feature) {
-                    showLiveFeature(feature);
-                    found = true;
-                }
-            }
-
-            if (!found) setStatus('warn', t('noResults'));
-        });
-
-        // Inicialización
-        updateUIStrings();
-        loadLiveAnomalies();
-    </script>
+/* Inicio */
+applyStrings();
+setTime(state.ybp, { immediate: true });
+loadLive();
+</script>
 </body>
 </html>

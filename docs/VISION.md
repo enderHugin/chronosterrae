@@ -80,7 +80,7 @@ realista: poder entrar en otra época y ver cómo era.
 
 | Capa | Qué aporta | Fuente prevista | Estado (sonda 2026-11-01) |
 |---|---|---|---|
-| Paleogeografía | Costas y placas reconstruidas, Pangea | GPlates Web Service; a medio plazo precalculado con pyGPlates y publicado versionado | Responde con CORS (1,2–2,1 MB, 2–5 s). **La respuesta son polígonos sin propiedades: sin modelo ni edad.** Los modelos discrepan (250 Ma: Merdith 2021 = 2.214 polígonos, modelo por defecto = 1.636). Hay que registrar y archivar modelo+edad nosotros |
+| Paleogeografía | Costas y placas reconstruidas, Pangea. **OJO: el servicio de GPlates `coastlines` NO da costas antiguas reales**: mueve como bloques rígidos los contornos actuales (perímetro y nº de vértices idénticos a 250 y 500 Ma; Groenlandia con su forma de hoy). Sirve para ver el movimiento de las placas, no la geografía real de Pangea. Las costas reales requieren mapas paleogeográficos (PALEOMAP, Cao et al., Macrostrat…): **pendiente de fuente y licencia** | GPlates Web Service; a medio plazo precalculado con pyGPlates y publicado versionado | Responde con CORS (1,2–2,1 MB, 2–5 s). **La respuesta son polígonos sin propiedades: sin modelo ni edad.** Los modelos discrepan (250 Ma: Merdith 2021 = 2.214 polígonos, modelo por defecto = 1.636). Hay que registrar y archivar modelo+edad nosotros |
 | Fronteras históricas | Polities de −123000 a 2010 | `aourednik/historical-basemaps` vía jsDelivr (GPL-3.0, solo en ejecución) | Responde con CORS |
 | Geología | Unidades, intervalos | Macrostrat | Responde con CORS |
 | Fósiles | Ocurrencias con edad y lugar | Paleobiology Database | Responde con CORS |
@@ -169,6 +169,11 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
 
 ## 6. Pendiente de aclarar
 
+- **Costas reales de Pangea (prioridad alta).** El creador pidió explícitamente «las costas
+  reales de Pangea». La fuente actual (GPlates `coastlines`) solo desplaza contornos
+  actuales; la web lo dice así en pantalla. Hay que encontrar una fuente de paleogeografía
+  real (líneas de costa con mares someros) con licencia compatible y verificar su formato
+  con la sonda antes de integrarla.
 - El creador ofreció compartir su conversación previa con **opencode** para ver qué se
   intentó y no se logró. **Aún no ha llegado.** Revisarla puede cambiar el orden de la
   hoja de ruta.

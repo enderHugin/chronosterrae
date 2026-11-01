@@ -55,6 +55,15 @@ const targets = [
     { id: 'jsdelivr-historical-basemaps-1945', area: 'fronteras', url: `https://cdn.jsdelivr.net/gh/aourednik/historical-basemaps@${HB_COMMIT}/geojson/world_1945.geojson`, expect: jsonHas('features') },
     { id: 'jsdelivr-historical-basemaps-index', area: 'fronteras', url: `https://cdn.jsdelivr.net/gh/aourednik/historical-basemaps@${HB_COMMIT}/index.json`, expect: jsonHas('years') },
     { id: 'carto-positron-style', area: 'mapa-base', url: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json', expect: jsonHas('layers') },
+    { id: 'gplates-coastlines-66ma', area: 'paleogeografia', url: 'https://gws.gplates.org/reconstruct/coastlines/?time=66&model=MERDITH2021', expect: jsonHas('features') },
+    { id: 'macrostrat-paleogeography-permian', area: 'paleogeografia-real', url: 'https://macrostrat.org/api/v2/paleogeography?interval_name=Permian', full: true, expect: (t) => t.length > 2 },
+    { id: 'macrostrat-paleogeography-250', area: 'paleogeografia-real', url: 'https://macrostrat.org/api/v2/paleogeography?age=250&format=geojson', full: true, expect: (t) => t.length > 2 },
+    { id: 'zenodo-paleomap', area: 'paleogeografia-real', url: 'https://zenodo.org/api/records?q=PALEOMAP%20PaleoAtlas&size=5', full: true, expect: jsonHas('hits') },
+    { id: 'zenodo-scotese-gplates', area: 'paleogeografia-real', url: 'https://zenodo.org/api/records?q=Scotese%20paleogeography%20GPlates&size=5', full: true, expect: jsonHas('hits') },
+    { id: 'zenodo-merdith-model', area: 'paleogeografia-real', url: 'https://zenodo.org/api/records?q=Merdith%20plate%20tectonic%20model%20Neoproterozoic&size=5', full: true, expect: jsonHas('hits') },
+    { id: 'zenodo-cao-paleogeography', area: 'paleogeografia-real', url: 'https://zenodo.org/api/records?q=Cao%20Phanerozoic%20palaeogeography%20GPlates&size=5', full: true, expect: jsonHas('hits') },
+    { id: 'crossref-merdith2021', area: 'verificacion-doi', url: 'https://api.crossref.org/works/10.1016/j.earscirev.2020.103477', full: true, expect: jsonHas('message') },
+    { id: 'crossref-renne2013', area: 'verificacion-doi', url: 'https://api.crossref.org/works/10.1126/science.1230492', full: true, expect: jsonHas('message') },
     { id: 'zenodo-search-plate-model', area: 'paleogeografia', url: 'https://zenodo.org/api/records?q=Merdith2021%20plate%20model&size=1', expect: jsonHas('hits') }
 ];
 
