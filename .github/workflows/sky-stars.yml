@@ -38,10 +38,12 @@ jobs:
       - name: 'Conectividad con curl (dice por que falla una red, a diferencia de fetch)'
         continue-on-error: true
         run: |
-          for u in https://tapvizier.cds.unistra.fr/TAPVizieR/tap/capabilities \
-                   https://vizier.cds.unistra.fr/ \
-                   https://vizier.cfa.harvard.edu/ \
-                   https://simbad.cds.unistra.fr/simbad/sim-tap/capabilities \
+          for u in https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=I/239/hip_main\&-out.max=2\&-out=HIP,Vmag \
+                   https://vizier.cfa.harvard.edu/TAPVizieR/tap/capabilities \
+                   https://vizier.cfa.harvard.edu/tap/capabilities \
+                   https://cdsarc.cds.unistra.fr/ftp/cats/I/239/ReadMe \
+                   https://cdsarc.u-strasbg.fr/ftp/cats/I/239/ReadMe \
+                   https://www.cosmos.esa.int/web/hipparcos/catalogues \
                    https://raw.githubusercontent.com/astronexus/HYG-Database/main/README.md; do
             echo "== $u"; curl -sS -m 25 -o /dev/null -w "http=%{http_code} ip=%{remote_ip} t=%{time_total}s\n" "$u" 2>&1 | tail -2
           done 2>&1 | tee /tmp/net.log

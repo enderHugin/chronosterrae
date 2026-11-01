@@ -70,8 +70,32 @@ async function pickServer() {
     return { chosen: null, tried };
 }
 
+// Interfaz ASU de VizieR (texto separado por tabuladores). El espejo del CfA (Harvard) responde
+// desde GitHub aunque el servidor de Estrasburgo no.
+const ASU = 'https://vizier.cfa.harvard.edu/viz-bin/asu-tsv';
+const asuRaw = async (params) => {
+    const url = ASU + '?' + params;
+    const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, signal: AbortSignal.timeout(TIMEOUT_MS) });
+    const text = await res.text();
+    if (!res.ok) throw new Error('ASU HTTP ' + res.status + ': ' + text.slice(0, 200));
+    return text;
+};
+
+async function inspectAsu(out) {
+    out.asu = {};
+    out.asu.sample = await safe('asu sample', async () => (await asuRaw('-source=I/239/hip_main&-out.max=3&-out.all=1')).split('\n').slice(0, 80));
+    out.asu.brightest = await safe('asu brightest', async () => (await asuRaw('-source=I/239/hip_main&-out.max=12&-out=HIP,RAICRS,DEICRS,Plx,pmRA,pmDE,Vmag,B-V&Vmag=%3C0&-sort=Vmag')).split('\n').slice(0, 60));
+    out.asu.count = await safe('asu count', async () => {
+        const t = await asuRaw('-source=I/239/hip_main&-out.max=unlimited&-out=HIP&Vmag=%3C6.5');
+        const rows = t.split('\n').filter((l) => /^\s*\d+\s*$/.test(l));
+        return { bytes: t.length, hip_rows: rows.length };
+    });
+    out.asu.hip2 = await safe('asu hip2', async () => (await asuRaw('-source=I/311/hip2&-out.max=3&-out.all=1')).split('\n').slice(0, 60));
+}
+
 async function inspect() {
     const out = { probed_at: new Date().toISOString() };
+    await inspectAsu(out);
     out.servers = await pickServer();
     out.tap = TAP;
     if (!TAP) { process.stdout.write(JSON.stringify(out, null, 2) + '\n'); return; }
