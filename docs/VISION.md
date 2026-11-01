@@ -174,8 +174,10 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
   incluyendo inundación continental. Se archiva en `data/paleocoastlines/` con
   `scripts/build-paleocoastlines.js`. Pendiente: de 535 a 1000 Ma solo hay contornos
   rígidos de GPlates (rotulados como tales); el DOI del artículo asociado
-  (10.1016/j.earscirev.2020.103463) viene de la ficha de Zenodo y la sonda lo verifica en
-  Crossref.
+  (10.1016/j.earscirev.2020.103463) venía de la ficha de Zenodo y **está verificado en
+  Crossref** (sonda del 2026-11-01): «Mapping paleocoastlines and continental flooding
+  during the Phanerozoic», Kocsis y Scotese, *Earth-Science Reviews*, 2021. Falta quitar la
+  nota «pendiente de verificar» del manifiesto en la próxima publicación de datos.
 - El creador ofreció compartir su conversación previa con **opencode** para ver qué se
   intentó y no se logró. **Aún no ha llegado.** Revisarla puede cambiar el orden de la
   hoja de ruta.
