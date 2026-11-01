@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-11-01T20:33:07.917Z",
+  "source": "Wikidata (CC0) via QLever (qlever.cs.uni-freiburg.de/api/wikidata)",
+  "kinds": [
+    "birth",
+    "death",
+    "publication",
+    "composition",
+    "discovery",
+    "event"
+  ],
+  "per_kind": {
+    "birth": 7340,
+    "death": 4969,
+    "publication": 1326,
+    "composition": 731,
+    "discovery": 7097,
+    "event": 5959
+  },
+  "stats": {
+    "queries": 6,
+    "failed": [],
+    "skipped": {
+      "duplicado (misma fecha, otro lugar)": 785,
+      "anterior al año 1 (numeracion sin calibrar)": 1715,
+      "asteroide numerado o provisional": 8954,
+      "etiqueta que es solo un año": 2097
+    },
+    "rows": 40973
+  }
+}

@@ -1,0 +1,115 @@
+{
+ "shards": {
+  "c18": {
+   "file": "c18.json",
+   "count": 6523,
+   "bytes": 3495679
+  },
+  "c19": {
+   "file": "c19.json",
+   "count": 9539,
+   "bytes": 5259870
+  },
+  "c17": {
+   "file": "c17.json",
+   "count": 2626,
+   "bytes": 1409726
+  },
+  "c15": {
+   "file": "c15.json",
+   "count": 591,
+   "bytes": 321683
+  },
+  "c16": {
+   "file": "c16.json",
+   "count": 640,
+   "bytes": 350134
+  },
+  "c0": {
+   "file": "c0.json",
+   "count": 139,
+   "bytes": 73638
+  },
+  "c10": {
+   "file": "c10.json",
+   "count": 137,
+   "bytes": 74144
+  },
+  "c14": {
+   "file": "c14.json",
+   "count": 327,
+   "bytes": 177564
+  },
+  "c3": {
+   "file": "c3.json",
+   "count": 127,
+   "bytes": 68153
+  },
+  "c2": {
+   "file": "c2.json",
+   "count": 150,
+   "bytes": 79601
+  },
+  "c11": {
+   "file": "c11.json",
+   "count": 153,
+   "bytes": 83578
+  },
+  "c13": {
+   "file": "c13.json",
+   "count": 176,
+   "bytes": 94875
+  },
+  "c4": {
+   "file": "c4.json",
+   "count": 91,
+   "bytes": 48370
+  },
+  "c6": {
+   "file": "c6.json",
+   "count": 121,
+   "bytes": 64690
+  },
+  "c7": {
+   "file": "c7.json",
+   "count": 96,
+   "bytes": 51159
+  },
+  "c9": {
+   "file": "c9.json",
+   "count": 103,
+   "bytes": 55287
+  },
+  "c12": {
+   "file": "c12.json",
+   "count": 222,
+   "bytes": 120003
+  },
+  "c8": {
+   "file": "c8.json",
+   "count": 106,
+   "bytes": 56973
+  },
+  "c5": {
+   "file": "c5.json",
+   "count": 85,
+   "bytes": 45405
+  },
+  "c20": {
+   "file": "c20.json",
+   "count": 5366,
+   "bytes": 3079183
+  },
+  "c1": {
+   "file": "c1.json",
+   "count": 102,
+   "bytes": 53417
+  },
+  "c21": {
+   "file": "c21.json",
+   "count": 2,
+   "bytes": 1153
+  }
+ },
+ "generated_at": "2026-11-01T20:33:07.917Z"
+}
