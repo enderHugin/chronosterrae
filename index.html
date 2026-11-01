@@ -110,6 +110,22 @@
         #clock-controls .btn { padding: 3px 10px; font-size: 12px; }
         #clock-rate { padding: 3px 6px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); font: 600 12px var(--font-ui); }
         #clock-rate option { color: #222; }
+        #events { position: absolute; top: 60px; left: 14px; width: 344px; max-width: calc(100% - 28px); max-height: calc(100% - 300px); overflow: auto; padding: 12px 14px 10px; z-index: 11; display: none; box-sizing: border-box; }
+        #events.open { display: block; }
+        #events h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
+        #events .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #events-list { list-style: none; margin: 6px 0; padding: 0; }
+        #events-list li { display: grid; grid-template-columns: 12px 1fr; gap: 0 8px; padding: 6px 4px; border-top: 1px solid rgba(128, 128, 128, 0.25); cursor: pointer; font-size: 13px; }
+        #events-list li:hover, #events-list li:focus { background: rgba(128, 128, 128, 0.12); outline: none; }
+        .ev-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; grid-row: 1 / span 2; }
+        .ev-name { font-weight: 600; }
+        .ev-when { grid-column: 2; font-size: 11.5px; color: var(--muted); }
+        #events-note { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+        #toasts { position: absolute; top: 96px; left: 50%; transform: translateX(-50%); z-index: 13; display: flex; flex-direction: column; gap: 8px; width: min(92%, 520px); pointer-events: none; }
+        .toast { pointer-events: auto; display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); cursor: pointer; font-size: 14px; line-height: 1.35; }
+        .toast-dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+        .toast-text { flex: 1; font-variant-numeric: tabular-nums; }
+        .toast-x { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
         #sky { position: absolute; top: 60px; left: 14px; width: 344px; max-width: calc(100% - 28px); max-height: calc(100% - 300px); overflow: auto; padding: 12px 14px 10px; z-index: 11; display: none; box-sizing: border-box; }
         #sky.open { display: block; }
         #sky h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
@@ -154,11 +170,21 @@
     </div>
 
     <div id="top-right">
+        <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
         <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
         <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
         <button class="btn" id="btn-lang" type="button">EN / ES</button>
         <button class="btn" id="btn-theme" type="button">Dark</button>
     </div>
+
+    <div id="events" class="panel" role="region" aria-label="Events">
+        <button class="close" id="events-close" type="button" aria-label="Close">&times;</button>
+        <h2 data-i18n="events.title"></h2>
+        <ul id="events-list"></ul>
+        <div id="events-note"></div>
+    </div>
+
+    <div id="toasts" aria-live="polite"></div>
 
     <div id="sky" class="panel" role="region" aria-label="Sky">
         <button class="close" id="sky-close" type="button" aria-label="Close">&times;</button>
@@ -236,6 +262,7 @@
 <script src="./vendor/astronomy-engine/astronomy.browser.min.js"></script>
 <script src="./sky/sky.js"></script>
 <script src="./sky/space.js"></script>
+<script src="./sky/timed.js"></script>
 <script src="./sky/sky-view.js"></script>
 <script>
 'use strict';
@@ -329,6 +356,20 @@ const i18n = {
         prec: { 1: 'aproximada', 2: 'moderada', 3: 'fijada por tratado' },
         unnamed: 'Sin nombre en el conjunto de datos', liveTitle: 'Dato reciente', event: 'Fecha del suceso', harvested: 'Recogido', tier: 'Nivel', unknown: 'Desconocida',
         creditsLand: 'Costas', creditsBorders: 'Fronteras',
+        events: {
+            button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
+            basisUtc: 'UTC/GMT', basisLocal: 'hora oficial del lugar (UTC{off})', noPlace: 'sin lugar', empty: 'No hay sucesos con fuente cerca de este instante a esta escala. Acércate o cambia de año.',
+            none: 'Los sucesos de Wikidata aún no están publicados: solo hay los de hora verificada.', outOfRange: 'Los sucesos con fecha se muestran entre los años 1 y hoy.',
+            shown: 'Los más cercanos al reloj ({n}). A esta escala solo los más notorios: al acercarte aparecen más.',
+            kind: { birth: 'Nacimiento', death: 'Muerte', publication: 'Publicación', composition: 'Composición', discovery: 'Descubrimiento o invención', extinction: 'Extinción', event: 'Suceso' },
+            in: 'Dentro de {t}: {text}', now: 'Ahora: {text}', ago: 'Hace {t}: {text}', today: 'Hoy (hora desconocida): {text}',
+            say: {
+                birth: { future: 'nace {n}', now: 'nace {n}', past: 'acaba de nacer {n}' }, death: { future: 'muere {n}', now: 'muere {n}', past: 'acaba de morir {n}' },
+                publication: { future: 'se publica «{n}»', now: 'se publica «{n}»', past: 'se acaba de publicar «{n}»' }, composition: { future: 'se compone «{n}»', now: 'se compone «{n}»', past: 'se acaba de componer «{n}»' },
+                discovery: { future: 'se descubre {n}', now: 'se descubre {n}', past: 'se acaba de descubrir {n}' }, extinction: { future: 'se extingue {n}', now: 'se extingue {n}', past: 'se acaba de extinguir {n}' },
+                event: { future: '{n}', now: '{n}', past: 'acaba de ocurrir: {n}' }
+            }
+        },
         clock: { now: 'Ahora', play: 'Reproducir', pause: 'Pausa', rate: 'Velocidad', solar: 'hora solar local {t} (lon. {lon}°)', device: 'hora de tu equipo {t}', julian: 'juliano', back: 'hacia atrás' },
         space: {
             button: 'Estrellas', tip: 'Estrellas, Sol, Luna y planetas tras el globo, en su posición en ese instante, y la noche sobre la Tierra. Es un cálculo; los símbolos no están a escala.',
@@ -381,6 +422,20 @@ const i18n = {
         prec: { 1: 'approximate', 2: 'moderate', 3: 'set by treaty' },
         unnamed: 'Unnamed in the dataset', liveTitle: 'Recent data', event: 'Event date', harvested: 'Harvested', tier: 'Tier', unknown: 'Unknown',
         creditsLand: 'Coastlines', creditsBorders: 'Borders',
+        events: {
+            button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
+            basisUtc: 'UTC/GMT', basisLocal: 'official local time (UTC{off})', noPlace: 'no place', empty: 'No sourced events near this instant at this scale. Zoom in or change the year.',
+            none: 'The Wikidata events are not published yet: only those with a verified time of day exist.', outOfRange: 'Dated events are shown between year 1 and today.',
+            shown: 'The closest to the clock ({n}). At this scale only the most notable: more appear as you zoom in.',
+            kind: { birth: 'Birth', death: 'Death', publication: 'Publication', composition: 'Composition', discovery: 'Discovery or invention', extinction: 'Extinction', event: 'Event' },
+            in: 'In {t}: {text}', now: 'Now: {text}', ago: '{t} ago: {text}', today: 'Today (time unknown): {text}',
+            say: {
+                birth: { future: '{n} is born', now: '{n} is born', past: '{n} was just born' }, death: { future: '{n} dies', now: '{n} dies', past: '{n} just died' },
+                publication: { future: '\u201c{n}\u201d is published', now: '\u201c{n}\u201d is published', past: '\u201c{n}\u201d was just published' }, composition: { future: '\u201c{n}\u201d is composed', now: '\u201c{n}\u201d is composed', past: '\u201c{n}\u201d was just composed' },
+                discovery: { future: '{n} is discovered', now: '{n} is discovered', past: '{n} was just discovered' }, extinction: { future: '{n} goes extinct', now: '{n} goes extinct', past: '{n} just went extinct' },
+                event: { future: '{n}', now: '{n}', past: 'just happened: {n}' }
+            }
+        },
         clock: { now: 'Now', play: 'Play', pause: 'Pause', rate: 'Speed', solar: 'local solar time {t} (lon. {lon}°)', device: 'your device time {t}', julian: 'Julian', back: 'backwards' },
         space: {
             button: 'Stars', tip: 'Stars, Sun, Moon and planets behind the globe, where they are at that instant, and the night over the Earth. A calculation; symbols are not to scale.',
@@ -653,6 +708,16 @@ mapReady.then(() => {
     map.addSource('night', { type: 'geojson', data: emptyFC() });
     map.addLayer({ id: 'night-fill', type: 'fill', source: 'night', layout: { visibility: 'none' }, paint: { 'fill-color': '#000a1f', 'fill-opacity': 0.34 } }, 'live-points');
     updateNight(true);
+    map.addSource('events', { type: 'geojson', data: emptyFC() });
+    map.addLayer({
+        id: 'events-circle', type: 'circle', source: 'events',
+        paint: {
+            'circle-radius': ['interpolate', ['linear'], ['get', 'importance'], 0.3, 4, 1, 8],
+            'circle-color': ['match', ['get', 'kind'], 'birth', KIND_COLORS.birth, 'death', KIND_COLORS.death, 'publication', KIND_COLORS.publication, 'composition', KIND_COLORS.composition, 'discovery', KIND_COLORS.discovery, 'extinction', KIND_COLORS.extinction, KIND_COLORS.event],
+            'circle-stroke-width': 1.5, 'circle-stroke-color': '#ffffff'
+        }
+    });
+    eventsRefresh();
 });
 
 // Doble clic (o doble toque) = centrar el mapa en ese punto, sin cambiar el zoom.
@@ -672,6 +737,7 @@ map.on('moveend', () => {
     savePrefs({ c: [r(c.lng, 3), r(Math.max(-85, Math.min(85, c.lat)), 3)], z: r(map.getZoom(), 2) });
     if (sky.open && sky.follow) { syncPlace(); skyFieldsFromClock(); scheduleSky(); }
     renderClock();
+    eventsRefresh();
 });
 map.on('move', () => scheduleSpace());
 map.on('resize', () => scheduleSpace());
@@ -953,15 +1019,16 @@ function showLive(p) {
 
 map.on('click', (e) => {
     if (!map.getLayer('borders-fill')) return;
-    const hit = map.queryRenderedFeatures(e.point, { layers: ['live-points', 'borders-fill', 'land-fill', 'margin-fill'] })[0];
+    const hit = map.queryRenderedFeatures(e.point, { layers: ['events-circle', 'live-points', 'borders-fill', 'land-fill', 'margin-fill'] })[0];
     clearHighlight();
     if (!hit) { hideInfo(); return; }
-    if (hit.layer.id === 'live-points') showLive(hit.properties);
+    if (hit.layer.id === 'events-circle') { const f = events.byId.get(hit.properties.id); if (f) showEvent(f); }
+    else if (hit.layer.id === 'live-points') showLive(hit.properties);
     else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { map.setFilter('borders-hl', ['==', ['get', 'NAME'], hit.properties.NAME]); showPolity(hit.properties); }
     else if (hit.layer.id === 'borders-fill') showPolity(hit.properties);
     else showCoast(hit.properties);
 });
-['live-points', 'borders-fill'].forEach((id) => {
+['events-circle', 'live-points', 'borders-fill'].forEach((id) => {
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
 });
@@ -1053,6 +1120,8 @@ function applyStrings() {
     skyTexts();
     $('btn-space').title = t('space.tip');
     syncClockUI();
+    toastsTick();
+    eventsRefresh();
     setTime(state.ybp, { immediate: false, persist: false });
 }
 
@@ -1225,6 +1294,7 @@ function setSkyOpen(open) {
     sky.open = open;
     $('sky').classList.toggle('open', open);
     if (!open) return;
+    if (events.open) setEventsOpen(false);
     if (!sky.ready) { updateSky(); return; }
     syncPlace();
     sky.started = true;
@@ -1325,6 +1395,7 @@ function clockFromYear(year) {
 
 // Devuelve true si el instante pedido se salio de [inicio de la ventana, ahora] y se recorto.
 function clockSet(jd, { user = false, tick = false } = {}) {
+    const prev = clock.jd;
     const lo = clockMinJD(); const hi = realNowJD();
     const clipped = jd > hi || jd < lo;
     clock.jd = Math.min(hi, Math.max(lo, jd));
@@ -1332,6 +1403,7 @@ function clockSet(jd, { user = false, tick = false } = {}) {
     const y = ChronosSky.jdToCalendar(clock.jd, 'auto').year;
     if (y !== ybpToYear(state.ybp)) setTime(yearToYbp(y), { fromClock: true, persist: false });
     clockChanged({ tick });
+    eventsNotify(prev, clock.jd);
     if (!tick) rememberTime();
     return clipped;
 }
@@ -1374,6 +1446,9 @@ function clockChanged({ tick = false } = {}) {
     if (sky.open && (!tick || secChanged || clock.rate >= 3600)) { skyFieldsFromClock(); scheduleSky(); }
     scheduleSpace();
     updateNight(false);
+    eventsEnsureData();
+    eventsRefresh();
+    toastsTick();
 }
 
 function clockTick() {
@@ -1550,6 +1625,215 @@ $('btn-space').addEventListener('click', () => {
     savePrefs({ sp: space.on });
     scheduleSpace(); updateNight(true);
 });
+
+/* ------------------------------------------------------------------ */
+/* Sucesos: nacimientos, muertes, obras, descubrimientos y hechos       */
+/* ------------------------------------------------------------------ */
+// Los datos son registros ChronosTerrae (data/events/): seed.json (con hora verificada) y un fichero por siglo (solo fecha).
+// Que se dibuja lo decide sky/timed.js segun el instante del reloj y la escala del mapa; de los avisos se ocupa el reloj.
+const KIND_COLORS = { birth: '#43a047', death: '#6d4c41', publication: '#1e88e5', composition: '#8e24aa', discovery: '#f9a825', extinction: '#e53935', event: '#fb8c00' };
+const events = { seed: [], shards: new Map(), index: undefined, loading: new Set(), all: [], timed: [], byId: new Map(), toasts: new Map(), open: false, timer: 0, shown: [] };
+const evName = (f) => (f.properties.labels && f.properties.labels[lang]) || f.properties.name;
+const evKind = (f) => f.properties.kind || 'event';
+
+function eventsRebuild() {
+    events.all = [...events.seed];
+    events.shards.forEach((feats) => events.all.push(...feats));
+    events.byId = new Map(events.all.map((f) => [f.properties.id, f]));
+    events.timed = events.all.filter((f) => window.ChronosTimed && ChronosTimed.isTimed(f));
+}
+
+async function eventsFetch(url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const parsed = JSON.parse(await res.text());
+    if (!parsed || parsed.type !== 'FeatureCollection' && !parsed.shards) throw new Error('forma inesperada');
+    return parsed;
+}
+
+async function eventsEnsureData() {
+    if (!window.ChronosTimed || !clockUsable()) return;
+    let changed = false;
+    if (!events.seed.length && !events.loading.has('seed')) {
+        events.loading.add('seed');
+        try { events.seed = (await eventsFetch('./data/events/seed.json')).features; changed = true; } catch (e) { console.warn('[EVENTS] seed', e.message); }
+    }
+    if (events.index === undefined && !events.loading.has('index')) {
+        events.loading.add('index');
+        try { events.index = (await eventsFetch('./data/events/index.json')).shards; } catch (e) { events.index = null; }
+    }
+    if (events.index) {
+        const year = ChronosSky.jdToCalendar(clock.jd, 'auto').year;
+        for (const key of ChronosTimed.shardKeys(year - 1, year + 1)) {
+            const entry = events.index[key];
+            if (!entry || events.shards.has(key) || events.loading.has(key)) continue;
+            events.loading.add(key);
+            try { events.shards.set(key, (await eventsFetch('./data/events/' + entry.file)).features); changed = true; } catch (e) { console.warn('[EVENTS]', key, e.message); }
+        }
+    }
+    if (changed) eventsRebuild();
+    eventsRefresh();
+}
+
+// Anchura de la vista en metros (al paralelo del centro): es la "escala" con la que se decide que mostrar.
+function viewMeters() {
+    const lat = Math.max(-80, Math.min(80, map.getCenter().lat));
+    return 40075016.686 * Math.cos(lat * Math.PI / 180) / (512 * Math.pow(2, map.getZoom())) * map.getContainer().clientWidth;
+}
+
+// Limitado, no "esperar a que pare": el reloj cambia cada 100 ms y un temporizador que se reinicia nunca llegaria a dispararse.
+function eventsRefresh() {
+    if (events.timer) return;
+    events.timer = setTimeout(() => { events.timer = 0; eventsDraw(); }, 150);
+}
+
+function eventsDraw() {
+    if (!window.ChronosTimed || !map.getSource || !map.getSource('events')) return;
+    if (!clockUsable() || !events.all.length) { map.getSource('events').setData(emptyFC()); events.shown = []; if (events.open) renderEventsPanel(); return; }
+    const vm = viewMeters();
+    const zoomed = map.getZoom() >= 3;
+    const b = zoomed ? map.getBounds() : null;
+    const sel = ChronosTimed.selectVisible(events.all, {
+        jd: clock.jd, viewMeters: vm, max: 80, cellPx: 40, bounds: b ? [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()] : null,
+        project: (lng, lat) => { const p = map.project([lng, lat]); return [p.x, p.y]; }
+    });
+    events.shown = sel;
+    map.getSource('events').setData({
+        type: 'FeatureCollection',
+        features: sel.map((f) => ({ type: 'Feature', geometry: f.geometry, properties: { id: f.properties.id, name: evName(f), kind: evKind(f), importance: f.properties.importance } }))
+    });
+    if (events.open) renderEventsPanel();
+}
+
+function eventDateText(f) {
+    const tm = f.properties.time;
+    const cal = tm.calendar === 'julian' ? ' (' + t('clock.julian') + ')' : '';
+    if (tm.instant) return tm.instant.clock_text + ' · ' + (tm.iso || '').slice(0, 10) + cal;
+    return (tm.iso || '') + cal;
+}
+
+function showEvent(f) {
+    const p = f.properties; const tm = p.time;
+    const rows = [{ label: t('evidence'), badge: p.evidence }];
+    rows.push({ label: t('events.kindLabel'), value: t('events.kind.' + evKind(f)) });
+    rows.push({ label: t('events.when'), value: eventDateText(f) });
+    if (tm.instant) {
+        const basis = tm.instant.basis === 'utc' ? t('events.basisUtc') : fmt('events.basisLocal', { off: (tm.instant.utc_offset_minutes >= 0 ? '+' : '−') + Math.abs(tm.instant.utc_offset_minutes / 60) });
+        rows.push({ label: t('events.timeBasis'), value: basis + ' · ±' + nf().format(tm.instant.uncertainty_s) + ' s' });
+    } else if (['day', 'month', 'year'].includes(tm.precision)) rows.push({ label: t('events.timeOfDay'), value: t('events.noTime') });
+    if (p.description && (p.description[lang] || p.description.en)) rows.push({ label: t('events.note'), value: p.description[lang] || p.description.en });
+    rows.push({ label: t('events.status'), value: p.status });
+    p.sources.forEach((s) => {
+        const href = s.kind === 'wikidata' ? 'https://www.wikidata.org/wiki/' + s.id : s.kind === 'url' ? s.id : null;
+        const row = { label: t('source'), value: s.kind === 'wikidata' ? 'Wikidata ' + s.id : s.id };
+        if (href) row.href = href;
+        rows.push(row);
+        if (s.citation) rows.push({ label: t('events.citation'), value: s.citation });
+    });
+    showInfo(evName(f), rows);
+}
+
+function eventFocus(f) {
+    if (f.geometry) map.flyTo({ center: f.geometry.coordinates, zoom: Math.max(map.getZoom(), 4.5), duration: 1400 });
+    showEvent(f);
+}
+
+/* ---- panel de lista ---- */
+function renderEventsPanel() {
+    const list = $('events-list'); list.textContent = '';
+    if (!clockUsable()) { $('events-note').textContent = t('events.outOfRange'); return; }
+    const status = events.index === null && !events.seed.length ? t('events.none') : '';
+    const floor = ChronosTimed.importanceFloor(viewMeters());
+    const half = 183;
+    const items = events.all.filter((f) => {
+        if (f.properties.importance < floor) return false;
+        const sp = ChronosTimed.span(f);
+        return sp.b >= clock.jd - half && sp.a <= clock.jd + half;
+    }).map((f) => ({ f, d: Math.abs(ChronosTimed.span(f).a - clock.jd) })).sort((a, b) => a.d - b.d || b.f.properties.importance - a.f.properties.importance).slice(0, 40);
+    items.forEach(({ f }) => {
+        const li = el('li', { tabindex: '0', role: 'button' }, [
+            el('span', { class: 'ev-dot', style: 'background:' + (KIND_COLORS[evKind(f)] || '#888') }),
+            el('span', { class: 'ev-name', text: evName(f) }),
+            el('span', { class: 'ev-when', text: eventDateText(f) + (f.geometry ? '' : ' · ' + t('events.noPlace')) })
+        ]);
+        const go = () => eventFocus(f);
+        li.addEventListener('click', go);
+        li.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+        list.appendChild(li);
+    });
+    $('events-note').textContent = status || (items.length ? fmt('events.shown', { n: items.length }) : t('events.empty'));
+}
+
+function setEventsOpen(open) {
+    events.open = open;
+    $('events').classList.toggle('open', open);
+    $('btn-events').setAttribute('aria-pressed', String(open));
+    if (open) { if (sky.open) setSkyOpen(false); eventsEnsureData(); renderEventsPanel(); }
+}
+$('btn-events').addEventListener('click', () => setEventsOpen(!events.open));
+$('events-close').addEventListener('click', () => setEventsOpen(false));
+
+/* ---- avisos ---- */
+function eventPhrase(f, form) {
+    const k = evKind(f);
+    return fmt('events.say.' + k + '.' + form, { n: evName(f) });
+}
+
+function toastText(rec) {
+    const left = (rec.eventJD - clock.jd) * 86400;
+    if (rec.phase === 'day') return fmt('events.today', { text: eventPhrase(rec.f, 'now') });
+    if (left > 0.5) return fmt('events.in', { t: ChronosTimed.formatCountdown(left, lang), text: eventPhrase(rec.f, 'future') });
+    if (left > -60) return fmt('events.now', { text: eventPhrase(rec.f, 'now') });
+    return fmt('events.ago', { t: ChronosTimed.formatCountdown(-left, lang), text: eventPhrase(rec.f, 'past') });
+}
+
+function toastRemove(id) {
+    const rec = events.toasts.get(id);
+    if (rec) { rec.node.remove(); events.toasts.delete(id); }
+}
+
+function toastShow(f, phase, eventJD) {
+    const id = f.properties.id;
+    let rec = events.toasts.get(id);
+    if (!rec) {
+        while (events.toasts.size >= 4) toastRemove(events.toasts.keys().next().value);
+        const node = el('div', { class: 'toast', role: 'status' }, [el('span', { class: 'toast-dot', style: 'background:' + (KIND_COLORS[evKind(f)] || '#888') }), el('span', { class: 'toast-text' }), el('button', { class: 'toast-x', type: 'button', 'aria-label': 'Close', text: '×' })]);
+        rec = { f, node, phase, eventJD, born: performance.now() };
+        node.querySelector('.toast-x').addEventListener('click', (e) => { e.stopPropagation(); toastRemove(id); });
+        node.addEventListener('click', () => eventFocus(f));
+        $('toasts').appendChild(node);
+        events.toasts.set(id, rec);
+    }
+    rec.phase = phase; rec.eventJD = eventJD; rec.born = performance.now();
+    rec.node.querySelector('.toast-text').textContent = toastText(rec);
+}
+
+// Se llama en cada cambio del reloj: refresca cuentas atras y retira los avisos viejos.
+function toastsTick() {
+    events.toasts.forEach((rec, id) => {
+        const left = (rec.eventJD - clock.jd) * 86400;
+        const stale = rec.phase === 'day' ? performance.now() - rec.born > 20000 : (left < -300 || left > 3600 || (rec.phase === 'jump' && left > 700));
+        if (stale || !clockUsable()) { toastRemove(id); return; }
+        rec.node.querySelector('.toast-text').textContent = toastText(rec);
+    });
+}
+
+// prev -> jd: avisos del recorrido continuo; al aterrizar tras un salto, cuenta atras si hay un suceso con hora cerca y,
+// como mucho, tres sucesos del dia en que se cae (los mas notorios).
+function eventsNotify(prev, jd) {
+    if (!window.ChronosTimed || !Number.isFinite(prev) || !events.all.length || !(jd > prev)) return;
+    const stepS = (jd - prev) * 86400;
+    const continuous = stepS <= 7200;
+    const pool = continuous && stepS < 3600 * 80 ? [...events.timed, ...events.all.filter((f) => { const a = ChronosTimed.span(f).a; return !ChronosTimed.isTimed(f) && f.properties.time.precision === 'day' && a > prev - 1 && a <= jd; })] : events.timed;
+    ChronosTimed.notices(pool, prev, jd, { minImportance: clock.rate >= 86400 ? 0.85 : 0.5 }).forEach((n) => {
+        if (n.phase === 'lead' && n.leadS === 10 && stepS > 30) return;
+        toastShow(n.feature, n.phase === 'jump' ? 'jump' : n.phase, n.eventJD);
+    });
+    if (!continuous) {
+        events.all.filter((f) => { const sp = ChronosTimed.span(f); return !sp.timed && f.properties.time.precision === 'day' && sp.a <= jd && jd < sp.b && f.properties.importance >= 0.75; })
+            .sort((a, b) => b.properties.importance - a.properties.importance).slice(0, 3).forEach((f) => toastShow(f, 'day', ChronosTimed.span(f).a));
+    }
+}
 
 /* Datos recientes del harvester (se muestran solo cerca del presente) */
 async function loadLive() {
