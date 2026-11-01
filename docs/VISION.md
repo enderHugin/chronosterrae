@@ -28,6 +28,12 @@ realista: poder entrar en otra época y ver cómo era.
   musicales, inventos…**
 - **Futuro con gafas de VR.** Mucho más adelante, **con AR**: estar en cualquier lugar del
   planeta, ponerse las gafas y **mirar cómo se veía ese lugar en aquel entonces**.
+- **Capas de verificación a voluntad del usuario:** lo no verificado se puede activar o desactivar; nada
+  se oculta ni se disfraza de cierto. (Ya implementado para sucesos: nivel de revisión y tipo de evidencia.)
+- **Futuros probables**, rellenados con especulación lo más ajustada posible: siempre como capa aparte,
+  con evidencia `speculation` o `model`, apagada por defecto y con el modelo y sus supuestos declarados.
+- **Estudiar la forma de vestir de cada época** (vestimenta, objetos, transporte), con la evidencia de cada
+  detalle (pintura, texto, pieza de museo) y la reconstrucción rotulada como tal.
 - **A largo plazo, algo parecido a un videojuego**, con VR y AR: moverse por el mundo y por las
   épocas, con las especies, la gente y los sucesos de cada lugar y momento.
 - **Comunidad, y ahí entran las IAs:** la gente podría aportar su IA (quizá su cuenta) para
@@ -107,6 +113,17 @@ Los avisos salen solo al recorrer el reloj hacia delante (a 300, 60 y 10 s y «a
 entrar en el día si solo hay día). **Principio: la hora es un dato, no un adorno; sin fuente no hay
 cuenta atrás.** Wikidata suele traer solo la fecha, de modo que los sucesos con hora real son escasos
 y hay que ir verificándolos uno a uno.
+
+### Rigor de los datos (criterio del creador: «lo mejor de lo mejor, contrastado, cada detalle»)
+
+- Cada registro lleva **nivel de revisión** (`raw`, `community`, `reviewed`, `consensus`) y **tipo de evidencia**; la web los
+  muestra y deja al usuario elegir qué ver. Lo masivo de Wikidata entra como `raw` y se dibuja atenuado.
+- `scripts/check-data.js` separa **errores nuestros** (fecha escrita frente a la calculada, siglo del fichero:
+  hacen fallar el CI) de **anomalías de los datos** (muerte antes de nacer, edad imposible, fecha futura): estas se
+  apartan en la construcción y se cuentan, nunca se corrigen ni se adivinan. 27 422 registros: 0 errores propios.
+- **Límite conocido:** la importancia actual es el número de artículos de Wikipedia, que mide fama y no relevancia
+  científica (sesgo moderno y occidental). Debe sustituirse por listas curadas por personas expertas por área.
+- Un dato generado por IA no supera `community`; `reviewed` y `consensus` exigen personas con autoridad en el área.
 
 ### Archivo propio (resiliencia)
 
