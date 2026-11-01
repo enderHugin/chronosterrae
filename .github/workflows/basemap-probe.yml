@@ -1,0 +1,41 @@
+name: Sonda de mapa base (OpenFreeMap)
+
+# Prueba OpenFreeMap desde un runner (CORS, forma y tamano) y deja el informe en la rama `basemap-build`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: basemap-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear OpenFreeMap
+        run: node scripts/probe-basemap.js > /tmp/basemap.json 2> /tmp/basemap.log
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 30 /tmp/basemap.log || true
+          head -c 800 /tmp/basemap.json || true
+      - name: Informe en la rama basemap-build
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/basemap.json || echo '{"error":"sin salida"}' > /tmp/basemap.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan basemap-build
+          cp /tmp/basemap.json report.json
+          cp /tmp/basemap.log report.log || true
+          git add report.json report.log
+          git commit -m "Sonda de mapa base $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin basemap-build
