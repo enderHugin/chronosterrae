@@ -89,7 +89,10 @@
             "properties": {
               "kind": { "enum": ["doi", "url", "wikidata", "dataset", "observation"] },
               "id": { "type": "string", "minLength": 1 },
-              "citation": { "type": "string" }
+              "citation": { "type": "string" },
+              "retrieved_at": { "type": "string", "format": "date-time", "description": "Cuándo se recuperó el dato de la fuente. Permite saber cuánto envejece." },
+              "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Huella del contenido recuperado. Prueba que el archivo propio es fiel a lo que dijo la fuente." },
+              "archive_url": { "type": "string", "format": "uri", "description": "Copia de archivo independiente (Zenodo, Internet Archive o el archivo propio)." }
             },
             "allOf": [
               { "if": { "properties": { "kind": { "const": "doi" } } }, "then": { "properties": { "id": { "type": "string", "pattern": "^10\\.\\d{4,9}/\\S+$" } } } },

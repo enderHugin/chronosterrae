@@ -46,8 +46,15 @@ realista: poder entrar en otra época y ver cómo era.
 3. **Evidencia ≠ reconstrucción.** Cada elemento declara si es medición, documento,
    artefacto, reconstrucción, modelo o especulación, y la interfaz **siempre** lo muestra.
    Esto aplica con especial fuerza a cómo vestía, hablaba o se movía la gente.
-4. **Federar, no acaparar.** Se conectan las bases que ya son la autoridad de cada campo
-   (GBIF, PBDB, Wikidata, Macrostrat, GPlates…). No se intenta duplicar la ciencia.
+4. **Federar para descubrir, archivar para perdurar.** Se conectan las bases que ya son la
+   autoridad de cada campo (GBIF, PBDB, Wikidata, Macrostrat, GPlates…) para encontrar y
+   contrastar datos, pero **todo lo que se contrasta y se acepta se guarda en un archivo
+   propio**, con su fuente, fecha de recuperación y huella (sha256). Si una API cae, cambia
+   o se retira (como la del Met, retirada el 2026-10-01), el dato ya contrastado sigue
+   existiendo aquí. Origen: decisión explícita del creador (2026-11-01): las aportaciones
+   de los usuarios deben permitir mantener una base de datos que conserve todo lo recabado.
+   Límite: solo se archiva lo que la licencia de la fuente permite redistribuir, con su
+   atribución.
 5. **Un único estado: (instante, lugar, escala).** Cada capa responde a esa tupla y declara
    en qué rango de tiempo y escala es válida.
 6. **Las IAs proponen, las personas con autoridad promueven.** Nada generado por una IA pasa
@@ -73,19 +80,38 @@ realista: poder entrar en otra época y ver cómo era.
 
 | Capa | Qué aporta | Fuente prevista | Estado (sonda 2026-11-01) |
 |---|---|---|---|
-| Paleogeografía | Costas y placas reconstruidas, Pangea | GPlates Web Service; a medio plazo precalculado con pyGPlates y publicado versionado | Responde con CORS (~2 MB). Falta verificar contenido y modelo |
+| Paleogeografía | Costas y placas reconstruidas, Pangea | GPlates Web Service; a medio plazo precalculado con pyGPlates y publicado versionado | Responde con CORS (1,2–2,1 MB, 2–5 s). **La respuesta son polígonos sin propiedades: sin modelo ni edad.** Los modelos discrepan (250 Ma: Merdith 2021 = 2.214 polígonos, modelo por defecto = 1.636). Hay que registrar y archivar modelo+edad nosotros |
 | Fronteras históricas | Polities de −123000 a 2010 | `aourednik/historical-basemaps` vía jsDelivr (GPL-3.0, solo en ejecución) | Responde con CORS |
 | Geología | Unidades, intervalos | Macrostrat | Responde con CORS |
 | Fósiles | Ocurrencias con edad y lugar | Paleobiology Database | Responde con CORS |
 | Vida actual | Fauna y flora | GBIF, iNaturalist | Responden con CORS |
 | Taxonomía | Árbol de la vida | Open Tree of Life | Responde con CORS |
-| Personas, obras, inventos | Nacimientos, muertes, composiciones, inventores | Wikidata (+ MusicBrainz, IMSLP) | **Consulta SPARQL por fecha agotó 25 s: reformular** |
+| Personas, obras, inventos | Nacimientos, muertes, composiciones, inventores | Wikidata (+ MusicBrainz, IMSLP) | Servicio OK (consulta trivial: 5 s). **La consulta «nacidos en tal fecha» agotó 25 s: era demasiado pesada, reformular** |
 | Efemérides | Qué pasó tal día | Wikipedia «On this day» | Responde con CORS |
 | Vestimenta, objetos, imágenes | Cómo vestían, qué usaban | Met Open Access (CC0), Wikimedia Commons, Europeana | Commons OK. **Met: migrar a `/v1.1/search`** (v1 retirado el 2026-10-01). Europeana requiere clave |
 | Literatura científica | Citas y respaldo | OpenAlex, Crossref | **OpenAlex exige clave de API**: llamar desde Actions |
 | Directo | Terremotos, eventos naturales | USGS, NASA EONET (+ noticias geolocalizadas) | Responden con CORS |
 | Cielo | Sol, Luna, planetas, estrellas | Cálculo en el cliente (efemérides + catálogo con movimiento propio), validado en CI contra JPL Horizons | Horizons **sin CORS**: solo para validar en CI |
 | Mapa base | Teselas de fondo | Carto | Responde con CORS |
+
+### Archivo propio (resiliencia)
+
+Tres niveles, de más volátil a más duradero:
+
+1. **Fuentes vivas** (APIs externas): para descubrir y contrastar. Pueden caer o cambiar.
+2. **Archivo de ChronosTerrae**: copia de lo contrastado y aceptado, que es lo que sirve la
+   web. Registros pequeños y revisados en **Git** (esquema + CI); volúmenes grandes
+   (teselas, rásteres, instantáneas de modelos) en **almacenamiento de objetos** direccionado
+   por hash, referenciado desde Git.
+3. **Preservación a largo plazo**: publicaciones versionadas con DOI (p. ej. Zenodo) y copia
+   en el Internet Archive, para que el proyecto sobreviva a sus propios servidores.
+
+Cada fuente de un registro lleva `retrieved_at`, `sha256` y, si existe, `archive_url`. Las
+respuestas sin metadatos (como las costas de GPlates, que llegan como polígonos desnudos sin
+modelo ni edad) se archivan **con el modelo, la versión y la edad con que se pidieron**.
+
+Esto cuesta almacenamiento y mantenimiento: el modelo de «cero coste» solo vale para la
+fase inicial. La financiación comunitaria (Ko-fi y similares) debe cubrir el archivo.
 
 ### Cielo en el tiempo profundo
 
@@ -120,6 +146,7 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
 |---|---|---|
 | 0 | Cimientos: CI en Node 22, esquema con procedencia, validador y pruebas, sonda de fuentes | **Hecho** |
 | 1 | Globo con viaje en el tiempo: costas reales (GPlates), fronteras históricas, slider | En curso |
+| 1b | Archivo propio: instantáneas de costas por modelo y edad con hash y atribución; campos de archivo en el esquema | En curso |
 | 2 | Cielo: Sol, Luna, planetas y estrellas según instante y lugar | Pendiente |
 | 3 | Personas, obras e inventos (Wikidata/MusicBrainz) con calendario correcto | Pendiente |
 | 4 | Vida: fauna y flora actual y fósil, taxonomía | Pendiente |
@@ -136,8 +163,9 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
   esquema, procedencia y revisión humana. (Las IAs de la comunidad siguen siendo parte de
   la visión, ver §3.)
 - **Los datos son ficheros en Git**, validados por CI. No hay base de datos propia.
-- **Costes mínimos:** sitio estático, llamadas a APIs desde el navegador, trabajo pesado en
-  GitHub Actions.
+- **Costes mínimos al principio:** sitio estático, llamadas a APIs desde el navegador,
+  trabajo pesado en GitHub Actions. **Con el archivo propio ese objetivo se relaja**
+  (ver §3 «Archivo propio»).
 
 ## 6. Pendiente de aclarar
 

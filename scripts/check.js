@@ -170,6 +170,20 @@ check('esquema: acepta fecha de dia con calendario', () => {
     return runValidator(r) === 0;
 });
 
+check('esquema: acepta fuente con huella, fecha de recuperacion y copia de archivo', () => {
+    const r = exampleRecord();
+    r.properties.sources[0].retrieved_at = '2026-11-01T14:00:00Z';
+    r.properties.sources[0].sha256 = 'a'.repeat(64);
+    r.properties.sources[0].archive_url = 'https://web.archive.org/web/2026/https://doi.org/10.1126/science.1230492';
+    return runValidator(r) === 0;
+});
+
+check('esquema: rechaza una huella sha256 mal formada', () => {
+    const r = exampleRecord();
+    r.properties.sources[0].sha256 = 'no-es-una-huella';
+    return runValidator(r) !== 0;
+});
+
 check('esquema: rechaza margen de posicion negativo', () => {
     const r = exampleRecord();
     r.properties.position_uncertainty_m = -5;
