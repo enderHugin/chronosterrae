@@ -1,0 +1,9 @@
+wdqs-count-100+ {"status":504,"ms":65317,"error":"upstream request timeout"}
+wdqs-humans-150+ {"ms":60130,"error":"Bad control character in string literal in JSON at position 115147 (line 4141 column 482)"}
+wdqs-humans-100-150 {"ms":60133,"error":"Expected double-quoted property name in JSON at position 196608 (line 7090 column 9)"}
+wdqs-humans-60-80 {"ms":75213,"error":"terminated [UND_ERR_SOCKET other side closed]"}
+qlever-count-60+ {"status":200,"ms":1063,"rows":1}
+qlever-humans-60+ {"status":200,"ms":1309,"rows":8355}
+qlever-humans-60+-labelled {"status":200,"ms":2323,"rows":8164}
+qlever-humans-30+ {"status":200,"ms":2165,"rows":43012}
+qlever-events-25+ {"status":200,"ms":664,"rows":9745}

@@ -1,0 +1,149 @@
+{
+  "probed_at": "2026-11-01T20:22:23.845Z",
+  "steps": {
+    "wdqs-count-100+": {
+      "status": 504,
+      "ms": 65317,
+      "error": "upstream request timeout"
+    },
+    "wdqs-humans-150+": {
+      "ms": 60130,
+      "error": "Bad control character in string literal in JSON at position 115147 (line 4141 column 482)"
+    },
+    "wdqs-humans-100-150": {
+      "ms": 60133,
+      "error": "Expected double-quoted property name in JSON at position 196608 (line 7090 column 9)"
+    },
+    "wdqs-humans-60-80": {
+      "ms": 75213,
+      "error": "terminated [UND_ERR_SOCKET other side closed]"
+    },
+    "qlever-count-60+": {
+      "status": 200,
+      "ms": 1063,
+      "bytes": 188,
+      "rows": 1,
+      "sample": [
+        {
+          "n": "6781"
+        }
+      ]
+    },
+    "qlever-humans-60+": {
+      "status": 200,
+      "ms": 1309,
+      "bytes": 3581604,
+      "rows": 8355,
+      "sample": [
+        {
+          "item": "http://www.wikidata.org/entity/Q231886",
+          "sl": "77",
+          "t": "1640-01-01T00:00:00Z",
+          "prec": "11",
+          "cal": "http://www.wikidata.org/entity/Q1985727"
+        },
+        {
+          "item": "http://www.wikidata.org/entity/Q34076",
+          "sl": "95",
+          "t": "1986-03-24T00:00:00Z",
+          "prec": "11",
+          "cal": "http://www.wikidata.org/entity/Q1985727"
+        },
+        {
+          "item": "http://www.wikidata.org/entity/Q298033",
+          "sl": "95",
+          "t": "1871-02-25T00:00:00Z",
+          "prec": "11",
+          "cal": "http://www.wikidata.org/entity/Q1985786"
+        }
+      ]
+    },
+    "qlever-humans-60+-labelled": {
+      "status": 200,
+      "ms": 2323,
+      "bytes": 3998706,
+      "rows": 8164,
+      "sample": [
+        {
+          "item": "http://www.wikidata.org/entity/Q1001",
+          "label": "Mahatma Gandhi",
+          "es": "Mahatma Gandhi",
+          "sl": "287",
+          "t": "1869-10-02T00:00:00Z",
+          "prec": "11"
+        },
+        {
+          "item": "http://www.wikidata.org/entity/Q1002250",
+          "label": "Duncan Haldane",
+          "es": "Duncan Haldane",
+          "sl": "67",
+          "t": "1951-11-14T00:00:00Z",
+          "prec": "11"
+        },
+        {
+          "item": "http://www.wikidata.org/entity/Q1002250",
+          "label": "Duncan Haldane",
+          "es": "Duncan Haldane",
+          "sl": "67",
+          "t": "1951-09-14T00:00:00Z",
+          "prec": "11"
+        }
+      ]
+    },
+    "qlever-humans-30+": {
+      "status": 200,
+      "ms": 2165,
+      "bytes": 18449910,
+      "rows": 43012,
+      "sample": [
+        {
+          "item": "http://www.wikidata.org/entity/Q298877",
+          "sl": "42",
+          "t": "1453-11-03T00:00:00Z",
+          "prec": "11",
+          "cal": "http://www.wikidata.org/entity/Q1985786"
+        },
+        {
+          "item": "http://www.wikidata.org/entity/Q231886",
+          "sl": "77",
+          "t": "1640-01-01T00:00:00Z",
+          "prec": "11",
+          "cal": "http://www.wikidata.org/entity/Q1985727"
+        },
+        {
+          "item": "http://www.wikidata.org/entity/Q265015",
+          "sl": "44",
+          "t": "1852-02-13T00:00:00Z",
+          "prec": "11",
+          "cal": "http://www.wikidata.org/entity/Q1985727"
+        }
+      ]
+    },
+    "qlever-events-25+": {
+      "status": 200,
+      "ms": 664,
+      "bytes": 3487493,
+      "rows": 9745,
+      "sample": [
+        {
+          "item": "http://www.wikidata.org/entity/Q243768",
+          "sl": "67",
+          "t": "-0550-01-01T00:00:00Z",
+          "prec": "9"
+        },
+        {
+          "item": "http://www.wikidata.org/entity/Q704641",
+          "sl": "25",
+          "t": "1998-09-27T00:00:00Z",
+          "prec": "11"
+        },
+        {
+          "item": "http://www.wikidata.org/entity/Q235469",
+          "sl": "75",
+          "t": "-0459-01-01T00:00:00Z",
+          "prec": "9"
+        }
+      ]
+    }
+  }
+}
