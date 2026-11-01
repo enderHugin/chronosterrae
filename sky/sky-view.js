@@ -36,6 +36,23 @@
 
     const PLANET_COLOR = { Mercury: '#c9b8a0', Venus: '#fff6d8', Mars: '#ff8a65', Jupiter: '#ffe0b2', Saturn: '#e8d28c', Uranus: '#9be7e7', Neptune: '#7fa0ff' };
 
+    /** Luna con su fase, con el lado iluminado hacia el angulo theta (direccion al Sol en pantalla, radianes). */
+    function drawMoon(ctx, x, y, r, theta, phaseFraction) {
+        const k = Math.max(0, Math.min(1, phaseFraction));
+        ctx.save();
+        ctx.translate(x, y); ctx.rotate(theta);
+        ctx.fillStyle = 'rgba(40,46,60,0.95)'; ctx.beginPath(); ctx.arc(0, 0, r, 0, 2 * Math.PI); ctx.fill();
+        ctx.fillStyle = '#f4f1e6';
+        ctx.beginPath();
+        ctx.arc(0, 0, r, -Math.PI / 2, Math.PI / 2, false);                      // semicirculo iluminado (lado del Sol)
+        const rx = r * Math.abs(2 * k - 1);
+        if (k > 0.5) ctx.ellipse(0, 0, rx, r, 0, Math.PI / 2, -Math.PI / 2, false);   // gibosa: el terminador cede hacia el lado oscuro
+        else ctx.ellipse(0, 0, rx, r, 0, Math.PI / 2, -Math.PI / 2, true);            // creciente o menguante: lo recorta hacia el lado del Sol
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.arc(0, 0, r, 0, 2 * Math.PI); ctx.stroke();
+        ctx.restore();
+    }
+
     /**
      * @param canvas  <canvas>
      * @param sky     resultado de ChronosSky.skyAt (con .stars si hay catalogo)
@@ -140,20 +157,9 @@
             const [x, y] = toXY(Math.max(moon.alt, 0), moon.az);
             const [sx, sy] = toXY(sun.alt, sun.az);
             const theta = Math.atan2(sy - y, sx - x);
-            const r = 7; const k = Math.max(0, Math.min(1, moon.phaseFraction));
-            ctx.save();
-            ctx.translate(x, y); ctx.rotate(theta);
-            ctx.fillStyle = 'rgba(40,46,60,0.95)'; ctx.beginPath(); ctx.arc(0, 0, r, 0, 2 * Math.PI); ctx.fill();
-            ctx.fillStyle = '#f4f1e6';
-            ctx.beginPath();
-            ctx.arc(0, 0, r, -Math.PI / 2, Math.PI / 2, false);                      // semicirculo iluminado (lado del Sol)
-            const rx = r * Math.abs(2 * k - 1);
-            if (k > 0.5) ctx.ellipse(0, 0, rx, r, 0, Math.PI / 2, -Math.PI / 2, false);   // gibosa: el terminador cede hacia el lado oscuro
-            else ctx.ellipse(0, 0, rx, r, 0, Math.PI / 2, -Math.PI / 2, true);            // creciente o menguante: lo recorta hacia el lado del Sol
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.arc(0, 0, r, 0, 2 * Math.PI); ctx.stroke();
-            ctx.restore();
-            drawn.push({ x, y, label: opts.names.Moon + '  ' + Math.round(k * 100) + ' %' });
+            const r = 7;
+            drawMoon(ctx, x, y, r, theta, moon.phaseFraction);
+            drawn.push({ x, y, label: opts.names.Moon + '  ' + Math.round(Math.max(0, Math.min(1, moon.phaseFraction)) * 100) + ' %' });
         }
         ctx.restore();
 
@@ -169,5 +175,5 @@
         return drawn;
     }
 
-    root.ChronosSkyView = { draw, starColor, LIMIT_MAG };
+    root.ChronosSkyView = { draw, drawMoon, starColor, LIMIT_MAG, PLANET_COLOR };
 })(typeof self !== 'undefined' ? self : this);

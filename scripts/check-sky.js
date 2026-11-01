@@ -215,6 +215,71 @@ check('skyAt: funciona en los dos extremos de la ventana de epocas', () => {
     return true;
 });
 
+/* ---------------- El cielo visto desde el espacio (sky/space.js) ---------------- */
+const SP = require('../sky/space.js');
+const D2R = Math.PI / 180;
+{
+    const fake = { n: 3, epochJD: 2451545.0, ra: Float64Array.from([1.0, 3.5, 5.9]), dec: Float64Array.from([0.3, -0.8, 1.2]), pmra: Float64Array.from([2e-8, 0, 0]), pmde: Float64Array.from([-1e-8, 0, 0]) };
+    const jd = S.calendarToJD({ year: 1500, month: 3, day: 3, hour: 4 }).jd;
+    const time = new A.AstroTime(jd - 2451545);
+    const gast = A.SiderealTime(time) * 15 * D2R;
+    check('espacio: starsOfDate coincide con starPositions (ra/dec de la fecha) a 1e-9', () => {
+        const a = SP.starsOfDate(fake, time); const b = S.starPositions(fake, time, 20, 10);
+        for (let i = 0; i < 3; i++) {
+            if (Math.abs(a.ra[i] - b.ra[i] * 15 * D2R) > 1e-9 || Math.abs(a.dec[i] - b.dec[i] * D2R) > 1e-9) throw new Error('estrella ' + i);
+        }
+        return true;
+    });
+    check('espacio: la direccion en el marco del globo da la altura geometrica correcta para un observador', () => {
+        const a = SP.starsOfDate(fake, time);
+        const [lat, lon] = [40.4, -3.7];
+        const up = [Math.cos(lat * D2R) * Math.sin(lon * D2R), Math.sin(lat * D2R), Math.cos(lat * D2R) * Math.cos(lon * D2R)];
+        for (let i = 0; i < 3; i++) {
+            const v = new Float64Array(3); SP.modelDirection(a.ra[i], a.dec[i], gast, v, 0);
+            const alt = Math.asin(v[0] * up[0] + v[1] * up[1] + v[2] * up[2]) / D2R;
+            const ref = A.Horizon(time, new A.Observer(lat, lon, 0), a.ra[i] / D2R / 15, a.dec[i] / D2R, null).altitude;
+            if (Math.abs(alt - ref) > 1e-6) throw new Error('estrella ' + i + ': ' + alt + ' vs ' + ref);
+        }
+        return true;
+    });
+    check('espacio: el Sol esta en el cenit del punto subsolar (altura 90 grados) y la Luna a unos 55-64 radios terrestres', () => {
+        const b = SP.bodiesGeocentric(time);
+        const sun = b.find((x) => x.id === 'Sun'); const moon = b.find((x) => x.id === 'Moon');
+        const v = new Float64Array(3); SP.modelDirection(sun.ra, sun.dec, gast, v, 0);
+        const sunLat = Math.asin(v[1]) / D2R; const sunLng = Math.atan2(v[0], v[2]) / D2R;
+        const ref = A.Horizon(time, new A.Observer(sunLat, sunLng, 0), sun.ra / D2R / 15, sun.dec / D2R, null).altitude;
+        return Math.abs(ref - 90) < 1e-6 && moon.distER > 54 && moon.distER < 64.5;
+    });
+    check('espacio: el terminador es el circulo maximo a 90 grados del Sol', () => {
+        const poly = SP.nightPolygon(20, 35).coordinates[0];
+        const sun = [Math.cos(20 * D2R) * Math.sin(35 * D2R), Math.sin(20 * D2R), Math.cos(20 * D2R) * Math.cos(35 * D2R)];
+        for (const [lng, lat] of poly.slice(0, 181)) {
+            const p = [Math.cos(lat * D2R) * Math.sin(lng * D2R), Math.sin(lat * D2R), Math.cos(lat * D2R) * Math.cos(lng * D2R)];
+            if (Math.abs(p[0] * sun[0] + p[1] * sun[1] + p[2] * sun[2]) > 0.01) throw new Error('punto ' + lng + ',' + lat);
+        }
+        // el anillo cierra y el polo incluido es el opuesto al Sol (Sol al norte -> noche en el polo sur)
+        return poly[0][0] === poly[poly.length - 1][0] && poly[poly.length - 3][1] === -89.9;
+    });
+    check('espacio: proyeccion con camara cenital: el centro cae en el centro, el horizonte tiene el radio del globo, y N queda arriba', () => {
+        const cam = { lng: 10, lat: 20, bearing: 0, pitch: 0, roll: 0, worldSize: 512 * Math.pow(2, 0.5), width: 1000, height: 600 };
+        const pr = SP.makeProjector(cam);
+        const c = pr.surface(10, 20);
+        const n = pr.surface(10, 30);
+        const e = pr.surface(20, 20);
+        return Math.abs(c[0] - 500) < 1e-6 && Math.abs(c[1] - 300) < 1e-6 && n[1] < c[1] && e[0] > c[0];
+    });
+    check('espacio: rumbo 90 grados pone el este arriba', () => {
+        const pr = SP.makeProjector({ lng: 0, lat: 0, bearing: 90, pitch: 0, roll: 0, worldSize: 512, width: 800, height: 800 });
+        const c = pr.surface(0, 0); const e = pr.surface(10, 0);
+        return e[1] < c[1] - 1 && Math.abs(e[0] - c[0]) < 1e-6;
+    });
+    check('espacio: la camara mira hacia el centro de la Tierra: se ven los puntos del cielo al otro lado (z<0), no los de detras de la camara', () => {
+        const pr = SP.makeProjector({ lng: 0, lat: 0, bearing: 0, pitch: 0, roll: 0, worldSize: 512, width: 800, height: 600 });
+        const behindGlobe = pr.infinity(0, 0, -1);
+        return behindGlobe !== null && Math.abs(behindGlobe[0] - 400) < 1e-6 && Math.abs(behindGlobe[1] - 300) < 1e-6 && pr.infinity(0, 0, 1) === null;
+    });
+}
+
 /* ---------------- Integridad de lo vendorizado y del catalogo ---------------- */
 const sha = (f) => crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
 check('vendor: astronomy-engine es identico al paquete npm instalado', () => {

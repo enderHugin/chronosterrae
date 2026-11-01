@@ -99,6 +99,17 @@
         #credits a { color: var(--muted); }
         .kofi { background: #29abe0; color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font: 700 13px var(--font-ui); }
 
+        [hidden] { display: none !important; }
+        #space { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+        #space-note { position: absolute; top: 56px; left: 50%; transform: translateX(-50%); z-index: 5; font-size: 11.5px; color: #9aa6c0; pointer-events: none; text-align: center; max-width: 80%; }
+        .btn[aria-pressed="false"] { opacity: 0.6; }
+        #clock { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+        #clock-time { font: 700 15px var(--font-ui); font-variant-numeric: tabular-nums; }
+        #clock-sub { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+        #clock-controls { display: flex; gap: 6px; align-items: center; margin-top: 2px; flex-wrap: wrap; }
+        #clock-controls .btn { padding: 3px 10px; font-size: 12px; }
+        #clock-rate { padding: 3px 6px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); font: 600 12px var(--font-ui); }
+        #clock-rate option { color: #222; }
         #sky { position: absolute; top: 60px; left: 14px; width: 344px; max-width: calc(100% - 28px); max-height: calc(100% - 300px); overflow: auto; padding: 12px 14px 10px; z-index: 11; display: none; box-sizing: border-box; }
         #sky.open { display: block; }
         #sky h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
@@ -134,13 +145,16 @@
 </head>
 <body>
 
+    <canvas id="space" aria-hidden="true"></canvas>
     <div id="map"></div>
+    <div id="space-note" role="status"></div>
 
     <div id="top-left">
         <input id="search" type="search" data-i18n-placeholder="searchPlaceholder" aria-label="Search" autocomplete="off">
     </div>
 
     <div id="top-right">
+        <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
         <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
         <button class="btn" id="btn-lang" type="button">EN / ES</button>
         <button class="btn" id="btn-theme" type="button">Dark</button>
@@ -200,6 +214,15 @@
                 <div id="time-label">--</div>
                 <div id="time-sub"></div>
             </div>
+            <div id="clock" hidden>
+                <div id="clock-time"></div>
+                <div id="clock-sub"></div>
+                <div id="clock-controls">
+                    <button class="btn" id="clock-play" type="button"></button>
+                    <select id="clock-rate"></select>
+                    <button class="btn" id="clock-now" type="button" data-i18n="clock.now"></button>
+                </div>
+            </div>
             <input id="time-input" type="text" data-i18n-placeholder="timePlaceholder" aria-label="Go to a date" autocomplete="off">
             <a class="kofi" href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" rel="noopener" data-i18n="donate"></a>
         </div>
@@ -212,6 +235,7 @@
 
 <script src="./vendor/astronomy-engine/astronomy.browser.min.js"></script>
 <script src="./sky/sky.js"></script>
+<script src="./sky/space.js"></script>
 <script src="./sky/sky-view.js"></script>
 <script>
 'use strict';
@@ -255,6 +279,8 @@ const parsePrefs = (raw) => {
     if (typeof p.ybp === 'number' && Number.isFinite(p.ybp) && p.ybp >= 1 - OFFSET && p.ybp <= CFG.maxYbp) out.ybp = Math.round(p.ybp);
     if (Array.isArray(p.c) && p.c.length === 2 && p.c.every((n) => typeof n === 'number' && Number.isFinite(n)) && Math.abs(p.c[0]) <= 180 && Math.abs(p.c[1]) <= 85) out.c = [p.c[0], p.c[1]];
     if (typeof p.z === 'number' && p.z >= 0 && p.z <= 22) out.z = p.z;
+    if (p.sp === 0 || p.sp === 1) out.sp = p.sp === 1;
+    if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
     return out;
 };
 const readPrefs = () => {
@@ -266,7 +292,7 @@ const readPrefs = () => {
 const prefs = readPrefs();
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), jd: prefs.jd };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -303,6 +329,11 @@ const i18n = {
         prec: { 1: 'aproximada', 2: 'moderada', 3: 'fijada por tratado' },
         unnamed: 'Sin nombre en el conjunto de datos', liveTitle: 'Dato reciente', event: 'Fecha del suceso', harvested: 'Recogido', tier: 'Nivel', unknown: 'Desconocida',
         creditsLand: 'Costas', creditsBorders: 'Fronteras',
+        clock: { now: 'Ahora', play: 'Reproducir', pause: 'Pausa', rate: 'Velocidad', solar: 'hora solar local {t} (lon. {lon}°)', device: 'hora de tu equipo {t}', julian: 'juliano', back: 'hacia atrás' },
+        space: {
+            button: 'Estrellas', tip: 'Estrellas, Sol, Luna y planetas tras el globo, en su posición en ese instante, y la noche sobre la Tierra. Es un cálculo; los símbolos no están a escala.',
+            outOfRange: 'Sin estrellas ni noche en esta época: el cielo se calcula entre {a} y {b}.'
+        },
         sky: {
             button: 'Cielo', title: 'Cielo en este lugar e instante',
             month: 'Mes', day: 'Día', time: 'Hora solar local', calendar: 'Calendario', follow: 'Seguir el centro del mapa',
@@ -350,6 +381,11 @@ const i18n = {
         prec: { 1: 'approximate', 2: 'moderate', 3: 'set by treaty' },
         unnamed: 'Unnamed in the dataset', liveTitle: 'Recent data', event: 'Event date', harvested: 'Harvested', tier: 'Tier', unknown: 'Unknown',
         creditsLand: 'Coastlines', creditsBorders: 'Borders',
+        clock: { now: 'Now', play: 'Play', pause: 'Pause', rate: 'Speed', solar: 'local solar time {t} (lon. {lon}°)', device: 'your device time {t}', julian: 'Julian', back: 'backwards' },
+        space: {
+            button: 'Stars', tip: 'Stars, Sun, Moon and planets behind the globe, where they are at that instant, and the night over the Earth. A calculation; symbols are not to scale.',
+            outOfRange: 'No stars or night in this era: the sky is computed between {a} and {b}.'
+        },
         sky: {
             button: 'Sky', title: 'Sky at this place and time',
             month: 'Month', day: 'Day', time: 'Local solar time', calendar: 'Calendar', follow: 'Follow the map centre',
@@ -614,6 +650,9 @@ mapReady.then(() => {
     map.addLayer({ id: 'borders-line', type: 'line', source: 'borders', paint: { 'line-color': p.line, 'line-width': 0.6, 'line-opacity': 0.55 } });
     map.addLayer({ id: 'borders-hl', type: 'line', source: 'borders', filter: ['==', ['get', 'NAME'], '\u0000'], paint: { 'line-color': '#e53935', 'line-width': 3 } });
     map.addLayer({ id: 'live-points', type: 'circle', source: 'live', paint: { 'circle-radius': 6, 'circle-color': '#e53935', 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff' } });
+    map.addSource('night', { type: 'geojson', data: emptyFC() });
+    map.addLayer({ id: 'night-fill', type: 'fill', source: 'night', layout: { visibility: 'none' }, paint: { 'fill-color': '#000a1f', 'fill-opacity': 0.34 } }, 'live-points');
+    updateNight(true);
 });
 
 // Doble clic (o doble toque) = centrar el mapa en ese punto, sin cambiar el zoom.
@@ -631,8 +670,11 @@ map.on('moveend', () => {
     const c = map.getCenter().wrap();
     const r = (n, d) => Math.round(n * 10 ** d) / 10 ** d;
     savePrefs({ c: [r(c.lng, 3), r(Math.max(-85, Math.min(85, c.lat)), 3)], z: r(map.getZoom(), 2) });
-    if (sky.open && sky.follow) { syncPlace(); scheduleSky(); }
+    if (sky.open && sky.follow) { syncPlace(); skyFieldsFromClock(); scheduleSky(); }
+    renderClock();
 });
+map.on('move', () => scheduleSpace());
+map.on('resize', () => scheduleSpace());
 
 map.on('error', (e) => {
     const msg = e && e.error && e.error.message ? e.error.message : 'unknown';
@@ -827,11 +869,13 @@ function scheduleScene() {
 }
 
 let prefTimer = null;
-const rememberTime = () => { clearTimeout(prefTimer); prefTimer = setTimeout(() => { prefTimer = null; savePrefs({ ybp: state.ybp }); }, 400); };
-window.addEventListener('pagehide', () => { if (prefTimer) { clearTimeout(prefTimer); prefTimer = null; savePrefs({ ybp: state.ybp }); } });
+const timePrefs = () => ({ ybp: state.ybp, jd: clockUsable() ? Math.round(clock.jd * 86400) / 86400 : undefined });
+const rememberTime = () => { clearTimeout(prefTimer); prefTimer = setTimeout(() => { prefTimer = null; savePrefs(timePrefs()); }, 400); };
+window.addEventListener('pagehide', () => { clearTimeout(prefTimer); prefTimer = null; savePrefs(timePrefs()); });
 
-function setTime(ybp, { fromSlider = false, immediate = false, persist = true } = {}) {
+function setTime(ybp, { fromSlider = false, immediate = false, persist = true, fromClock = false } = {}) {
     state.ybp = Math.min(Math.max(ybp, 1 - OFFSET), CFG.maxYbp);
+    if (!fromClock) clockFromYear(ybpToYear(state.ybp));
     if (persist) rememberTime();
     if (!fromSlider) $('slider').value = ybpToSlider(state.ybp);
     if (document.activeElement !== $('time-input')) $('time-input').value = '';
@@ -839,7 +883,7 @@ function setTime(ybp, { fromSlider = false, immediate = false, persist = true } 
     $('time-label').textContent = f.main;
     $('time-sub').textContent = f.sub;
     if (immediate) { clearTimeout(sceneTimer); sceneTimer = null; lastScene = performance.now(); updateScene({ immediate: true }); } else scheduleScene();
-    if (sky.open) scheduleSky();
+    if (!fromClock) clockChanged();
 }
 
 /* ------------------------------------------------------------------ */
@@ -987,7 +1031,7 @@ const PRESETS = [
     { label: () => '117', ybp: yearToYbp(117) },
     { label: () => '1492', ybp: yearToYbp(1492) },
     { label: () => '1945', ybp: yearToYbp(1945) },
-    { label: () => t('today'), ybp: -(CFG.nowYear - CFG.present) }
+    { label: () => t('today'), ybp: -(CFG.nowYear - CFG.present), now: true }
 ];
 
 function renderPresets() {
@@ -995,7 +1039,7 @@ function renderPresets() {
     box.textContent = '';
     PRESETS.forEach((p) => {
         const b = el('button', { class: 'btn', type: 'button', text: p.label() });
-        b.addEventListener('click', () => setTime(p.ybp, { immediate: true }));
+        b.addEventListener('click', () => { if (p.now && sky.ready) clockNow(); else setTime(p.ybp, { immediate: true }); });
         box.appendChild(b);
     });
 }
@@ -1007,6 +1051,8 @@ function applyStrings() {
     renderPresets();
     renderCredits();
     skyTexts();
+    $('btn-space').title = t('space.tip');
+    syncClockUI();
     setTime(state.ybp, { immediate: false, persist: false });
 }
 
@@ -1043,13 +1089,6 @@ const compass = (az) => (lang === 'es' ? ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 
 const pad2 = (n) => String(n).padStart(2, '0');
 const hhmm = (minutes) => pad2(Math.floor(minutes / 60)) + ':' + pad2(minutes % 60);
 const monthName = (m) => new Date(2001, m - 1, 1).toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { month: 'long' });
-
-// Fecha y hora del reloj real, expresadas en hora solar media local del meridiano dado.
-function skyClock(lon) {
-    const jdUT = Date.now() / 86400000 + 2440587.5;
-    const c = ChronosSky.jdToCalendar(jdUT + lon / 360, 'gregorian');
-    return { year: c.year, month: c.month, day: c.day, minutes: Math.floor(c.hour * 60 + c.minute) };
-}
 
 function syncPlace() {
     const c = map.getCenter().wrap();
@@ -1093,6 +1132,7 @@ async function skyLoadCatalog() {
         sky.catalogState = 'missing';
     }
     scheduleSky();
+    scheduleSpace();
 }
 
 async function skyLoadValidation() {
@@ -1145,20 +1185,15 @@ function updateSky() {
     $('sky-range').textContent = inRange ? '' : fmt('sky.outOfRange', { a: formatYear(W.minYear), b: formatYear(W.maxYear) });
     if (!inRange) return;
     $('sky-error').textContent = '';
-    let local;
-    try {
-        local = ChronosSky.calendarToJD({ year, month: sky.month, day: sky.day, hour: Math.floor(sky.minutes / 60), minute: sky.minutes % 60 }, sky.calendar);
-    } catch (e) {
-        $('sky-error').textContent = fmt('sky.badDate', { err: skyErrorText(e) });
-        return;
-    }
-    const jd = local.jd - sky.lon / 360;   // hora solar media local -> UT
+    if (!clockUsable()) clockFromYear(year);
+    if (!clockUsable()) return;
+    const jd = clock.jd;
     const res = ChronosSky.skyAt({ jd, lat: sky.lat, lon: sky.lon, catalog: sky.stars ? sky.catalog : null });
 
-    const u = ChronosSky.jdToCalendar(jd, local.calendar);
+    const u = ChronosSky.jdToCalendar(jd, sky.calendar);
     $('sky-when').textContent = fmt('sky.when', {
-        date: u.day + ' ' + monthName(u.month) + ' ' + formatYear(u.year), cal: t('sky.cal.' + local.calendar),
-        ut: pad2(u.hour) + ':' + pad2(u.minute), dt: nf().format(Math.round(res.deltaTSeconds))
+        date: u.day + ' ' + monthName(u.month) + ' ' + formatYear(u.year), cal: t('sky.cal.' + u.calendar),
+        ut: pad2(u.hour) + ':' + pad2(u.minute) + ':' + pad2(Math.floor(u.second)), dt: nf().format(Math.round(res.deltaTSeconds))
     });
 
     const names = {};
@@ -1192,11 +1227,8 @@ function setSkyOpen(open) {
     if (!open) return;
     if (!sky.ready) { updateSky(); return; }
     syncPlace();
-    if (!sky.started) {   // primera vez: hoy a esta hora solar en el lugar del mapa
-        sky.started = true;
-        const now = skyClock(sky.lon);
-        sky.month = now.month; sky.day = now.day; sky.minutes = now.minutes;
-    }
+    sky.started = true;
+    skyFieldsFromClock();
     syncControls();
     skyLoadCatalog();
     skyLoadValidation();
@@ -1205,17 +1237,36 @@ function setSkyOpen(open) {
 
 $('btn-sky').addEventListener('click', () => setSkyOpen(!sky.open));
 $('sky-close').addEventListener('click', () => setSkyOpen(false));
-$('sky-month').addEventListener('change', (e) => { sky.month = parseInt(e.target.value, 10); updateSky(); });
-$('sky-day').addEventListener('input', (e) => { const d = parseInt(e.target.value, 10); if (Number.isFinite(d)) { sky.day = d; updateSky(); } });
+// Los campos del panel son la hora solar media local en el lugar elegido; el reloj guarda el instante en UT.
+function skyFieldsFromClock() {
+    if (!clockUsable()) return;
+    const c = ChronosSky.jdToCalendar(clock.jd + sky.lon / 360, sky.calendar);
+    sky.month = c.month; sky.day = c.day; sky.minutes = c.hour * 60 + c.minute;
+    const active = document.activeElement && document.activeElement.id;
+    if (!['sky-month', 'sky-day', 'sky-time', 'sky-cal'].includes(active)) syncControls();
+}
+function skyApplyFields() {
+    if (!clockUsable()) return;
+    const year = ChronosSky.jdToCalendar(clock.jd + sky.lon / 360, sky.calendar).year;
+    try {
+        const local = ChronosSky.calendarToJD({ year, month: sky.month, day: sky.day, hour: Math.floor(sky.minutes / 60), minute: sky.minutes % 60 }, sky.calendar);
+        $('sky-error').textContent = '';
+        clockSet(local.jd - sky.lon / 360, { user: true });
+    } catch (e) {
+        $('sky-error').textContent = fmt('sky.badDate', { err: skyErrorText(e) });
+    }
+}
+$('sky-month').addEventListener('change', (e) => { sky.month = parseInt(e.target.value, 10); skyApplyFields(); });
+$('sky-day').addEventListener('input', (e) => { const d = parseInt(e.target.value, 10); if (Number.isFinite(d)) { sky.day = d; skyApplyFields(); } });
 $('sky-time').addEventListener('input', (e) => {
     const m = /^(\d{1,2}):(\d{2})/.exec(e.target.value);
-    if (m) { sky.minutes = Math.min(1439, parseInt(m[1], 10) * 60 + parseInt(m[2], 10)); updateSky(); }
+    if (m) { sky.minutes = Math.min(1439, parseInt(m[1], 10) * 60 + parseInt(m[2], 10)); skyApplyFields(); }
 });
-$('sky-cal').addEventListener('change', (e) => { sky.calendar = e.target.value; updateSky(); });
+$('sky-cal').addEventListener('change', (e) => { sky.calendar = e.target.value; skyFieldsFromClock(); updateSky(); });
 $('sky-follow').addEventListener('change', (e) => {
     sky.follow = e.target.checked;
     $('sky-lat').disabled = $('sky-lon').disabled = sky.follow;
-    if (sky.follow) syncPlace();
+    if (sky.follow) { syncPlace(); skyFieldsFromClock(); }
     updateSky();
 });
 $('sky-lat').disabled = $('sky-lon').disabled = true;
@@ -1223,18 +1274,12 @@ const readPlace = () => {
     const la = parseFloat($('sky-lat').value); const lo = parseFloat($('sky-lon').value);
     if (Number.isFinite(la) && Math.abs(la) <= 90) sky.lat = la;
     if (Number.isFinite(lo) && Math.abs(lo) <= 180) sky.lon = lo;
+    skyFieldsFromClock();
     updateSky();
 };
 $('sky-lat').addEventListener('input', readPlace);
 $('sky-lon').addEventListener('input', readPlace);
-$('sky-now').addEventListener('click', () => {
-    if (!sky.ready) return;
-    const now = skyClock(sky.lon);
-    sky.month = now.month; sky.day = now.day; sky.minutes = now.minutes;
-    syncControls();
-    setTime(yearToYbp(now.year), { immediate: true });
-    updateSky();
-});
+$('sky-now').addEventListener('click', () => { if (sky.ready) clockNow(); });
 [['sky-t-stars', 'stars'], ['sky-t-names', 'names'], ['sky-t-lines', 'lines'], ['sky-t-day', 'dayStars']].forEach(([id, key]) => {
     $(id).addEventListener('change', (e) => { sky[key] = e.target.checked; updateSky(); });
 });
@@ -1244,6 +1289,266 @@ $('sky-chart').addEventListener('mousemove', (e) => {
     let best = null;
     sky.drawn.forEach((d) => { const dist = Math.hypot(d.x - x, d.y - y); if (dist < 11 && (!best || dist < best.dist)) best = { dist, label: d.label }; });
     e.currentTarget.title = best ? best.label : '';
+});
+
+/* ------------------------------------------------------------------ */
+/* Reloj: el instante exacto (UT) que gobierna el cielo y el fondo      */
+/* ------------------------------------------------------------------ */
+// Un solo instante (dia juliano UT) con resolucion de segundos. La barra de tiempo elige el AÑO; el reloj conserva
+// mes, dia y hora al cambiar de año, y avanza solo cuando se le da a reproducir. Fuera de la ventana del cielo
+// (2001 a. C. – hoy) no hay reloj: el instante no esta definido con esa precision.
+const CLOCK_RATES = [
+    { v: 1, es: 'tiempo real', en: 'real time' }, { v: 60, es: '1 min/s', en: '1 min/s' }, { v: 3600, es: '1 h/s', en: '1 h/s' },
+    { v: 86400, es: '1 día/s', en: '1 day/s' }, { v: 2629800, es: '1 mes/s', en: '1 month/s' }, { v: 31557600, es: '1 año/s', en: '1 year/s' }
+];
+const clock = { jd: NaN, running: false, live: false, rate: 1, dir: 1, wall: 0, lastSec: -1 };
+const realNowJD = () => Date.now() / 86400000 + 2440587.5;
+const clockMinJD = () => ChronosSky.calendarToJD({ year: ChronosSky.WINDOW.minYear, month: 1, day: 1 }).jd;
+const clockUsable = () => sky.ready && Number.isFinite(clock.jd);
+
+// Pone el reloj en el año dado conservando mes, dia y hora (o los de ahora si aun no habia reloj).
+function clockFromYear(year) {
+    if (!sky.ready) return;
+    const W = ChronosSky.WINDOW;
+    if (year < W.minYear || year > W.maxYear || year > CFG.nowYear) { clock.jd = NaN; clock.running = false; clock.live = false; return; }
+    if (Number.isFinite(clock.jd) && ChronosSky.jdToCalendar(clock.jd, 'auto').year === year) return;
+    const base = ChronosSky.jdToCalendar(Number.isFinite(clock.jd) ? clock.jd : realNowJD(), 'auto');
+    const secs = base.hour * 3600 + base.minute * 60 + Math.floor(base.second);
+    let jd = NaN;
+    for (let d = base.day; d >= 1 && !Number.isFinite(jd); d--) {
+        try { jd = ChronosSky.calendarToJD({ year, month: base.month, day: d, hour: Math.floor(secs / 3600), minute: Math.floor((secs % 3600) / 60), second: secs % 60 }, 'auto').jd; } catch (e) { /* ese dia no existe en ese mes o calendario */ }
+    }
+    if (!Number.isFinite(jd)) jd = ChronosSky.calendarToJD({ year, month: 1, day: 1 }, 'auto').jd;
+    clock.jd = Math.min(jd, realNowJD());
+    clock.live = false;
+}
+
+// Devuelve true si el instante pedido se salio de [inicio de la ventana, ahora] y se recorto.
+function clockSet(jd, { user = false, tick = false } = {}) {
+    const lo = clockMinJD(); const hi = realNowJD();
+    const clipped = jd > hi || jd < lo;
+    clock.jd = Math.min(hi, Math.max(lo, jd));
+    if (user) clock.live = false;
+    const y = ChronosSky.jdToCalendar(clock.jd, 'auto').year;
+    if (y !== ybpToYear(state.ybp)) setTime(yearToYbp(y), { fromClock: true, persist: false });
+    clockChanged({ tick });
+    if (!tick) rememberTime();
+    return clipped;
+}
+
+function clockNow() {
+    if (!sky.ready) return;
+    clock.running = true; clock.live = true; clock.rate = 1; clock.dir = 1;
+    clockSet(realNowJD());
+    syncClockUI();
+}
+
+function syncClockUI() {
+    $('clock-play').textContent = clock.running ? '⏸' : '▶';
+    $('clock-play').setAttribute('aria-label', t(clock.running ? 'clock.pause' : 'clock.play'));
+    $('clock-rate').value = String(clock.dir * clock.rate);
+}
+
+function renderClock() {
+    const box = $('clock');
+    const ok = clockUsable();
+    box.hidden = !ok;
+    if (!ok) return;
+    const c = ChronosSky.jdToCalendar(clock.jd, 'auto');
+    const month = new Date(2001, c.month - 1, 1).toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { month: 'short' });
+    $('clock-time').textContent = c.day + ' ' + month + ' ' + formatYear(c.year) + ' · ' + pad2(c.hour) + ':' + pad2(c.minute) + ':' + pad2(Math.floor(c.second)) + ' UT'
+        + (c.calendar === 'julian' ? ' (' + t('clock.julian') + ')' : '');
+    const lon = map.getCenter().wrap().lng;
+    const l = ChronosSky.jdToCalendar(clock.jd + lon / 360, 'auto');
+    let sub = fmt('clock.solar', { t: pad2(l.hour) + ':' + pad2(l.minute) + ':' + pad2(Math.floor(l.second)), lon: nf().format(Math.round(lon * 10) / 10) });
+    if (clock.live) sub += ' · ' + fmt('clock.device', { t: new Date().toLocaleTimeString(lang === 'es' ? 'es-ES' : 'en-GB') });
+    $('clock-sub').textContent = sub;
+}
+
+// Todo lo que depende del instante se actualiza aqui.
+function clockChanged({ tick = false } = {}) {
+    renderClock();
+    const sec = Math.floor(clock.jd * 86400);
+    const secChanged = sec !== clock.lastSec;
+    clock.lastSec = sec;
+    if (sky.open && (!tick || secChanged || clock.rate >= 3600)) { skyFieldsFromClock(); scheduleSky(); }
+    scheduleSpace();
+    updateNight(false);
+}
+
+function clockTick() {
+    const now = performance.now();
+    const dt = (now - clock.wall) / 1000;
+    clock.wall = now;
+    if (!clockUsable() || !clock.running) return;
+    const jd = clock.live ? realNowJD() : clock.jd + clock.dir * clock.rate * dt / 86400;
+    const clipped = clockSet(jd, { tick: true });
+    if (clipped) {
+        if (clock.dir > 0) { clock.live = true; clock.rate = 1; } else clock.running = false;   // llego al presente o al inicio de la ventana
+        syncClockUI();
+    }
+}
+
+function initClock() {
+    CLOCK_RATES.forEach((r) => {
+        [1, -1].forEach((dir) => {
+            $('clock-rate').appendChild(el('option', { value: String(dir * r.v), text: (dir < 0 ? '− ' : '') + r[lang] }));
+        });
+    });
+    $('clock-rate').addEventListener('change', (e) => {
+        const v = parseInt(e.target.value, 10);
+        clock.rate = Math.abs(v); clock.dir = v < 0 ? -1 : 1;
+        if (clock.live && (clock.rate !== 1 || clock.dir !== 1)) clock.live = false;
+    });
+    $('clock-play').addEventListener('click', () => {
+        if (!clockUsable()) return;
+        clock.running = !clock.running;
+        if (!clock.running) { clock.live = false; rememberTime(); }
+        syncClockUI();
+    });
+    $('clock-now').addEventListener('click', clockNow);
+    if (sky.ready && Number.isFinite(prefs.jd) && ChronosSky.jdToCalendar(prefs.jd, 'auto').year === ybpToYear(state.ybp)) clock.jd = Math.min(prefs.jd, realNowJD());
+    clock.wall = performance.now();
+    setInterval(clockTick, 100);
+    syncClockUI();
+}
+
+/* ------------------------------------------------------------------ */
+/* El cielo visto desde el espacio, detras del globo                    */
+/* ------------------------------------------------------------------ */
+// Un lienzo bajo el mapa (el mapa es transparente fuera del globo). Los cuerpos y las estrellas se proyectan con la
+// misma camara que el globo; el propio globo tapa lo que queda detras de la Tierra.
+const space = { on: prefs.sp !== false, raf: 0, frameJD: NaN, frame: null, eqJD: NaN, eq: null, eqCat: null, dirs: null, dirsJD: NaN, colors: null };
+
+function spaceFrame(jd) {
+    if (jd === space.frameJD && space.frame) return space.frame;
+    const time = new Astronomy.AstroTime(jd - ChronosSky.J2000_JD);
+    space.frame = { time, gast: Astronomy.SiderealTime(time) * 15 * Math.PI / 180, bodies: ChronosSpace.bodiesGeocentric(time) };
+    space.frameJD = jd;
+    return space.frame;
+}
+
+function scheduleSpace() {
+    if (!space.raf) space.raf = requestAnimationFrame(drawSpace);
+}
+
+function drawSpace() {
+    space.raf = 0;
+    const cv = $('space');
+    const box = map.getContainer();
+    const w = box.clientWidth; const h = box.clientHeight;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const bg = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.hypot(w, h) / 2);
+    bg.addColorStop(0, '#0b1224'); bg.addColorStop(1, '#03050b');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+    const note = $('space-note');
+    note.textContent = '';
+    if (!space.on || !window.ChronosSpace || !sky.ready) return;
+    if (!clockUsable()) { const W = ChronosSky.WINDOW; note.textContent = fmt('space.outOfRange', { a: formatYear(W.minYear), b: formatYear(W.maxYear) }); return; }
+    if (sky.catalogState === 'idle') skyLoadCatalog();
+
+    const c = map.getCenter(); const tr = map.transform;
+    const pr = ChronosSpace.makeProjector({
+        lng: c.lng, lat: c.lat, bearing: map.getBearing(), pitch: map.getPitch(),
+        roll: typeof map.getRoll === 'function' ? map.getRoll() : 0,
+        worldSize: tr && typeof tr.worldSize === 'number' ? tr.worldSize : 512 * Math.pow(2, map.getZoom()),
+        fovDeg: tr && typeof tr.fov === 'number' ? tr.fov : undefined, width: w, height: h
+    });
+    const jd = clock.jd;
+    const frame = spaceFrame(jd);
+    const cat = sky.catalog;
+    const label = (text, x, y, alpha) => { ctx.fillStyle = 'rgba(214,224,248,' + alpha + ')'; ctx.font = '11px system-ui, sans-serif'; ctx.fillText(text, x, y); };
+
+    if (cat) {
+        if (space.eqCat !== cat || Math.abs(jd - space.eqJD) > 1) { space.eq = ChronosSpace.starsOfDate(cat, frame.time); space.eqJD = jd; space.eqCat = cat; space.dirsJD = NaN; }
+        if (!space.dirs || space.dirs.length !== cat.n * 3) space.dirs = new Float64Array(cat.n * 3);
+        if (space.dirsJD !== jd) { for (let i = 0; i < cat.n; i++) ChronosSpace.modelDirection(space.eq.ra[i], space.eq.dec[i], frame.gast, space.dirs, 3 * i); space.dirsJD = jd; }
+        if (!space.colors) space.colors = Array.from(cat.bv, (bv) => ChronosSkyView.starColor(bv));
+        const px = new Float32Array(cat.n); const py = new Float32Array(cat.n);
+        for (let i = 0; i < cat.n; i++) {
+            const s = pr.infinity(space.dirs[3 * i], space.dirs[3 * i + 1], space.dirs[3 * i + 2]);
+            if (s) { px[i] = s[0]; py[i] = s[1]; } else px[i] = NaN;
+        }
+        if (sky.lines && cat.constellations.length) {
+            ctx.strokeStyle = 'rgba(150,175,235,0.16)'; ctx.lineWidth = 1; ctx.beginPath();
+            cat.constellations.forEach((cn) => cn.lines.forEach(([a, b]) => {
+                if (Number.isNaN(px[a]) || Number.isNaN(px[b])) return;
+                ctx.moveTo(px[a], py[a]); ctx.lineTo(px[b], py[b]);
+            }));
+            ctx.stroke();
+        }
+        for (let i = 0; i < cat.n; i++) {
+            const x = px[i]; const y = py[i];
+            if (Number.isNaN(x) || x < -4 || y < -4 || x > w + 4 || y > h + 4) continue;
+            const mag = cat.mag[i];
+            const r = Math.max(0.5, Math.min(2.7, 2.5 - 0.36 * mag));
+            ctx.globalAlpha = Math.max(0.4, Math.min(1, 1.15 - 0.13 * mag));
+            ctx.fillStyle = space.colors[i];
+            if (r < 1.1) ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+            else { ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); }
+        }
+        ctx.globalAlpha = 1;
+        for (let i = 0; i < cat.n && cat.mag[i] < 1.0; i++) {      // el catalogo va ordenado por brillo
+            const nm = cat.names[cat.hip[i]];
+            if (nm && !Number.isNaN(px[i]) && px[i] > 0 && py[i] > 0 && px[i] < w && py[i] < h) label((lang === 'es' && nm[1]) || nm[0], px[i] + 6, py[i] - 5, 0.7);
+        }
+    }
+
+    // Sol, planetas y Luna
+    const dirOf = (b) => { const v = new Float64Array(3); ChronosSpace.modelDirection(b.ra, b.dec, frame.gast, v, 0); return v; };
+    const sunB = frame.bodies[0];
+    const sunV = dirOf(sunB); const sunS = pr.infinity(sunV[0], sunV[1], sunV[2]);
+    frame.bodies.forEach((b) => {
+        if (b.id === 'Sun') return;
+        const v = dirOf(b);
+        if (b.id === 'Moon') {
+            const m = pr.near(v[0] * b.distER, v[1] * b.distER, v[2] * b.distER);
+            if (!m) return;
+            const r = Math.max(6, Math.min(40, 0.2725 * m.pxPerER));
+            const theta = sunS ? Math.atan2(sunS[1] - m.y, sunS[0] - m.x) : 0;
+            ChronosSkyView.drawMoon(ctx, m.x, m.y, r, theta, b.phaseFraction);
+            label(t('sky.body.Moon'), m.x + r + 4, m.y + 4, 0.85);
+            return;
+        }
+        const s = pr.infinity(v[0], v[1], v[2]);
+        if (!s) return;
+        const r = Math.max(2.4, Math.min(5, 4.6 - 0.4 * b.mag));
+        ctx.beginPath(); ctx.arc(s[0], s[1], r, 0, 2 * Math.PI); ctx.fillStyle = ChronosSkyView.PLANET_COLOR[b.id]; ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1; ctx.stroke();
+        label(t('sky.body.' + b.id), s[0] + r + 4, s[1] + 4, 0.85);
+    });
+    if (sunS) {
+        const glow = ctx.createRadialGradient(sunS[0], sunS[1], 2, sunS[0], sunS[1], 34);
+        glow.addColorStop(0, 'rgba(255,236,150,0.95)'); glow.addColorStop(1, 'rgba(255,236,150,0)');
+        ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(sunS[0], sunS[1], 34, 0, 2 * Math.PI); ctx.fill();
+        ctx.fillStyle = '#ffd54f'; ctx.beginPath(); ctx.arc(sunS[0], sunS[1], 7, 0, 2 * Math.PI); ctx.fill();
+        label(t('sky.body.Sun'), sunS[0] + 12, sunS[1] + 4, 0.85);
+    }
+}
+
+// Lado nocturno de la Tierra: poligono bajo la linea del terminador.
+let nightJD = NaN;
+function updateNight(force) {
+    if (!map.getSource || !map.getSource('night')) return;
+    const show = space.on && clockUsable() && window.ChronosSpace;
+    map.setLayoutProperty('night-fill', 'visibility', show ? 'visible' : 'none');
+    if (!show) return;
+    if (!force && Math.abs(clock.jd - nightJD) * 86400 < 20) return;   // 20 s de rotacion terrestre = 0,08 grados
+    nightJD = clock.jd;
+    const f = spaceFrame(clock.jd); const sun = f.bodies[0];
+    const v = new Float64Array(3); ChronosSpace.modelDirection(sun.ra, sun.dec, f.gast, v, 0);
+    const lat = Math.asin(v[1]) * 180 / Math.PI; const lng = Math.atan2(v[0], v[2]) * 180 / Math.PI;
+    map.getSource('night').setData({ type: 'Feature', properties: {}, geometry: ChronosSpace.nightPolygon(lat, lng) });
+}
+
+$('btn-space').addEventListener('click', () => {
+    space.on = !space.on;
+    $('btn-space').setAttribute('aria-pressed', String(space.on));
+    savePrefs({ sp: space.on });
+    scheduleSpace(); updateNight(true);
 });
 
 /* Datos recientes del harvester (se muestran solo cerca del presente) */
@@ -1264,8 +1569,12 @@ async function loadLive() {
 }
 
 /* Inicio */
+initClock();
+$('btn-space').setAttribute('aria-pressed', String(space.on));
+$('btn-space').title = t('space.tip');
 applyStrings();
 applyTheme();
+scheduleSpace();
 setTime(state.ybp, { immediate: true, persist: false });
 loadLive();
 </script>
