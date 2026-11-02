@@ -116,8 +116,11 @@
      * (solo con resolve:'clear').
      */
     function classify(groups, bbox, opts) {
-        const o = Object.assign({ distM: 40000, maxCells: 640, ratio: 2, marginM: 10000, resolve: 'nearest', land: null }, opts || {});
-        const grid = makeGrid(bbox, o.distM, o.maxCells);
+        const o = Object.assign({ distM: 40000, maxCells: 640, ratio: 2, marginM: 10000, resolve: 'nearest', land: null, padM: null, coarseCells: 640 }, opts || {});
+        // padM < distM: rejilla FINA solo sobre la vista (resolucion segun la pantalla); lo que queda mas alla de padM pero a menos de
+        // distM se resuelve con una rejilla GRUESA que si cubre distM, y gana la distancia menor (ver mas abajo).
+        const padM = o.padM === null || o.padM === undefined ? o.distM : Math.min(o.padM, o.distM);
+        const grid = makeGrid(bbox, padM, o.maxCells);
         const maxD = o.distM / grid.cellM; const marginCells = o.marginM / grid.cellM;
         const { cols, rows } = grid;
         const masks = groups.map((g) => rasterize(g.polys, grid));
@@ -132,7 +135,26 @@
         const cls = new Uint16Array(cols * rows);
         if (o.resolve === 'nearest') {
             const { d, lab } = nearestLabels(owner, cols, rows, maxD);
-            for (let i = 0; i < cls.length; i++) if (!inside[i] && d[i] <= maxD) cls[i] = lab[i];
+            let far = null;
+            if (padM < o.distM && o.resolve === 'nearest') {
+                const cg = makeGrid(bbox, o.distM, o.coarseCells);
+                const cown = new Uint16Array(cg.cols * cg.rows);
+                groups.forEach((g, gi) => { const m = rasterize(g.polys, cg); for (let i = 0; i < m.length; i++) if (m[i]) cown[i] = gi + 1; });
+                far = { cg, nl: nearestLabels(cown, cg.cols, cg.rows, o.distM / cg.cellM) };
+            }
+            for (let i = 0; i < cls.length; i++) {
+                if (inside[i]) continue;
+                let dm = d[i] <= maxD ? d[i] * grid.cellM : Infinity; let who = d[i] <= maxD ? lab[i] : 0;
+                if (far) {   // la celda gruesa que contiene el centro de esta celda fina (mismo bbox: mismos metros por unidad)
+                    const c = i % cols; const r = (i - c) / cols;
+                    const cc = Math.floor((grid.x0 + (c + 0.5) / grid.scale - far.cg.x0) * far.cg.scale); const cr = Math.floor((grid.y0 + (r + 0.5) / grid.scale - far.cg.y0) * far.cg.scale);
+                    if (cc >= 0 && cc < far.cg.cols && cr >= 0 && cr < far.cg.rows) {
+                        const j = cr * far.cg.cols + cc; const dc = far.nl.d[j] * far.cg.cellM;
+                        if (far.nl.lab[j] && dc <= o.distM && dc < dm) { dm = dc; who = far.nl.lab[j]; }
+                    }
+                }
+                if (who && dm <= o.distM) cls[i] = who;
+            }
         } else {
             const dists = masks.map((m) => distance(m, cols, rows, maxD));
             for (let i = 0; i < cls.length; i++) {

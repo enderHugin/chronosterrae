@@ -40,6 +40,15 @@ const real = innerBorders(ne, neKey);
 check('Natural Earth: entre el 15 y el 40 % de los tramos son frontera compartida; el resto, costa', () => {
     const r = real.stats.shared / real.stats.segments; return r > 0.15 && r < 0.4 ? true : 'proporcion ' + r.toFixed(3);
 });
+check('cada linea lleva la clave del pais al que pertenece su anillo (para resaltar solo SUS fronteras terrestres)', () => {
+    const out = innerBorders(fc(feat('A', sq(0, 0, 1)), feat('B', sq(1, 0, 1)), feat('C', sq(5, 5, 1))), keyOf);
+    const keys = out.features.map((f) => f.properties.key).sort();
+    return keys.join() === 'A,B' && out.features.every((f) => typeof f.properties.key === 'string') && !keys.includes('C');
+});
+check('rechazo vs roto: el pais C (isla) no tiene lineas que resaltar, y A y B si', () => {
+    const out = innerBorders(fc(feat('A', sq(0, 0, 1)), feat('B', sq(1, 0, 1)), feat('C', sq(5, 5, 1))), keyOf);
+    return out.features.filter((f) => f.properties.key === 'C').length === 0 && out.features.filter((f) => f.properties.key === 'A').length === 1;
+});
 const near = (lng, lat, km) => real.features.some((f) => f.geometry.coordinates.some(([x, y]) => Math.hypot((x - lng) * Math.cos(lat * Math.PI / 180), y - lat) * 111.2 < km));
 check('Natural Earth: la frontera Espana-Portugal esta; la costa de Islandia no tiene ninguna linea', () => near(-7.0, 41.9, 8) && !near(-19, 64.9, 60));
 check('Natural Earth: la frontera Guatemala-El Salvador esta y sin lineas en el mar frente a ella', () => near(-89.9, 14.0, 25) && !near(-90.7, 13.2, 20));

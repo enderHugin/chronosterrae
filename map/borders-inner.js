@@ -55,13 +55,14 @@
         const features = []; let kept = 0;
         let idx = 0;
         fc.features.forEach((f) => {
+            const fkey = keyOf(f);   // el pais al que pertenece el anillo: sirve para resaltar solo SUS fronteras terrestres
             ringsOf(f).forEach((r) => {
                 let line = null;
                 for (let i = 0; i < r.length - 1; i++, idx++) {
                     if (shared(segs[idx])) { kept++; if (!line) line = [r[i]]; line.push(r[i + 1]); }
-                    else if (line) { features.push({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: line } }); line = null; }
+                    else if (line) { features.push({ type: 'Feature', properties: { key: fkey }, geometry: { type: 'LineString', coordinates: line } }); line = null; }
                 }
-                if (line) features.push({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: line } });
+                if (line) features.push({ type: 'Feature', properties: { key: fkey }, geometry: { type: 'LineString', coordinates: line } });
             });
         });
         return { type: 'FeatureCollection', features, stats: { segments: segs.length, shared: kept } };

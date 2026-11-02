@@ -126,5 +126,45 @@ check('geometria: la distancia chamfer a un punto es cercana a la euclidea (erro
     const d = G.distance(m, cols, rows, 100);
     const e = Math.hypot(15, 10); return Math.abs(d[30 * cols + 35] - e) / e < 0.08;
 });
+// ---- Rejilla fina (resolucion segun la pantalla) con rejilla gruesa para los origenes lejanos
+const mpd = (lat) => 111320 * Math.cos(lat * Math.PI / 180);
+check('rejilla fina: al acercar, la celda se encoge (no queda en ~300 m): vista de 10 km con 800 celdas -> celdas < 20 m', () => {
+    const groups = [{ key: 'A', polys: [sq(0, 40, 0.3)] }];
+    const view = [0.5, 40.1, 0.5 + 10000 / mpd(40.1), 40.1 + 10000 / 111320];
+    const fine = G.classify(groups, view, { distM: 100000, padM: 500, maxCells: 800, resolve: 'nearest' });
+    const old = G.classify(groups, view, { distM: 100000, maxCells: 800, resolve: 'nearest' });
+    return fine.grid.cellM < 20 && old.grid.cellM > 200 ? true : 'fina ' + fine.grid.cellM.toFixed(1) + ' m, antigua ' + old.grid.cellM.toFixed(1) + ' m';
+});
+check('rejilla fina: un pais FUERA de la vista pero a menos de distM sigue atribuyendose la tierra cercana (origenes lejanos)', () => {
+    const groups = [{ key: 'A', polys: [sq(-0.6, 40, 0.4)] }, { key: 'B', polys: [sq(1.5, 40, 1)] }];
+    const view = [-0.15, 40.4, -0.05, 40.5];
+    const res = G.classify(groups, view, { distM: 100000, padM: 2000, maxCells: 800, resolve: 'nearest' });
+    let a = 0; let b = 0; let none = 0; for (const v of res.cls) { if (v === 1) a++; else if (v === 2) b++; else none++; }
+    return a > 0.95 * res.cls.length && b === 0 ? true : `A ${a} B ${b} nada ${none}`;
+});
+check('rejilla fina: rechazo vs roto: si el pais esta a MAS de distM no se atribuye nada (y la prueba anterior si atribuye)', () => {
+    const groups = [{ key: 'A', polys: [sq(-5, 40, 0.4)] }];
+    const view = [-0.15, 40.4, -0.05, 40.5];
+    const res = G.classify(groups, view, { distM: 100000, padM: 2000, maxCells: 800, resolve: 'nearest' });
+    let n = 0; for (const v of res.cls) if (v) n++;
+    return n === 0;
+});
+check('rejilla fina == rejilla completa de la misma celda: coinciden en > 99 % de los puntos de una vista con costa, dos paises y un tercero fuera', () => {
+    const A = sq(0, 40, 0.5); const B = [[[0.52, 40], [0.9, 40.1], [0.9, 40.6], [0.52, 40.5], [0.52, 40]]]; const C = sq(0.2, 40.8, 0.3);
+    const groups = [{ key: 'A', polys: [A] }, { key: 'B', polys: [B] }, { key: 'C', polys: [C] }];
+    const view = [0.4, 40.3, 0.6, 40.5]; const dist = 40000;
+    const fine = G.classify(groups, view, { distM: dist, padM: 800, maxCells: 700, resolve: 'nearest' });
+    const cell = fine.grid.cellM; const refCells = Math.ceil(Math.max((view[2] - view[0]) * mpd(40.4) + 2 * dist, (view[3] - view[1]) * 111320 + 2 * dist) / cell);
+    const ref = G.classify(groups, view, { distM: dist, maxCells: refCells, resolve: 'nearest' });
+    let diff = 0; let tot = 0;
+    for (let r = 0; r < fine.grid.rows; r += 3) for (let c = 0; c < fine.grid.cols; c += 3) {
+        const mx = fine.grid.x0 + (c + 0.5) / fine.grid.scale; const my = fine.grid.y0 + (r + 0.5) / fine.grid.scale;
+        const rc = Math.floor((mx - ref.grid.x0) * ref.grid.scale); const rr = Math.floor((my - ref.grid.y0) * ref.grid.scale);
+        const a = fine.owner[r * fine.grid.cols + c] || fine.cls[r * fine.grid.cols + c]; const b = ref.owner[rr * ref.grid.cols + rc] || ref.cls[rr * ref.grid.cols + rc];
+        tot++; if (a !== b) diff++;
+    }
+    return diff / tot < 0.01 ? true : (100 * diff / tot).toFixed(2) + ' % distintos de ' + tot;
+});
+
 console.log(fails ? '\nHay fallos.' : '\nBordes (relleno de franjas): todo verde.');
 process.exitCode = fails ? 1 : 0;

@@ -770,7 +770,7 @@ mapReady.then(() => {
     // Franja entre un poligono de frontera demasiado simplificado y la costa real (ver gapDraw): imagen georreferenciada por sus cuatro esquinas.
     map.addSource('gap', { type: 'image', url: GAP_BLANK, coordinates: [[-1, 1], [1, 1], [1, -1], [-1, -1]] });
     map.addLayer({ id: 'gap-raster', type: 'raster', source: 'gap', layout: { visibility: 'none' }, paint: { 'raster-opacity': 1, 'raster-fade-duration': 0, 'raster-resampling': 'linear' } }, 'borders-line');
-    map.addLayer({ id: 'borders-hl', type: 'line', source: 'borders', filter: ['==', ['get', 'NAME'], '\u0000'], paint: { 'line-color': '#e53935', 'line-width': 3 } });
+    map.addLayer({ id: 'borders-hl', type: 'line', source: 'borders-inner', filter: ['==', ['get', 'key'], '\u0000'], paint: { 'line-color': '#e53935', 'line-width': 3 } });
     map.addLayer({ id: 'live-points', type: 'circle', source: 'live', paint: { 'circle-radius': 6, 'circle-color': '#e53935', 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff' } });
     map.addSource('night', { type: 'geojson', data: emptyFC() });
     map.addLayer({ id: 'night-fill', type: 'fill', source: 'night', layout: { visibility: 'none' }, paint: { 'fill-color': '#000a1f', 'fill-opacity': 0.34 } }, 'live-points');
@@ -932,8 +932,11 @@ function detailVisibility() {
 // grafica, no un dato; se declara en el estado.
 const GAP_DIST_M = 100000;       // fronteras historicas (toscas)
 const GAP_DIST_NE_M = 20000;     // Natural Earth (1,7 km): solo rendijas frente a la costa del mapa
-const GAP_MAX_SPAN_DEG = 90;     // vistas mas anchas: no merece la pena
-const GAP = { timer: 0, shown: false, ctx: null };
+const GAP_MAX_SPAN_DEG = 200;    // vistas mas anchas (el globo entero): las franjas miden menos de un pixel
+const GAP_CELL_PX = 1.5;         // tamano de celda objetivo en pixeles de pantalla (para que la costa no salga escalonada)
+const GAP_CELLS_MIN = 200; const GAP_CELLS_MAX = 1100;
+let gapSeq = 0;                   // el PNG se codifica fuera del hilo principal: solo vale el ultimo
+const GAP = { timer: 0, shown: false, ctx: null, sel: null, url: null };
 function gapColor(css) {
     if (!GAP.ctx) { const c = document.createElement('canvas'); c.width = c.height = 1; GAP.ctx = c.getContext('2d', { willReadFrequently: true }); }
     GAP.ctx.clearRect(0, 0, 1, 1); GAP.ctx.fillStyle = css; GAP.ctx.fillRect(0, 0, 1, 1);
@@ -944,8 +947,21 @@ function gapRefresh() {
     GAP.timer = setTimeout(gapDraw, 220);
 }
 // Mientras la imagen pinta todo el territorio, el relleno vectorial queda casi invisible (0,01: con 0 MapLibre deja de detectar clics).
-function gapFillPaint() { if (map.getLayer('borders-fill')) map.setPaintProperty('borders-fill', 'fill-opacity', GAP.shown ? 0.01 : ['get', '_o']); }
-function gapHide() { if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visibility', 'none'); GAP.shown = false; gapFillPaint(); renderStatus(); } }
+// Pais resaltado: sus fronteras TERRESTRES en rojo (nunca el contorno tosco que da al mar) y su territorio algo mas opaco.
+const polityKey = (props) => (props && (props.SUBJECTO || props.NAME)) || null;
+function gapFillPaint() {
+    if (!map.getLayer('borders-fill')) return;
+    const base = ['get', '_o'];
+    const tinted = GAP.sel ? ['case', ['==', ['coalesce', ['get', 'SUBJECTO'], ['get', 'NAME']], GAP.sel], ['min', 1, ['+', base, 0.3]], base] : base;
+    map.setPaintProperty('borders-fill', 'fill-opacity', GAP.shown ? 0.01 : tinted);
+}
+function setHighlightKey(key) {
+    GAP.sel = key || null;
+    if (map.getLayer('borders-hl')) map.setFilter('borders-hl', ['==', ['get', 'key'], key || '\u0000']);
+    gapFillPaint();
+    if (GAP.shown) gapRefresh();
+}
+function gapHide() { gapSeq++; if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visibility', 'none'); GAP.shown = false; gapFillPaint(); renderStatus(); } }
 function gapDraw() {
     if (!map.getLayer('gap-raster') || !window.ChronosGap) return;
     const b = state.borders;
@@ -956,8 +972,14 @@ function gapDraw() {
     if (!DETAIL.shown && !(L && L.data && L.data.features)) { gapHide(); return; }
     const capM = b.source === 'ne' ? GAP_DIST_NE_M : GAP_DIST_M;
     const bd = map.getBounds(); const padDeg = capM / 111000 * 1.2;
-    const view = [bd.getWest(), Math.max(-84, bd.getSouth()), bd.getEast(), Math.min(84, bd.getNorth())];
+    const view = [Math.max(-180, bd.getWest()), Math.max(-84, bd.getSouth()), Math.min(180, bd.getEast()), Math.min(84, bd.getNorth())];
     if (view[2] - view[0] > GAP_MAX_SPAN_DEG) { gapHide(); return; }
+    const degPerPx = 360 / (512 * Math.pow(2, map.getZoom()));
+    // La rejilla cubre la VISTA (mas un 5 %) con celdas de ~1,5 px: al acercar la resolucion SUBE. Lo que cae mas alla, hasta el tope
+    // de franja, lo resuelve una rejilla gruesa aparte (ver ChronosGap.classify, padM/coarseCells).
+    const viewWm = (view[2] - view[0]) * 111320 * Math.cos((view[1] + view[3]) / 2 * Math.PI / 180);
+    const maxCells = Math.round(Math.max(GAP_CELLS_MIN, Math.min(GAP_CELLS_MAX, (view[2] - view[0]) / (GAP_CELL_PX * degPerPx))));
+    const padM = Math.min(capM, 0.05 * viewWm);
     const groups = new Map();
     for (const f of b.data.features) {
         if (!f.geometry) continue;
@@ -967,7 +989,7 @@ function gapDraw() {
             if (!poly._bb) { let a = 180, c = 90, d = -180, e = -90; poly[0].forEach(([x, y]) => { a = Math.min(a, x); d = Math.max(d, x); c = Math.min(c, y); e = Math.max(e, y); }); poly._bb = [a, c, d, e]; }
             const bb = poly._bb;
             if (bb[2] < view[0] - padDeg || bb[0] > view[2] + padDeg || bb[3] < view[1] - padDeg || bb[1] > view[3] + padDeg) continue;
-            if (!groups.has(key)) groups.set(key, { key, css: f.properties._c, alpha: Math.round(255 * (f.properties._o == null ? 0.5 : f.properties._o)), polys: [] });
+            if (!groups.has(key)) groups.set(key, { key, css: f.properties._c, alpha: Math.min(255, Math.round(255 * ((f.properties._o == null ? 0.5 : f.properties._o) + (GAP.sel === key ? 0.3 : 0)))), polys: [] });
             groups.get(key).polys.push(poly);
         }
     }
@@ -988,7 +1010,7 @@ function gapDraw() {
         }
         if (!landPolys.length) { gapHide(); return; }
     }
-    const res = ChronosGap.classify(list, view, { distM: capM, maxCells: 640, resolve: 'nearest', land: landPolys });
+    const res = ChronosGap.classify(list, view, { distM: capM, padM, maxCells, coarseCells: 640, resolve: 'nearest', land: landPolys });
     const { cols, rows } = res.grid;
     const cv = document.createElement('canvas'); cv.width = cols; cv.height = rows;
     const cx = cv.getContext('2d'); const img = cx.createImageData(cols, rows);
@@ -1000,11 +1022,19 @@ function gapDraw() {
         img.data[o] = k[0]; img.data[o + 1] = k[1]; img.data[o + 2] = k[2]; img.data[o + 3] = list[c - 1].alpha; filled++;
     }
     cx.putImageData(img, 0, 0);
-    map.getSource('gap').updateImage({ url: cv.toDataURL('image/png'), coordinates: res.grid.corners });
-    const was = GAP.shown; GAP.shown = filled > 0;
-    map.setLayoutProperty('gap-raster', 'visibility', GAP.shown ? 'visible' : 'none');
-    gapFillPaint();
-    if (was !== GAP.shown) renderStatus();
+    if (!filled) { gapHide(); return; }
+    const seq = ++gapSeq;
+    cv.toBlob((blob) => {
+        if (!blob || seq !== gapSeq) return;     // llego tarde: ya hay una vista mas nueva en camino
+        const url = URL.createObjectURL(blob);
+        const old = GAP.url; GAP.url = url;
+        map.getSource('gap').updateImage({ url, coordinates: res.grid.corners });
+        const was = GAP.shown; GAP.shown = true;
+        map.setLayoutProperty('gap-raster', 'visibility', 'visible');
+        gapFillPaint();
+        if (was !== GAP.shown) renderStatus();
+        if (old) setTimeout(() => URL.revokeObjectURL(old), 4000);
+    }, 'image/png');
 }
 map.on('moveend', gapRefresh);
 
@@ -1254,7 +1284,7 @@ function setTime(ybp, { fromSlider = false, immediate = false, persist = true, f
 /* Selección y búsqueda                                               */
 /* ------------------------------------------------------------------ */
 function clearHighlight() {
-    if (map.getLayer('borders-hl')) map.setFilter('borders-hl', ['==', ['get', 'NAME'], '\u0000']);
+    setHighlightKey(null);
 }
 
 function bboxOf(features) {
@@ -1268,7 +1298,7 @@ function focusPolity(name) {
     if (!state.borders) return;
     const feats = state.borders.data.features.filter((f) => f.properties.NAME === name);
     if (!feats.length) return;
-    map.setFilter('borders-hl', ['==', ['get', 'NAME'], name]);
+    setHighlightKey(polityKey(feats[0].properties));
     const box = bboxOf(feats);
     if (box) map.fitBounds(box, { padding: 120, maxZoom: 6, duration: 1400 });
     showPolity(feats[0].properties);
@@ -1334,7 +1364,7 @@ map.on('click', (e) => {
     if (!hit) { hideInfo(); return; }
     if (hit.layer.id === 'events-circle') { const f = events.byId.get(hit.properties.id); if (f) showEvent(f); }
     else if (hit.layer.id === 'live-points') showLive(hit.properties);
-    else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { map.setFilter('borders-hl', ['==', ['get', 'NAME'], hit.properties.NAME]); showPolity(hit.properties); }
+    else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { setHighlightKey(polityKey(hit.properties)); showPolity(hit.properties); }
     else if (hit.layer.id === 'borders-fill') showPolity(hit.properties);
     else showCoast(hit.properties);
 });
