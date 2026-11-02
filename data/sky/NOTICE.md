@@ -10,3 +10,11 @@ Estos ficheros son datos derivados y llevan su propia licencia, distinta de la d
   (`constellations.json`). Copyright (c) 2015, Olaf Frohn.
 
 Los datos subyacentes (posiciones y movimientos propios) son mediciones astronomicas; la atribucion a ESA/Hipparcos se conserva.
+
+## Precesion de largo plazo (`ltp.json`, `ltp-LICENSE-ERFA.txt`)
+
+`ltp.json` contiene las tablas del modelo de precesion de largo plazo de Vondrak, Capitaine y Wallace (2011, A&A 534, A22;
+corrigendum 2012, A&A 541, C1), valido +/-200.000 anos. Se extrajeron **por programa** (`scripts/build-ltp.js`) del texto de
+**ERFA** (https://github.com/liberfa/erfa, commit en `ltp.json`), licencia **BSD-3-Clause** (texto en `ltp-LICENSE-ERFA.txt`).
+ERFA es una biblioteca derivada, con permiso, de SOFA del IAU; se reconoce ese origen, y ni SOFA ni el IAU avalan este uso.
+`sky/ltp.js` es un port propio de las rutinas `eraLtpequ`, `eraLtpecl`, `eraLtp` y `eraLtpb`.
