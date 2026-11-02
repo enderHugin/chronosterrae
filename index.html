@@ -354,7 +354,8 @@ const i18n = {
         bordersFail: 'No se pudieron cargar las fronteras ({err}).',
         landOk: 'Contornos actuales movidos por el modelo de placas {model}, {age}. No son las costas reales de la época.', seaLevel: 'Costas actuales. El nivel del mar y las glaciaciones no están modelados.',
         noBorders: 'Sin fronteras históricas para esta época (el conjunto cubre desde 123.000 a.C.).',
-        gapNote: 'Los polígonos históricos son toscos: la costa la pone el mapa actual, así que no se dibuja el borde que da al mar, solo las fronteras entre países, y la tierra hasta la costa se colorea con el país más cercano. El reparto entre vecinos junto a la costa es aproximado.',
+        gapNoteNE: 'Las rendijas entre las fronteras de Natural Earth y la costa del mapa se rellenan con el color del país más cercano (hasta 20 km); el borde que da al mar no se dibuja.',
+        gapNote: 'Los polígonos históricos son toscos: la costa la pone el mapa (de cerca, OpenStreetMap; de lejos, las costas del mapa base), así que no se dibuja el borde que da al mar, solo las fronteras entre países, y la tierra hasta la costa se colorea con el país más cercano. El reparto entre vecinos junto a la costa es aproximado.',
         bordersNE: 'Fronteras vigentes: Natural Earth 10m (dominio público), resolución mediana ~{km} km.',
         neBackdate: 'Para 2016–2019 se aplican las fronteras vigentes: no se han comprobado una a una las diferencias menores de esos años.',
         neNote: 'Fronteras vigentes según Natural Earth. En zonas en disputa se muestra la convención de esa fuente (campo «Tipo»), sin juicio sobre soberanía.', resolution: 'Resolución de la fuente', typeLabel: 'Tipo según la fuente',
@@ -430,7 +431,8 @@ const i18n = {
         bordersFail: 'Could not load borders ({err}).',
         landOk: 'Present-day outlines moved by plate model {model}, {age}. Not the real coastlines of that time.', seaLevel: 'Present-day coastlines. Sea level and ice ages are not modelled.',
         noBorders: 'No historical borders for this era (the dataset starts at 123,000 BC).',
-        gapNote: 'Historical polygons are coarse: the coast comes from the current map, so the edge facing the sea is not drawn, only borders between countries, and land up to the coast takes the colour of the nearest country. The split between neighbours near the coast is approximate.',
+        gapNoteNE: 'Gaps between the Natural Earth borders and the map coastline are filled with the colour of the nearest country (up to 20 km); the edge facing the sea is not drawn.',
+        gapNote: 'Historical polygons are coarse: the coast comes from the map (close up, OpenStreetMap; zoomed out, the base map coastlines), so the edge facing the sea is not drawn, only borders between countries, and land up to the coast takes the colour of the nearest country. The split between neighbours near the coast is approximate.',
         bordersNE: 'Current borders: Natural Earth 10m (public domain), median resolution ~{km} km.',
         neBackdate: 'For 2016–2019 the current borders are applied: minor differences in those years have not been checked one by one.',
         neNote: 'Current borders per Natural Earth. In disputed areas the source\'s own convention is shown ("Type" field), with no judgement on sovereignty.', resolution: 'Source resolution', typeLabel: 'Type per the source',
@@ -905,7 +907,9 @@ function detailVisibility() {
 // fondo queda una franja sin color. Se colorea con el pais mas cercano (hasta GAP_DIST_M) y con el mismo tinte que
 // el poligono: la costa la pone el mapa, no el poligono. El reparto entre vecinos junto a la costa es una aproximacion
 // grafica, no un dato; se declara en el estado.
-const GAP_DIST_M = 100000;
+const GAP_DIST_M = 100000;       // fronteras historicas (toscas)
+const GAP_DIST_NE_M = 20000;     // Natural Earth (1,7 km): solo rendijas frente a la costa del mapa
+const GAP_MAX_SPAN_DEG = 90;     // vistas mas anchas: no merece la pena
 const GAP = { timer: 0, shown: false, ctx: null };
 function gapColor(css) {
     if (!GAP.ctx) { const c = document.createElement('canvas'); c.width = c.height = 1; GAP.ctx = c.getContext('2d', { willReadFrequently: true }); }
@@ -922,11 +926,15 @@ function gapHide() { if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visib
 function gapDraw() {
     if (!map.getLayer('gap-raster') || !window.ChronosGap) return;
     const b = state.borders;
-    const want = Boolean(DETAIL.shown && b && b.source !== 'ne' && b.data && b.data.features.length);
+    const want = Boolean(b && b.data && b.data.features.length);
     if (!want) { gapHide(); return; }
-    const bd = map.getBounds(); const padDeg = GAP_DIST_M / 111000 * 1.2;
+    // Con el detalle de OpenStreetMap el agua va por encima y ya pone la costa; sin el, la costa la pone la tierra del mapa base.
+    const L = DETAIL.shown ? null : (state.landError ? null : state.land);
+    if (!DETAIL.shown && !(L && L.data && L.data.features)) { gapHide(); return; }
+    const capM = b.source === 'ne' ? GAP_DIST_NE_M : GAP_DIST_M;
+    const bd = map.getBounds(); const padDeg = capM / 111000 * 1.2;
     const view = [bd.getWest(), Math.max(-84, bd.getSouth()), bd.getEast(), Math.min(84, bd.getNorth())];
-    if (view[2] - view[0] > 40) { gapHide(); return; }           // vista demasiado ancha: no es zoom de costa
+    if (view[2] - view[0] > GAP_MAX_SPAN_DEG) { gapHide(); return; }
     const groups = new Map();
     for (const f of b.data.features) {
         if (!f.geometry) continue;
@@ -942,7 +950,22 @@ function gapDraw() {
     }
     const list = [...groups.values()];
     if (!list.length) { gapHide(); return; }
-    const res = ChronosGap.classify(list, view, { distM: GAP_DIST_M, maxCells: 640, resolve: 'nearest' });
+    let landPolys = null;
+    if (L) {
+        landPolys = [];
+        for (const f of L.data.features) {
+            if (!f.geometry || (f.properties && f.properties.kind === 'margin')) continue;
+            const polys = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates : f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : [];
+            for (const poly of polys) {
+                if (!poly._bb) { let a = 180, c = 90, d = -180, e = -90; poly[0].forEach(([x, y]) => { a = Math.min(a, x); d = Math.max(d, x); c = Math.min(c, y); e = Math.max(e, y); }); poly._bb = [a, c, d, e]; }
+                const bb = poly._bb;
+                if (bb[2] < view[0] - padDeg || bb[0] > view[2] + padDeg || bb[3] < view[1] - padDeg || bb[1] > view[3] + padDeg) continue;
+                landPolys.push(poly);
+            }
+        }
+        if (!landPolys.length) { gapHide(); return; }
+    }
+    const res = ChronosGap.classify(list, view, { distM: capM, maxCells: 640, resolve: 'nearest', land: landPolys });
     const { cols, rows } = res.grid;
     const cv = document.createElement('canvas'); cv.width = cols; cv.height = rows;
     const cx = cv.getContext('2d'); const img = cx.createImageData(cols, rows);
@@ -1010,6 +1033,7 @@ function applyLand(L) {
     if (state.landData === L.data) return;
     map.getSource('land').setData(L.data);
     state.landData = L.data;
+    if (typeof gapRefresh === 'function') gapRefresh();
 }
 
 // Un poligono que da al mar es una costa tosca (la buena la pone el mapa): solo se dibujan los tramos que comparte con otro pais.
@@ -1056,13 +1080,14 @@ function renderStatus() {
         messages.push(t('loadingBorders'));
     } else if (state.borders) {
         const b = state.borders;
-        if (b.source === 'ne') messages.push(fmt('bordersNE', { km: nf().format(b.meta.segment_median_km) }));
-        if (b.source === 'ne' && ybpToYear(state.ybp) < 2020) messages.push(t('neBackdate'));
-        else messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
+        if (b.source === 'ne') {
+            messages.push(fmt('bordersNE', { km: nf().format(b.meta.segment_median_km) }));
+            if (ybpToYear(state.ybp) < 2020) messages.push(t('neBackdate'));
+        } else messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
     } else if (ybp <= CFG.bordersMaxYbp) {
         messages.push(t('noBorders'));
     }
-    if (GAP.shown) messages.push(t('gapNote'));
+    if (GAP.shown) messages.push(t(state.borders && state.borders.source === 'ne' ? 'gapNoteNE' : 'gapNote'));
     if (DETAIL.shown) messages.push(t(DETAIL.shown === 'full' ? 'detailFull' : 'detailPhysical'));
     else if (DETAIL.error && detailMode()) { level = 'warn'; messages.push(fmt('detailFail', { err: DETAIL.error.message })); }
     if (messages.length) setStatus(level, messages.join(' '));

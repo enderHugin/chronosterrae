@@ -31,20 +31,31 @@
             corners: [[unmercX(x0), unmercY(y0)], [unmercX(x1), unmercY(y0)], [unmercX(x1), unmercY(y1)], [unmercX(x0), unmercY(y1)]] };
     }
 
-    /** Pinta (regla par-impar, asi los huecos quedan huecos) los poligonos [[anillo,...],...] en una mascara. */
+    /**
+     * Pinta (regla par-impar, asi los huecos quedan huecos) los poligonos [[anillo,...],...] en una mascara.
+     * Cada arista solo se reparte entre las filas que cruza (coste proporcional a lo que cubre, no a filas x aristas).
+     */
     function rasterize(polys, grid) {
         const { cols, rows, x0, y0, scale } = grid;
         const mask = new Uint8Array(cols * rows);
         for (const poly of polys) {
-            const edges = [];
-            for (const ring of poly) for (let i = 0; i < ring.length - 1; i++) {
-                const ax = (mercX(ring[i][0]) - x0) * scale; const ay = (mercY(ring[i][1]) - y0) * scale;
-                const bx = (mercX(ring[i + 1][0]) - x0) * scale; const by = (mercY(ring[i + 1][1]) - y0) * scale;
-                if (ay !== by) edges.push(ay < by ? [ax, ay, bx, by] : [bx, by, ax, ay]);
+            const rowX = new Map();   // fila -> cortes en x
+            for (const ring of poly) {
+                let px = (mercX(ring[0][0]) - x0) * scale; let py = (mercY(ring[0][1]) - y0) * scale;
+                for (let i = 1; i < ring.length; i++) {
+                    const qx = (mercX(ring[i][0]) - x0) * scale; const qy = (mercY(ring[i][1]) - y0) * scale;
+                    if (py !== qy) {
+                        const ax = py < qy ? px : qx, ay = py < qy ? py : qy, bx = py < qy ? qx : px, by = py < qy ? qy : py;
+                        const r0 = Math.max(0, Math.ceil(ay - 0.5)); const r1 = Math.min(rows - 1, Math.ceil(by - 0.5) - 1);
+                        for (let r = r0; r <= r1; r++) {
+                            const x = ax + (r + 0.5 - ay) / (by - ay) * (bx - ax);
+                            let l = rowX.get(r); if (!l) rowX.set(r, l = []); l.push(x);
+                        }
+                    }
+                    px = qx; py = qy;
+                }
             }
-            for (let r = 0; r < rows; r++) {
-                const yc = r + 0.5; const xs = [];
-                for (const [ax, ay, bx, by] of edges) if (yc >= ay && yc < by) xs.push(ax + (yc - ay) / (by - ay) * (bx - ax));
+            for (const [r, xs] of rowX) {
                 xs.sort((p, q) => p - q);
                 for (let k = 0; k + 1 < xs.length; k += 2) {
                     const c0 = Math.max(0, Math.ceil(xs[k] - 0.5)); const c1 = Math.min(cols - 1, Math.floor(xs[k + 1] - 0.5));
@@ -75,37 +86,71 @@
         return d;
     }
 
+    const AMBIGUOUS = 65535;
+
+    /** Pasada doble de chamfer propagando la ETIQUETA del origen mas cercano (coste lineal, sin importar cuantos grupos haya). */
+    function nearestLabels(owner, cols, rows, maxD) {
+        const INF = 1e9; const S = Math.SQRT2; const n = cols * rows;
+        const d = new Float32Array(n); const lab = new Uint16Array(n);
+        for (let i = 0; i < n; i++) { if (owner[i]) { d[i] = 0; lab[i] = owner[i]; } else d[i] = INF; }
+        const relax = (i, j, w) => { const v = d[j] + w; if (v < d[i]) { d[i] = v; lab[i] = lab[j]; } };
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+            const i = r * cols + c;
+            if (c > 0) relax(i, i - 1, 1);
+            if (r > 0) { relax(i, i - cols, 1); if (c > 0) relax(i, i - cols - 1, S); if (c < cols - 1) relax(i, i - cols + 1, S); }
+        }
+        for (let r = rows - 1; r >= 0; r--) for (let c = cols - 1; c >= 0; c--) {
+            const i = r * cols + c;
+            if (c < cols - 1) relax(i, i + 1, 1);
+            if (r < rows - 1) { relax(i, i + cols, 1); if (c < cols - 1) relax(i, i + cols + 1, S); if (c > 0) relax(i, i + cols - 1, S); }
+        }
+        for (let i = 0; i < n; i++) if (d[i] > maxD) { d[i] = INF; lab[i] = 0; }
+        return { d, lab };
+    }
+
     /**
      * groups: [{ key, polys }] (un grupo por pais/potencia; sus poligonos comparten color).
-     * Devuelve { grid, cls, owner } con cls: 0 = nada, 1..n = indice+1 del grupo al que se atribuye, 255 = no resuelta.
+     * opts.land: poligonos de tierra [[anillo,...],...] (opcional). Si se da, NADA se colorea fuera de ellos: la costa la
+     * ponen esos poligonos (de lejos, sin mapa de detalle), no el borde tosco del poligono de frontera.
+     * Devuelve { grid, cls, owner } con cls: 0 = nada, 1..n = indice+1 del grupo al que se atribuye, 65535 = no resuelta
+     * (solo con resolve:'clear').
      */
     function classify(groups, bbox, opts) {
-        const o = Object.assign({ distM: 40000, maxCells: 640, ratio: 2, marginM: 10000, resolve: 'nearest' }, opts || {});
+        const o = Object.assign({ distM: 40000, maxCells: 640, ratio: 2, marginM: 10000, resolve: 'nearest', land: null }, opts || {});
         const grid = makeGrid(bbox, o.distM, o.maxCells);
         const maxD = o.distM / grid.cellM; const marginCells = o.marginM / grid.cellM;
         const { cols, rows } = grid;
         const masks = groups.map((g) => rasterize(g.polys, grid));
         // Los huecos de un poligono (lagos, enclaves sin dibujar) NO son franja de costa: no se rellenan.
         const inside = new Uint8Array(cols * rows);
-        groups.forEach((g) => { const outer = rasterize(g.polys.map((p) => [p[0]]), grid); for (let i = 0; i < outer.length; i++) if (outer[i]) inside[i] = 1; });
+        groups.forEach((g) => { const holed = g.polys.filter((p) => p.length > 1); if (!holed.length) return; const outer = rasterize(holed.map((p) => [p[0]]), grid); for (let i = 0; i < outer.length; i++) if (outer[i]) inside[i] = 1; });
         masks.forEach((m) => { for (let i = 0; i < m.length; i++) if (m[i]) inside[i] = 1; });
-        const dists = masks.map((m) => distance(m, cols, rows, maxD));
-        const cls = new Uint8Array(cols * rows);
-        for (let i = 0; i < cls.length; i++) {
-            if (inside[i]) continue;
-            let d1 = Infinity; let d2 = Infinity; let who = 0;
-            for (let g = 0; g < dists.length; g++) {
-                const v = dists[g][i]; if (v > maxD) continue;
-                if (v < d1) { d2 = d1; d1 = v; who = g + 1; } else if (v < d2) d2 = v;
-            }
-            cls[i] = who === 0 ? 0 : (o.resolve === 'nearest' || d2 > o.ratio * d1 + marginCells ? who : 255);
-        }
         // owner: grupo (indice+1) que CONTIENE la celda (el ultimo dibujado gana; los huecos quedan en 0). Asi una sola capa
         // pinta todo el territorio, poligonos incluidos, sin costura entre el relleno y el borde del poligono.
-        const owner = new Uint8Array(cols * rows);
+        const owner = new Uint16Array(cols * rows);
         masks.forEach((m, g) => { for (let i = 0; i < m.length; i++) if (m[i]) owner[i] = g + 1; });
+        const cls = new Uint16Array(cols * rows);
+        if (o.resolve === 'nearest') {
+            const { d, lab } = nearestLabels(owner, cols, rows, maxD);
+            for (let i = 0; i < cls.length; i++) if (!inside[i] && d[i] <= maxD) cls[i] = lab[i];
+        } else {
+            const dists = masks.map((m) => distance(m, cols, rows, maxD));
+            for (let i = 0; i < cls.length; i++) {
+                if (inside[i]) continue;
+                let d1 = Infinity; let d2 = Infinity; let who = 0;
+                for (let g = 0; g < dists.length; g++) {
+                    const v = dists[g][i]; if (v > maxD) continue;
+                    if (v < d1) { d2 = d1; d1 = v; who = g + 1; } else if (v < d2) d2 = v;
+                }
+                cls[i] = who === 0 ? 0 : (d2 > o.ratio * d1 + marginCells ? who : AMBIGUOUS);
+            }
+        }
+        if (o.land) {
+            const land = rasterize(o.land, grid);
+            for (let i = 0; i < cls.length; i++) if (!land[i]) { cls[i] = 0; owner[i] = 0; }
+        }
         return { grid, cls, owner, maxD };
     }
 
-    return { classify, makeGrid, rasterize, distance, mercX, mercY };
+    return { classify, nearestLabels, AMBIGUOUS, makeGrid, rasterize, distance, mercX, mercY };
 });
