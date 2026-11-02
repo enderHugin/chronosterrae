@@ -19,7 +19,7 @@ function block(text, name) {           // contenido entre las llaves de `static 
 }
 const rows = (flat, n) => { if (flat.length % n) throw new Error('longitud inesperada ' + flat.length); const r = []; for (let i = 0; i < flat.length; i += n) r.push(flat.slice(i, i + n)); return r; };
 
-const files = { 'ltpequ.c': read('ltpequ.c'), 'ltpecl.c': read('ltpecl.c'), 'ltpb.c': read('ltpb.c'), 'obl06.c': read('obl06.c'), 'ltp.c': read('ltp.c') };
+const files = { 'era00.c': read('era00.c'), 'ltpequ.c': read('ltpequ.c'), 'ltpecl.c': read('ltpecl.c'), 'ltpb.c': read('ltpb.c'), 'obl06.c': read('obl06.c'), 'ltp.c': read('ltp.c') };
 const xypol = rows(nums(block(files['ltpequ.c'], 'xypol')), 4); const xyper = rows(nums(block(files['ltpequ.c'], 'xyper')), 5);
 const pqpol = rows(nums(block(files['ltpecl.c'], 'pqpol')), 4); const pqper = rows(nums(block(files['ltpecl.c'], 'pqper')), 5);
 const eps0 = Number((files['ltpecl.c'].match(/eps0\s*=\s*([-+\d.eE]+)\s*\*\s*ERFA_DAS2R/) || [])[1]);
@@ -29,11 +29,14 @@ const oblTxt = files['obl06.c'].slice(files['obl06.c'].indexOf('eps0 = (') + 'ep
 const obl06 = nums(oblTxt.replace(/\(/g, ' ').replace(/\)/g, ' ').replace(/\*/g, ' ').replace(/\+/g, ' '));
 const das2r = Number((read('erfam.h').match(/define ERFA_DAS2R \(([\d.eE+-]+)\)/) || [])[1]);
 
+const eraM = files['era00.c'].match(/f\s*\+\s*([\d.]+)\s*\+\s*([\d.]+)\s*\*\s*t/);
+const era = eraM ? { a: Number(eraM[1]), b: Number(eraM[2]) } : null;   // ERA = 2 pi (f + a + b Tu); f = parte fraccionaria de Tu
 const must = (c, m) => { if (!c) throw new Error('extraccion invalida: ' + m); };
 must(xypol.length === 2 && xyper.length === 14 && pqpol.length === 2 && pqper.length === 8, 'numero de filas');
 must(Number.isFinite(eps0) && Object.values(bias).every(Number.isFinite) && Number.isFinite(das2r), 'constantes');
 must(obl06.length === 6, 'obl06 tiene 6 coeficientes, hay ' + obl06.length);
-const tables = { xypol, xyper, pqpol, pqper, eps0_arcsec: eps0, bias_arcsec: bias, obl06_arcsec: obl06, das2r };
+must(era && Number.isFinite(era.a) && Number.isFinite(era.b), 'era00');
+const tables = { era, xypol, xyper, pqpol, pqper, eps0_arcsec: eps0, bias_arcsec: bias, obl06_arcsec: obl06, das2r };
 const doc = {
     generated_at: new Date().toISOString(),
     description: 'Precesion de largo plazo (modelo de 400 milenios): Vondrak, Capitaine y Wallace 2011, A&A 534, A22; corrigendum 2012, A&A 541, C1. Tablas extraidas del texto de ERFA.',

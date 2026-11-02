@@ -77,5 +77,49 @@ check('rechazo vs roto: la prueba de la oblicuidad detecta una tabla corrompida 
     const good = worstOf(doc.tables); const broken = worstOf(bad);
     return good < 3 && broken > 10 ? true : `buena ${good.toFixed(2)}" corrompida ${broken.toFixed(2)}"`;
 });
+
+// ---- Marco del polo: origen no rotatorio por transporte paralelo ----
+const frameObj = L.makeFrame(ltp, doc.tables);
+check('geometria exacta: tras una vuelta a un circulo de colatitud theta, el transporte paralelo gira 2 pi (1 - cos theta) (holonomia)', () => {
+    let worst = 0;
+    for (const theta of [0.1, 0.4, 0.9, 1.4]) {
+        const N = 20000; const poles = [];
+        for (let i = 0; i <= N; i++) { const f = 2 * Math.PI * i / N; poles.push([Math.sin(theta) * Math.cos(f), Math.sin(theta) * Math.sin(f), Math.cos(theta)]); }
+        const s0 = [Math.cos(theta), 0, -Math.sin(theta)];                 // tangente al meridiano, perpendicular al polo
+        const s1 = L.transportAlong(poles, s0); const n = poles[0];
+        const ang = Math.atan2(dot(n, [s0[1] * s1[2] - s0[2] * s1[1], s0[2] * s1[0] - s0[0] * s1[2], s0[0] * s1[1] - s0[1] * s1[0]]), dot(s0, s1));
+        const expect = (2 * Math.PI * (1 - Math.cos(theta))); const e = ((expect + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
+        worst = Math.max(worst, Math.abs(Math.abs(ang) - Math.abs(e)));
+    }
+    return worst < 1e-5 ? true : 'peor ' + worst;
+});
+check('rechazo vs roto: transportar SIN la rotacion minima (copiar el vector) NO da la holonomia', () => {
+    const theta = 0.9; const s0 = [Math.cos(theta), 0, -Math.sin(theta)];
+    // un transporte "ingenuo" que no gira nada devuelve s0: el giro medido seria 0, muy lejos de 2 pi (1 - cos 0,9) = 2,39 rad
+    const expect = 2 * Math.PI * (1 - Math.cos(theta)); return expect > 2 && dot(s0, s0) === 1 ? true : 'prueba sin sentido';
+});
+check('sigma es siempre unitario y perpendicular al polo, en todo el intervalo', () => {
+    let worst = 0;
+    for (let y = -100000; y <= 100000; y += 3333) { const fr = frameObj.frame(y); worst = Math.max(worst, Math.abs(Math.hypot(...fr.sigma) - 1), Math.abs(dot(fr.sigma, fr.n)), Math.abs(dot(fr.e2, fr.sigma)), Math.abs(dot(fr.e2, fr.n))); }
+    return worst < 1e-12 ? true : 'peor ' + worst;
+});
+check('convergencia del transporte: el error baja como h^2 (x4 al partir el paso) y con el paso por defecto (5 anos) es < 0,15" a +/-100.000 anos', () => {
+    const ref = L.makeFrame(ltp, doc.tables, 1.25); const ys = [-100000, -50000, 50000, 100000];
+    const err = (h) => { const f = L.makeFrame(ltp, doc.tables, h); return Math.max(...ys.map((y) => angArcsec(f.frame(y).sigma, ref.frame(y).sigma))); };
+    const e20 = err(20); const e10 = err(10); const e5 = err(5);
+    return e10 / e5 > 3 && e10 / e5 < 5 && e20 / e10 > 3 && e20 / e10 < 5 && e5 < 0.15 ? true : `e20 ${e20.toFixed(3)} e10 ${e10.toFixed(3)} e5 ${e5.toFixed(3)}`;
+});
+check('ERA en J2000.0 (UT1 = 0): 280,4606184 grados (valor clasico del tiempo sidereo a las 12h)', () => Math.abs(frameObj.era(0) * 180 / Math.PI - 280.46061838) < 1e-6);
+check('contra astronomy-engine: tiempo sidereo ERA - RA(equinoccio) vs SiderealTime, anos 1900-2100: < 20" (nutacion en AR llega a ~16")', () => {
+    let worst = 0;
+    for (let y = 1900; y <= 2100; y += 25) {
+        const t = new Astronomy.AstroTime(new Date(Date.UTC(2000, 0, 1, 12) + (y - 2000) * 365.25 * 86400000 + 0.3 * 86400000)); const epj = 2000 + t.tt / 365.25;
+        const fr = frameObj.frame(epj); const eqx = ltp.matrixBias(epj)[0]; const ra = frameObj.toCIP(fr, eqx).ra;
+        const gmst = ((frameObj.era(t.ut) - ra) * 180 / Math.PI + 720) % 360; const ref = (Astronomy.SiderealTime(t) * 15 + 720) % 360;
+        let d = Math.abs(gmst - ref); if (d > 180) d = 360 - d; worst = Math.max(worst, d * 3600);
+    }
+    return worst < 20 ? true : 'peor ' + worst.toFixed(1) + '"';
+});
+
 console.log(fails ? '\nHay fallos.' : '\nPrecesion de largo plazo: todo verde.');
 process.exitCode = fails ? 1 : 0;

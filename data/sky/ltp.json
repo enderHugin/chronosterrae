@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-02T13:56:22.214Z",
+ "generated_at": "2026-11-02T14:00:33.816Z",
  "description": "Precesion de largo plazo (modelo de 400 milenios): Vondrak, Capitaine y Wallace 2011, A&A 534, A22; corrigendum 2012, A&A 541, C1. Tablas extraidas del texto de ERFA.",
  "valid_epoch_years": [
   -200000,
@@ -11,6 +11,7 @@
   "commit": "1a8044cde5b7763295d472a6443387239127c6c8",
   "license": "BSD-3-Clause (derivada, con permiso, de SOFA del IAU; ver NOTICE)",
   "files": {
+   "era00.c": "91c092c322d070305ba02873005bcb03110d7c26674fbdc7105477c50543ffb5",
    "ltpequ.c": "8b6db221ef3203e1ba9e4af96b58caeadd2e1978b8b7c6be8c49aed52aa4570f",
    "ltpecl.c": "13e4936ac97abe110b75cbdbbcba04c37cb6bcb59952c0f727ccabab1d55e9cf",
    "ltpb.c": "8fdf9e7d8422cd5942a04ad0b62a2a1a21da225fe15431eb4adc4bf908accfad",
@@ -19,6 +20,10 @@
   }
  },
  "tables": {
+  "era": {
+   "a": 0.779057273264,
+   "b": 0.00273781191135448
+  },
   "xypol": [
    [
     5453.282155,
@@ -221,5 +226,5 @@
   ],
   "das2r": 0.00000484813681109536
  },
- "tables_sha256": "2ba9282e7fce030adae21ad8e07b70811baece551b9c7797a0386d29f33d723a"
+ "tables_sha256": "236ac941f10a0fbabe3401f23e667a00af4bea26e392271546218b5db0c0dc22"
 }

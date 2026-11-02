@@ -58,8 +58,71 @@
         return { equatorPole, eclipticPole, matrix, matrixBias, obliquityIAU2006 };
     }
 
+
+    /* ------------------------------------------------------------------------------------------------
+     * Marco del polo: origen NO ROTATORIO (CIO) por transporte paralelo.
+     * La serie estandar del localizador s solo vale unos siglos. Pero el origen no rotatorio se define
+     * cinematicamente: es la direccion del ecuador que NO gira sobre el polo (CIP) cuando este se mueve, es decir,
+     * el TRANSPORTE PARALELO de una direccion a lo largo de la trayectoria del polo sobre la esfera. Se integra por
+     * pasos de rotacion minima (Rodrigues), desde J2000.0. Con el polo (n) y este origen (sigma) la ascension recta se
+     * mide desde sigma y el angulo horario es H = ERA + lon - RA, sin precesion ni equinoccio de por medio.
+     * ---------------------------------------------------------------------------------------------- */
+    const sub = (a, p) => [a[0] - p[0], a[1] - p[1], a[2] - p[2]];
+    const scale = (a, k) => [a[0] * k, a[1] * k, a[2] * k];
+    const dotv = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+
+    /** Un paso de transporte paralelo: gira sigma (perpendicular a n1) por la rotacion minima n1 -> n2. */
+    function transportStep(sigma, n1, n2) {
+        const ax = cross(n1, n2); const sinP = Math.hypot(ax[0], ax[1], ax[2]); const cosP = dotv(n1, n2);
+        let out;
+        if (sinP < 1e-300) out = sigma;
+        else {
+            const k = scale(ax, 1 / sinP); const kxs = cross(k, sigma); const kd = dotv(k, sigma);
+            out = [sigma[0] * cosP + kxs[0] * sinP + k[0] * kd * (1 - cosP), sigma[1] * cosP + kxs[1] * sinP + k[1] * kd * (1 - cosP), sigma[2] * cosP + kxs[2] * sinP + k[2] * kd * (1 - cosP)];
+        }
+        return unit(sub(out, scale(n2, dotv(out, n2))));     // re-proyecta: perpendicular a n2 y de norma 1
+    }
+    /** Transporta sigma0 a lo largo de una lista de polos [n0, n1, ...]; devuelve el sigma final. */
+    function transportAlong(poles, sigma0) { let s = sigma0; for (let i = 1; i < poles.length; i++) s = transportStep(s, poles[i - 1], poles[i]); return s; }
+
+    /**
+     * ltp: el resultado de make(tables). Devuelve { pole, sigma, frame, era }.
+     * stepYears: paso de integracion (anos). Los terminos periodicos mas rapidos son de ~15.800 anos: 
+     */
+    function makeFrame(ltp, tables, stepYears) {
+        const h = stepYears || 5;   // error ~ h^2: 0,09" a +/-100.000 anos (medido contra h = 1,25)
+        const pole = (epj) => unit(ltp.matrixBias(epj)[2]);       // CIP en el GCRS
+        const n0 = pole(2000);
+        const sigma0 = unit(sub([1, 0, 0], scale(n0, n0[0])));    // CIO en J2000.0: eje x del GCRS proyectado al ecuador (s = 94 microsegundos de arco, despreciable)
+        const nodes = { pos: [sigma0], neg: [sigma0] };           // sigma en 2000 + k h (pos) y 2000 - k h (neg)
+        const polesAt = { pos: [n0], neg: [n0] };
+        function grow(dir, k) {
+            const list = nodes[dir]; const ps = polesAt[dir]; const sign = dir === 'pos' ? 1 : -1;
+            while (list.length <= k) { const i = list.length; const n = pole(2000 + sign * i * h); list.push(transportStep(list[i - 1], ps[i - 1], n)); ps.push(n); }
+        }
+        function sigma(epj) {
+            const d = epj - 2000; const dir = d >= 0 ? 'pos' : 'neg'; const k = Math.floor(Math.abs(d) / h);
+            grow(dir, k + 1);
+            const base = nodes[dir][k]; const nb = polesAt[dir][k];
+            return transportStep(base, nb, pole(epj));            // ultimo tramo parcial, hasta la fecha exacta
+        }
+        /** Ejes del marco celeste del polo en la fecha epj (anos julianos TT): n, sigma, e2 = n x sigma. */
+        function frame(epj) { const n = pole(epj); const sg = sigma(epj); return { n, sigma: sg, e2: cross(n, sg) }; }
+        /** Angulo de rotacion terrestre (rad) para UT1 = dias desde J2000.0. ERA = 2 pi (f + a + b Tu), f = fraccion de Tu (ERFA era00). */
+        function era(ut1Days) {
+            const f = ut1Days - Math.trunc(ut1Days); const turns = f + tables.era.a + tables.era.b * ut1Days;
+            let v = (turns % 1) * D2PI; if (v < 0) v += D2PI; return v;
+        }
+        /** Ascension recta (desde el CIO, rad en [0,2pi)) y declinacion (rad) de un vector del GCRS. */
+        function toCIP(fr, v) {
+            const x = dotv(v, fr.sigma); const y = dotv(v, fr.e2); const z = dotv(v, fr.n); let ra = Math.atan2(y, x); if (ra < 0) ra += D2PI;
+            return { ra, dec: Math.asin(Math.max(-1, Math.min(1, z / Math.hypot(x, y, z)))) };
+        }
+        return { pole, sigma, frame, era, toCIP };
+    }
+
     /** Aplica la matriz m (filas = ejes) al vector v: v' = m v. */
     const apply = (m, v) => [m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2], m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2], m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2]];
 
-    return { make, apply, VALID_YEARS: 200000 };
+    return { make, makeFrame, transportStep, transportAlong, apply, VALID_YEARS: 200000 };
 });
