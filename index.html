@@ -93,6 +93,10 @@
         #time-sub { font-size: 12px; color: var(--muted); }
         #time-input { width: 130px; padding: 6px 9px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); font: 600 13px var(--font-ui); }
         #slider { width: 100%; margin: 8px 0 2px; accent-color: var(--accent); }
+        #step-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+        #key-step { padding: 2px 6px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); font: 600 12px var(--font-ui); }
+        #key-step option { color: #222; }
+        #step-hint.warn { color: var(--warn); }
         #presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
         #presets .btn { padding: 4px 9px; font-size: 12px; }
         #credits { font-size: 10.5px; color: var(--muted); line-height: 1.35; margin-top: 4px; }
@@ -276,7 +280,8 @@
             <input id="time-input" type="text" data-i18n-placeholder="timePlaceholder" aria-label="Go to a date" autocomplete="off">
             <a class="kofi" href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" rel="noopener" data-i18n="donate"></a>
         </div>
-        <input id="slider" type="range" min="0" max="10000" value="0" step="1" aria-label="Time" dir="ltr">
+        <input id="slider" type="range" min="0" max="10000" value="0" step="1" aria-label="Time" dir="ltr" aria-describedby="step-row">
+        <div id="step-row"><label for="key-step" id="step-label"></label><select id="key-step"></select><span id="step-hint"></span></div>
         <div id="presets"></div>
         <div id="credits"></div>
     </div>
@@ -293,6 +298,7 @@
 <script src="./map/borders-gap.js"></script>
 <script src="./map/borders-inner.js"></script>
 <script src="./sky/sky-view.js"></script>
+<script src="./sky/timestep.js"></script>
 <script src="./sky/solar.js"></script>
 <script src="./solar/solar-view.js"></script>
 <script>
@@ -339,6 +345,7 @@ const parsePrefs = (raw) => {
     if (Array.isArray(p.c) && p.c.length === 2 && p.c.every((n) => typeof n === 'number' && Number.isFinite(n)) && Math.abs(p.c[0]) <= 180 && Math.abs(p.c[1]) <= 85) out.c = [p.c[0], p.c[1]];
     if (typeof p.z === 'number' && p.z >= 0 && p.z <= 22) out.z = p.z;
     if (p.sp === 0 || p.sp === 1) out.sp = p.sp === 1;
+    if (typeof p.ks === 'string' && /^[0-9A-Za-z]{1,5}$/.test(p.ks)) out.ks = p.ks;   // paso de las flechas (id; se valida al usarlo)
     if (Number.isInteger(p.vf) && p.vf >= 0 && p.vf <= 127) out.vf = p.vf;   // filtros de verificacion de sucesos (mascara de bits)
     if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
     return out;
@@ -352,7 +359,7 @@ const readPrefs = () => {
 const prefs = readPrefs();
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), jd: prefs.jd, vf: prefs.vf };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -415,6 +422,7 @@ const i18n = {
             }
         },
         clock: { now: 'Ahora', play: 'Reproducir', pause: 'Pausa', rate: 'Velocidad', solar: 'hora solar local {t} (lon. {lon}°)', device: 'hora de tu equipo {t}', julian: 'juliano', back: 'hacia atrás' },
+        step: { label: 'Cada pulsación de ← → mueve:', hint: 'con el deslizador seleccionado · Mayús = ×10', minYear: 'En esta época el instante tiene resolución de 1 año: el paso se redondea a 1 año.', clipped: 'Límite alcanzado.' },
         solar: {
             button: 'Planetas', tip: 'El sistema solar para esta fecha: elige el cuerpo central (Sol, planetas, Tierra, Luna) y acércate desde todo el sistema hasta el propio cuerpo.',
             title: 'Sistema solar', system: 'Todo el sistema', back: '← Volver al mapa de la Tierra', zoom: 'Distancia al cuerpo',
@@ -513,6 +521,7 @@ const i18n = {
             }
         },
         clock: { now: 'Now', play: 'Play', pause: 'Pause', rate: 'Speed', solar: 'local solar time {t} (lon. {lon}°)', device: 'your device time {t}', julian: 'Julian', back: 'backwards' },
+        step: { label: 'Each press of ← → moves:', hint: 'with the slider focused · Shift = ×10', minYear: 'In this era time has 1-year resolution: the step is rounded up to 1 year.', clipped: 'Limit reached.' },
         solar: {
             button: 'Planets', tip: 'The solar system for this date: choose the central body (Sun, planets, Earth, Moon) and zoom from the whole system down to the body itself.',
             title: 'Solar system', system: 'Whole system', back: '← Back to the Earth map', zoom: 'Distance to the body',
@@ -1532,6 +1541,7 @@ function applyStrings() {
     skyTexts();
     $('btn-space').title = t('space.tip');
     $('btn-solar').title = t('solar.tip');
+    keyStepTexts();
     solarView.texts();
     syncClockUI();
     toastsTick();
@@ -1543,6 +1553,35 @@ function applyStrings() {
 /* Eventos                                                            */
 /* ------------------------------------------------------------------ */
 $('slider').addEventListener('input', (e) => setTime(sliderToYbp(parseInt(e.target.value, 10)), { fromSlider: true }));
+
+/* Teclas de direccion con el deslizador en foco: cada pulsacion mueve el tiempo el paso que elija el usuario (1 minuto ... 100 Ma). */
+let keyStepId = ChronosTimeStep.byId(prefs.ks) ? prefs.ks : ChronosTimeStep.DEFAULT_ID;
+function keyStepTexts() {
+    $('step-label').textContent = t('step.label');
+    const sel = $('key-step'); sel.innerHTML = '';
+    ChronosTimeStep.STEPS.forEach((st) => sel.appendChild(el('option', { value: st.id, text: st[lang] })));
+    sel.value = keyStepId;
+    $('step-hint').textContent = t('step.hint'); $('step-hint').classList.remove('warn');
+}
+$('key-step').addEventListener('change', (e) => { keyStepId = e.target.value; savePrefs({ ks: keyStepId }); $('step-hint').textContent = t('step.hint'); $('step-hint').classList.remove('warn'); });
+const KEY_DIR = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 1, PageDown: -1 };
+function keyStepTime(dir, count) {
+    const ctx = {
+        jd: clockUsable() ? clock.jd : NaN, ybp: state.ybp, minYear: skyRange().minYear, nowYear: CFG.nowYear, present: CFG.present,
+        minJD: clockMinJD(), maxJD: realNowJD(), minYbp: 1 - OFFSET, maxYbp: CFG.maxYbp
+    };
+    const r = ChronosTimeStep.move(ChronosSky, ctx, keyStepId, dir * count);
+    if (r.jd !== undefined) clockSet(r.jd, { user: true }); else setTime(r.ybp, { immediate: false });
+    const hint = $('step-hint');
+    hint.textContent = r.note === 'minYear' ? t('step.minYear') : r.clipped ? t('step.clipped') : t('step.hint');
+    hint.classList.toggle('warn', Boolean(r.note || r.clipped));
+}
+$('slider').addEventListener('keydown', (e) => {
+    const dir = KEY_DIR[e.key];
+    if (!dir || e.ctrlKey || e.altKey || e.metaKey) return;      // Inicio/Fin y las combinaciones del navegador siguen como siempre
+    e.preventDefault();
+    keyStepTime(dir, e.shiftKey || e.key.startsWith('Page') ? 10 : 1);
+});
 $('time-input').addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     const ybp = parseTime(e.target.value);

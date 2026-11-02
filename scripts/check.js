@@ -194,6 +194,13 @@ check('cookie de preferencias: ignora basura sin romperse', () => {
     return true;
 });
 
+check('cookie de preferencias: el paso de las flechas (ks) acepta un id corto y rechaza lo demas, sin romperse', () => {
+    const { parsePrefs } = prefsFns();
+    const ok = ['1h', '100M', '1mo'].every((v) => parsePrefs(JSON.stringify({ ks: v })).ks === v);
+    const bad = ['', '1h; drop', '<b>', '123456', 7, null, [], {}, 'a b'].every((v) => !('ks' in parsePrefs(JSON.stringify({ ks: v }))));
+    return ok && bad;
+});
+
 check('cookie de preferencias: un campo malo no invalida los buenos', () => {
     const { parsePrefs } = prefsFns();
     const r = parsePrefs(JSON.stringify({ lang: 'es', ybp: 'x', z: 2 }));

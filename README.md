@@ -49,6 +49,11 @@ sale y cuánto se puede fiar de él.
   del catálogo HYG (CC BY-SA 4.0, con movimiento propio) y los planetas, el Sol y la Luna en su
   posición real del instante elegido, más el terminador día/noche sobre el mapa. La Luna se oculta
   tras el globo, pero a distancias extremas puede quedar delante y entonces no se dibuja encima.
+- **Paso de las flechas**: con el deslizador de tiempo seleccionado, ← → (y ↑ ↓) mueven el tiempo el paso que elijas en el
+  selector de debajo, de 1 minuto a 100 millones de años (minutos, horas, días, semanas, meses, años, siglos, milenios…);
+  Mayús o Re Pág/Av Pág = ×10; Inicio y Fin siguen como siempre. Los pasos de calendario conservan mes, día y hora (con el día
+  recortado si el mes no lo tiene y respetando el salto de 1582); en el tiempo profundo la resolución es de 1 año y la web avisa.
+  El paso elegido se recuerda en la cookie de preferencias (`sky/timestep.js`).
 - **Reloj** con horas, minutos y segundos (tiempo real, pausa, acelerado, atrás), enlazado al deslizador.
 - **Sucesos con hora conocida y avisos**: nacimientos, muertes, composiciones, obras, descubrimientos…
   El alcance decide qué se ve (ventana temporal ±6 meses, umbral de importancia según el zoom, un
