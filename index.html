@@ -834,6 +834,7 @@ const DETAIL = {
     built: false, building: null, error: null, failedAt: null, backoff: 15000, fadeTimer: null
 };
 const DETAIL_PHYSICAL_LAYERS = new Set(['water', 'waterway', 'landcover']);
+const DETAIL_NOT_MODERN_WATER = ['!', ['in', ['get', 'class'], ['literal', ['dock', 'swimming_pool']]]];
 
 function detailMode() {
     if (state.ybp > DETAIL.physicalMaxYbp) return null;
@@ -870,7 +871,7 @@ function detailBuild(style) {
         const orig = {};
         if (role === 'fill') orig['fill-opacity'] = map.getPaintProperty(clone.id, 'fill-opacity');
         if (role === 'symbol') { orig['text-color'] = map.getPaintProperty(clone.id, 'text-color'); orig['text-halo-color'] = map.getPaintProperty(clone.id, 'text-halo-color'); }
-        DETAIL.layers.push({ id: clone.id, role, physical, orig });
+        DETAIL.layers.push({ id: clone.id, role, physical, orig, filter: l.filter || null });
     });
     detailTheme();
 }
@@ -922,7 +923,11 @@ function detailFade() {
 // serian dos mapas de fronteras superpuestos (y el actual no es el de la epoca).
 function detailVisibility() {
     const mode = DETAIL.shown;
-    DETAIL.layers.forEach((l) => map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !(l.role === 'boundary' && state.borders) ? 'visible' : 'none'));
+    DETAIL.layers.forEach((l) => {
+        map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !(l.role === 'boundary' && state.borders) ? 'visible' : 'none');
+        // Antes de hoy no se dibujan dársenas ni piscinas: obras modernas (clases `dock` y `swimming_pool` del esquema de OpenFreeMap, comprobadas con la sonda).
+        if (l.role === 'water') map.setFilter(l.id, mode === 'physical' ? (l.filter ? ['all', l.filter, DETAIL_NOT_MODERN_WATER] : DETAIL_NOT_MODERN_WATER) : (l.filter || null));
+    });
 }
 
 /* ---- franja entre frontera y costa ---- */
