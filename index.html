@@ -101,6 +101,22 @@
 
         [hidden] { display: none !important; }
         #space { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+        /* Sistema solar: pantalla propia sobre el mapa (el mapa sigue debajo, oculto, y vuelve al salir) */
+        #solar { position: absolute; inset: 0; z-index: 6; background: #03050b; }
+        #solar[hidden] { display: none; }
+        #solar-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+        #solar-canvas:active { cursor: grabbing; }
+        #solar-chips { position: absolute; top: 56px; left: 14px; z-index: 7; display: flex; gap: 5px; flex-wrap: wrap; max-width: calc(100% - 28px); }
+        #solar-chips .btn { padding: 4px 9px; font-size: 12px; }
+        #solar-chips .btn.on { background: var(--accent); color: var(--bg); }
+        #solar-info { position: absolute; top: 100px; left: 14px; z-index: 7; width: 290px; max-width: calc(100% - 28px); padding: 10px 14px 12px; box-sizing: border-box; }
+        #solar-info h2 { margin: 0 0 4px; font: 700 18px var(--font); color: var(--accent); }
+        #solar-info .solar-lines div { font-size: 12px; line-height: 1.45; margin-top: 3px; }
+        #solar-zoom { width: 100%; margin: 10px 0 8px; accent-color: var(--accent); }
+        #solar-back { padding: 4px 10px; font-size: 12px; }
+        #solar-note { position: absolute; left: 14px; bottom: 168px; z-index: 7; max-width: 360px; padding: 8px 12px; font-size: 11.5px; line-height: 1.4; border-left: 4px solid #1565c0; }
+        body.solar-on #map, body.solar-on #space, body.solar-on #space-note, body.solar-on #status, body.solar-on #info { visibility: hidden; pointer-events: none; }
+        @media (max-width: 760px) { #solar-info { top: 130px; width: 250px; } #solar-note { display: none; } }
         #space-note { position: absolute; top: 56px; left: 50%; transform: translateX(-50%); z-index: 5; font-size: 11.5px; color: #9aa6c0; pointer-events: none; text-align: center; max-width: 80%; }
         .btn[aria-pressed="false"] { opacity: 0.6; }
         #clock { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
@@ -169,6 +185,7 @@
     <canvas id="space" aria-hidden="true"></canvas>
     <div id="map"></div>
     <div id="space-note" role="status"></div>
+    <div id="solar" hidden></div>
 
     <div id="top-left">
         <input id="search" type="search" data-i18n-placeholder="searchPlaceholder" aria-label="Search" autocomplete="off">
@@ -177,6 +194,7 @@
     <div id="top-right">
         <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
         <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
+        <button class="btn" id="btn-solar" type="button" aria-pressed="false" data-i18n="solar.button"></button>
         <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
         <button class="btn" id="btn-lang" type="button">EN / ES</button>
         <button class="btn" id="btn-theme" type="button">Dark</button>
@@ -275,6 +293,8 @@
 <script src="./map/borders-gap.js"></script>
 <script src="./map/borders-inner.js"></script>
 <script src="./sky/sky-view.js"></script>
+<script src="./sky/solar.js"></script>
+<script src="./solar/solar-view.js"></script>
 <script>
 'use strict';
 
@@ -395,6 +415,17 @@ const i18n = {
             }
         },
         clock: { now: 'Ahora', play: 'Reproducir', pause: 'Pausa', rate: 'Velocidad', solar: 'hora solar local {t} (lon. {lon}°)', device: 'hora de tu equipo {t}', julian: 'juliano', back: 'hacia atrás' },
+        solar: {
+            button: 'Planetas', tip: 'El sistema solar para esta fecha: elige el cuerpo central (Sol, planetas, Tierra, Luna) y acércate desde todo el sistema hasta el propio cuerpo.',
+            title: 'Sistema solar', system: 'Todo el sistema', back: '← Volver al mapa de la Tierra', zoom: 'Distancia al cuerpo',
+            outOfRange: 'Sin posiciones calculadas en esta época: el sistema solar se calcula entre {a} y {b}. Antes solo hay estrellas.',
+            dist: 'Distancia a {name}: {d}', sunDist: 'Distancia al Sol: {au} AU · la luz tarda {light}', radius: 'Radio: {r} km ({src})',
+            dots: 'Un punto con aro no está a escala: el cuerpo es más pequeño que un punto a esta distancia. Los discos sí.',
+            acc: 'Error medido de la posición de su centro (JPL Horizons/DE441) en esta época ({band}): hasta {km} km.',
+            accBary: 'Horizons da el baricentro de su sistema; el error incluye esa diferencia.',
+            accSun: 'El Sol es el origen de este marco: no tiene error de posición propio.', accNone: 'Sin error medido para esta época.', accFail: 'No se pudo cargar el error medido de las posiciones.',
+            note: 'Cálculo (efemérides), no observación: posiciones y fases reales para la fecha del reloj; trayectorias reales de una revolución. Colores ilustrativos: sin texturas, ejes de rotación, anillos ni lunas de otros planetas.'
+        },
         space: {
             button: 'Estrellas', tip: 'Estrellas, Sol, Luna y planetas tras el globo, en su posición en ese instante, y la noche sobre la Tierra. Es un cálculo; los símbolos no están a escala.',
             outOfRange: 'Sin estrellas ni noche en esta época: el cielo se calcula entre {a} y {b}.'
@@ -482,6 +513,17 @@ const i18n = {
             }
         },
         clock: { now: 'Now', play: 'Play', pause: 'Pause', rate: 'Speed', solar: 'local solar time {t} (lon. {lon}°)', device: 'your device time {t}', julian: 'Julian', back: 'backwards' },
+        solar: {
+            button: 'Planets', tip: 'The solar system for this date: choose the central body (Sun, planets, Earth, Moon) and zoom from the whole system down to the body itself.',
+            title: 'Solar system', system: 'Whole system', back: '← Back to the Earth map', zoom: 'Distance to the body',
+            outOfRange: 'No computed positions in this era: the solar system is computed between {a} and {b}. Before that there are only stars.',
+            dist: 'Distance to {name}: {d}', sunDist: 'Distance to the Sun: {au} AU · light takes {light}', radius: 'Radius: {r} km ({src})',
+            dots: 'A dot with a ring is not to scale: the body is smaller than a dot at this distance. Discs are.',
+            acc: 'Measured error of the position of its centre (JPL Horizons/DE441) in this era ({band}): up to {km} km.',
+            accBary: 'Horizons gives the barycentre of its system; the error includes that difference.',
+            accSun: 'The Sun is the origin of this frame: it has no position error of its own.', accNone: 'No measured error for this era.', accFail: 'Could not load the measured position error.',
+            note: 'A calculation (ephemerides), not an observation: real positions and phases for the clock date; real trajectories of one revolution. Illustrative colours: no textures, rotation axes, rings or other planets\' moons.'
+        },
         space: {
             button: 'Stars', tip: 'Stars, Sun, Moon and planets behind the globe, where they are at that instant, and the night over the Earth. A calculation; symbols are not to scale.',
             outOfRange: 'No stars or night in this era: the sky is computed between {a} and {b}.'
@@ -1489,6 +1531,8 @@ function applyStrings() {
     renderCredits();
     skyTexts();
     $('btn-space').title = t('space.tip');
+    $('btn-solar').title = t('solar.tip');
+    solarView.texts();
     syncClockUI();
     toastsTick();
     eventsRefresh();
@@ -1749,6 +1793,36 @@ function setSkyOpen(open) {
     updateSky();
 }
 
+/* ------------------------------------------------------------------ */
+/* Sistema solar (pantalla propia: ver sky/solar.js y solar/solar-view.js)  */
+/* ------------------------------------------------------------------ */
+let solarAccuracy = null;
+const solarView = ChronosSolarView.create({
+    root: $('solar'),
+    getJD: () => (clockUsable() ? clock.jd : NaN),
+    getCatalog: () => sky.catalog || null,
+    starColor: (bv) => ChronosSkyView.starColor(bv),
+    t, fmt, lang: () => lang, nf,
+    loadAccuracy: () => {
+        if (!solarAccuracy) solarAccuracy = fetch('./data/sky/validation-helio.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
+        return solarAccuracy;
+    },
+    onExit: () => setSolarOpen(false)
+});
+function setSolarOpen(open) {
+    document.body.classList.toggle('solar-on', open);
+    $('btn-solar').setAttribute('aria-pressed', String(open));
+    if (open) {
+        if (sky.open) setSkyOpen(false);
+        if (events.open) setEventsOpen(false);
+        if (sky.catalogState === 'idle') skyLoadCatalog();
+        solarView.open();
+    } else {
+        solarView.close();
+        map.resize(); scheduleSpace();
+    }
+}
+$('btn-solar').addEventListener('click', () => setSolarOpen(!document.body.classList.contains('solar-on')));
 $('btn-sky').addEventListener('click', () => setSkyOpen(!sky.open));
 $('sky-close').addEventListener('click', () => setSkyOpen(false));
 // Los campos del panel son la hora solar media local en el lugar elegido; el reloj guarda el instante en UT.
@@ -1892,6 +1966,7 @@ function clockChanged({ tick = false } = {}) {
     clock.lastSec = sec;
     if (sky.open && (!tick || secChanged || clock.rate >= 3600)) { skyFieldsFromClock(); scheduleSky(); }
     scheduleSpace();
+    solarView.invalidate();
     updateNight(false);
     eventsEnsureData();
     eventsRefresh();
