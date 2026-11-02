@@ -1,0 +1,86 @@
+name: Sistema solar (validación heliocéntrica contra Horizons)
+
+# Compara el calculo del cielo con JPL Horizons en 16 epocas (-2000 a 3000) y guarda los errores
+# medidos en la rama `helio-validation`. Con mode=publish deja el informe en data/sky/validation-helio.json,
+# que la web muestra como precision comprobada.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'run | publish'
+        default: 'run'
+  push:
+    branches: [main]
+    paths:
+      - 'sky/solar.js'
+      - 'scripts/validate-helio.js'
+      - '.github/workflows/helio-validate.yml'
+  schedule:
+    - cron: '41 4 1 * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: helio-validate
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      MODE: ${{ github.event.inputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Contrastar con Horizons
+        run: node scripts/validate-helio.js > /tmp/helio.json 2> /tmp/helio.log
+
+      - name: Resumen en el log
+        if: always()
+        run: |
+          cat /tmp/helio.log || true
+          python3 - <<'PY' || true
+          import json
+          d = json.load(open('/tmp/helio.json'))
+          print(json.dumps(d.get('summary'), indent=1))
+          print('errores:', d.get('errors'))
+          PY
+
+      - name: Publicar en main (data/sky/validation-helio.json)
+        if: env.MODE == 'publish'
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          mkdir -p data/sky
+          cp /tmp/helio.json data/sky/validation-helio.json
+          git add data/sky/validation-helio.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios."
+          else
+            git commit -m "Datos: validacion heliocentrica contra JPL Horizons"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Informe en la rama helio-validation
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/helio.json || echo '{"error":"sin salida"}' > /tmp/helio.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan helio-validation
+          cp /tmp/helio.json helio.json
+          cp /tmp/helio.log helio.log || true
+          git add helio.json helio.log
+          git commit -m "Validacion heliocentrica $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin helio-validation
