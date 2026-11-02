@@ -916,7 +916,9 @@ function gapRefresh() {
     clearTimeout(GAP.timer);
     GAP.timer = setTimeout(gapDraw, 220);
 }
-function gapHide() { if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visibility', 'none'); GAP.shown = false; renderStatus(); } }
+// Mientras la imagen pinta todo el territorio, el relleno vectorial queda casi invisible (0,01: con 0 MapLibre deja de detectar clics).
+function gapFillPaint() { if (map.getLayer('borders-fill')) map.setPaintProperty('borders-fill', 'fill-opacity', GAP.shown ? 0.01 : ['get', '_o']); }
+function gapHide() { if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visibility', 'none'); GAP.shown = false; gapFillPaint(); renderStatus(); } }
 function gapDraw() {
     if (!map.getLayer('gap-raster') || !window.ChronosGap) return;
     const b = state.borders;
@@ -934,7 +936,7 @@ function gapDraw() {
             if (!poly._bb) { let a = 180, c = 90, d = -180, e = -90; poly[0].forEach(([x, y]) => { a = Math.min(a, x); d = Math.max(d, x); c = Math.min(c, y); e = Math.max(e, y); }); poly._bb = [a, c, d, e]; }
             const bb = poly._bb;
             if (bb[2] < view[0] - padDeg || bb[0] > view[2] + padDeg || bb[3] < view[1] - padDeg || bb[1] > view[3] + padDeg) continue;
-            if (!groups.has(key)) groups.set(key, { key, css: f.properties._c, polys: [] });
+            if (!groups.has(key)) groups.set(key, { key, css: f.properties._c, alpha: Math.round(255 * (f.properties._o == null ? 0.5 : f.properties._o)), polys: [] });
             groups.get(key).polys.push(poly);
         }
     }
@@ -947,14 +949,15 @@ function gapDraw() {
     const rgb = list.map((g) => gapColor(g.css || '#8a8a8a'));
     let filled = 0;
     for (let i = 0; i < res.cls.length; i++) {
-        const c = res.cls[i]; if (!c) continue;
-        const o = i * 4;
-        const k = rgb[c - 1]; img.data[o] = k[0]; img.data[o + 1] = k[1]; img.data[o + 2] = k[2]; img.data[o + 3] = 128; filled++;   // 0,5: igual que el relleno de los poligonos
+        const c = res.owner[i] || res.cls[i]; if (!c) continue;   // dentro de un poligono: el suyo; fuera: el mas cercano
+        const o = i * 4; const k = rgb[c - 1];
+        img.data[o] = k[0]; img.data[o + 1] = k[1]; img.data[o + 2] = k[2]; img.data[o + 3] = list[c - 1].alpha; filled++;
     }
     cx.putImageData(img, 0, 0);
     map.getSource('gap').updateImage({ url: cv.toDataURL('image/png'), coordinates: res.grid.corners });
     const was = GAP.shown; GAP.shown = filled > 0;
     map.setLayoutProperty('gap-raster', 'visibility', GAP.shown ? 'visible' : 'none');
+    gapFillPaint();
     if (was !== GAP.shown) renderStatus();
 }
 map.on('moveend', gapRefresh);

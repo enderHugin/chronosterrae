@@ -77,7 +77,7 @@
 
     /**
      * groups: [{ key, polys }] (un grupo por pais/potencia; sus poligonos comparten color).
-     * Devuelve { grid, cls } con cls: 0 = nada, 1..n = indice+1 del grupo al que se atribuye, 255 = no resuelta.
+     * Devuelve { grid, cls, owner } con cls: 0 = nada, 1..n = indice+1 del grupo al que se atribuye, 255 = no resuelta.
      */
     function classify(groups, bbox, opts) {
         const o = Object.assign({ distM: 40000, maxCells: 640, ratio: 2, marginM: 10000, resolve: 'nearest' }, opts || {});
@@ -100,7 +100,11 @@
             }
             cls[i] = who === 0 ? 0 : (o.resolve === 'nearest' || d2 > o.ratio * d1 + marginCells ? who : 255);
         }
-        return { grid, cls, maxD };
+        // owner: grupo (indice+1) que CONTIENE la celda (el ultimo dibujado gana; los huecos quedan en 0). Asi una sola capa
+        // pinta todo el territorio, poligonos incluidos, sin costura entre el relleno y el borde del poligono.
+        const owner = new Uint8Array(cols * rows);
+        masks.forEach((m, g) => { for (let i = 0; i < m.length; i++) if (m[i]) owner[i] = g + 1; });
+        return { grid, cls, owner, maxD };
     }
 
     return { classify, makeGrid, rasterize, distance, mercX, mercY };

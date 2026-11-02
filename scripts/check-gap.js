@@ -35,6 +35,12 @@ check('nearest: la franja de un solo pais llega hasta el tope de distancia, no m
     const res = G.classify([{ key: 'A', polys: [sq(0, 0, 0.5)] }], bbox, { distM: 100000 });
     return at(res, 0.5 + 0.7, 0.25) === 1 /* ~78 km */ && at(res, 0.5 + 1.2, 0.25) === 0 /* ~133 km */;
 });
+check('owner: la celda dentro de un poligono dice cual lo contiene; fuera y en huecos, 0', () => {
+    const donut = [[[0, 0], [2, 0], [2, 2], [0, 2], [0, 0]], [[0.8, 0.8], [1.2, 0.8], [1.2, 1.2], [0.8, 1.2], [0.8, 0.8]]];
+    const res = G.classify([{ key: 'A', polys: [donut] }, { key: 'B', polys: [sq(2.5, 0, 0.5)] }], [-1, -1, 4, 3], { distM: 40000 });
+    const o = (lng, lat) => { const g = res.grid; const c = Math.floor((G.mercX(lng) - g.x0) * g.scale); const r = Math.floor((G.mercY(lat) - g.y0) * g.scale); return res.owner[r * g.cols + c]; };
+    return o(0.3, 0.3) === 1 && o(2.7, 0.2) === 2 && o(1, 1) === 0 /* hueco */ && o(3.8, 2.5) === 0 /* fuera */;
+});
 check('un hueco (lago o enclave sin dibujar) dentro de un poligono no se rellena: no es franja de costa', () => {
     const donut = [[[0, 0], [2, 0], [2, 2], [0, 2], [0, 0]], [[0.8, 0.8], [1.2, 0.8], [1.2, 1.2], [0.8, 1.2], [0.8, 0.8]]];
     const res = G.classify([{ key: 'A', polys: [donut] }], [-1, -1, 3, 3], { distM: 40000 });
