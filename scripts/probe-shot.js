@@ -1,14 +1,50 @@
 #!/usr/bin/env node
 // probe-shot.js - Fotografia la web REAL publicada (OpenFreeMap + datos reales) en una vista concreta, con variantes que
 // apagan capas una a una para localizar de que capa viene un artefacto grafico. Solo diagnostico: no toca datos.
-//   node scripts/probe-shot.js <url> <carpeta-salida> [lng lat zoom]
+//   node scripts/probe-shot.js <url> <carpeta-salida>               -> SERIE FIJA de vistas (revision rutinaria, claro y oscuro)
+//   node scripts/probe-shot.js <url> <carpeta-salida> lng lat zoom   -> diagnostico de una vista, con capas apagadas una a una
 'use strict';
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 
+// Vistas de la revision rutinaria: las que ya dieron problemas o que protegen lo que mas se mira. Cada una se fotografia en claro y en oscuro.
+const SUITE = [
+    { id: 'pirineos-2026', year: 2026, lng: -1.35, lat: 43.05, zoom: 11 },
+    { id: 'europa-1606', year: 1606, lng: 10, lat: 48, zoom: 3.3 },
+    { id: 'estrecho-2026', year: 2026, lng: -5.6, lat: 36, zoom: 8 },
+    { id: 'europa-1945', year: 1945, lng: 12, lat: 50, zoom: 4 },
+    { id: 'mediterraneo-9010aC', year: -9010, lng: 20, lat: 38, zoom: 5 },
+    { id: 'costa-9010aC-zoom', year: -9010, lng: 2.5, lat: 41.2, zoom: 9 },
+    { id: 'globo-2026', year: 2026, lng: 0, lat: 20, zoom: 1.4 },
+    { id: 'pangea-250Ma', year: -250e6 + 2000, lng: 0, lat: 0, zoom: 1.4 }
+];
+
+async function settle(page) {
+    await page.waitForFunction(() => !state.bordersLoading, null, { timeout: 60000 }).catch(() => {});
+    await page.evaluate(() => new Promise((r) => { if (map.loaded()) r(); else map.once('idle', r); }));
+    await page.waitForTimeout(3500);
+}
+
+async function runSuite(page, out) {
+    const rows = [];
+    for (const dark of [true, false]) {
+        await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark);
+        for (const v of SUITE) {
+            await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
+            await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
+            await settle(page);
+            const name = v.id + (dark ? '-oscuro' : '-claro');
+            await page.screenshot({ path: path.join(out, name + '.png') });
+            rows.push({ name, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+        }
+    }
+    fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));
+}
+
 (async () => {
     const url = process.argv[2]; const out = process.argv[3];
+    const diag = process.argv.length > 4;
     const [lng, lat, zoom] = [process.argv[4] || -1.35, process.argv[5] || 43.05, process.argv[6] || 11].map(Number);
     fs.mkdirSync(out, { recursive: true });
     const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'] });
@@ -18,6 +54,7 @@ const { chromium } = require('playwright');
     page.on('console', (m) => { if (m.type() === 'error') log.push('CONSOLE ' + m.text().slice(0, 200)); });
     await page.goto(url, { waitUntil: 'load' });
     await page.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
+    if (!diag) { await runSuite(page, out); await browser.close(); return; }
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
     await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [lng, lat, zoom]);
     await page.waitForFunction(() => !state.bordersLoading, null, { timeout: 60000 }).catch(() => {});

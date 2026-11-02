@@ -4,14 +4,13 @@ name: Sonda de captura (render real)
 on:
   workflow_dispatch:
     inputs:
-      lng: { description: 'longitud', default: '-1.35' }
-      lat: { description: 'latitud', default: '43.05' }
-      zoom: { description: 'zoom', default: '11' }
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/probe-shot.js'
-      - '.github/workflows/probe-shot.yml'
+      lng: { description: 'longitud (vacio = serie fija)', default: '' }
+      lat: { description: 'latitud', default: '' }
+      zoom: { description: 'zoom', default: '' }
+  # Revision rutinaria: cada vez que se publica la web, se fotografia la serie fija de vistas (ver SUITE en scripts/probe-shot.js).
+  workflow_run:
+    workflows: ['Publicar web (Pages)']
+    types: [completed]
 
 permissions:
   contents: write
@@ -33,7 +32,16 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.49.1
           npx playwright install --with-deps chromium
       - name: Fotografiar la demo publicada
-        run: node scripts/probe-shot.js https://enderhugin.github.io/chronosterrae/ /tmp/shots "${{ github.event.inputs.lng || '-1.35' }}" "${{ github.event.inputs.lat || '43.05' }}" "${{ github.event.inputs.zoom || '11' }}" > /tmp/shot.log 2>&1 || true
+        env:
+          LNG: ${{ github.event.inputs.lng }}
+          LAT: ${{ github.event.inputs.lat }}
+          ZOOM: ${{ github.event.inputs.zoom }}
+        run: |
+          if [ -n "$LNG" ] && [ -n "$LAT" ] && [ -n "$ZOOM" ]; then
+            node scripts/probe-shot.js https://enderhugin.github.io/chronosterrae/ /tmp/shots "$LNG" "$LAT" "$ZOOM" > /tmp/shot.log 2>&1 || true
+          else
+            node scripts/probe-shot.js https://enderhugin.github.io/chronosterrae/ /tmp/shots > /tmp/shot.log 2>&1 || true
+          fi
       - name: Publicar en la rama probe-shot
         if: always()
         run: |
