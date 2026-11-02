@@ -1,0 +1,2941 @@
+{
+ "probed_at": "2026-11-02T15:33:15.236Z",
+ "tilejson": {
+  "tilejson": "3.0.0",
+  "tiles": [
+   "https://tiles.openfreemap.org/planet/20261025_080012_pt/{z}/{x}/{y}.pbf"
+  ],
+  "vector_layers": [
+   {
+    "id": "aerodrome_label",
+    "fields": {
+     "class": "String",
+     "ele": "Number",
+     "ele_ft": "Number",
+     "iata": "String",
+     "icao": "String",
+     "name": "String",
+     "name:af": "String",
+     "name:am": "String",
+     "name:ar": "String",
+     "name:az": "String",
+     "name:be": "String",
+     "name:bg": "String",
+     "name:bn": "String",
+     "name:br": "String",
+     "name:bs": "String",
+     "name:ca": "String",
+     "name:co": "String",
+     "name:cs": "String",
+     "name:cy": "String",
+     "name:da": "String",
+     "name:de": "String",
+     "name:el": "String",
+     "name:en": "String",
+     "name:eo": "String",
+     "name:es": "String",
+     "name:et": "String",
+     "name:eu": "String",
+     "name:fa": "String",
+     "name:fi": "String",
+     "name:fr": "String",
+     "name:fy": "String",
+     "name:ga": "String",
+     "name:gd": "String",
+     "name:he": "String",
+     "name:hi": "String",
+     "name:hr": "String",
+     "name:hu": "String",
+     "name:hy": "String",
+     "name:id": "String",
+     "name:is": "String",
+     "name:it": "String",
+     "name:ja": "String",
+     "name:ja-Hira": "String",
+     "name:ja-Latn": "String",
+     "name:ka": "String",
+     "name:kk": "String",
+     "name:kn": "String",
+     "name:ko": "String",
+     "name:ko-Latn": "String",
+     "name:ku": "String",
+     "name:la": "String",
+     "name:latin": "String",
+     "name:lb": "String",
+     "name:lt": "String",
+     "name:lv": "String",
+     "name:mk": "String",
+     "name:ml": "String",
+     "name:mt": "String",
+     "name:nl": "String",
+     "name:no": "String",
+     "name:nonlatin": "String",
+     "name:oc": "String",
+     "name:pa": "String",
+     "name:pl": "String",
+     "name:pnb": "String",
+     "name:pt": "String",
+     "name:rm": "String",
+     "name:ro": "String",
+     "name:ru": "String",
+     "name:sk": "String",
+     "name:sl": "String",
+     "name:sq": "String",
+     "name:sr": "String",
+     "name:sr-Latn": "String",
+     "name:sv": "String",
+     "name:ta": "String",
+     "name:te": "String",
+     "name:th": "String",
+     "name:tr": "String",
+     "name:uk": "String",
+     "name:ur": "String",
+     "name:vi": "String",
+     "name:zh": "String",
+     "name:zh-Hans": "String",
+     "name:zh-Hant": "String",
+     "name_de": "String",
+     "name_en": "String",
+     "name_int": "String"
+    },
+    "minzoom": 8,
+    "maxzoom": 14
+   },
+   {
+    "id": "aeroway",
+    "fields": {
+     "class": "String",
+     "ref": "String"
+    },
+    "minzoom": 10,
+    "maxzoom": 14
+   },
+   {
+    "id": "boundary",
+    "fields": {
+     "adm0_l": "String",
+     "adm0_r": "String",
+     "admin_level": "Number",
+     "claimed_by": "String",
+     "class": "String",
+     "disputed": "Number",
+     "disputed_name": "String",
+     "maritime": "Number",
+     "name": "String",
+     "name:af": "String",
+     "name:ar": "String",
+     "name:az": "String",
+     "name:be": "String",
+     "name:bg": "String",
+     "name:bn": "String",
+     "name:br": "String",
+     "name:bs": "String",
+     "name:ca": "String",
+     "name:co": "String",
+     "name:cs": "String",
+     "name:cy": "String",
+     "name:da": "String",
+     "name:de": "String",
+     "name:el": "String",
+     "name:en": "String",
+     "name:eo": "String",
+     "name:es": "String",
+     "name:et": "String",
+     "name:eu": "String",
+     "name:fa": "String",
+     "name:fi": "String",
+     "name:fr": "String",
+     "name:fy": "String",
+     "name:ga": "String",
+     "name:gd": "String",
+     "name:he": "String",
+     "name:hi": "String",
+     "name:hr": "String",
+     "name:hu": "String",
+     "name:hy": "String",
+     "name:id": "String",
+     "name:is": "String",
+     "name:it": "String",
+     "name:ja": "String",
+     "name:ka": "String",
+     "name:kk": "String",
+     "name:ko": "String",
+     "name:ku": "String",
+     "name:la": "String",
+     "name:latin": "String",
+     "name:lb": "String",
+     "name:lt": "String",
+     "name:lv": "String",
+     "name:mk": "String",
+     "name:ml": "String",
+     "name:mt": "String",
+     "name:nl": "String",
+     "name:nonlatin": "String",
+     "name:oc": "String",
+     "name:pl": "String",
+     "name:pt": "String",
+     "name:rm": "String",
+     "name:ro": "String",
+     "name:ru": "String",
+     "name:sk": "String",
+     "name:sl": "String",
+     "name:sq": "String",
+     "name:sr": "String",
+     "name:sv": "String",
+     "name:ta": "String",
+     "name:th": "String",
+     "name:tok": "String",
+     "name:tr": "String",
+     "name:uk": "String",
+     "name:ur": "String",
+     "name:vi": "String",
+     "name:zh": "String",
+     "name_de": "String",
+     "name_en": "String",
+     "name_int": "String"
+    },
+    "minzoom": 0,
+    "maxzoom": 14
+   },
+   {
+    "id": "building",
+    "fields": {
+     "colour": "String",
+     "hide_3d": "Boolean",
+     "render_height": "Number",
+     "render_min_height": "Number"
+    },
+    "minzoom": 13,
+    "maxzoom": 14
+   },
+   {
+    "id": "housenumber",
+    "fields": {
+     "housenumber": "String"
+    },
+    "minzoom": 14,
+    "maxzoom": 14
+   },
+   {
+    "id": "landcover",
+    "fields": {
+     "class": "String",
+     "subclass": "String"
+    },
+    "minzoom": 0,
+    "maxzoom": 14
+   },
+   {
+    "id": "landuse",
+    "fields": {
+     "class": "String"
+    },
+    "minzoom": 4,
+    "maxzoom": 14
+   },
+   {
+    "id": "mountain_peak",
+    "fields": {
+     "class": "String",
+     "customary_ft": "Number",
+     "ele": "Number",
+     "ele_ft": "Number",
+     "name": "String",
+     "name:af": "String",
+     "name:am": "String",
+     "name:ar": "String",
+     "name:az": "String",
+     "name:be": "String",
+     "name:bg": "String",
+     "name:bn": "String",
+     "name:br": "String",
+     "name:bs": "String",
+     "name:ca": "String",
+     "name:co": "String",
+     "name:cs": "String",
+     "name:cy": "String",
+     "name:da": "String",
+     "name:de": "String",
+     "name:el": "String",
+     "name:en": "String",
+     "name:eo": "String",
+     "name:es": "String",
+     "name:et": "String",
+     "name:eu": "String",
+     "name:fa": "String",
+     "name:fi": "String",
+     "name:fr": "String",
+     "name:fy": "String",
+     "name:ga": "String",
+     "name:gd": "String",
+     "name:he": "String",
+     "name:hi": "String",
+     "name:hr": "String",
+     "name:hu": "String",
+     "name:hy": "String",
+     "name:id": "String",
+     "name:is": "String",
+     "name:it": "String",
+     "name:ja": "String",
+     "name:ja-Hira": "String",
+     "name:ja-Latn": "String",
+     "name:ka": "String",
+     "name:kk": "String",
+     "name:kn": "String",
+     "name:ko": "String",
+     "name:ko-Latn": "String",
+     "name:ku": "String",
+     "name:la": "String",
+     "name:latin": "String",
+     "name:lb": "String",
+     "name:lt": "String",
+     "name:lv": "String",
+     "name:mk": "String",
+     "name:ml": "String",
+     "name:mt": "String",
+     "name:nl": "String",
+     "name:no": "String",
+     "name:nonlatin": "String",
+     "name:oc": "String",
+     "name:pa": "String",
+     "name:pl": "String",
+     "name:pnb": "String",
+     "name:pt": "String",
+     "name:rm": "String",
+     "name:ro": "String",
+     "name:ru": "String",
+     "name:sk": "String",
+     "name:sl": "String",
+     "name:sq": "String",
+     "name:sr": "String",
+     "name:sr-Latn": "String",
+     "name:sv": "String",
+     "name:ta": "String",
+     "name:te": "String",
+     "name:th": "String",
+     "name:tok": "String",
+     "name:tr": "String",
+     "name:uk": "String",
+     "name:ur": "String",
+     "name:vi": "String",
+     "name:zh": "String",
+     "name:zh-Hans": "String",
+     "name:zh-Hant": "String",
+     "name_de": "String",
+     "name_en": "String",
+     "name_int": "String",
+     "rank": "Number"
+    },
+    "minzoom": 7,
+    "maxzoom": 14
+   },
+   {
+    "id": "park",
+    "fields": {
+     "class": "String",
+     "name": "String",
+     "name:af": "String",
+     "name:am": "String",
+     "name:ar": "String",
+     "name:az": "String",
+     "name:be": "String",
+     "name:bg": "String",
+     "name:bn": "String",
+     "name:br": "String",
+     "name:bs": "String",
+     "name:ca": "String",
+     "name:co": "String",
+     "name:cs": "String",
+     "name:cy": "String",
+     "name:da": "String",
+     "name:de": "String",
+     "name:el": "String",
+     "name:en": "String",
+     "name:eo": "String",
+     "name:es": "String",
+     "name:et": "String",
+     "name:eu": "String",
+     "name:fa": "String",
+     "name:fi": "String",
+     "name:fr": "String",
+     "name:fy": "String",
+     "name:ga": "String",
+     "name:gd": "String",
+     "name:he": "String",
+     "name:hi": "String",
+     "name:hr": "String",
+     "name:hu": "String",
+     "name:hy": "String",
+     "name:id": "String",
+     "name:is": "String",
+     "name:it": "String",
+     "name:ja": "String",
+     "name:ja-Hira": "String",
+     "name:ja-Latn": "String",
+     "name:ka": "String",
+     "name:kk": "String",
+     "name:kn": "String",
+     "name:ko": "String",
+     "name:ko-Latn": "String",
+     "name:ku": "String",
+     "name:la": "String",
+     "name:latin": "String",
+     "name:lb": "String",
+     "name:lt": "String",
+     "name:lv": "String",
+     "name:mk": "String",
+     "name:ml": "String",
+     "name:mt": "String",
+     "name:nl": "String",
+     "name:no": "String",
+     "name:nonlatin": "String",
+     "name:oc": "String",
+     "name:pa": "String",
+     "name:pl": "String",
+     "name:pnb": "String",
+     "name:pt": "String",
+     "name:rm": "String",
+     "name:ro": "String",
+     "name:ru": "String",
+     "name:sk": "String",
+     "name:sl": "String",
+     "name:sq": "String",
+     "name:sr": "String",
+     "name:sr-Latn": "String",
+     "name:sv": "String",
+     "name:ta": "String",
+     "name:te": "String",
+     "name:th": "String",
+     "name:tok": "String",
+     "name:tr": "String",
+     "name:uk": "String",
+     "name:ur": "String",
+     "name:vi": "String",
+     "name:zh": "String",
+     "name:zh-Hans": "String",
+     "name:zh-Hant": "String",
+     "name_de": "String",
+     "name_en": "String",
+     "name_int": "String",
+     "rank": "Number"
+    },
+    "minzoom": 4,
+    "maxzoom": 14
+   },
+   {
+    "id": "place",
+    "fields": {
+     "capital": "Number",
+     "class": "String",
+     "iso_a2": "String",
+     "name": "String",
+     "name:af": "String",
+     "name:am": "String",
+     "name:ar": "String",
+     "name:az": "String",
+     "name:be": "String",
+     "name:bg": "String",
+     "name:bn": "String",
+     "name:br": "String",
+     "name:bs": "String",
+     "name:ca": "String",
+     "name:co": "String",
+     "name:cs": "String",
+     "name:cy": "String",
+     "name:da": "String",
+     "name:de": "String",
+     "name:el": "String",
+     "name:en": "String",
+     "name:eo": "String",
+     "name:es": "String",
+     "name:et": "String",
+     "name:eu": "String",
+     "name:fa": "String",
+     "name:fi": "String",
+     "name:fr": "String",
+     "name:fy": "String",
+     "name:ga": "String",
+     "name:gd": "String",
+     "name:he": "String",
+     "name:hi": "String",
+     "name:hr": "String",
+     "name:hu": "String",
+     "name:hy": "String",
+     "name:id": "String",
+     "name:is": "String",
+     "name:it": "String",
+     "name:ja": "String",
+     "name:ja-Hira": "String",
+     "name:ja-Latn": "String",
+     "name:ka": "String",
+     "name:kk": "String",
+     "name:kn": "String",
+     "name:ko": "String",
+     "name:ko-Latn": "String",
+     "name:ku": "String",
+     "name:la": "String",
+     "name:latin": "String",
+     "name:lb": "String",
+     "name:lt": "String",
+     "name:lv": "String",
+     "name:mk": "String",
+     "name:ml": "String",
+     "name:mt": "String",
+     "name:nl": "String",
+     "name:no": "String",
+     "name:nonlatin": "String",
+     "name:oc": "String",
+     "name:pa": "String",
+     "name:pl": "String",
+     "name:pnb": "String",
+     "name:pt": "String",
+     "name:rm": "String",
+     "name:ro": "String",
+     "name:ru": "String",
+     "name:sk": "String",
+     "name:sl": "String",
+     "name:sq": "String",
+     "name:sr": "String",
+     "name:sr-Latn": "String",
+     "name:sv": "String",
+     "name:ta": "String",
+     "name:te": "String",
+     "name:th": "String",
+     "name:tok": "String",
+     "name:tr": "String",
+     "name:uk": "String",
+     "name:ur": "String",
+     "name:vi": "String",
+     "name:zh": "String",
+     "name:zh-Hans": "String",
+     "name:zh-Hant": "String",
+     "name_de": "String",
+     "name_en": "String",
+     "name_int": "String",
+     "rank": "Number"
+    },
+    "minzoom": 0,
+    "maxzoom": 14
+   },
+   {
+    "id": "poi",
+    "fields": {
+     "agg_stop": "Number",
+     "class": "String",
+     "indoor": "Number",
+     "layer": "Number",
+     "level": "Number",
+     "name": "String",
+     "name:af": "String",
+     "name:am": "String",
+     "name:ar": "String",
+     "name:az": "String",
+     "name:be": "String",
+     "name:bg": "String",
+     "name:bn": "String",
+     "name:br": "String",
+     "name:bs": "String",
+     "name:ca": "String",
+     "name:co": "String",
+     "name:cs": "String",
+     "name:cy": "String",
+     "name:da": "String",
+     "name:de": "String",
+     "name:el": "String",
+     "name:en": "String",
+     "name:eo": "String",
+     "name:es": "String",
+     "name:et": "String",
+     "name:eu": "String",
+     "name:fa": "String",
+     "name:fi": "String",
+     "name:fr": "String",
+     "name:fy": "String",
+     "name:ga": "String",
+     "name:gd": "String",
+     "name:he": "String",
+     "name:hi": "String",
+     "name:hr": "String",
+     "name:hu": "String",
+     "name:hy": "String",
+     "name:id": "String",
+     "name:is": "String",
+     "name:it": "String",
+     "name:ja": "String",
+     "name:ja-Hira": "String",
+     "name:ja-Latn": "String",
+     "name:ka": "String",
+     "name:kk": "String",
+     "name:kn": "String",
+     "name:ko": "String",
+     "name:ko-Latn": "String",
+     "name:ku": "String",
+     "name:la": "String",
+     "name:latin": "String",
+     "name:lb": "String",
+     "name:lt": "String",
+     "name:lv": "String",
+     "name:mk": "String",
+     "name:ml": "String",
+     "name:mt": "String",
+     "name:nl": "String",
+     "name:no": "String",
+     "name:nonlatin": "String",
+     "name:oc": "String",
+     "name:pa": "String",
+     "name:pl": "String",
+     "name:pnb": "String",
+     "name:pt": "String",
+     "name:rm": "String",
+     "name:ro": "String",
+     "name:ru": "String",
+     "name:sk": "String",
+     "name:sl": "String",
+     "name:sq": "String",
+     "name:sr": "String",
+     "name:sr-Latn": "String",
+     "name:sv": "String",
+     "name:ta": "String",
+     "name:te": "String",
+     "name:th": "String",
+     "name:tok": "String",
+     "name:tr": "String",
+     "name:uk": "String",
+     "name:ur": "String",
+     "name:vi": "String",
+     "name:zh": "String",
+     "name:zh-Hans": "String",
+     "name:zh-Hant": "String",
+     "name_de": "String",
+     "name_en": "String",
+     "name_int": "String",
+     "rank": "Number",
+     "subclass": "String"
+    },
+    "minzoom": 11,
+    "maxzoom": 14
+   },
+   {
+    "id": "transportation",
+    "fields": {
+     "access": "String",
+     "bicycle": "String",
+     "brunnel": "String",
+     "class": "String",
+     "expressway": "Number",
+     "foot": "String",
+     "horse": "String",
+     "indoor": "Number",
+     "layer": "Number",
+     "level": "Number",
+     "mtb_scale": "String",
+     "network": "String",
+     "official": "Number",
+     "oneway": "Number",
+     "ramp": "Number",
+     "service": "String",
+     "subclass": "String",
+     "surface": "String",
+     "toll": "Number"
+    },
+    "minzoom": 4,
+    "maxzoom": 14
+   },
+   {
+    "id": "transportation_name",
+    "fields": {
+     "class": "String",
+     "indoor": "Number",
+     "layer": "Number",
+     "level": "Number",
+     "name": "String",
+     "name:af": "String",
+     "name:am": "String",
+     "name:ar": "String",
+     "name:az": "String",
+     "name:be": "String",
+     "name:bg": "String",
+     "name:bn": "String",
+     "name:br": "String",
+     "name:bs": "String",
+     "name:ca": "String",
+     "name:co": "String",
+     "name:cs": "String",
+     "name:cy": "String",
+     "name:da": "String",
+     "name:de": "String",
+     "name:el": "String",
+     "name:en": "String",
+     "name:eo": "String",
+     "name:es": "String",
+     "name:et": "String",
+     "name:eu": "String",
+     "name:fa": "String",
+     "name:fi": "String",
+     "name:fr": "String",
+     "name:fy": "String",
+     "name:ga": "String",
+     "name:gd": "String",
+     "name:he": "String",
+     "name:hi": "String",
+     "name:hr": "String",
+     "name:hu": "String",
+     "name:hy": "String",
+     "name:id": "String",
+     "name:is": "String",
+     "name:it": "String",
+     "name:ja": "String",
+     "name:ja-Hira": "String",
+     "name:ja-Latn": "String",
+     "name:ka": "String",
+     "name:kk": "String",
+     "name:kn": "String",
+     "name:ko": "String",
+     "name:ko-Latn": "String",
+     "name:ku": "String",
+     "name:la": "String",
+     "name:latin": "String",
+     "name:lb": "String",
+     "name:lt": "String",
+     "name:lv": "String",
+     "name:mk": "String",
+     "name:ml": "String",
+     "name:mt": "String",
+     "name:nl": "String",
+     "name:no": "String",
+     "name:nonlatin": "String",
+     "name:oc": "String",
+     "name:pa": "String",
+     "name:pl": "String",
+     "name:pnb": "String",
+     "name:pt": "String",
+     "name:rm": "String",
+     "name:ro": "String",
+     "name:ru": "String",
+     "name:sk": "String",
+     "name:sl": "String",
+     "name:sq": "String",
+     "name:sr": "String",
+     "name:sr-Latn": "String",
+     "name:sv": "String",
+     "name:ta": "String",
+     "name:te": "String",
+     "name:th": "String",
+     "name:tok": "String",
+     "name:tr": "String",
+     "name:uk": "String",
+     "name:ur": "String",
+     "name:vi": "String",
+     "name:zh": "String",
+     "name:zh-Hans": "String",
+     "name:zh-Hant": "String",
+     "name_de": "String",
+     "name_en": "String",
+     "name_int": "String",
+     "network": "String",
+     "ref": "String",
+     "ref_length": "Number",
+     "route_10_colour": "String",
+     "route_10_name": "String",
+     "route_10_network": "String",
+     "route_10_ref": "String",
+     "route_11_colour": "String",
+     "route_11_name": "String",
+     "route_11_network": "String",
+     "route_11_ref": "String",
+     "route_12_colour": "String",
+     "route_12_name": "String",
+     "route_12_network": "String",
+     "route_12_ref": "String",
+     "route_13_colour": "String",
+     "route_13_name": "String",
+     "route_13_network": "String",
+     "route_13_ref": "String",
+     "route_14_colour": "String",
+     "route_14_name": "String",
+     "route_14_network": "String",
+     "route_14_ref": "String",
+     "route_15_colour": "String",
+     "route_15_name": "String",
+     "route_15_network": "String",
+     "route_15_ref": "String",
+     "route_16_colour": "String",
+     "route_16_name": "String",
+     "route_16_network": "String",
+     "route_16_ref": "String",
+     "route_17_name": "String",
+     "route_17_network": "String",
+     "route_17_ref": "String",
+     "route_18_name": "String",
+     "route_18_network": "String",
+     "route_18_ref": "String",
+     "route_19_name": "String",
+     "route_19_network": "String",
+     "route_1_colour": "String",
+     "route_1_name": "String",
+     "route_1_network": "String",
+     "route_1_ref": "String",
+     "route_20_name": "String",
+     "route_20_network": "String",
+     "route_21_name": "String",
+     "route_21_network": "String",
+     "route_2_colour": "String",
+     "route_2_name": "String",
+     "route_2_network": "String",
+     "route_2_ref": "String",
+     "route_3_colour": "String",
+     "route_3_name": "String",
+     "route_3_network": "String",
+     "route_3_ref": "String",
+     "route_4_colour": "String",
+     "route_4_name": "String",
+     "route_4_network": "String",
+     "route_4_ref": "String",
+     "route_5_colour": "String",
+     "route_5_name": "String",
+     "route_5_network": "String",
+     "route_5_ref": "String",
+     "route_6_colour": "String",
+     "route_6_name": "String",
+     "route_6_network": "String",
+     "route_6_ref": "String",
+     "route_7_colour": "String",
+     "route_7_name": "String",
+     "route_7_network": "String",
+     "route_7_ref": "String",
+     "route_8_colour": "String",
+     "route_8_name": "String",
+     "route_8_network": "String",
+     "route_8_ref": "String",
+     "route_9_colour": "String",
+     "route_9_name": "String",
+     "route_9_network": "String",
+     "route_9_ref": "String",
+     "subclass": "String"
+    },
+    "minzoom": 6,
+    "maxzoom": 14
+   },
+   {
+    "id": "water",
+    "fields": {
+     "brunnel": "String",
+     "class": "String",
+     "id": "Number",
+     "intermittent": "Number"
+    },
+    "minzoom": 0,
+    "maxzoom": 14
+   },
+   {
+    "id": "water_name",
+    "fields": {
+     "class": "String",
+     "intermittent": "Number",
+     "name": "String",
+     "name:af": "String",
+     "name:am": "String",
+     "name:ar": "String",
+     "name:az": "String",
+     "name:be": "String",
+     "name:bg": "String",
+     "name:bn": "String",
+     "name:br": "String",
+     "name:bs": "String",
+     "name:ca": "String",
+     "name:co": "String",
+     "name:cs": "String",
+     "name:cy": "String",
+     "name:da": "String",
+     "name:de": "String",
+     "name:el": "String",
+     "name:en": "String",
+     "name:eo": "String",
+     "name:es": "String",
+     "name:et": "String",
+     "name:eu": "String",
+     "name:fa": "String",
+     "name:fi": "String",
+     "name:fr": "String",
+     "name:fy": "String",
+     "name:ga": "String",
+     "name:gd": "String",
+     "name:he": "String",
+     "name:hi": "String",
+     "name:hr": "String",
+     "name:hu": "String",
+     "name:hy": "String",
+     "name:id": "String",
+     "name:is": "String",
+     "name:it": "String",
+     "name:ja": "String",
+     "name:ja-Hira": "String",
+     "name:ja-Latn": "String",
+     "name:ka": "String",
+     "name:kk": "String",
+     "name:kn": "String",
+     "name:ko": "String",
+     "name:ko-Latn": "String",
+     "name:ku": "String",
+     "name:la": "String",
+     "name:latin": "String",
+     "name:lb": "String",
+     "name:lt": "String",
+     "name:lv": "String",
+     "name:mk": "String",
+     "name:ml": "String",
+     "name:mt": "String",
+     "name:nl": "String",
+     "name:no": "String",
+     "name:nonlatin": "String",
+     "name:oc": "String",
+     "name:pa": "String",
+     "name:pl": "String",
+     "name:pnb": "String",
+     "name:pt": "String",
+     "name:rm": "String",
+     "name:ro": "String",
+     "name:ru": "String",
+     "name:sk": "String",
+     "name:sl": "String",
+     "name:sq": "String",
+     "name:sr": "String",
+     "name:sr-Latn": "String",
+     "name:sv": "String",
+     "name:ta": "String",
+     "name:te": "String",
+     "name:th": "String",
+     "name:tok": "String",
+     "name:tr": "String",
+     "name:uk": "String",
+     "name:ur": "String",
+     "name:vi": "String",
+     "name:zh": "String",
+     "name:zh-Hans": "String",
+     "name:zh-Hant": "String",
+     "name_de": "String",
+     "name_en": "String",
+     "name_int": "String"
+    },
+    "minzoom": 0,
+    "maxzoom": 14
+   },
+   {
+    "id": "waterway",
+    "fields": {
+     "brunnel": "String",
+     "class": "String",
+     "intermittent": "Number",
+     "name": "String",
+     "name:af": "String",
+     "name:am": "String",
+     "name:ar": "String",
+     "name:az": "String",
+     "name:be": "String",
+     "name:bg": "String",
+     "name:bn": "String",
+     "name:br": "String",
+     "name:bs": "String",
+     "name:ca": "String",
+     "name:co": "String",
+     "name:cs": "String",
+     "name:cy": "String",
+     "name:da": "String",
+     "name:de": "String",
+     "name:el": "String",
+     "name:en": "String",
+     "name:eo": "String",
+     "name:es": "String",
+     "name:et": "String",
+     "name:eu": "String",
+     "name:fa": "String",
+     "name:fi": "String",
+     "name:fr": "String",
+     "name:fy": "String",
+     "name:ga": "String",
+     "name:gd": "String",
+     "name:he": "String",
+     "name:hi": "String",
+     "name:hr": "String",
+     "name:hu": "String",
+     "name:hy": "String",
+     "name:id": "String",
+     "name:is": "String",
+     "name:it": "String",
+     "name:ja": "String",
+     "name:ja-Hira": "String",
+     "name:ja-Latn": "String",
+     "name:ka": "String",
+     "name:kk": "String",
+     "name:kn": "String",
+     "name:ko": "String",
+     "name:ko-Latn": "String",
+     "name:ku": "String",
+     "name:la": "String",
+     "name:latin": "String",
+     "name:lb": "String",
+     "name:lt": "String",
+     "name:lv": "String",
+     "name:mk": "String",
+     "name:ml": "String",
+     "name:mt": "String",
+     "name:nl": "String",
+     "name:no": "String",
+     "name:nonlatin": "String",
+     "name:oc": "String",
+     "name:pa": "String",
+     "name:pl": "String",
+     "name:pnb": "String",
+     "name:pt": "String",
+     "name:rm": "String",
+     "name:ro": "String",
+     "name:ru": "String",
+     "name:sk": "String",
+     "name:sl": "String",
+     "name:sq": "String",
+     "name:sr": "String",
+     "name:sr-Latn": "String",
+     "name:sv": "String",
+     "name:ta": "String",
+     "name:te": "String",
+     "name:th": "String",
+     "name:tok": "String",
+     "name:tr": "String",
+     "name:uk": "String",
+     "name:ur": "String",
+     "name:vi": "String",
+     "name:zh": "String",
+     "name:zh-Hans": "String",
+     "name:zh-Hant": "String",
+     "name_de": "String",
+     "name_en": "String",
+     "name_int": "String"
+    },
+    "minzoom": 3,
+    "maxzoom": 14
+   }
+  ],
+  "attribution": "<a href=\"https://openfreemap.org\" target=\"_blank\">OpenFreeMap</a> <a href=\"https://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> Data from <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">OpenStreetMap</a>",
+  "bounds": [
+   -180,
+   -85.05113,
+   180,
+   85.05113
+  ],
+  "center": [
+   0,
+   0,
+   1
+  ],
+  "description": "https://openfreemap.org",
+  "maxzoom": 14,
+  "minzoom": 0,
+  "name": "OpenFreeMap",
+  "version": "3.16.0"
+ },
+ "tiles": {
+  "barcelona_puerto": {
+   "x": 8290,
+   "y": 6121,
+   "status": 200,
+   "bytes": 66245,
+   "layers": {
+    "boundary": {
+     "features": 2,
+     "extent": 4096,
+     "attributes": {
+      "admin_level": {
+       "4": 1,
+       "10": 1
+      },
+      "disputed": {
+       "0": 2
+      },
+      "maritime": {
+       "0": 1,
+       "1": 1
+      }
+     }
+    },
+    "building": {
+     "features": 8,
+     "extent": 4096,
+     "attributes": {
+      "render_height": {
+       "4": 1,
+       "5": 1,
+       "8": 1,
+       "9": 1,
+       "11": 1,
+       "19": 1,
+       "48": 1,
+       "88": 1
+      },
+      "render_min_height": {
+       "0": 8
+      }
+     }
+    },
+    "housenumber": {
+     "features": 65,
+     "extent": 4096,
+     "attributes": {
+      "housenumber": {
+       "1": 1,
+       "2": 1,
+       "3": 1,
+       "5": 1,
+       "6": 1,
+       "7": 1,
+       "8": 1,
+       "84": 1,
+       "138": 1,
+       "233": 1,
+       "236": 1,
+       "350": 1,
+       "28-18": 1,
+       "174-156": 1,
+       "54I": 1,
+       "54H": 1,
+       "16-38": 1,
+       "3B": 1,
+       "100-88": 1,
+       "16-2": 1,
+       "1-9": 1,
+       "1-123": 1,
+       "22-20": 1,
+       "3-4": 1,
+       "166-174": 1
+      }
+     }
+    },
+    "landcover": {
+     "features": 19,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "park": 2,
+       "garden": 5,
+       "wood": 1,
+       "meadow": 3,
+       "grass": 7,
+       "forest": 1
+      },
+      "class": {
+       "grass": 17,
+       "wood": 2
+      }
+     }
+    },
+    "landuse": {
+     "features": 45,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "track": 2,
+       "industrial": 35,
+       "cemetery": 1,
+       "pitch": 2,
+       "railway": 4,
+       "residential": 1
+      }
+     }
+    },
+    "mountain_peak": {
+     "features": 10,
+     "extent": 4096,
+     "attributes": {
+      "rank": {
+       "1": 1,
+       "3": 9
+      },
+      "class": {
+       "peak": 1,
+       "cliff": 9
+      },
+      "ele": {
+       "177": 1
+      },
+      "ele_ft": {
+       "581": 1
+      }
+     }
+    },
+    "place": {
+     "features": 26,
+     "extent": 4096,
+     "attributes": {
+      "rank": {
+       "11": 1,
+       "12": 1,
+       "13": 1,
+       "14": 1,
+       "15": 1,
+       "16": 1,
+       "17": 1,
+       "18": 1,
+       "19": 1,
+       "20": 1,
+       "21": 1,
+       "22": 1,
+       "23": 1,
+       "24": 1,
+       "25": 1,
+       "26": 1,
+       "27": 1,
+       "28": 1,
+       "29": 1,
+       "30": 1,
+       "31": 1,
+       "32": 1,
+       "33": 1,
+       "34": 1,
+       "35": 1
+      },
+      "class": {
+       "suburb": 1,
+       "quarter": 8,
+       "neighbourhood": 16,
+       "island": 1
+      }
+     }
+    },
+    "poi": {
+     "features": 504,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "bus_stop": 50,
+       "attraction": 1,
+       "viewpoint": 2,
+       "school": 1,
+       "stadium": 2,
+       "cemetery": 2,
+       "park": 2,
+       "police": 3,
+       "bar": 2,
+       "lift_gate": 3,
+       "parking": 1,
+       "shelter": 1,
+       "board": 12,
+       "castle": 1,
+       "map": 2,
+       "car": 1,
+       "fuel": 1,
+       "sports_centre": 2,
+       "garden": 6,
+       "rc_car": 2,
+       "gate": 1,
+       "bicycle_rental": 1,
+       "orienteering": 1,
+       "christian": 1,
+       "museum": 1
+      },
+      "rank": {
+       "1": 25,
+       "2": 18,
+       "3": 17,
+       "4": 17,
+       "5": 14,
+       "6": 14,
+       "7": 10,
+       "8": 10,
+       "9": 8,
+       "10": 6,
+       "11": 5,
+       "12": 5,
+       "13": 5,
+       "14": 3,
+       "15": 2,
+       "16": 2,
+       "17": 2,
+       "18": 2,
+       "19": 2,
+       "20": 1,
+       "21": 1,
+       "22": 1,
+       "23": 1,
+       "24": 1,
+       "25": 1
+      },
+      "class": {
+       "bus": 50,
+       "attraction": 3,
+       "school": 1,
+       "stadium": 2,
+       "cemetery": 2,
+       "park": 2,
+       "police": 3,
+       "bar": 2,
+       "lift_gate": 5,
+       "parking": 1,
+       "shelter": 1,
+       "information": 14,
+       "castle": 1,
+       "car": 1,
+       "fuel": 1,
+       "sports_centre": 2,
+       "garden": 6,
+       "pitch": 1,
+       "gate": 2,
+       "rc_car": 1,
+       "bicycle_rental": 1,
+       "orienteering": 1,
+       "place_of_worship": 1,
+       "museum": 1,
+       "cafe": 1
+      },
+      "level": {
+       "1": 1
+      },
+      "layer": {
+       "1": 1
+      }
+     }
+    },
+    "transportation": {
+     "features": 236,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "pedestrian": 4,
+       "rail": 6,
+       "path": 6,
+       "footway": 5,
+       "steps": 2,
+       "narrow_gauge": 3
+      },
+      "class": {
+       "path": 17,
+       "rail": 9,
+       "service": 127,
+       "track": 2,
+       "ferry": 1,
+       "minor": 47,
+       "trunk": 33
+      },
+      "brunnel": {
+       "tunnel": 1,
+       "bridge": 10
+      },
+      "layer": {
+       "1": 10,
+       "-1": 1
+      },
+      "access": {
+       "no": 105
+      },
+      "bicycle": {
+       "yes": 5,
+       "no": 39,
+       "private": 7
+      },
+      "surface": {
+       "unpaved": 9,
+       "paved": 79
+      },
+      "foot": {
+       "yes": 5,
+       "no": 41,
+       "private": 7
+      },
+      "oneway": {
+       "1": 190
+      },
+      "service": {
+       "driveway": 14,
+       "parking_aisle": 23,
+       "yard": 2,
+       "spur": 1,
+       "siding": 1,
+       "crossover": 2
+      },
+      "horse": {
+       "no": 3,
+       "private": 7
+      },
+      "ramp": {
+       "1": 12
+      }
+     }
+    },
+    "transportation_name": {
+     "features": 49,
+     "extent": 4096,
+     "attributes": {
+      "ref_length": {
+       "2": 3,
+       "4": 1
+      },
+      "subclass": {
+       "junction": 2,
+       "path": 1,
+       "footway": 6
+      },
+      "ref": {
+       "13": 2,
+       "14": 1,
+       "B-10": 1
+      },
+      "class": {
+       "trunk": 4,
+       "service": 29,
+       "path": 7,
+       "ferry": 2,
+       "minor": 7
+      },
+      "network": {
+       "road": 2
+      },
+      "route_1_ref": {
+       "E 90": 1
+      },
+      "route_1_name": {
+       "Carretera europea E90 (España)": 1
+      },
+      "route_1_network": {
+       "e-road": 1
+      },
+      "route_1_colour": {
+       "#00cc00": 1
+      }
+     }
+    },
+    "water": {
+     "features": 1,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "ocean": 1
+      }
+     }
+    },
+    "water_name": {
+     "features": 11,
+     "extent": 4096,
+     "attributes": {
+      "intermittent": {
+       "0": 11
+      },
+      "class": {
+       "lake": 11
+      }
+     }
+    }
+   }
+  },
+  "rotterdam_maasvlakte": {
+   "x": 8375,
+   "y": 5415,
+   "status": 200,
+   "bytes": 27725,
+   "layers": {
+    "aeroway": {
+     "features": 1,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "helipad": 1
+      }
+     }
+    },
+    "building": {
+     "features": 3,
+     "extent": 4096,
+     "attributes": {
+      "render_height": {
+       "4": 1,
+       "5": 1,
+       "8": 1
+      },
+      "render_min_height": {
+       "0": 3
+      }
+     }
+    },
+    "housenumber": {
+     "features": 13,
+     "extent": 4096,
+     "attributes": {
+      "housenumber": {
+       "3": 1,
+       "4": 1,
+       "6": 1,
+       "9": 1,
+       "10": 1,
+       "17": 1,
+       "20": 1,
+       "25": 1,
+       "30": 1,
+       "50": 1,
+       "869": 1,
+       "875": 1,
+       "887": 1
+      }
+     }
+    },
+    "landcover": {
+     "features": 75,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "grass": 37,
+       "forest": 2,
+       "meadow": 20,
+       "sand": 16
+      },
+      "class": {
+       "grass": 57,
+       "wood": 2,
+       "sand": 16
+      }
+     }
+    },
+    "landuse": {
+     "features": 11,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "railway": 2,
+       "industrial": 9
+      }
+     }
+    },
+    "poi": {
+     "features": 142,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "bus_stop": 3,
+       "government": 2,
+       "company": 2,
+       "fire_station": 1,
+       "lift_gate": 32,
+       "parking": 37,
+       "gate": 58,
+       "charging_station": 4,
+       "bollard": 1,
+       "toilets": 1
+      },
+      "rank": {
+       "1": 24,
+       "2": 22,
+       "3": 16,
+       "4": 12,
+       "5": 11,
+       "6": 10,
+       "7": 9,
+       "8": 7,
+       "9": 6,
+       "10": 5,
+       "11": 5,
+       "12": 4,
+       "13": 3,
+       "14": 3,
+       "15": 1,
+       "16": 1,
+       "17": 1,
+       "18": 1,
+       "19": 1
+      },
+      "class": {
+       "bus": 3,
+       "office": 4,
+       "fire_station": 1,
+       "lift_gate": 32,
+       "parking": 37,
+       "gate": 58,
+       "fuel": 4,
+       "pitch": 1,
+       "bollard": 1,
+       "toilets": 1
+      }
+     }
+    },
+    "transportation": {
+     "features": 227,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "bridge": 7,
+       "service": 112,
+       "path": 9,
+       "track": 1,
+       "service_construction": 3,
+       "minor": 28,
+       "trunk": 22,
+       "tertiary": 24,
+       "secondary": 19,
+       "rail": 2
+      },
+      "layer": {
+       "1": 34
+      },
+      "brunnel": {
+       "bridge": 34,
+       "tunnel": 3
+      },
+      "access": {
+       "no": 111
+      },
+      "oneway": {
+       "1": 196
+      },
+      "subclass": {
+       "cycleway": 7,
+       "footway": 2,
+       "rail": 2
+      },
+      "surface": {
+       "paved": 104
+      },
+      "service": {
+       "driveway": 2,
+       "parking_aisle": 26,
+       "yard": 1,
+       "spur": 1
+      },
+      "bicycle": {
+       "no": 74,
+       "use_sidepath": 1
+      },
+      "foot": {
+       "no": 55
+      },
+      "horse": {
+       "no": 3
+      },
+      "ramp": {
+       "1": 14
+      }
+     }
+    },
+    "transportation_name": {
+     "features": 23,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "service": 5,
+       "path": 7,
+       "service_construction": 1,
+       "minor": 5,
+       "trunk": 2,
+       "tertiary": 2,
+       "secondary": 1
+      },
+      "subclass": {
+       "cycleway": 7
+      }
+     }
+    },
+    "water": {
+     "features": 7,
+     "extent": 4096,
+     "attributes": {
+      "intermittent": {
+       "0": 7
+      },
+      "class": {
+       "lake": 7
+      },
+      "id": {
+       "6288529": 1,
+       "6288765": 1,
+       "34273186": 1,
+       "140592226": 1,
+       "140592232": 1,
+       "603376178": 1,
+       "810231836": 1
+      }
+     }
+    },
+    "water_name": {
+     "features": 1,
+     "extent": 4096,
+     "attributes": {
+      "intermittent": {
+       "0": 1
+      },
+      "class": {
+       "lake": 1
+      }
+     }
+    },
+    "waterway": {
+     "features": 2,
+     "extent": 4096,
+     "attributes": {
+      "intermittent": {
+       "0": 2
+      },
+      "class": {
+       "canal": 2
+      }
+     }
+    }
+   }
+  },
+  "hamburgo": {
+   "x": 8645,
+   "y": 5296,
+   "status": 200,
+   "bytes": 35973,
+   "layers": {
+    "building": {
+     "features": 11,
+     "extent": 4096,
+     "attributes": {
+      "render_height": {
+       "0": 1,
+       "4": 2,
+       "5": 1,
+       "8": 2,
+       "11": 1,
+       "15": 2,
+       "19": 2
+      },
+      "render_min_height": {
+       "0": 11
+      },
+      "colour": {
+       "white": 1,
+       "#cd7a52": 3
+      }
+     }
+    },
+    "housenumber": {
+     "features": 33,
+     "extent": 4096,
+     "attributes": {
+      "housenumber": {
+       "1": 1,
+       "2": 1,
+       "3": 1,
+       "5": 1,
+       "7": 1,
+       "8": 1,
+       "9": 1,
+       "10": 1,
+       "11": 1,
+       "12": 1,
+       "13": 1,
+       "14": 1,
+       "15": 1,
+       "16": 1,
+       "17": 1,
+       "18": 1,
+       "19": 1,
+       "22": 1,
+       "23": 1,
+       "24": 1,
+       "29": 1,
+       "32": 1,
+       "44": 1,
+       "46": 1,
+       "52": 1
+      }
+     }
+    },
+    "landcover": {
+     "features": 39,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "sand": 1,
+       "grass": 21,
+       "scrub": 3,
+       "meadow": 11,
+       "scree": 2,
+       "grassland": 1
+      },
+      "class": {
+       "sand": 1,
+       "grass": 36,
+       "rock": 2
+      }
+     }
+    },
+    "landuse": {
+     "features": 17,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "industrial": 11,
+       "military": 1,
+       "commercial": 3,
+       "railway": 2
+      }
+     }
+    },
+    "place": {
+     "features": 11,
+     "extent": 4096,
+     "attributes": {
+      "rank": {
+       "11": 1,
+       "12": 1,
+       "13": 1,
+       "14": 1,
+       "15": 1,
+       "16": 1,
+       "17": 1,
+       "18": 1,
+       "19": 1,
+       "20": 1,
+       "21": 1
+      },
+      "class": {
+       "suburb": 5,
+       "neighbourhood": 5,
+       "borough": 1
+      }
+     }
+    },
+    "poi": {
+     "features": 234,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "bus_stop": 14,
+       "attraction": 2,
+       "dock": 8,
+       "marina": 1,
+       "police": 1,
+       "fast_food": 2,
+       "fire_station": 1,
+       "brownfield": 1,
+       "government": 1,
+       "cafe": 1,
+       "bicycle_rental": 1,
+       "parking": 12,
+       "theatre": 2,
+       "artwork": 1,
+       "christian": 1,
+       "museum": 1,
+       "hotel": 1,
+       "restaurant": 1,
+       "ferry_terminal": 1,
+       "board": 1,
+       "viewpoint": 3,
+       "gate": 29,
+       "bicycle_parking": 1,
+       "lift_gate": 4,
+       "toilets": 1
+      },
+      "rank": {
+       "1": 27,
+       "2": 19,
+       "3": 15,
+       "4": 11,
+       "5": 7,
+       "6": 5,
+       "7": 4,
+       "8": 4,
+       "9": 4,
+       "10": 4,
+       "11": 4,
+       "12": 3,
+       "13": 3,
+       "14": 3,
+       "15": 2,
+       "16": 2,
+       "17": 2,
+       "18": 2,
+       "19": 2,
+       "20": 2,
+       "21": 2,
+       "22": 2,
+       "23": 2,
+       "24": 1,
+       "25": 1
+      },
+      "class": {
+       "bus": 14,
+       "attraction": 5,
+       "harbor": 9,
+       "police": 1,
+       "fast_food": 2,
+       "fire_station": 1,
+       "brownfield": 1,
+       "office": 1,
+       "cafe": 1,
+       "bicycle_rental": 1,
+       "parking": 16,
+       "theatre": 2,
+       "art_gallery": 1,
+       "place_of_worship": 1,
+       "museum": 1,
+       "lodging": 1,
+       "restaurant": 1,
+       "ferry_terminal": 1,
+       "information": 3,
+       "gate": 33,
+       "bicycle_parking": 1,
+       "lift_gate": 9,
+       "toilets": 2,
+       "waste_basket": 4,
+       "shelter": 1
+      },
+      "layer": {
+       "1": 2
+      }
+     }
+    },
+    "transportation": {
+     "features": 177,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "pier": 6,
+       "path": 30,
+       "bridge": 12,
+       "service": 80,
+       "ferry": 1,
+       "tertiary_construction": 2,
+       "minor": 14,
+       "tertiary": 23,
+       "primary": 5,
+       "rail": 3,
+       "minor_construction": 1
+      },
+      "subclass": {
+       "platform": 4,
+       "footway": 9,
+       "path": 12,
+       "steps": 2,
+       "cycleway": 2,
+       "rail": 3,
+       "corridor": 1
+      },
+      "layer": {
+       "1": 28,
+       "2": 5
+      },
+      "brunnel": {
+       "bridge": 29,
+       "tunnel": 5
+      },
+      "access": {
+       "no": 28
+      },
+      "oneway": {
+       "1": 106
+      },
+      "surface": {
+       "paved": 121,
+       "unpaved": 4
+      },
+      "foot": {
+       "yes": 6,
+       "designated": 2,
+       "no": 14,
+       "private": 1
+      },
+      "bicycle": {
+       "no": 3,
+       "designated": 6,
+       "use_sidepath": 10,
+       "yes": 3
+      },
+      "service": {
+       "driveway": 10,
+       "parking_aisle": 29,
+       "spur": 2,
+       "siding": 1
+      },
+      "official": {
+       "0": 2
+      }
+     }
+    },
+    "transportation_name": {
+     "features": 44,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "ferry": 3,
+       "path": 1,
+       "service": 23,
+       "tertiary_construction": 1,
+       "minor": 11,
+       "tertiary": 3,
+       "primary": 1,
+       "minor_construction": 1
+      },
+      "subclass": {
+       "footway": 1
+      },
+      "ref_length": {
+       "1": 9,
+       "2": 13
+      },
+      "ref": {
+       "1": 1,
+       "2": 1,
+       "3": 1,
+       "4": 1,
+       "5": 1,
+       "6": 1,
+       "7": 1,
+       "8": 1,
+       "9": 1,
+       "10": 1,
+       "11": 1,
+       "12": 1,
+       "13": 1,
+       "14": 1,
+       "15": 1,
+       "16": 1,
+       "17": 1,
+       "18": 1,
+       "19": 1,
+       "20": 1,
+       "21": 1,
+       "22": 1
+      },
+      "network": {
+       "road": 22
+      }
+     }
+    },
+    "water": {
+     "features": 17,
+     "extent": 4096,
+     "attributes": {
+      "intermittent": {
+       "0": 17
+      },
+      "class": {
+       "river": 8,
+       "lake": 4,
+       "dock": 5
+      },
+      "id": {
+       "2956875": 1,
+       "4475273": 1,
+       "8140959": 1,
+       "8140960": 1,
+       "8177500": 1,
+       "23366658": 1,
+       "23564209": 1,
+       "23564288": 1,
+       "23564462": 1,
+       "23567108": 1,
+       "25490767": 1,
+       "25859616": 1,
+       "69416618": 1,
+       "69416619": 1,
+       "69416624": 1,
+       "80895182": 1,
+       "80895491": 1
+      }
+     }
+    },
+    "water_name": {
+     "features": 14,
+     "extent": 4096,
+     "attributes": {
+      "intermittent": {
+       "0": 14
+      },
+      "class": {
+       "lake": 14
+      }
+     }
+    },
+    "waterway": {
+     "features": 20,
+     "extent": 4096,
+     "attributes": {
+      "intermittent": {
+       "0": 20
+      },
+      "class": {
+       "canal": 20
+      }
+     }
+    }
+   }
+  },
+  "fisterra_costa_natural": {
+   "x": 7770,
+   "y": 6025,
+   "status": 200,
+   "bytes": 26826,
+   "layers": {
+    "boundary": {
+     "features": 2,
+     "extent": 4096,
+     "attributes": {
+      "admin_level": {
+       "4": 1,
+       "9": 1
+      },
+      "disputed": {
+       "0": 2
+      },
+      "maritime": {
+       "0": 1,
+       "1": 1
+      }
+     }
+    },
+    "building": {
+     "features": 3,
+     "extent": 4096,
+     "attributes": {
+      "render_height": {
+       "4": 1,
+       "5": 1,
+       "8": 1
+      },
+      "render_min_height": {
+       "0": 3
+      }
+     }
+    },
+    "housenumber": {
+     "features": 23,
+     "extent": 4096,
+     "attributes": {
+      "housenumber": {
+       "1": 1,
+       "2": 1,
+       "3": 1,
+       "5": 1,
+       "8": 1,
+       "9": 1,
+       "11": 1,
+       "13": 1,
+       "14": 1,
+       "15": 1,
+       "16": 1,
+       "19": 1,
+       "22": 1,
+       "24": 1,
+       "27": 1,
+       "30": 1,
+       "33": 1,
+       "36": 1,
+       "40": 1,
+       "42": 1,
+       "44": 1,
+       "61": 1,
+       "79": 1
+      }
+     }
+    },
+    "landcover": {
+     "features": 12,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "beach": 4,
+       "forest": 1,
+       "garden": 2,
+       "park": 2,
+       "recreation_ground": 1,
+       "grass": 1,
+       "scrub": 1
+      },
+      "class": {
+       "sand": 4,
+       "wood": 1,
+       "grass": 7
+      }
+     }
+    },
+    "landuse": {
+     "features": 7,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "school": 1,
+       "pitch": 2,
+       "cemetery": 1,
+       "playground": 1,
+       "retail": 1,
+       "residential": 1
+      }
+     }
+    },
+    "mountain_peak": {
+     "features": 2,
+     "extent": 4096,
+     "attributes": {
+      "ele_ft": {
+       "184": 1
+      },
+      "rank": {
+       "1": 1,
+       "3": 1
+      },
+      "class": {
+       "peak": 1,
+       "cliff": 1
+      },
+      "ele": {
+       "56": 1
+      }
+     }
+    },
+    "park": {
+     "features": 2,
+     "extent": 4096,
+     "attributes": {
+      "rank": {
+       "1": 1
+      },
+      "class": {
+       "historic": 1,
+       "Special Area of Conservation": 1
+      }
+     }
+    },
+    "place": {
+     "features": 18,
+     "extent": 4096,
+     "attributes": {
+      "rank": {
+       "11": 1,
+       "12": 1,
+       "13": 1,
+       "14": 1,
+       "15": 1,
+       "16": 1,
+       "17": 1,
+       "18": 1,
+       "19": 1,
+       "20": 1,
+       "21": 1,
+       "22": 1,
+       "23": 1,
+       "24": 1,
+       "25": 1,
+       "26": 1,
+       "27": 1,
+       "28": 1
+      },
+      "class": {
+       "village": 1,
+       "hamlet": 11,
+       "neighbourhood": 6
+      }
+     }
+    },
+    "poi": {
+     "features": 213,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "clinic": 1,
+       "bus_station": 2,
+       "attraction": 1,
+       "dock": 1,
+       "school": 3,
+       "soccer": 1,
+       "townhall": 1,
+       "courthouse": 1,
+       "caravan_site": 2,
+       "grave_yard": 1,
+       "police": 1,
+       "post_office": 1,
+       "convenience": 1,
+       "travel_agency": 1,
+       "kiosk": 1,
+       "gift": 1,
+       "ticket": 1,
+       "supermarket": 2,
+       "marketplace": 1,
+       "fast_food": 1,
+       "clothes": 1,
+       "bar": 3,
+       "restaurant": 1,
+       "christian": 1,
+       "fuel": 1
+      },
+      "rank": {
+       "1": 11,
+       "2": 7,
+       "3": 5,
+       "4": 3,
+       "5": 3,
+       "6": 2,
+       "7": 2,
+       "8": 2,
+       "9": 2,
+       "10": 2,
+       "11": 2,
+       "12": 2,
+       "13": 2,
+       "14": 2,
+       "15": 2,
+       "16": 2,
+       "17": 2,
+       "18": 2,
+       "19": 2,
+       "20": 2,
+       "21": 2,
+       "22": 2,
+       "23": 1,
+       "24": 1,
+       "25": 1
+      },
+      "class": {
+       "hospital": 1,
+       "bus": 2,
+       "attraction": 1,
+       "harbor": 1,
+       "school": 3,
+       "stadium": 1,
+       "town_hall": 2,
+       "campsite": 2,
+       "cemetery": 1,
+       "police": 1,
+       "post": 1,
+       "shop": 5,
+       "grocery": 3,
+       "fast_food": 1,
+       "clothing_store": 1,
+       "bar": 3,
+       "restaurant": 5,
+       "place_of_worship": 1,
+       "fuel": 1,
+       "pitch": 1,
+       "lodging": 11,
+       "playground": 1,
+       "pharmacy": 1,
+       "office": 1,
+       "laundry": 1
+      },
+      "level": {
+       "0": 3,
+       "2": 1
+      },
+      "layer": {
+       "1": 1
+      }
+     }
+    },
+    "transportation": {
+     "features": 40,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "service": 13,
+       "minor": 13,
+       "path": 9,
+       "track": 3,
+       "tertiary": 1,
+       "primary": 1
+      },
+      "layer": {
+       "-1": 2
+      },
+      "oneway": {
+       "1": 15
+      },
+      "bicycle": {
+       "yes": 2,
+       "no": 1
+      },
+      "surface": {
+       "paved": 18,
+       "unpaved": 4
+      },
+      "subclass": {
+       "footway": 3,
+       "pedestrian": 2,
+       "path": 2,
+       "steps": 2
+      },
+      "service": {
+       "driveway": 2,
+       "parking_aisle": 5,
+       "alley": 1
+      },
+      "horse": {
+       "no": 1
+      },
+      "foot": {
+       "yes": 1
+      },
+      "access": {
+       "no": 2
+      }
+     }
+    },
+    "transportation_name": {
+     "features": 56,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "minor": 37,
+       "path": 10,
+       "service": 2,
+       "tertiary": 3,
+       "primary": 4
+      },
+      "subclass": {
+       "footway": 3,
+       "pedestrian": 4,
+       "path": 1,
+       "steps": 2
+      },
+      "route_1_name": {
+       "Camiño de Fisterra-Muxía": 7,
+       "Estrada AC-445": 4
+      },
+      "route_1_network": {
+       "nwn": 7,
+       "GL:AC-road": 4
+      },
+      "route_1_ref": {
+       "AC-445": 4
+      },
+      "route_2_network": {
+       "nwn": 2
+      },
+      "network": {
+       "road": 4
+      },
+      "route_2_name": {
+       "Camiño de Fisterra-Muxía": 2
+      },
+      "ref": {
+       "AC-445": 4
+      },
+      "ref_length": {
+       "6": 4
+      },
+      "route_1_colour": {
+       "#008000": 4
+      }
+     }
+    },
+    "water": {
+     "features": 2,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "ocean": 1,
+       "pond": 1
+      },
+      "intermittent": {
+       "0": 1
+      },
+      "id": {
+       "1418934137": 1
+      }
+     }
+    },
+    "water_name": {
+     "features": 3,
+     "extent": 4096,
+     "attributes": {
+      "intermittent": {
+       "0": 3
+      },
+      "class": {
+       "bay": 3
+      }
+     }
+    }
+   }
+  },
+  "pier_santa_monica": {
+   "x": 2799,
+   "y": 6544,
+   "status": 200,
+   "bytes": 219414,
+   "layers": {
+    "boundary": {
+     "features": 1,
+     "extent": 4096,
+     "attributes": {
+      "admin_level": {
+       "8": 1
+      },
+      "disputed": {
+       "0": 1
+      },
+      "maritime": {
+       "0": 1
+      }
+     }
+    },
+    "building": {
+     "features": 36,
+     "extent": 4096,
+     "attributes": {
+      "render_height": {
+       "3": 1,
+       "4": 1,
+       "5": 2,
+       "6": 1,
+       "7": 1,
+       "8": 1,
+       "9": 1,
+       "10": 1,
+       "11": 1,
+       "12": 1,
+       "13": 1,
+       "14": 1,
+       "15": 1,
+       "16": 1,
+       "17": 1,
+       "18": 1,
+       "19": 1,
+       "20": 1,
+       "21": 1,
+       "22": 1,
+       "23": 1,
+       "24": 1,
+       "25": 1,
+       "26": 1,
+       "27": 1
+      },
+      "render_min_height": {
+       "0": 36
+      },
+      "colour": {
+       "green": 1
+      }
+     }
+    },
+    "housenumber": {
+     "features": 189,
+     "extent": 4096,
+     "attributes": {
+      "housenumber": {
+       "132": 1,
+       "213": 1,
+       "235": 1,
+       "395": 1,
+       "1040": 1,
+       "1332": 1,
+       "1333": 1,
+       "1345": 1,
+       "1354": 1,
+       "1355": 1,
+       "1444": 1,
+       "1445": 1,
+       "1447": 1,
+       "1450": 1,
+       "1600": 1,
+       "1601": 1,
+       "1602": 1,
+       "1910": 1,
+       "1922": 1,
+       "2430": 1,
+       "2437": 1,
+       "2440": 1,
+       "1420,1430": 1,
+       "1908A": 1,
+       "1908B": 1
+      }
+     }
+    },
+    "landcover": {
+     "features": 160,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "grass": 109,
+       "beach": 5,
+       "park": 12,
+       "recreation_ground": 5,
+       "allotments": 1,
+       "sand": 2,
+       "scrub": 8,
+       "forest": 3,
+       "garden": 15
+      },
+      "class": {
+       "grass": 150,
+       "sand": 7,
+       "wood": 3
+      }
+     }
+    },
+    "landuse": {
+     "features": 109,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "track": 2,
+       "industrial": 5,
+       "cemetery": 1,
+       "pitch": 38,
+       "theme_park": 1,
+       "playground": 8,
+       "school": 3,
+       "railway": 3,
+       "retail": 34,
+       "commercial": 11,
+       "kindergarten": 1,
+       "stadium": 1,
+       "residential": 1
+      }
+     }
+    },
+    "park": {
+     "features": 3,
+     "extent": 4096,
+     "attributes": {
+      "rank": {
+       "1": 1
+      },
+      "class": {
+       "recreation": 2,
+       "National Recreation Area": 1
+      }
+     }
+    },
+    "place": {
+     "features": 5,
+     "extent": 4096,
+     "attributes": {
+      "rank": {
+       "11": 1,
+       "12": 1,
+       "13": 1,
+       "14": 1,
+       "15": 1
+      },
+      "class": {
+       "city": 1,
+       "suburb": 1,
+       "quarter": 1,
+       "neighbourhood": 2
+      }
+     }
+    },
+    "poi": {
+     "features": 1476,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "clinic": 4,
+       "station": 1,
+       "bus_stop": 119,
+       "attraction": 11,
+       "college": 1,
+       "school": 6,
+       "kindergarten": 1,
+       "community_centre": 4,
+       "townhall": 1,
+       "courthouse": 1,
+       "cemetery": 1,
+       "park": 17,
+       "books": 4,
+       "library": 2,
+       "police": 2,
+       "post_office": 5,
+       "golf": 1,
+       "interior_decoration": 1,
+       "mobile_phone": 1,
+       "stationery": 1,
+       "gift": 1,
+       "chemist": 1,
+       "charity": 1,
+       "shoes": 1,
+       "sports": 1
+      },
+      "rank": {
+       "1": 29,
+       "2": 24,
+       "3": 22,
+       "4": 20,
+       "5": 16,
+       "6": 14,
+       "7": 13,
+       "8": 10,
+       "9": 8,
+       "10": 6,
+       "11": 6,
+       "12": 5,
+       "13": 4,
+       "14": 3,
+       "15": 2,
+       "16": 2,
+       "17": 1,
+       "18": 1,
+       "19": 1,
+       "20": 1,
+       "21": 1,
+       "22": 1,
+       "23": 1,
+       "24": 1,
+       "25": 1
+      },
+      "class": {
+       "hospital": 4,
+       "railway": 1,
+       "bus": 119,
+       "attraction": 11,
+       "college": 1,
+       "school": 7,
+       "town_hall": 6,
+       "cemetery": 1,
+       "park": 17,
+       "library": 6,
+       "police": 2,
+       "post": 5,
+       "golf": 1,
+       "shop": 101,
+       "grocery": 9,
+       "fast_food": 42,
+       "clothing_store": 46,
+       "bar": 16,
+       "lodging": 3,
+       "cafe": 1,
+       "place_of_worship": 1,
+       "restaurant": 4,
+       "dentist": 1,
+       "office": 1,
+       "art_gallery": 1
+      },
+      "layer": {
+       "1": 2,
+       "2": 2,
+       "-1": 2,
+       "-4": 1
+      },
+      "level": {
+       "0": 25,
+       "1": 9,
+       "2": 8,
+       "7": 1,
+       "18": 1
+      }
+     }
+    },
+    "transportation": {
+     "features": 572,
+     "extent": 4096,
+     "attributes": {
+      "subclass": {
+       "pedestrian": 12,
+       "platform": 2,
+       "footway": 29,
+       "cycleway": 6,
+       "path": 7,
+       "steps": 6,
+       "light_rail": 1
+      },
+      "class": {
+       "path": 62,
+       "pier": 1,
+       "bridge": 8,
+       "trunk": 9,
+       "service": 193,
+       "minor": 51,
+       "service_construction": 2,
+       "motorway": 23,
+       "tertiary": 94,
+       "secondary": 102,
+       "primary": 26,
+       "transit": 1
+      },
+      "layer": {
+       "1": 40,
+       "-1": 5
+      },
+      "brunnel": {
+       "bridge": 25,
+       "tunnel": 12
+      },
+      "bicycle": {
+       "designated": 8,
+       "no": 29,
+       "yes": 11,
+       "dismount": 1,
+       "permit": 1,
+       "permissive": 1
+      },
+      "surface": {
+       "paved": 219,
+       "unpaved": 2
+      },
+      "foot": {
+       "no": 20,
+       "designated": 4,
+       "yes": 13,
+       "permissive": 4,
+       "private": 1,
+       "permit": 1
+      },
+      "expressway": {
+       "1": 16
+      },
+      "oneway": {
+       "1": 461
+      },
+      "network": {
+       "us-interstate": 14,
+       "us-state": 21
+      },
+      "service": {
+       "driveway": 24,
+       "alley": 15,
+       "parking_aisle": 75
+      },
+      "access": {
+       "no": 27
+      },
+      "horse": {
+       "no": 2
+      },
+      "level": {
+       "0": 2,
+       "1": 2
+      },
+      "official": {
+       "0": 2
+      },
+      "ramp": {
+       "1": 22
+      }
+     }
+    },
+    "transportation_name": {
+     "features": 159,
+     "extent": 4096,
+     "attributes": {
+      "ref_length": {
+       "1": 4,
+       "2": 8,
+       "10": 1
+      },
+      "subclass": {
+       "junction": 4,
+       "cycleway": 2,
+       "path": 3,
+       "footway": 14,
+       "pedestrian": 1,
+       "steps": 2
+      },
+      "ref": {
+       "1": 4,
+       "10": 6,
+       "1A": 2,
+       "US 66 Hist": 1
+      },
+      "class": {
+       "motorway": 6,
+       "trunk": 5,
+       "tertiary": 19,
+       "path": 22,
+       "minor": 53,
+       "service": 39,
+       "secondary": 8,
+       "primary": 7
+      },
+      "route_1_ref": {
+       "1": 4,
+       "10": 6,
+       "66": 1
+      },
+      "route_2_network": {
+       "US:I": 3,
+       "US:CA": 2
+      },
+      "route_3_network": {
+       "US:CA": 3
+      },
+      "route_1_name": {
+       "Pearl Harbor Memorial Highway": 1
+      },
+      "route_1_network": {
+       "US:I": 6,
+       "US:CA": 4,
+       "US:US:Historic": 1
+      },
+      "route_2_ref": {
+       "1": 2,
+       "10": 3
+      },
+      "network": {
+       "us-interstate": 6,
+       "us-state": 4,
+       "road": 1
+      },
+      "route_3_ref": {
+       "1": 3
+      },
+      "route_2_name": {
+       "Pearl Harbor Memorial Highway": 2
+      },
+      "layer": {
+       "1": 1
+      }
+     }
+    },
+    "water": {
+     "features": 18,
+     "extent": 4096,
+     "attributes": {
+      "class": {
+       "ocean": 1,
+       "swimming_pool": 12,
+       "pond": 3,
+       "river": 2
+      },
+      "intermittent": {
+       "0": 17
+      },
+      "id": {
+       "312969396": 1,
+       "408470206": 1,
+       "447911041": 1,
+       "447913801": 1,
+       "448031298": 1,
+       "456244523": 1,
+       "475704961": 1,
+       "475704962": 1,
+       "480545109": 1,
+       "480969727": 1,
+       "481298177": 1,
+       "509117537": 1,
+       "1229836080": 1,
+       "1289245439": 1,
+       "1302369748": 1,
+       "1302369750": 1,
+       "1548491993": 1
+      }
+     }
+    },
+    "water_name": {
+     "features": 1,
+     "extent": 4096,
+     "attributes": {
+      "intermittent": {
+       "0": 1
+      },
+      "class": {
+       "lake": 1
+      }
+     }
+    },
+    "waterway": {
+     "features": 2,
+     "extent": 4096,
+     "attributes": {
+      "intermittent": {
+       "0": 1,
+       "1": 1
+      },
+      "class": {
+       "stream": 2
+      },
+      "brunnel": {
+       "tunnel": 1
+      }
+     }
+    }
+   }
+  }
+ },
+ "template": "https://tiles.openfreemap.org/planet/20261025_080012_pt/{z}/{x}/{y}.pbf"
+}
