@@ -17,9 +17,9 @@ sale y cuánto se puede fiar de él.
   (`data/paleocoastlines/`), no de un servicio externo.
 - **Fronteras y pueblos históricos de −123000 a 2010** ([historical-basemaps](https://github.com/aourednik/historical-basemaps),
   GPL-3.0, cargadas en tiempo de ejecución con atribución). Búsqueda por nombre con salto a su época.
-- **Fronteras vigentes de alta resolución desde 2020** (Natural Earth 10m, dominio público, ~1,7 km de
+- **Fronteras vigentes de alta resolución desde 2016** (Natural Earth 10m, dominio público, ~1,7 km de
   mediana entre vértices; origen, commit y sha256 en `data/borders/manifest.json`). Ceuta y Melilla salen
-  como España, igual que en OpenStreetMap. Antes de 2020 sigue la compilación histórica, mucho más gruesa.
+  como España, igual que en OpenStreetMap. De 2016 a 2019 se aplican las vigentes (no se han comprobado una a una las diferencias menores de esos años; la web lo avisa). Antes de 2016 sigue la compilación histórica, mucho más gruesa: p. ej. en 2010 El Salvador tiene 29 vértices frente a 380 y su contorno se desvía hasta 23 km (Guatemala, hasta 43 km).
 - **Tipo de evidencia en cada capa** (medición, documento, artefacto, modelo, reconstrucción,
   especulación), siempre visible.
 - **Datos recientes** de un recolector diario (artículos más vistos de Wikipedia con coordenadas

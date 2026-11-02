@@ -5,7 +5,7 @@
   "source_sha256": "239eec57ac17f100a11e2536cffc56752c318b50ae765b0918ff7aab4ce8f255",
   "license": "Dominio publico (Natural Earth: https://www.naturalearthdata.com/about/terms-of-use/)",
   "retrieved_at": "2026-11-01T21:23:54.567Z",
-  "valid_from_year": 2020,
+  "valid_from_year": 2016,
   "transformations": [
     "propiedades recortadas a NAME, NAME_ES, SUBJECTO (=SOVEREIGNT), ADM0_A3, TYPE, WIKIDATAID",
     "coordenadas redondeadas a 4 decimales",

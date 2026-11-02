@@ -53,7 +53,7 @@ const meta = {
     source: 'Natural Earth 10m admin 0 countries (nvkelso/natural-earth-vector)',
     source_url: 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/' + commit + '/geojson/ne_10m_admin_0_countries.geojson',
     commit, source_sha256: sha256, license: 'Dominio publico (Natural Earth: https://www.naturalearthdata.com/about/terms-of-use/)',
-    retrieved_at: new Date().toISOString(), valid_from_year: 2020,
+    retrieved_at: new Date().toISOString(), valid_from_year: 2016,
     transformations: ['propiedades recortadas a NAME, NAME_ES, SUBJECTO (=SOVEREIGNT), ADM0_A3, TYPE, WIKIDATAID', 'coordenadas redondeadas a 4 decimales', 'puntos consecutivos repetidos eliminados'],
     features: features.length, dropped, vertices, segment_median_km: +lens[lens.length >> 1].toFixed(2), segment_p90_km: +lens[Math.floor(lens.length * 0.9)].toFixed(2), segment_max_km: +lens[lens.length - 1].toFixed(1)
 };

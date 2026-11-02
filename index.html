@@ -288,7 +288,7 @@ const CFG = {
     deepTimeFrom: 1e6,                   // desde 1 Ma se muestra la edad en Ma
     paleoBase: './data/paleocoastlines/',   // archivo propio: PaleoMAP PaleoCoastlines (CC BY 4.0), 0-535 Ma
     paleoMaxDeltaMa: 10,                 // no se usa una loncha mas lejana que esto
-    neFromYear: 2020, neUrl: './data/borders/ne-10m-countries.json',   // fronteras vigentes (Natural Earth 10m) desde este año
+    neFromYear: 2016, neUrl: './data/borders/ne-10m-countries.json',   // fronteras vigentes (Natural Earth 10m) desde este año
     bordersMaxYbp: 125000,               // las fronteras históricas empiezan en -123000
     throttleMs: 80,                      // costas: ligeras, se actualizan mientras se arrastra el slider
     bordersDebounceMs: 300,              // fronteras: archivos de 1-3,6 MB, se piden cuando el slider se detiene
@@ -355,6 +355,7 @@ const i18n = {
         noBorders: 'Sin fronteras históricas para esta época (el conjunto cubre desde 123.000 a.C.).',
         gapNote: 'Las franjas de tierra que el polígono de una frontera deja sin cubrir se rellenan con tinte tenue con el color del país claramente más cercano; donde dos están a distancias parecidas se rayan: frontera no resuelta a esta escala.',
         bordersNE: 'Fronteras vigentes: Natural Earth 10m (dominio público), resolución mediana ~{km} km.',
+        neBackdate: 'Para 2016–2019 se aplican las fronteras vigentes: no se han comprobado una a una las diferencias menores de esos años.',
         neNote: 'Fronteras vigentes según Natural Earth. En zonas en disputa se muestra la convención de esa fuente (campo «Tipo»), sin juicio sobre soberanía.', resolution: 'Resolución de la fuente', typeLabel: 'Tipo según la fuente',
         bordersSnapshot: 'Fronteras: instantánea de {y} ({d}).', exact: 'misma fecha', apart: 'a {n} años',
         noResults: 'Sin resultados para «{q}». Pronto una búsqueda sin resultado podrá convertirse en una petición de datos.',
@@ -430,6 +431,7 @@ const i18n = {
         noBorders: 'No historical borders for this era (the dataset starts at 123,000 BC).',
         gapNote: 'Strips of land that a border polygon leaves uncovered are tinted faintly with the colour of the clearly nearest country; where two are at similar distances they are hatched: border unresolved at this scale.',
         bordersNE: 'Current borders: Natural Earth 10m (public domain), median resolution ~{km} km.',
+        neBackdate: 'For 2016–2019 the current borders are applied: minor differences in those years have not been checked one by one.',
         neNote: 'Current borders per Natural Earth. In disputed areas the source\'s own convention is shown ("Type" field), with no judgement on sovereignty.', resolution: 'Source resolution', typeLabel: 'Type per the source',
         bordersSnapshot: 'Borders: snapshot of {y} ({d}).', exact: 'same date', apart: '{n} years apart',
         noResults: 'No results for "{q}". Soon an empty search will be able to become a data request.',
@@ -674,7 +676,7 @@ function pickSnapshot(ybp) {
 
 const snapshotUrl = (best) => CFG.hbBase + 'geojson/' + best.p.file;
 
-// Desde 2020 se usan las fronteras vigentes de Natural Earth 10m (dominio publico, resolucion ~1,7 km, fuente y
+// Desde 2016 se usan las fronteras vigentes de Natural Earth 10m (dominio publico, resolucion ~1,7 km, fuente y
 // licencia en data/borders/manifest.json), mucho mas precisas que la compilacion historica; antes, esa compilacion.
 const usesNE = (ybp) => ybpToYear(ybp) >= CFG.neFromYear;
 const neBorders = (fc) => ({ data: colorize(fc), year: CFG.neFromYear, delta: 0, source: 'ne', meta: fc.meta });
@@ -1045,6 +1047,7 @@ function renderStatus() {
     } else if (state.borders) {
         const b = state.borders;
         if (b.source === 'ne') messages.push(fmt('bordersNE', { km: nf().format(b.meta.segment_median_km) }));
+        if (b.source === 'ne' && ybpToYear(state.ybp) < 2020) messages.push(t('neBackdate'));
         else messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
     } else if (ybp <= CFG.bordersMaxYbp) {
         messages.push(t('noBorders'));
