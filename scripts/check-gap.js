@@ -15,7 +15,7 @@ check('un pais solo: la franja de tierra cercana se le atribuye; lo lejano, no',
     return at(res, 0.5, 0.5) === 0 /* dentro: no es hueco */ && at(res, 1.15, 0.5) === 1 /* a ~17 km */ && at(res, 2.5, 0.5) === 0 /* a >150 km */;
 });
 check('dos paises que se juntan: la franja entre ambos queda no resuelta (255), no se reparte', () => {
-    const res = G.classify([{ key: 'A', polys: [sq(0, 0, 1)] }, { key: 'B', polys: [sq(1.2, 0, 1)] }], bbox, { distM: 40000 });
+    const res = G.classify([{ key: 'A', polys: [sq(0, 0, 1)] }, { key: 'B', polys: [sq(1.2, 0, 1)] }], bbox, { distM: 40000, resolve: 'clear' });
     return at(res, 1.1, 0.5) === 255 && at(res, 1.05, 0.5) === 255;
 });
 check('dos paises lejanos: cada uno rellena solo su lado', () => {
@@ -23,8 +23,17 @@ check('dos paises lejanos: cada uno rellena solo su lado', () => {
     return at(res, 0.6, 0.25) === 1 && at(res, 2.9, 0.25) === 2 && at(res, 1.75, 0.25) === 0;
 });
 check('golfo: un pais al otro lado del mar (mucho mas lejos) NO vuelve ambigua una costa claramente de otro', () => {
-    const res = G.classify([{ key: 'A', polys: [sq(0, 0, 1)] }, { key: 'B', polys: [sq(1.3, 0, 1)] }], bbox, { distM: 40000 });
+    const res = G.classify([{ key: 'A', polys: [sq(0, 0, 1)] }, { key: 'B', polys: [sq(1.3, 0, 1)] }], bbox, { distM: 40000, resolve: 'clear' });
     return at(res, 1.03, 0.5) === 1 /* ~3 km de A, ~30 km de B */ && at(res, 1.27, 0.5) === 2 && at(res, 1.15, 0.5) === 255 /* a mitad */;
+});
+check('por defecto (nearest): ninguna celda queda sin color ni rayada; entre dos paises manda el mas cercano', () => {
+    const res = G.classify([{ key: 'A', polys: [sq(0, 0, 1)] }, { key: 'B', polys: [sq(1.2, 0, 1)] }], bbox, { distM: 40000 });
+    let n255 = 0; for (const c of res.cls) if (c === 255) n255++;
+    return n255 === 0 && at(res, 1.05, 0.5) === 1 && at(res, 1.15, 0.5) === 2;
+});
+check('nearest: la franja de un solo pais llega hasta el tope de distancia, no mas', () => {
+    const res = G.classify([{ key: 'A', polys: [sq(0, 0, 0.5)] }], bbox, { distM: 100000 });
+    return at(res, 0.5 + 0.7, 0.25) === 1 /* ~78 km */ && at(res, 0.5 + 1.2, 0.25) === 0 /* ~133 km */;
 });
 check('un hueco (lago o enclave sin dibujar) dentro de un poligono no se rellena: no es franja de costa', () => {
     const donut = [[[0, 0], [2, 0], [2, 2], [0, 2], [0, 0]], [[0.8, 0.8], [1.2, 0.8], [1.2, 1.2], [0.8, 1.2], [0.8, 0.8]]];

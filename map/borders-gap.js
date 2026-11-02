@@ -1,10 +1,10 @@
 /* borders-gap.js - Rellena (de forma declarada y conservadora) la franja de tierra que un poligono de frontera
  * demasiado simplificado deja entre su borde y la costa real.
  *
- * Regla: una celda fuera de TODO poligono (a menos de D metros de alguno) se atribuye al pais MAS CERCANO si lo es con
- * claridad: el segundo pais debe estar a mas de 2 x (distancia al primero) + un margen (10 km). Si dos paises estan a
- * distancias parecidas (se juntan), la celda queda "no resuelta" (el cliente la raya): ahi la frontera es discutible.
- * Un pais al otro lado de un golfo (mucho mas lejos que el propio) no vuelve ambigua una costa que es claramente de otro.
+ * Regla (opts.resolve): por defecto 'nearest': una celda fuera de TODO poligono, a menos de D metros de alguno, se
+ * colorea con el pais MAS CERCANO, sin dejar tierra sin color ni rayados: el contorno de un poligono que da al mar es
+ * una costa tosca, y la costa buena la pone el mapa. El reparto entre dos paises vecinos junto a la costa (mediatriz)
+ * es una aproximacion grafica. 'clear' (conservador): solo si el 2.o pais esta a mas de 2 x d1 + 10 km; si no, 255.
  * Sin dependencias; funciona en el navegador y en Node (se prueba sin red).
  */
 (function (root, factory) {
@@ -80,7 +80,7 @@
      * Devuelve { grid, cls } con cls: 0 = nada, 1..n = indice+1 del grupo al que se atribuye, 255 = no resuelta.
      */
     function classify(groups, bbox, opts) {
-        const o = Object.assign({ distM: 40000, maxCells: 640, ratio: 2, marginM: 10000 }, opts || {});
+        const o = Object.assign({ distM: 40000, maxCells: 640, ratio: 2, marginM: 10000, resolve: 'nearest' }, opts || {});
         const grid = makeGrid(bbox, o.distM, o.maxCells);
         const maxD = o.distM / grid.cellM; const marginCells = o.marginM / grid.cellM;
         const { cols, rows } = grid;
@@ -98,7 +98,7 @@
                 const v = dists[g][i]; if (v > maxD) continue;
                 if (v < d1) { d2 = d1; d1 = v; who = g + 1; } else if (v < d2) d2 = v;
             }
-            cls[i] = who === 0 ? 0 : (d2 > o.ratio * d1 + marginCells ? who : 255);
+            cls[i] = who === 0 ? 0 : (o.resolve === 'nearest' || d2 > o.ratio * d1 + marginCells ? who : 255);
         }
         return { grid, cls, maxD };
     }
