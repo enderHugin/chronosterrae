@@ -29,13 +29,26 @@ const { chromium } = require('playwright');
         zoom: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source,
         layers: map.getStyle().layers.map((l) => l.id + (map.getLayoutProperty(l.id, 'visibility') === 'none' ? ' (oculta)' : ''))
     }));
-    fs.writeFileSync(path.join(out, 'info.json'), JSON.stringify({ info, log }, null, 2));
+    // Que hay dibujado en puntos concretos de pantalla (capa + propiedades), y como son las capas de linea del detalle.
+    const probes = await page.evaluate(() => {
+        const pts = { banda: [330, 380], interior_francia: [560, 300], linea_interior: [352, 360], espana: [150, 450], cuña_espana: [700, 300] };
+        const res = {};
+        for (const [k, [x, y]] of Object.entries(pts)) {
+            res[k] = map.queryRenderedFeatures([[x - 3, y - 3], [x + 3, y + 3]]).filter((f) => !/^ofm-(landuse|landcover)/.test(f.layer.id) || true)
+                .map((f) => f.layer.id + ' | ' + (f.sourceLayer || f.source) + ' | ' + JSON.stringify(f.properties).slice(0, 160));
+        }
+        const lines = map.getStyle().layers.filter((l) => l.type === 'line' && l.id.startsWith('ofm-')).map((l) => ({ id: l.id, sl: l['source-layer'], filter: l.filter || null, dash: l.paint && l.paint['line-dasharray'] || null, vis: map.getLayoutProperty(l.id, 'visibility') }));
+        const inner = map.querySourceFeatures('borders-inner').map((f) => ({ key: f.properties.key, n: f.geometry.coordinates.length, type: f.geometry.type }));
+        return { res, lines, inner: inner.slice(0, 30), nInner: inner.length };
+    });
+    fs.writeFileSync(path.join(out, 'info.json'), JSON.stringify({ info, probes, log }, null, 2));
     await shot('1-completa-oscuro');
     const variants = [
         ['2-sin-relleno-gap', () => { map.setLayoutProperty('gap-raster', 'visibility', 'none'); map.setPaintProperty('borders-fill', 'fill-opacity', ['get', '_o']); }],
         ['3-sin-gap-ni-poligonos', () => { map.setLayoutProperty('borders-fill', 'visibility', 'none'); }],
         ['4-sin-linea-ne', () => { map.setLayoutProperty('borders-line', 'visibility', 'none'); }],
-        ['5-solo-fondo-ofm', () => { map.getStyle().layers.filter((l) => l.id.startsWith('ofm-') && l.type !== 'background').forEach((l) => map.setLayoutProperty(l.id, 'visibility', 'none')); }],
+        ['5-sin-parques-ni-limites-ofm', () => { map.getStyle().layers.filter((l) => l.id.startsWith('ofm-') && (l['source-layer'] === 'park' || l['source-layer'] === 'boundary' || /park|boundary/.test(l.id))).forEach((l) => map.setLayoutProperty(l.id, 'visibility', 'none')); }],
+        ['6-solo-fondo-ofm', () => { map.getStyle().layers.filter((l) => l.id.startsWith('ofm-') && l.type !== 'background').forEach((l) => map.setLayoutProperty(l.id, 'visibility', 'none')); }],
     ];
     for (const [name, fn] of variants) { await page.evaluate(fn); await shot(name); }
     await browser.close();
