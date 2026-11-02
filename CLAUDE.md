@@ -25,6 +25,11 @@ escribe en `main`).
    API externa**: pruébala con `scripts/probe.js` (workflow `probe.yml`, resultado en la
    rama `probe-results`).
 7. Una prueba que comprueba un rechazo debe distinguir «rechazado» de «roto».
+8. **Un arreglo visual no está arreglado hasta verlo en el render real.** Las pruebas con mapa simulado no ven
+   lo que ve el usuario. El workflow `probe-shot.yml` fotografía la web publicada (serie fija `SUITE` en
+   `scripts/probe-shot.js`, claro y oscuro) tras cada publicación; el resultado va a la rama `probe-shot`. Mira las
+   imágenes antes de decir que algo está arreglado. Para una vista concreta: ejecútalo a mano con `lng`, `lat`, `zoom`
+   (devuelve además qué capa dibuja cada punto y variantes con capas apagadas).
 
 ## Comandos
 
