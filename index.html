@@ -854,6 +854,17 @@ function detailBuild(style) {
     if (style.glyphs) map.setGlyphs(style.glyphs);
     if (style.sprite) map.setSprite(style.sprite);
     Object.entries(style.sources).forEach(([name, src]) => map.addSource('ofm-' + name, src));
+    // Rotulo con el nombre de parques y espacios protegidos (el estilo de OpenFreeMap dibuja el relleno y el contorno de rayas, pero
+    // no su nombre): sin el, una zona de otro tono con borde de rayas se confunde con un territorio. Hereda fuente y halo de un rotulo existente.
+    const proto = style.layers.find((l) => l.type === 'symbol' && l.source && l.layout && l.layout['text-font']);
+    if (proto && !style.layers.some((l) => l.id === 'chronos_park_name')) {
+        style.layers.push({
+            id: 'chronos_park_name', type: 'symbol', source: proto.source, 'source-layer': 'park', minzoom: 9,
+            filter: ['match', ['geometry-type'], ['MultiPolygon', 'Polygon'], true, false],
+            layout: { 'text-field': ['coalesce', ['get', 'name:latin'], ['get', 'name']], 'text-font': proto.layout['text-font'], 'text-size': 12, 'text-max-width': 7, 'text-padding': 6 },
+            paint: { 'text-color': '#3b6d3b', 'text-halo-color': (proto.paint && proto.paint['text-halo-color']) || '#ffffff', 'text-halo-width': 1.2 }
+        });
+    }
     style.layers.forEach((l) => {
         if (l.type === 'fill-extrusion') return;               // edificios en 3D: pesados y de hoy
         const clone = { ...l, id: 'ofm-' + l.id, layout: { ...(l.layout || {}), visibility: 'none' } };
@@ -871,11 +882,7 @@ function detailBuild(style) {
         const orig = {};
         if (role === 'fill') orig['fill-opacity'] = map.getPaintProperty(clone.id, 'fill-opacity');
         if (role === 'symbol') { orig['text-color'] = map.getPaintProperty(clone.id, 'text-color'); orig['text-halo-color'] = map.getPaintProperty(clone.id, 'text-halo-color'); }
-        // Parques y espacios protegidos de OSM (relleno y contorno de rayas): con fronteras historicas encima se leen como una
-        // segunda frontera y como una franja de otro tono (visto en los Pirineos con Aldudeko mendia), asi que se ocultan igual que
-        // las fronteras de OSM. No aportan nada a un mapa de territorios; los rotulos (simbolos) no se tocan.
-        const park = l['source-layer'] === 'park' && l.type !== 'symbol';
-        DETAIL.layers.push({ id: clone.id, role, physical, orig, filter: l.filter || null, park });
+        DETAIL.layers.push({ id: clone.id, role, physical, orig, filter: l.filter || null });
     });
     detailTheme();
 }
@@ -923,12 +930,12 @@ function detailFade() {
     DETAIL.fadeTimer = setTimeout(reveal, 3000);
 }
 
-// Las fronteras administrativas actuales de OpenStreetMap (y los contornos de parques, que se confunden con ellas) no se dibujan
-// mientras haya fronteras historicas: serian dos mapas de fronteras superpuestos (y el actual no es el de la epoca).
+// Las fronteras administrativas actuales de OpenStreetMap no se dibujan mientras haya fronteras historicas:
+// serian dos mapas de fronteras superpuestos (y el actual no es el de la epoca).
 function detailVisibility() {
     const mode = DETAIL.shown;
     DETAIL.layers.forEach((l) => {
-        map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !((l.role === 'boundary' || l.park) && state.borders) ? 'visible' : 'none');
+        map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !(l.role === 'boundary' && state.borders) ? 'visible' : 'none');
         // Antes de hoy no se dibujan dársenas ni piscinas: obras modernas (clases `dock` y `swimming_pool` del esquema de OpenFreeMap, comprobadas con la sonda).
         if (l.role === 'water') map.setFilter(l.id, mode === 'physical' ? (l.filter ? ['all', l.filter, DETAIL_NOT_MODERN_WATER] : DETAIL_NOT_MODERN_WATER) : (l.filter || null));
     });
