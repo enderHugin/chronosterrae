@@ -14,6 +14,7 @@ on:
       - 'data/borders/**'
       - 'sky/**'
       - 'map/**'
+      - 'solar/**'
       - 'vendor/**'
       - '.github/workflows/pages.yml'
   workflow_run:
@@ -48,7 +49,7 @@ jobs:
           mkdir -p _site/data
           cp index.html latest_harvest.json _site/
           cp -r data/paleocoastlines _site/data/paleocoastlines
-          cp -r sky map vendor _site/
+          cp -r sky map vendor solar _site/
           if [ -d data/borders ]; then cp -r data/borders _site/data/borders; fi
           if [ -d data/sky ]; then cp -r data/sky _site/data/sky; fi
           touch _site/.nojekyll

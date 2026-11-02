@@ -39,6 +39,16 @@ async function runSuite(page, out) {
             rows.push({ name, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, status: document.getElementById('status').textContent.slice(0, 200) }))) });
         }
     }
+    // Pantalla del sistema solar (fecha de hoy y una antigua): cada vista se fotografia con el cuerpo central elegido.
+    await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
+    await page.waitForTimeout(2500);
+    await page.click('#btn-solar'); await page.waitForTimeout(1500);
+    const solarShots = [['sistema', () => solarView.goSystem()], ['jupiter', () => solarView.goTo('Jupiter')], ['luna', () => solarView.goTo('Moon')], ['tierra', () => solarView.goTo('Earth')], ['sol', () => solarView.goTo('Sun')]];
+    for (const [n, fn] of solarShots) { await page.evaluate(fn); await page.waitForTimeout(2200); await page.screenshot({ path: path.join(out, 'solar-' + n + '.png') }); rows.push({ name: 'solar-' + n, status: await page.evaluate(() => document.getElementById('solar-info').innerText.slice(0, 300)) }); }
+    await page.evaluate(() => setTime(yearToYbp(1492), { immediate: true })); await page.waitForTimeout(2000);
+    await page.screenshot({ path: path.join(out, 'solar-1492.png') });
+    await page.evaluate(() => setTime(yearToYbp(-5000), { immediate: true })); await page.waitForTimeout(2000);
+    await page.screenshot({ path: path.join(out, 'solar-fuera-de-ventana.png') });
     fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));
 }
 

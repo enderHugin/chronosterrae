@@ -26,3 +26,11 @@ ERFA es una biblioteca derivada, con permiso, de SOFA del IAU; se reconoce ese o
 mas que hoy son mas debiles que V = 6,5 pero llegan a verse a simple vista entre -100.000 y hoy. Se redistribuye bajo
 **CC BY-SA 4.0**, igual que `stars.json`. HYG escribe `rv = 0` cuando NO conoce la velocidad radial; aqui un 0 se trata como
 «desconocida» y esa estrella queda marcada.
+
+## Sistema solar (`validation-helio.json`, `sky/solar.js`)
+
+`validation-helio.json` es un informe propio (`scripts/validate-helio.js`, workflow `helio-validate.yml`): compara las posiciones
+heliocentricas (km) que calcula **astronomy-engine** (MIT) con los vectores de **JPL Horizons** (efemeride DE441; datos del
+JPL/Caltech, de la NASA, sin restricciones de uso para este fin), en 16 epocas de -2000 a 3000. No contiene datos de Horizons
+salvo las cifras de error. Los radios de `sky/solar.js` son valores publicados: ficha de planetas de la NASA (NSSDCA,
+https://nssdc.gsfc.nasa.gov/planetary/factsheet/, actualizada el 18-03-2025) y el radio solar nominal de la Resolucion B3 de la IAU 2015.

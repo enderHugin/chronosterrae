@@ -64,14 +64,18 @@
 
         function currentTarget(P) { return st.flight ? st.flight.cur : P[st.focus]; }
 
+        // Orientacion de llegada: la camara queda ~50 grados al lado de la direccion al Sol, asi se ve una fase gibosa y no un disco negro.
+        // Al Sol se conserva la orientacion actual.
+        function arrival(id, P) {
+            if (id === 'Sun') return [st.yaw, st.pitch];
+            const d = P[id]; return [Math.atan2(-d[1], -d[0]) + 0.87, 0.3];
+        }
+
         function startFlight(id, toLogD) {
             const jd = o.getJD(); if (!Number.isFinite(jd)) { st.focus = id; st.logD = toLogD; invalidate(); return; }
             let P; try { P = Solar.positions(jd); } catch (e) { st.focus = id; st.logD = toLogD; invalidate(); return; }
             const from = st.flight ? st.flight.cur.slice() : P[st.focus].slice();
-            // Orientacion de llegada: la camara queda ~50 grados al lado de la direccion al Sol, asi se ve una fase gibosa y no un disco negro.
-            // (Al ir al Sol se conserva la orientacion actual.)
-            let toYaw = st.yaw; let toPitch = st.pitch;
-            if (id !== 'Sun') { const d = P[id]; const az = Math.atan2(-d[1], -d[0]); toYaw = az + 0.87; toPitch = 0.3; }
+            const [toYaw, toPitch] = arrival(id, P);
             st.flight = { t0: performance.now(), dur: 900, from, fromLogD: st.logD, to: id, toLogD, cur: from.slice(), fromYaw: st.yaw, toYaw, fromPitch: st.pitch, toPitch };
             st.focus = id;
             frame();
@@ -194,6 +198,7 @@
                 st.yaw = st.flight.fromYaw + dy * e; st.pitch = lerp(st.flight.fromPitch, st.flight.toPitch, e);
                 if (s >= 1) st.flight = null;
             }
+            if (st.orient) { st.orient = false; const a = arrival(st.focus, P); st.yaw = a[0]; st.pitch = a[1]; }   // primera vez al abrir
             st.logD = clamp(st.logD, minLogD(), MAX_LOG_D);
             const target = currentTarget(P);
             const cam = Solar.makeCamera({ target, yaw: st.yaw, pitch: st.pitch, distance: Math.pow(10, st.logD), width: w, height: h });
@@ -280,7 +285,7 @@
         }
 
         return {
-            open() { st.open = true; root.hidden = false; texts(); invalidate(); },
+            open() { st.open = true; st.orient = true; root.hidden = false; texts(); invalidate(); },
             close() { st.open = false; root.hidden = true; if (st.raf) { cancelAnimationFrame(st.raf); st.raf = 0; } },
             invalidate, texts, goTo, goSystem,
             get state() { return st; }

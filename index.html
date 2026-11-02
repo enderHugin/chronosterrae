@@ -1819,7 +1819,7 @@ function setSolarOpen(open) {
         solarView.open();
     } else {
         solarView.close();
-        map.resize(); scheduleSpace();
+        map.resize(); scheduleSpace(); updateNight(false);
     }
 }
 $('btn-solar').addEventListener('click', () => setSolarOpen(!document.body.classList.contains('solar-on')));
@@ -1965,9 +1965,8 @@ function clockChanged({ tick = false } = {}) {
     const secChanged = sec !== clock.lastSec;
     clock.lastSec = sec;
     if (sky.open && (!tick || secChanged || clock.rate >= 3600)) { skyFieldsFromClock(); scheduleSky(); }
-    scheduleSpace();
-    solarView.invalidate();
-    updateNight(false);
+    if (document.body.classList.contains('solar-on')) solarView.invalidate();      // con el sistema solar abierto el mapa esta oculto: no se repinta
+    else { scheduleSpace(); updateNight(false); }
     eventsEnsureData();
     eventsRefresh();
     toastsTick();
