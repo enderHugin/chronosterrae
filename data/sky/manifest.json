@@ -48,5 +48,28 @@
   },
   "unmatched_vertices": [
     "UMa 169.5468,31.5308"
-  ]
+  ],
+  "stars3d": {
+    "file": "stars3d.json",
+    "bytes": 104183,
+    "sha256": "2096beff45cc323f6b60bbf31c1ad10e50185d7842f9adb3b703bf0f628e3a0a",
+    "hyg_sha256": "d9f69fd86bbf90a4e4d52b4c5c53eacfa6dfc0bfdef85bfd94f095e0bebe4ebd",
+    "window_years": [
+      -100000,
+      0
+    ],
+    "d_max_pc": 200,
+    "mag_limit": 6.5,
+    "stats": {
+      "catalogue_stars": 8870,
+      "with_parallax": 8671,
+      "without_parallax": 199,
+      "with_radial_velocity": 8465,
+      "without_radial_velocity": 405,
+      "rv_rms_kms": 23.73,
+      "extra_stars": 106,
+      "extra_candidates_evaluated": 48117,
+      "possible_omissions_unknown_rv": 115
+    }
+  }
 }

@@ -12,12 +12,14 @@
     "check": "node scripts/check.js",
     "check:sky": "node scripts/check-sky.js",
     "validate": "node scripts/validate-records.js",
-    "test": "npm run check && npm run check:sky && npm run check:events && npm run check:data && npm run check:gap && npm run check:inner && npm run check:ltp && npm run validate",
+    "test": "npm run check && npm run check:sky && npm run check:events && npm run check:data && npm run check:gap && npm run check:inner && npm run check:ltp && npm run check:stars3d && npm run check:prehistory && npm run validate",
     "check:events": "node scripts/check-events.js",
     "check:data": "node scripts/check-data.js",
     "check:gap": "node scripts/check-gap.js",
     "check:inner": "node scripts/check-inner.js",
-    "check:ltp": "node scripts/check-ltp.js"
+    "check:ltp": "node scripts/check-ltp.js",
+    "check:stars3d": "node scripts/check-stars3d.js",
+    "check:prehistory": "node scripts/check-prehistory.js"
   },
   "devDependencies": {
     "ajv": "^8.17.1",
