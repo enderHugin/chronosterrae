@@ -6,7 +6,7 @@
 'use strict';
 const zlib = require('zlib');
 const { VectorTile } = require('@mapbox/vector-tile');
-const Protobuf = require('pbf');
+const PbfModule = require('pbf'); const Protobuf = PbfModule.default || PbfModule;
 const UA = 'ChronosTerrae-Probe/0.3 (https://github.com/enderHugin/chronosterrae)';
 const tileOf = (lon, lat, z) => { const n = 2 ** z; const r = lat * Math.PI / 180; return [Math.floor((lon + 180) / 360 * n), Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n)]; };
 const PLACES = { barcelona_puerto: [2.17, 41.36], rotterdam_maasvlakte: [4.03, 51.95], hamburgo: [9.97, 53.54], fisterra_costa_natural: [-9.27, 42.91], pier_santa_monica: [-118.497, 34.009] };
