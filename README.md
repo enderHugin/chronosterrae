@@ -29,6 +29,14 @@ sale y cuánto se puede fiar de él.
   juliano hasta el 4-10-1582 y gregoriano después, refracción y crepúsculo. El cálculo está en
   `sky/sky.js` y se contrasta con JPL Horizons en Actions: **el error medido se muestra en la propia
   web** (segundos de arco hoy; unos 15′ para la Luna hacia el año 0 y ~1,2° hacia el 2000 a. C.).
+- **Estrellas de la prehistoria** (−100.000 a −2001, solo estrellas, etiquetado «modelo»): movimiento
+  propio **y velocidad radial** en 3D con el tiempo de luz exacto (`sky/stars3d.js`), precesión de largo
+  plazo de Vondrák, Capitaine y Wallace 2011 (`sky/ltp.js`, tablas extraídas de ERFA, BSD-3) y rotación
+  terrestre por el ángulo ERA. No hay Sol, Luna ni planetas antes del 2001 a. C. (sin efemérides fiables).
+  Se verifica contra una implementación independiente en Python (`scripts/ref/stars3d_ref.py`, coinciden a
+  0,000001″), contra el camino antiguo donde ambos valen y con casos físicos (Thuban, Vega). La web declara
+  su precisión y sus límites: ΔT es allí una extrapolación, 401 estrellas no tienen velocidad radial medida
+  y la estación del año real de la fecha proléptica no se afirma.
 - **Estrellas y planetas tras el globo**: al alejarte (pellizco) ves el espacio con las estrellas
   del catálogo HYG (CC BY-SA 4.0, con movimiento propio) y los planetas, el Sol y la Luna en su
   posición real del instante elegido, más el terminador día/noche sobre el mapa. La Luna se oculta

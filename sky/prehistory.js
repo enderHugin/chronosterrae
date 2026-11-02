@@ -43,9 +43,24 @@
             for (let i = 0; i < n; i++) { const r = fr.toCIP(f, [dir[3 * i], dir[3 * i + 1], dir[3 * i + 2]]); ra[i] = r.ra; dec[i] = r.dec; }
             return { ra, dec, mag, era: fr.era(ut1Days), epj, tYears };
         }
+        /**
+         * Altura y azimut GEOMETRICOS (grados; azimut desde el norte hacia el este) de todas las estrellas para un lugar.
+         * H = ERA + lon - RA (ascensiones rectas desde el CIO). Sin refraccion: la anade quien dibuja.
+         */
+        function horizontal(res, latDeg, lonDeg) {
+            const rad = Math.PI / 180; const phi = latDeg * rad; const sp = Math.sin(phi); const cp = Math.cos(phi);
+            const alt = new Float64Array(n); const az = new Float64Array(n);
+            for (let i = 0; i < n; i++) {
+                const H = res.era + lonDeg * rad - res.ra[i]; const sH = Math.sin(H); const cH = Math.cos(H);
+                const sd = Math.sin(res.dec[i]); const cd = Math.cos(res.dec[i]);
+                alt[i] = Math.asin(Math.max(-1, Math.min(1, sp * sd + cp * cd * cH))) / rad;
+                let a = Math.atan2(-cd * sH, sd * cp - cd * cH * sp) / rad; if (a < 0) a += 360; az[i] = a;
+            }
+            return { alt, az };
+        }
         /** Posicion (rad) que puede errar la estrella i por su radial desconocida +/- sigma (km/s) en tYears. */
         const uncertainty = (i, tYears, sigmaKms) => S3.uncertaintyRad(prep, i, tYears, sigmaKms);
-        return { n, prep, at, uncertainty, frame: fr, ltp };
+        return { n, prep, at, horizontal, uncertainty, frame: fr, ltp };
     }
 
     return { create, WINDOW };

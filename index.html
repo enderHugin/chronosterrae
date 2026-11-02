@@ -267,6 +267,9 @@
 
 <script src="./vendor/astronomy-engine/astronomy.browser.min.js"></script>
 <script src="./sky/sky.js"></script>
+<script src="./sky/ltp.js"></script>
+<script src="./sky/stars3d.js"></script>
+<script src="./sky/prehistory.js"></script>
 <script src="./sky/space.js"></script>
 <script src="./sky/timed.js"></script>
 <script src="./map/borders-gap.js"></script>
@@ -415,7 +418,17 @@ const i18n = {
             noStars: 'El catálogo de estrellas aún no está disponible: solo se muestran el Sol, la Luna y los planetas.',
             accuracy: 'Frente a JPL Horizons en el año medido más cercano ({y}): Sol {sun}, Luna {moon}, peor planeta {planet}. Solo la efeméride, sin la incertidumbre de ΔT.',
             noValidation: 'La comparación con JPL Horizons aún no está publicada: no se declara precisión.',
-            unavailable: 'No se pudo cargar el módulo de cielo.'
+            unavailable: 'No se pudo cargar el módulo de cielo.',
+            pre: {
+                loading: 'Cargando las estrellas de la prehistoria…',
+                missing: 'No se pudieron cargar los datos de las estrellas de la prehistoria.',
+                banner: 'Prehistoria (modelo): solo estrellas. No hay Sol, Luna ni planetas en esta época (no hay efemérides fiables), así que la carta se dibuja sobre cielo oscuro aunque a esa hora local fuese de día.',
+                stars: '{v} estrellas con V ≤ 6,5 en el catálogo en esta época (las {n} de hoy más {x} que hoy son más débiles pero llegan a verse; faltan las que hoy son débiles y no tienen velocidad radial medida: es una cota inferior).',
+                lines: 'Las figuras de las constelaciones son las de hoy: a esta edad se ven deformadas.',
+                model: 'Posición: movimiento propio y velocidad radial medidos hoy, extrapolados en línea recta con el tiempo de luz exacto (en ±100.000 años la aceleración galáctica es despreciable), y precesión de largo plazo (Vondrák, Capitaine y Wallace 2011). Según ERFA esa precesión es exacta «a unos pocos segundos de arco» en el periodo histórico y empeora hasta «unas décimas de grado» al final de ±200.000 años (a ±100.000 queda entre ambos). Sin nutación, aberración ni paralaje. El error de las mediciones crece con el tiempo: cada 1 mas/año de error en el movimiento propio son 1,7′ a 100.000 años.',
+                rv: '{u} de las {n} estrellas no tienen velocidad radial medida: se mueven solo en tangencial y su posición es incierta; con la dispersión de las radiales medidas del propio catálogo (±{s} km/s) la peor se desplazaría hasta {w} en esta época.',
+                time: 'La hora es UT proléptico: el cielo es el de la rotación terrestre (ERA) de ese instante exacto. ΔT = {dt} s ({days} días) es aquí una extrapolación teórica: un día de error en ΔT equivale a ~1° de ángulo horario, así que la estación del año real de esta fecha no se afirma.'
+            }
         }
     },
     en: {
@@ -492,7 +505,17 @@ const i18n = {
             noStars: 'The star catalogue is not available yet: only the Sun, Moon and planets are shown.',
             accuracy: 'Against JPL Horizons in the nearest measured year ({y}): Sun {sun}, Moon {moon}, worst planet {planet}. Ephemeris only, without the ΔT uncertainty.',
             noValidation: 'The comparison with JPL Horizons is not published yet: no accuracy is claimed.',
-            unavailable: 'The sky module could not be loaded.'
+            unavailable: 'The sky module could not be loaded.',
+            pre: {
+                loading: 'Loading the prehistoric stars…',
+                missing: 'The prehistoric star data could not be loaded.',
+                banner: 'Prehistory (model): stars only. There is no Sun, Moon or planets in this era (no reliable ephemerides), so the chart is drawn on a dark sky even if it was daytime at that local hour.',
+                stars: '{v} stars with V ≤ 6.5 in the catalogue at this epoch (today\'s {n} plus {x} that are fainter today but come into view; stars that are faint today and have no measured radial velocity are missing: this is a lower bound).',
+                lines: 'The constellation figures are today\'s: at this age they look distorted.',
+                model: 'Position: proper motion and radial velocity measured today, extrapolated in a straight line with exact light-time (over ±100,000 years galactic acceleration is negligible), and long-term precession (Vondrák, Capitaine & Wallace 2011). According to ERFA that precession is accurate "to a few arcseconds" in the historical period and worsens to "a few tenths of a degree" at the end of ±200,000 years (at ±100,000 it lies in between). No nutation, aberration or parallax. Measurement errors grow with time: every 1 mas/yr of error in proper motion is 1.7′ at 100,000 years.',
+                rv: '{u} of the {n} stars have no measured radial velocity: they move tangentially only and their position is uncertain; with the spread of the catalogue\'s own measured radial velocities (±{s} km/s) the worst would shift by up to {w} at this epoch.',
+                time: 'The time is proleptic UT: the sky is the one for the Earth\'s rotation (ERA) at that exact instant. ΔT = {dt} s ({days} days) is a theoretical extrapolation here: one day of error in ΔT equals ~1° of hour angle, so the real season of this date is not claimed.'
+            }
         }
     }
 };
@@ -1517,6 +1540,79 @@ async function skyLoadValidation() {
     scheduleSky();
 }
 
+/* ---- Prehistoria: solo estrellas (-100.000 .. -2001). Datos y calculo en sky/prehistory.js (verificado en Node). ---- */
+const pre = { state: 'idle', inst: null, view: null, res: null, fullJD: NaN, unknown: [], rvRms: 0, extraN: 0, catN: 0 };
+const skyRange = () => (window.ChronosPrehistory && window.ChronosLtp && window.ChronosStars3D
+    ? { minYear: ChronosPrehistory.WINDOW.minYear, maxYear: ChronosSky.WINDOW.maxYear } : ChronosSky.WINDOW);
+const yearStarsOnly = (year) => skyRange().minYear < ChronosSky.WINDOW.minYear && year < ChronosSky.WINDOW.minYear && year >= skyRange().minYear;
+
+async function preLoad() {
+    if (pre.state !== 'idle') return;
+    pre.state = 'loading';
+    try {
+        const [stars, s3, ltpDoc, con] = await Promise.all([getJSON('./data/sky/stars.json'), getJSON('./data/sky/stars3d.json'), getJSON('./data/sky/ltp.json'), getJSON('./data/sky/constellations.json').catch(() => null)]);
+        const cat = ChronosStars3D.buildCatalogue(stars, s3);
+        const inst = ChronosPrehistory.create({ ltpTables: ltpDoc.tables, cat });
+        const byHip = new Map(); for (let i = 0; i < cat.n; i++) byHip.set(cat.hip[i], i);
+        const constellations = con && Array.isArray(con.constellations)
+            ? con.constellations.map((c) => ({ id: c.id, lines: c.lines.map(([a, b]) => [byHip.get(a), byHip.get(b)]).filter(([a, b]) => a !== undefined && b !== undefined) })) : [];
+        pre.view = { n: cat.n, hip: cat.hip, bv: cat.bv, names: stars.names || {}, constellations, mag: new Float64Array(cat.n) };
+        pre.inst = inst; pre.rvRms = s3.rv_rms_kms; pre.extraN = s3.extra.length; pre.catN = stars.stars.length;
+        pre.unknown = []; for (let i = 0; i < cat.n; i++) if (inst.prep.hasPlx[i] && !inst.prep.rvKnown[i]) pre.unknown.push(i);
+        pre.state = 'ready';
+    } catch (err) { pre.state = 'missing'; console.warn('[PRE]', err.message); }
+    scheduleSky(); scheduleSpace();
+}
+
+// Las estrellas se mueven < 1" al dia: ra/dec/magnitud se recalculan como mucho una vez al dia de reloj; el angulo de rotacion (ERA), siempre.
+function preFrame(jd) {
+    if (pre.state !== 'ready') return null;
+    if (!pre.res || Math.abs(jd - pre.fullJD) > 1) {
+        const time = new Astronomy.AstroTime(jd - ChronosSky.J2000_JD);
+        const dt = (time.tt - time.ut) * 86400;
+        pre.res = pre.inst.at(jd, dt); pre.res.dtSeconds = dt; pre.view.mag.set(pre.res.mag); pre.fullJD = jd;
+    }
+    pre.res.era = pre.inst.frame.era(jd - ChronosSky.J2000_JD);
+    return pre.res;
+}
+
+const fmtAngle = (rad) => { const a = rad * 180 / Math.PI; return a < 1 ? nf().format(Math.round(a * 600) / 10) + '\u2032' : nf().format(Math.round(a * 10) / 10) + '\u00b0'; };
+
+function updateSkyStarsOnly(jd) {
+    if (pre.state === 'idle') preLoad();
+    if (pre.state !== 'ready') { $('sky-range').textContent = t(pre.state === 'missing' ? 'sky.pre.missing' : 'sky.pre.loading'); $('sky-body').style.display = 'none'; return; }
+    $('sky-body').style.display = '';
+    const res = preFrame(jd); const view = pre.view;
+    const hor = pre.inst.horizontal(res, sky.lat, sky.lon);
+    const alt = Float64Array.from(hor.alt, (a) => a + Astronomy.Refraction('normal', a));
+    const none = { alt: -90, az: 0, mag: 0, phaseFraction: 0 };
+    const u = ChronosSky.jdToCalendar(jd, sky.calendar);
+    $('sky-when').textContent = fmt('sky.when', { date: u.day + ' ' + monthName(u.month) + ' ' + formatYear(u.year), cal: t('sky.cal.' + u.calendar), ut: pad2(u.hour) + ':' + pad2(u.minute) + ':' + pad2(Math.floor(u.second)), dt: nf().format(Math.round(res.dtSeconds)) });
+    sky.drawn = ChronosSkyView.draw($('sky-chart'), { twilight: 'night', sun: none, moon: none, planets: [], stars: { alt, az: hor.az } }, {
+        catalog: sky.stars ? view : null, names: {}, cardinals: t('sky.cardinals'), showStars: sky.stars, showNames: sky.names, showLines: sky.lines, dayStars: true, lang
+    });
+    $('sky-twilight').textContent = t('sky.pre.banner');
+    // las estrellas mas brillantes que estan sobre el horizonte
+    const up = []; for (let i = 0; i < view.n; i++) if (alt[i] > 0 && view.mag[i] <= 6.5) up.push(i);
+    up.sort((a, b) => view.mag[a] - view.mag[b]);
+    const rows = $('sky-rows'); rows.textContent = '';
+    up.slice(0, 8).forEach((i) => {
+        const nm = view.names[view.hip[i]];
+        rows.appendChild(el('tr', {}, [
+            el('td', { text: nm ? ((lang === 'es' && nm[1]) || nm[0]) : 'HIP ' + view.hip[i] }),
+            el('td', { text: nf().format(Math.round(alt[i] * 10) / 10) + '\u00b0' }),
+            el('td', { text: compass(hor.az[i]) + ' ' + Math.round(hor.az[i]) + '\u00b0' }),
+            el('td', { text: nf().format(Math.round(view.mag[i] * 10) / 10) }),
+            el('td', { text: '' })
+        ]));
+    });
+    let visible = 0; for (let i = 0; i < view.n; i++) if (view.mag[i] <= 6.5) visible++;
+    $('sky-stars-note').textContent = fmt('sky.pre.stars', { v: nf().format(visible), n: nf().format(pre.catN), x: nf().format(pre.extraN) }) + (sky.lines ? ' ' + t('sky.pre.lines') : '');
+    let worst = 0; for (const i of pre.unknown) if (view.mag[i] <= 6.5) worst = Math.max(worst, pre.inst.uncertainty(i, res.tYears, pre.rvRms));
+    $('sky-accuracy').textContent = t('sky.pre.model') + ' ' + fmt('sky.pre.rv', { u: nf().format(pre.unknown.length), n: nf().format(view.n), s: nf().format(Math.round(pre.rvRms * 10) / 10), w: fmtAngle(worst) })
+        + ' ' + fmt('sky.pre.time', { dt: nf().format(Math.round(res.dtSeconds)), days: nf().format(Math.round(res.dtSeconds / 864) / 100) });
+}
+
 // Error medido frente a Horizons en el anio muestreado mas cercano al que se esta viendo.
 function skyAccuracyText(year) {
     const v = sky.validation;
@@ -1548,7 +1644,7 @@ function skyErrorText(e) {
 function updateSky() {
     if (!sky.open) return;
     if (!sky.ready) { $('sky-range').textContent = t('sky.unavailable'); $('sky-body').style.display = 'none'; return; }
-    const W = ChronosSky.WINDOW;
+    const W = skyRange();
     const year = ybpToYear(state.ybp);
     const inRange = year >= W.minYear && year <= W.maxYear;
     $('sky-body').style.display = inRange ? '' : 'none';
@@ -1558,6 +1654,7 @@ function updateSky() {
     if (!clockUsable()) clockFromYear(year);
     if (!clockUsable()) return;
     const jd = clock.jd;
+    if (yearStarsOnly(ChronosSky.jdToCalendar(jd, 'auto').year)) { updateSkyStarsOnly(jd); return; }
     const res = ChronosSky.skyAt({ jd, lat: sky.lat, lon: sky.lon, catalog: sky.stars ? sky.catalog : null });
 
     const u = ChronosSky.jdToCalendar(jd, sky.calendar);
@@ -1674,13 +1771,16 @@ const CLOCK_RATES = [
 ];
 const clock = { jd: NaN, running: false, live: false, rate: 1, dir: 1, wall: 0, lastSec: -1 };
 const realNowJD = () => Date.now() / 86400000 + 2440587.5;
-const clockMinJD = () => ChronosSky.calendarToJD({ year: ChronosSky.WINDOW.minYear, month: 1, day: 1 }).jd;
+const clockMinJD = () => ChronosSky.calendarToJD({ year: skyRange().minYear, month: 1, day: 1 }).jd;
 const clockUsable = () => sky.ready && Number.isFinite(clock.jd);
+// Antes de 2000 a. C. solo hay estrellas (prehistoria): sucesos, Sol, noche y avisos no se calculan.
+const clockStarsOnly = () => clockUsable() && yearStarsOnly(ChronosSky.jdToCalendar(clock.jd, 'auto').year);
+const clockFull = () => clockUsable() && !clockStarsOnly();
 
 // Pone el reloj en el año dado conservando mes, dia y hora (o los de ahora si aun no habia reloj).
 function clockFromYear(year) {
     if (!sky.ready) return;
-    const W = ChronosSky.WINDOW;
+    const W = skyRange();
     if (year < W.minYear || year > W.maxYear || year > CFG.nowYear) { clock.jd = NaN; clock.running = false; clock.live = false; return; }
     if (Number.isFinite(clock.jd) && ChronosSky.jdToCalendar(clock.jd, 'auto').year === year) return;
     const base = ChronosSky.jdToCalendar(Number.isFinite(clock.jd) ? clock.jd : realNowJD(), 'auto');
@@ -1823,7 +1923,7 @@ function drawSpace() {
     const note = $('space-note');
     note.textContent = '';
     if (!space.on || !window.ChronosSpace || !sky.ready) return;
-    if (!clockUsable()) { const W = ChronosSky.WINDOW; note.textContent = fmt('space.outOfRange', { a: formatYear(W.minYear), b: formatYear(W.maxYear) }); return; }
+    if (!clockUsable()) { const W = skyRange(); note.textContent = fmt('space.outOfRange', { a: formatYear(W.minYear), b: formatYear(W.maxYear) }); return; }
     if (sky.catalogState === 'idle') skyLoadCatalog();
 
     const c = map.getCenter(); const tr = map.transform;
@@ -1834,15 +1934,22 @@ function drawSpace() {
         fovDeg: tr && typeof tr.fov === 'number' ? tr.fov : undefined, width: w, height: h
     });
     const jd = clock.jd;
-    const frame = spaceFrame(jd);
-    const cat = sky.catalog;
+    const starsOnly = clockStarsOnly();
+    if (starsOnly) {
+        if (pre.state === 'idle') preLoad();
+        if (pre.state !== 'ready') { note.textContent = t(pre.state === 'missing' ? 'sky.pre.missing' : 'sky.pre.loading'); return; }
+        note.textContent = t('sky.pre.banner');
+    }
+    const frame = starsOnly ? { gast: preFrame(jd).era, bodies: [] } : spaceFrame(jd);
+    const cat = starsOnly ? pre.view : sky.catalog;
     const label = (text, x, y, alpha) => { ctx.fillStyle = 'rgba(214,224,248,' + alpha + ')'; ctx.font = '11px system-ui, sans-serif'; ctx.fillText(text, x, y); };
 
     if (cat) {
-        if (space.eqCat !== cat || Math.abs(jd - space.eqJD) > 1) { space.eq = ChronosSpace.starsOfDate(cat, frame.time); space.eqJD = jd; space.eqCat = cat; space.dirsJD = NaN; }
+        if (starsOnly) { if (space.eqCat !== cat || space.eqJD !== pre.fullJD) { space.eq = { ra: pre.res.ra, dec: pre.res.dec }; space.eqJD = pre.fullJD; space.eqCat = cat; space.dirsJD = NaN; } }
+        else if (space.eqCat !== cat || Math.abs(jd - space.eqJD) > 1) { space.eq = ChronosSpace.starsOfDate(cat, frame.time); space.eqJD = jd; space.eqCat = cat; space.dirsJD = NaN; }
         if (!space.dirs || space.dirs.length !== cat.n * 3) space.dirs = new Float64Array(cat.n * 3);
         if (space.dirsJD !== jd) { for (let i = 0; i < cat.n; i++) ChronosSpace.modelDirection(space.eq.ra[i], space.eq.dec[i], frame.gast, space.dirs, 3 * i); space.dirsJD = jd; }
-        if (!space.colors) space.colors = Array.from(cat.bv, (bv) => ChronosSkyView.starColor(bv));
+        if (!space.colors || space.colorsCat !== cat) { space.colors = Array.from(cat.bv, (bv) => ChronosSkyView.starColor(bv)); space.colorsCat = cat; }
         const px = new Float32Array(cat.n); const py = new Float32Array(cat.n);
         for (let i = 0; i < cat.n; i++) {
             const s = pr.infinity(space.dirs[3 * i], space.dirs[3 * i + 1], space.dirs[3 * i + 2]);
@@ -1867,12 +1974,14 @@ function drawSpace() {
             else { ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); }
         }
         ctx.globalAlpha = 1;
-        for (let i = 0; i < cat.n && cat.mag[i] < 1.0; i++) {      // el catalogo va ordenado por brillo
+        for (let i = 0; i < cat.n; i++) {
+            if (cat.mag[i] >= 1.0) continue;
             const nm = cat.names[cat.hip[i]];
             if (nm && !Number.isNaN(px[i]) && px[i] > 0 && py[i] > 0 && px[i] < w && py[i] < h) label((lang === 'es' && nm[1]) || nm[0], px[i] + 6, py[i] - 5, 0.7);
         }
     }
 
+    if (!frame.bodies.length) return;     // prehistoria: solo estrellas
     // Sol, planetas y Luna
     const dirOf = (b) => { const v = new Float64Array(3); ChronosSpace.modelDirection(b.ra, b.dec, frame.gast, v, 0); return v; };
     const sunB = frame.bodies[0];
@@ -1909,7 +2018,7 @@ function drawSpace() {
 let nightJD = NaN;
 function updateNight(force) {
     if (!map.getSource || !map.getSource('night')) return;
-    const show = space.on && clockUsable() && window.ChronosSpace;
+    const show = space.on && clockFull() && window.ChronosSpace;
     map.setLayoutProperty('night-fill', 'visibility', show ? 'visible' : 'none');
     if (!show) return;
     if (!force && Math.abs(clock.jd - nightJD) * 86400 < 20) return;   // 20 s de rotacion terrestre = 0,08 grados
@@ -1973,7 +2082,7 @@ async function eventsFetch(url) {
 }
 
 async function eventsEnsureData() {
-    if (!window.ChronosTimed || !clockUsable()) return;
+    if (!window.ChronosTimed || !clockFull()) return;
     let changed = false;
     if (!events.seed.length && !events.loading.has('seed')) {
         events.loading.add('seed');
@@ -2010,7 +2119,7 @@ function eventsRefresh() {
 
 function eventsDraw() {
     if (!window.ChronosTimed || !map.getSource || !map.getSource('events')) return;
-    if (!clockUsable() || !events.all.length) { map.getSource('events').setData(emptyFC()); events.shown = []; if (events.open) renderEventsPanel(); return; }
+    if (!clockFull() || !events.all.length) { map.getSource('events').setData(emptyFC()); events.shown = []; if (events.open) renderEventsPanel(); return; }
     const vm = viewMeters();
     const zoomed = map.getZoom() >= 3;
     const b = zoomed ? map.getBounds() : null;
@@ -2082,7 +2191,7 @@ function renderVerifFilters() {
 function renderEventsPanel() {
     renderVerifFilters();
     const list = $('events-list'); list.textContent = '';
-    if (!clockUsable()) { $('events-note').textContent = t('events.outOfRange'); return; }
+    if (!clockFull()) { $('events-note').textContent = t('events.outOfRange'); return; }
     const status = events.index === null && !events.seed.length ? t('events.none') : '';
     const floor = ChronosTimed.importanceFloor(viewMeters());
     const half = 183;
@@ -2154,7 +2263,7 @@ function toastsTick() {
     events.toasts.forEach((rec, id) => {
         const left = (rec.eventJD - clock.jd) * 86400;
         const stale = rec.phase === 'day' ? performance.now() - rec.born > 20000 : (left < -300 || left > 3600 || (rec.phase === 'jump' && left > 700));
-        if (stale || !clockUsable()) { toastRemove(id); return; }
+        if (stale || !clockFull()) { toastRemove(id); return; }
         rec.node.querySelector('.toast-text').textContent = toastText(rec);
     });
 }

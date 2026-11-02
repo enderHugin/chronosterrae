@@ -44,6 +44,36 @@ check('rechazo vs roto: si se usa el tiempo sidereo con 1 minuto de error el cot
     return worst > 600 ? true : 'solo ' + worst.toFixed(0) + '"';
 });
 
+// ---- Altura y azimut: contra starPositions (camino antiguo) en 2000, donde ambos valen
+check('altura y azimut contra el camino antiguo (ano 2000, Madrid y Sidney): < 40" tras aplicar la misma refraccion', () => {
+    const jd = jdOfYear(2000) + 0.37; const time = new Astronomy.AstroTime(jd - 2451545.0); const oldCat = Sky.prepareCatalog(stars, con);
+    const idx = new Map(); for (let i = 0; i < cat.n; i++) idx.set(cat.hip[i], i);
+    const nw = pre.at(jd, (time.tt - time.ut) * 86400); let worst = 0; let compared = 0;
+    for (const [lat, lon] of [[40.4, -3.7], [-33.9, 151.2]]) {
+        const o = Sky.starPositions(oldCat, time, lat, lon); const h = pre.horizontal(nw, lat, lon);
+        for (let k = 0; k < oldCat.n; k++) {
+            const i = idx.get(oldCat.hip[k]); if (cat.extra[i]) continue;
+            const altN = h.alt[i] + Astronomy.Refraction('normal', h.alt[i]); if (o.alt[k] < 5) continue;       // cerca del horizonte la refraccion amplifica cualquier diferencia
+            let da = Math.abs(o.az[k] - h.az[i]); if (da > 180) da = 360 - da;
+            worst = Math.max(worst, Math.abs(o.alt[k] - altN) * 3600, da * Math.cos(o.alt[k] * Math.PI / 180) * 3600); compared++;
+        }
+    }
+    return worst < 40 ? true : 'peor ' + worst.toFixed(1) + '" en ' + compared;
+});
+check('puntos cardinales: una estrella en el polo celeste norte esta a la altura de la latitud y una en el meridiano hacia el sur culmina en azimut 180', () => {
+    const res = { era: 0, ra: new Float64Array(cat.n), dec: new Float64Array(cat.n) };
+    res.dec[0] = Math.PI / 2; res.ra[0] = 0; res.dec[1] = 0; res.ra[1] = 0.0 + 0;   // RA 0, H = lon = 0 -> en el meridiano
+    const h = pre.horizontal(res, 40, 0);
+    return Math.abs(h.alt[0] - 40) < 1e-9 && Math.abs(h.alt[1] - 50) < 1e-9 && Math.abs(h.az[1] - 180) < 1e-9;
+});
+check('rechazo vs roto: invertir el signo del angulo horario (espejo este-oeste) se detecta en la misma prueba del camino antiguo', () => {
+    const jd = jdOfYear(2000) + 0.37; const time = new Astronomy.AstroTime(jd - 2451545.0); const oldCat = Sky.prepareCatalog(stars, con);
+    const nw = pre.at(jd, (time.tt - time.ut) * 86400); const o = Sky.starPositions(oldCat, time, 40.4, -3.7);
+    const bad = { era: -nw.era, ra: Float64Array.from(nw.ra, (v) => -v), dec: nw.dec }; const h = pre.horizontal(bad, 40.4, 3.7); let worst = 0;
+    for (let k = 0; k < oldCat.n; k++) if (o.alt[k] > 5) { let da = Math.abs(o.az[k] - h.az[k]); if (da > 180) da = 360 - da; worst = Math.max(worst, da * Math.cos(o.alt[k] * Math.PI / 180) * 3600); }
+    return worst > 3600 ? true : 'solo ' + worst.toFixed(0) + '"';
+});
+
 // ---- Propiedades del modelo en toda la ventana
 check('toda la ventana (-100000..-2001, 40 fechas): ra en [0, 2pi), dec en [-pi/2, pi/2], magnitudes finitas', () => {
     for (let y = -100000; y <= -2000; y += 2500) {

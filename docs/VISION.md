@@ -217,6 +217,16 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
 - **Catálogo de estrellas: RESUELTO con HYG** (CC BY-SA 4.0, con atribución y aviso en
   `data/sky/NOTICE.md`; constelaciones de d3-celestial, BSD-3). Hipparcos quedó descartado por su licencia
   no comercial. `scripts/build-stars.js` reconstruye `data/sky/` desde el CSV con su commit fijado.
+- **Estrellas de la prehistoria (±100.000 años): HECHO como «fase 1» (solo estrellas)**, 2026-11-02, a petición del
+  creador («¿estrellas de prehistoria con precisión científica?»). `sky/stars3d.js` (3D con velocidad radial y
+  tiempo de luz), `sky/ltp.js` (precesión de largo plazo, ±200.000 años), `sky/prehistory.js` (une todo con la rotación
+  terrestre ERA), `data/sky/stars3d.json`. Verificado con Python independiente y casos físicos; la web declara límites.
+  **Pendiente / no hecho**: Sol, Luna y planetas en la prehistoria (haría falta una efeméride numérica larga, p. ej. DE441,
+  sin sondear), la estación del año real (depende de ΔT, extrapolado antes de ~700 a. C.), nutación, y las 115 estrellas
+  débiles de hoy sin velocidad radial que podrían haberse visto (se cuentan en `data/sky/manifest.json`).
+  El cotejo contra la **implementación C de ERFA** quedó sin hacer: el entorno bloqueó compilar código externo; lo sustituyen
+  las tablas extraídas por programa (con sha256), holonomía exacta, convergencia h², acuerdo con astronomy-engine 1900–2100,
+  Thuban, Vega y Polaris.
 - El creador ofreció compartir su conversación previa con **opencode** para ver qué se
   intentó y no se logró. **Aún no ha llegado.** Revisarla puede cambiar el orden de la
   hoja de ruta.

@@ -18,3 +18,11 @@ corrigendum 2012, A&A 541, C1), valido +/-200.000 anos. Se extrajeron **por prog
 **ERFA** (https://github.com/liberfa/erfa, commit en `ltp.json`), licencia **BSD-3-Clause** (texto en `ltp-LICENSE-ERFA.txt`).
 ERFA es una biblioteca derivada, con permiso, de SOFA del IAU; se reconoce ese origen, y ni SOFA ni el IAU avalan este uso.
 `sky/ltp.js` es un port propio de las rutinas `eraLtpequ`, `eraLtpecl`, `eraLtp` y `eraLtpb`.
+
+## Movimiento espacial de las estrellas (`stars3d.json`)
+
+`stars3d.json` es un dato derivado de **HYG Database v4.1** (mismo commit y sha256 que `stars.json`, comprobados por
+`scripts/build-stars3d.js`): la velocidad radial (km/s) de las estrellas de `stars.json` que la tienen medida, y 106 estrellas
+mas que hoy son mas debiles que V = 6,5 pero llegan a verse a simple vista entre -100.000 y hoy. Se redistribuye bajo
+**CC BY-SA 4.0**, igual que `stars.json`. HYG escribe `rv = 0` cuando NO conoce la velocidad radial; aqui un 0 se trata como
+«desconocida» y esa estrella queda marcada.
