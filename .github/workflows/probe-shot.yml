@@ -1,0 +1,49 @@
+name: Sonda de captura (render real)
+
+# Fotografia la web publicada en una vista dada, con variantes que apagan capas. El resultado va a la rama `probe-shot`, nunca a `main`.
+on:
+  workflow_dispatch:
+    inputs:
+      lng: { description: 'longitud', default: '-1.35' }
+      lat: { description: 'latitud', default: '43.05' }
+      zoom: { description: 'zoom', default: '11' }
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/probe-shot.js'
+      - '.github/workflows/probe-shot.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: probe-shot
+  cancel-in-progress: false
+
+jobs:
+  shot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar Playwright (sin guardar en el repo)
+        run: |
+          npm install --no-save --no-package-lock playwright@1.49.1
+          npx playwright install --with-deps chromium
+      - name: Fotografiar la demo publicada
+        run: node scripts/probe-shot.js https://enderhugin.github.io/chronosterrae/ /tmp/shots "${{ github.event.inputs.lng || '-1.35' }}" "${{ github.event.inputs.lat || '43.05' }}" "${{ github.event.inputs.zoom || '11' }}" > /tmp/shot.log 2>&1 || true
+      - name: Publicar en la rama probe-shot
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/shots
+          git config user.name "ChronosTerrae-Probe"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan probe-shot
+          cp -r /tmp/shots/. . || true
+          cp /tmp/shot.log shot.log || true
+          git add -A -- . ':!node_modules'
+          git commit -m "Sonda captura $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin probe-shot
