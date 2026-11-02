@@ -871,7 +871,11 @@ function detailBuild(style) {
         const orig = {};
         if (role === 'fill') orig['fill-opacity'] = map.getPaintProperty(clone.id, 'fill-opacity');
         if (role === 'symbol') { orig['text-color'] = map.getPaintProperty(clone.id, 'text-color'); orig['text-halo-color'] = map.getPaintProperty(clone.id, 'text-halo-color'); }
-        DETAIL.layers.push({ id: clone.id, role, physical, orig, filter: l.filter || null });
+        // Parques y espacios protegidos de OSM (relleno y contorno de rayas): con fronteras historicas encima se leen como una
+        // segunda frontera y como una franja de otro tono (visto en los Pirineos con Aldudeko mendia), asi que se ocultan igual que
+        // las fronteras de OSM. No aportan nada a un mapa de territorios; los rotulos (simbolos) no se tocan.
+        const park = l['source-layer'] === 'park' && l.type !== 'symbol';
+        DETAIL.layers.push({ id: clone.id, role, physical, orig, filter: l.filter || null, park });
     });
     detailTheme();
 }
@@ -919,12 +923,12 @@ function detailFade() {
     DETAIL.fadeTimer = setTimeout(reveal, 3000);
 }
 
-// Las fronteras administrativas actuales de OpenStreetMap no se dibujan mientras haya fronteras historicas:
-// serian dos mapas de fronteras superpuestos (y el actual no es el de la epoca).
+// Las fronteras administrativas actuales de OpenStreetMap (y los contornos de parques, que se confunden con ellas) no se dibujan
+// mientras haya fronteras historicas: serian dos mapas de fronteras superpuestos (y el actual no es el de la epoca).
 function detailVisibility() {
     const mode = DETAIL.shown;
     DETAIL.layers.forEach((l) => {
-        map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !(l.role === 'boundary' && state.borders) ? 'visible' : 'none');
+        map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !((l.role === 'boundary' || l.park) && state.borders) ? 'visible' : 'none');
         // Antes de hoy no se dibujan dársenas ni piscinas: obras modernas (clases `dock` y `swimming_pool` del esquema de OpenFreeMap, comprobadas con la sonda).
         if (l.role === 'water') map.setFilter(l.id, mode === 'physical' ? (l.filter ? ['all', l.filter, DETAIL_NOT_MODERN_WATER] : DETAIL_NOT_MODERN_WATER) : (l.filter || null));
     });
