@@ -1933,6 +1933,29 @@ function solarZoomOut(deltaLog) {
     }, { capture: true, passive: false });
     box.addEventListener('touchend', () => { pinch = null; }, { capture: true, passive: true });
 }
+// Tocar un planeta, el Sol o la Luna en el cielo de detras del globo: ir hasta el (el mapa se aleja hasta su zoom minimo y la escena vuela al cuerpo)
+function flyToBody(id) {
+    if (!solarAvailable()) { solarHint(); return; }
+    const go = () => { if (solarView.isOpen || solarZoomOut(0.0002)) solarView.goTo(id); };
+    if (atMinZoom() && map.getPitch() === 0) go();
+    else { map.easeTo({ zoom: map.getMinZoom(), pitch: 0, duration: 700 }); map.once('moveend', go); }
+}
+{
+    const box = map.getContainer(); let down = null;
+    const hitAt = (e) => {
+        if (solarView.isOpen || !space.hits.length || e.target.closest('.maplibregl-control-container')) return null;
+        const r = box.getBoundingClientRect(); const x = e.clientX - r.left; const y = e.clientY - r.top; let best = null; let bd = 1e9;
+        for (const h of space.hits) { const d = Math.hypot(h.x - x, h.y - y); if (d <= h.r + 4 && d < bd) { bd = d; best = h; } }
+        return best;
+    };
+    box.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY }; }, true);
+    box.addEventListener('click', (e) => {
+        if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 4) return;      // un arrastre no es un toque
+        const h = hitAt(e); if (!h) return;
+        e.stopPropagation(); e.preventDefault(); flyToBody(h.id);
+    }, true);
+    box.addEventListener('mousemove', (e) => { map.getCanvasContainer().style.cursor = hitAt(e) ? 'pointer' : ''; });
+}
 // Teclado: + y - (los mismos que usa el mapa)
 window.addEventListener('keydown', (e) => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -2152,7 +2175,7 @@ function initClock() {
 /* ------------------------------------------------------------------ */
 // Un lienzo bajo el mapa (el mapa es transparente fuera del globo). Los cuerpos y las estrellas se proyectan con la
 // misma camara que el globo; el propio globo tapa lo que queda detras de la Tierra.
-const space = { on: prefs.sp !== false, raf: 0, frameJD: NaN, frame: null, eqJD: NaN, eq: null, eqCat: null, dirs: null, dirsJD: NaN, colors: null };
+const space = { on: prefs.sp !== false, hits: [], raf: 0, frameJD: NaN, frame: null, eqJD: NaN, eq: null, eqCat: null, dirs: null, dirsJD: NaN, colors: null };
 
 function spaceFrame(jd) {
     if (jd === space.frameJD && space.frame) return space.frame;
@@ -2168,6 +2191,7 @@ function scheduleSpace() {
 
 function drawSpace() {
     space.raf = 0;
+    space.hits = [];
     if (solarView.isOpen) return;          // con el sistema solar abierto, este lienzo lo pinta la escena
     const cv = $('space');
     const box = map.getContainer();
@@ -2241,7 +2265,9 @@ function drawSpace() {
     }
 
     if (!frame.bodies.length) return;     // prehistoria: solo estrellas
-    // Sol, planetas y Luna
+    // Sol, planetas y Luna. Los que no quedan detras del globo se pueden tocar: llevan hasta el cuerpo (space.hits).
+    const earthC = pr.near(0, 0, 0); const earthR = pr.cameraDistancePx / Math.sqrt(Math.pow((pr.cameraDistancePx + pr.globeRadiusPx) / pr.globeRadiusPx, 2) - 1);
+    const hit = (id, x, y, r) => { if (x < 0 || y < 0 || x > w || y > h || (earthC && Math.hypot(x - earthC.x, y - earthC.y) < earthR)) return; space.hits.push({ id, x, y, r: Math.max(r, 9) }); };
     const dirOf = (b) => { const v = new Float64Array(3); ChronosSpace.modelDirection(b.ra, b.dec, frame.gast, v, 0); return v; };
     const sunB = frame.bodies[0];
     const sunV = dirOf(sunB); const sunS = pr.infinity(sunV[0], sunV[1], sunV[2]);
@@ -2255,6 +2281,7 @@ function drawSpace() {
             const theta = sunS ? Math.atan2(sunS[1] - m.y, sunS[0] - m.x) : 0;
             ChronosSkyView.drawMoon(ctx, m.x, m.y, r, theta, b.phaseFraction);
             label(t('sky.body.Moon'), m.x + r + 4, m.y + 4, 0.85);
+            hit('Moon', m.x, m.y, r);
             return;
         }
         const s = pr.infinity(v[0], v[1], v[2]);
@@ -2263,6 +2290,7 @@ function drawSpace() {
         ctx.beginPath(); ctx.arc(s[0], s[1], r, 0, 2 * Math.PI); ctx.fillStyle = ChronosSkyView.PLANET_COLOR[b.id]; ctx.fill();
         ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1; ctx.stroke();
         label(t('sky.body.' + b.id), s[0] + r + 4, s[1] + 4, 0.85);
+        hit(b.id, s[0], s[1], r);
     });
     if (sunS) {
         const glow = ctx.createRadialGradient(sunS[0], sunS[1], 2, sunS[0], sunS[1], 34);
@@ -2270,6 +2298,7 @@ function drawSpace() {
         ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(sunS[0], sunS[1], 34, 0, 2 * Math.PI); ctx.fill();
         ctx.fillStyle = '#ffd54f'; ctx.beginPath(); ctx.arc(sunS[0], sunS[1], 7, 0, 2 * Math.PI); ctx.fill();
         label(t('sky.body.Sun'), sunS[0] + 12, sunS[1] + 4, 0.85);
+        hit('Sun', sunS[0], sunS[1], 14);
     }
 }
 
