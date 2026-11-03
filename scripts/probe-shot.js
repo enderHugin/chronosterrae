@@ -43,13 +43,13 @@ async function runSuite(page, out) {
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); map.jumpTo({ center: [-3.7, 40.4], zoom: map.getMinZoom(), bearing: 0, pitch: 0 }); });
     await page.waitForTimeout(2500);
     const idle = () => page.evaluate(() => new Promise((res) => { const t = setTimeout(res, 15000); map.once('idle', () => { clearTimeout(t); requestAnimationFrame(() => requestAnimationFrame(res)); }); map.triggerRepaint(); }));
-    const shotSolar = async (n) => { await page.waitForFunction(() => !solarView.state.flight && !solarView.state.raf, null, { timeout: 60000 }).catch(() => {}); await idle(); await page.screenshot({ path: path.join(out, 'solar-' + n + '.png') }); rows.push({ name: 'solar-' + n, open: await page.evaluate(() => solarView.isOpen), status: await page.evaluate(() => (document.getElementById('solar-info') ? document.getElementById('solar-info').innerText.slice(0, 300) : '')) }); };
+    const shotSolar = async (n) => { await page.waitForFunction(() => !solarView.state.flight && !solarView.state.raf, null, { timeout: 60000 }).catch(() => {}); await idle(); try { await page.screenshot({ path: path.join(out, 'solar-' + n + '.png'), timeout: 120000 }); } catch (e) { rows.push({ name: 'solar-' + n, error: 'captura: ' + e.message.split('\n')[0] }); return; } rows.push({ name: 'solar-' + n, open: await page.evaluate(() => solarView.isOpen), status: await page.evaluate(() => (document.getElementById('solar-info') ? document.getElementById('solar-info').innerText.slice(0, 300) : '')) }); };
     await shotSolar('0-mapa');
     for (const [n, step] of [['1-umbral', 0.0002], ['2-luna', 0.45], ['3-sol', 0.9], ['4-interior', 0.7], ['5-sistema', 0.9]]) { await page.evaluate((d) => solarZoomOut(d), step); await shotSolar(n); }
     for (const [n, fn] of [['sistema', () => solarView.goSystem()], ['jupiter', () => solarView.goTo('Jupiter')], ['luna', () => solarView.goTo('Moon')], ['sol', () => solarView.goTo('Sun')], ['tierra', () => solarView.goTo('Earth')]]) { await page.evaluate(fn); await shotSolar(n); }
     await page.evaluate(() => { map.jumpTo({ zoom: map.getMinZoom() }); setTime(yearToYbp(1492), { immediate: true }); solarZoomOut(0.9); }); await page.waitForTimeout(2000); await shotSolar('1492');
     await page.evaluate(() => { solarView.close(); setTime(yearToYbp(-5000), { immediate: true }); map.jumpTo({ zoom: map.getMinZoom() }); solarZoomOut(0.3); }); await page.waitForTimeout(2000);
-    await page.screenshot({ path: path.join(out, 'solar-fuera-de-ventana.png') });
+    await page.screenshot({ path: path.join(out, 'solar-fuera-de-ventana.png'), timeout: 120000 });
     fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));
 }
 
