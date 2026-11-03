@@ -235,4 +235,4 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
 
 ## Fronteras históricas y resolución (2026-11-03)
 
-Los polígonos de historical-basemaps traen un vértice cada 13–20 km de mediana (solo −5000 llega a ~2,5 km; medido en las 100+ fechas). Acercar el zoom no añade información: a partir del zoom en que ese tramo mide 4 px (calculado por fecha y latitud, `map/borders-resolution.js`) se muestra solo el mapa físico y un botón *Fronteras* permite verlas como aproximación. Pendiente: fronteras de mejor resolución para el tramo reciente (OpenHistoricalMap, sin sondear).
+Los polígonos de historical-basemaps traen un vértice cada 13–20 km de mediana (solo −5000 llega a ~2,5 km; medido en las 100+ fechas). Decisión del creador: de lejos (zoom < 4) solo mapa físico; de cerca, fronteras con un botón para ocultarlas. (Una primera versión lo hizo al revés —cortar de cerca— y se corrigió.) Pendiente: fronteras de mejor resolución para el tramo reciente (OpenHistoricalMap, sin sondear).
