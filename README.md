@@ -37,8 +37,10 @@ sale y cuánto se puede fiar de él.
   0,000001″), contra el camino antiguo donde ambos valen y con casos físicos (Thuban, Vega). La web declara
   su precisión y sus límites: ΔT es allí una extrapolación, 401 estrellas no tienen velocidad radial medida
   y la estación del año real de la fecha proléptica no se afirma.
-- **Sistema solar** (botón «Planetas»): elige el cuerpo central (Sol, Mercurio…Neptuno, Tierra o Luna) y
-  acércate desde todo el sistema hasta el propio cuerpo, con la fecha del reloj, de 2000 a. C. a hoy. Posiciones,
+- **Sistema solar** (sin botón: es la continuación del zoom): al alejar el globo más allá del zoom mínimo, la Tierra
+  (el propio mapa, a su tamaño real y orientado con el tiempo sidéreo) queda en medio del sistema con el Sol, la Luna, los
+  planetas y las estrellas; toca un cuerpo para ir hasta él (Sol, Mercurio…Neptuno, Luna) y vuelve acercándote a la Tierra,
+  con la fecha del reloj, de 2000 a. C. a hoy. Posiciones,
   fases y trayectorias de una revolución son un **cálculo** (astronomy-engine, MIT; `sky/solar.js`, 40 pruebas sin
   red). El error de la posición del centro de cada cuerpo se **midió contra JPL Horizons** (`scripts/validate-helio.js`,
   `data/sky/validation-helio.json`) y la pantalla lo muestra para la época: p. ej. ~2.500 km para la Tierra en 1700–2200

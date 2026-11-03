@@ -101,6 +101,89 @@ check('trayectoria de la Luna: respecto a la Tierra, radio 356.000-407.000 km', 
     const t = Solar.trail('Moon', jdOfYear(2026), 120); const r = t.points.map(len); return t.relativeTo === 'Earth' && Math.min(...r) > 350000 && Math.max(...r) < 410000 ? true : Math.min(...r) + '..' + Math.max(...r);
 });
 
+// ---- La Tierra del mapa dentro de la escena: marco ecliptico -> globo, y la camara del globo como camara en perspectiva
+const Space = require('../sky/space.js');
+const DEG = Math.PI / 180;
+const angleDeg = (a, b) => Math.acos(Math.max(-1, Math.min(1, (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) / (len(a) * len(b))))) / DEG;
+const TEST_JDS = [-1500, 0, 1492, 1945, 2026, 2026.5, 2500].map(jdOfYear);
+check('earthFrame es una rotacion (ortonormal, determinante +1) en 7 fechas', () => TEST_JDS.every((jd) => {
+    const M = Solar.earthFrame(jd).M; let ok = true;
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) { const d = M[i][0] * M[j][0] + M[i][1] * M[j][1] + M[i][2] * M[j][2]; if (Math.abs(d - (i === j ? 1 : 0)) > 1e-12) ok = false; }
+    const det = M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1]) - M[0][1] * (M[1][0] * M[2][2] - M[1][2] * M[2][0]) + M[0][2] * (M[1][0] * M[2][1] - M[1][1] * M[2][0]);
+    return ok && Math.abs(det - 1) < 1e-12;
+}));
+check('eclToGlobe y globeToEcl son inversas', () => { const f = Solar.earthFrame(jdOfYear(2026)); const v = [0.3, -1.2, 0.7]; const w = Solar.globeToEcl(f, Solar.eclToGlobe(f, v)); return len(sub(v, w)) < 1e-12; });
+// Contraste independiente: la direccion del Sol, la Luna y los planetas vista desde el centro de la Tierra, en el marco del globo, por dos caminos
+// distintos: (a) sky/solar.js (efemerides geometricas simultaneas + earthFrame) y (b) ChronosSpace (GeoVector con tiempo de luz y aberracion +
+// modelDirection). Un error de marco (ejes, signo del tiempo sidereo, precesion) daria grados; las diferencias fisicas esperadas son la aberracion
+// (20,5 segundos de arco = 0,0057 grados) y el tiempo de luz de un planeta que se mueve respecto a la Tierra (hasta ~0,02 grados).
+const TOL_DEG = { Sun: 0.01, Moon: 0.01, Mercury: 0.03, Venus: 0.03, Mars: 0.03, Jupiter: 0.03, Saturn: 0.03, Uranus: 0.03, Neptune: 0.03 };
+const worst = {};
+for (const jd of TEST_JDS) {
+    const P = Solar.positions(jd); const f = Solar.earthFrame(jd);
+    const time = new Astronomy.AstroTime(jd - J2000);
+    const gast = Astronomy.SiderealTime(time) * 15 * DEG;
+    for (const b of Space.bodiesGeocentric(time)) {
+        const v = new Float64Array(3); Space.modelDirection(b.ra, b.dec, gast, v, 0);
+        const mine = Solar.eclToGlobe(f, sub(P[b.id], P.Earth));
+        worst[b.id] = Math.max(worst[b.id] || 0, angleDeg(mine, [v[0], v[1], v[2]]));
+    }
+}
+for (const id of Object.keys(TOL_DEG)) check('marco del globo: direccion de ' + id + ' por dos caminos independientes (7 fechas, -1500..2500) < ' + TOL_DEG[id] + ' grados', () => worst[id] < TOL_DEG[id] ? true : 'peor ' + worst[id].toFixed(4));
+console.log('  (peor diferencia medida: ' + Object.entries(worst).map(([k, v]) => k + ' ' + v.toFixed(4) + '°').join(', ') + ')');
+
+check('mapBasis / mapFromBasis: ida y vuelta en 200 orientaciones al azar (lat <= 85)', () => {
+    let seed = 7; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+    for (let k = 0; k < 200; k++) {
+        const o = { lng: rnd() * 360 - 180, lat: rnd() * 170 - 85, bearing: rnd() * 360 - 180 };
+        const b = Solar.mapBasis(o.lng, o.lat, o.bearing); const r = Solar.mapFromBasis(b.dir, b.up);
+        const dB = Math.abs(((r.bearing - o.bearing + 540) % 360) - 180); const dL = Math.abs(((r.lng - o.lng + 540) % 360) - 180);
+        if (dB > 1e-7 || dL > 1e-7 || Math.abs(r.lat - o.lat) > 1e-7) return JSON.stringify([o, r]);
+        if (Math.abs(len(b.dir) - 1) > 1e-12 || Math.abs(len(b.up) - 1) > 1e-12 || Math.abs(b.dir[0] * b.up[0] + b.dir[1] * b.up[1] + b.dir[2] * b.up[2]) > 1e-12) return 'base no ortonormal';
+    }
+    return true;
+});
+check('mapBasis: con bearing 0 el norte queda arriba y con bearing 90 el este (convencion de MapLibre)', () => {
+    const a = Solar.mapBasis(0, 0, 0); const b = Solar.mapBasis(0, 0, 90);
+    return len(sub(a.up, [0, 1, 0])) < 1e-12 && len(sub(b.up, [1, 0, 0])) < 1e-12 ? true : JSON.stringify([a, b]);
+});
+
+// La camara por base debe dar EXACTAMENTE lo mismo que la proyeccion del globo (ChronosSpace.makeProjector, ya contrastada con map.project).
+check('camara por base == proyeccion del globo: 300 puntos x 40 orientaciones/zooms (< 1e-6 px en lo que cae a menos de 1e5 px) y contorno de la Tierra (discPx == silPx)', () => {
+    let seed = 11; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+    let worstPx = 0; let n = 0;
+    for (let k = 0; k < 40; k++) {
+        const o = { lng: rnd() * 360 - 180, lat: rnd() * 150 - 75, bearing: rnd() * 360 - 180, zoom: rnd() * 4 };
+        const width = 600 + Math.floor(rnd() * 1000); const height = 400 + Math.floor(rnd() * 600); const fovDeg = 36.86989764584402;
+        const pr = Space.makeProjector({ lng: o.lng, lat: o.lat, bearing: o.bearing, pitch: 0, worldSize: 512 * Math.pow(2, o.zoom), fovDeg, width, height });
+        const g = Solar.globe({ zoom: o.zoom, latDeg: o.lat, width, height, fovDeg });
+        if (Math.abs(g.Rpx - pr.globeRadiusPx) > 1e-9 || Math.abs(g.Dpx - pr.cameraDistancePx) > 1e-9) return 'globe() no coincide con el proyector';
+        const bs = Solar.mapBasis(o.lng, o.lat, o.bearing);
+        const cam = Solar.makeCamera({ target: [0, 0, 0], eyeDir: bs.dir, up: bs.up, distance: g.dER, fovDeg, width, height });
+        if (Math.abs(cam.discPx([0, 0, 0], 1) - g.silPx) > 1e-9) return 'contorno: ' + cam.discPx([0, 0, 0], 1) + ' vs ' + g.silPx;
+        for (let i = 0; i < 300; i++) {
+            const rr = Math.pow(10, rnd() * 5 - 0.3); const th = Math.acos(2 * rnd() - 1); const ph = rnd() * 2 * Math.PI;
+            const P = [rr * Math.sin(th) * Math.cos(ph), rr * Math.cos(th), rr * Math.sin(th) * Math.sin(ph)];
+            const a = pr.near(P[0], P[1], P[2]); const c = cam.project(P);
+            if (!a !== !c) { if (Math.hypot(P[0], P[1], P[2]) > 0.5) return 'uno proyecta y el otro no: ' + JSON.stringify([P, a, c]); continue; }
+            if (!a || Math.hypot(a.x, a.y) > 1e5) continue;      // puntos casi en el plano de la camara: coordenadas de millones de px, donde el error relativo (1e-11) ya no es de pixeles
+            worstPx = Math.max(worstPx, Math.hypot(a.x - c[0], a.y - c[1])); n++;
+        }
+    }
+    return worstPx < 1e-6 ? true : 'peor ' + worstPx + ' px en ' + n;
+});
+check('zoomForDistance es la inversa de globe() (zoom -3..9, lat -80..80)', () => {
+    for (const z of [-3, 0, 0.7, 2.1, 5, 9]) for (const la of [-80, -30, 0, 45, 80]) {
+        const g = Solar.globe({ zoom: z, latDeg: la, width: 1000, height: 700 }); const back = Solar.zoomForDistance({ dER: g.dER, latDeg: la, height: 700 });
+        if (Math.abs(back - z) > 1e-9) return JSON.stringify([z, la, back]);
+    }
+    return true;
+});
+check('con el zoom del mapa en 0 la Tierra queda a ~15,7 radios en el ecuador y ~8,4 a 60 grados (la camara del globo se acerca con la latitud) y el contorno ocupa menos de media pantalla', () => {
+    const e = Solar.globe({ zoom: 0, latDeg: 0, width: 1200, height: 800 }); const p = Solar.globe({ zoom: 0, latDeg: 60, width: 1200, height: 800 });
+    return e.dER > 15.5 && e.dER < 16 && p.dER > 8.2 && p.dER < 8.6 && e.silPx * 2 < 800 / 2 ? true : JSON.stringify([e, p]);
+});
+
 // ---- Rechazos: «rechazado» frente a «roto» (rule 7)
 const rejects = (fn, code) => { try { fn(); return 'no rechazo'; } catch (e) { return e.code === code ? true : 'roto: ' + (e.code || e.name) + ' ' + e.message; } };
 check('fuera de la ventana (ano 3500) se RECHAZA con OUT_OF_WINDOW, y el limite 2999 se acepta', () => rejects(() => Solar.positions(jdOfYear(3500)), 'OUT_OF_WINDOW') === true && Object.keys(Solar.positions(jdOfYear(2999))).length === 10);

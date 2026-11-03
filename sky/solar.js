@@ -107,11 +107,15 @@
      * Camara en perspectiva que mira a `target` (km) desde `distance` km, con yaw/pitch (rad) respecto al plano de la ecliptica.
      * pitch > 0 mira desde el norte de la ecliptica. width/height en px; fovDeg vertical.
      */
-    function makeCamera({ target, yaw = 0, pitch = 0.4, distance, fovDeg = 40, width, height }) {
-        const cp = Math.cos(pitch);
-        const eye = [target[0] + distance * cp * Math.cos(yaw), target[1] + distance * cp * Math.sin(yaw), target[2] + distance * Math.sin(pitch)];
-        const f = norm(sub(target, eye));
-        const r = norm(cross(f, [0, 0, 1]));
+    function makeCamera({ target, yaw = 0, pitch = 0.4, eyeDir = null, up = null, distance, fovDeg = 40, width, height }) {
+        // Orientacion: o bien yaw/pitch (arriba = polo de la ecliptica), o bien una base explicita: eyeDir (unitario, del cuerpo hacia la
+        // camara) y up (hacia donde queda "arriba" en pantalla; se ortogonaliza). La base es lo que usa el mapa de la Tierra.
+        let dir;
+        if (eyeDir) dir = norm(eyeDir);
+        else { const cp = Math.cos(pitch); dir = [cp * Math.cos(yaw), cp * Math.sin(yaw), Math.sin(pitch)]; }
+        const eye = [target[0] + distance * dir[0], target[1] + distance * dir[1], target[2] + distance * dir[2]];
+        const f = [-dir[0], -dir[1], -dir[2]];
+        const r = norm(cross(f, up || [0, 0, 1]));
         const u = cross(r, f);
         const fpx = (height / 2) / Math.tan(fovDeg * Math.PI / 360);
         return {
@@ -146,6 +150,75 @@
     }
 
     /* ---------------------------------------------------------------- */
+    /* La Tierra: el mapa dentro de la escena                              */
+    /* ---------------------------------------------------------------- */
+    // El mapa (globo de MapLibre) vive en su propio marco: x hacia el este del meridiano 0, y hacia el polo norte, z hacia (lng 0, lat 0)
+    // (ver ChronosSpace.modelDirection). Para dibujar la Tierra del mapa en medio del sistema solar hay que pasar del marco ecliptico J2000
+    // al del globo en el instante pedido: ecliptico -> ecuador medio de la fecha (precesion) -> giro del tiempo sidereo aparente (GAST).
+    const DEG = Math.PI / 180;
+    const T_ECL_EQJ = Astronomy.Rotation_ECL_EQJ();
+
+    /** Matriz M (filas) tal que v_globo = M * v_ecliptico, y el tiempo sidereo aparente de Greenwich (rad). */
+    function earthFrame(jdUT) {
+        const time = timeFromJD(jdUT);
+        const rot = Astronomy.CombineRotation(T_ECL_EQJ, Astronomy.Rotation_EQJ_EQD(time));
+        const gast = Astronomy.SiderealTime(time) * 15 * DEG;
+        const sg = Math.sin(gast); const cg = Math.cos(gast);
+        const cols = [[1, 0, 0], [0, 1, 0], [0, 0, 1]].map((e) => {
+            const w = Astronomy.RotateVector(rot, new Astronomy.Vector(e[0], e[1], e[2], time));
+            return [w.y * cg - w.x * sg, w.z, w.x * cg + w.y * sg];            // misma cuenta que ChronosSpace.modelDirection
+        });
+        const M = [[cols[0][0], cols[1][0], cols[2][0]], [cols[0][1], cols[1][1], cols[2][1]], [cols[0][2], cols[1][2], cols[2][2]]];
+        return { M, gast };
+    }
+    const mulM = (M, v) => [M[0][0] * v[0] + M[0][1] * v[1] + M[0][2] * v[2], M[1][0] * v[0] + M[1][1] * v[1] + M[1][2] * v[2], M[2][0] * v[0] + M[2][1] * v[1] + M[2][2] * v[2]];
+    const mulMt = (M, v) => [M[0][0] * v[0] + M[1][0] * v[1] + M[2][0] * v[2], M[0][1] * v[0] + M[1][1] * v[1] + M[2][1] * v[2], M[0][2] * v[0] + M[1][2] * v[1] + M[2][2] * v[2]];
+    /** Vector del marco ecliptico al del globo y al reves (M es una rotacion: la inversa es la traspuesta). */
+    const eclToGlobe = (frame, v) => mulM(frame.M, v);
+    const globeToEcl = (frame, v) => mulMt(frame.M, v);
+
+    /**
+     * Orientacion del mapa (lng, lat, bearing en grados; pitch 0) -> base en el marco del globo: dir = hacia donde esta la camara
+     * (el punto central del mapa visto desde el centro de la Tierra) y up = lo que queda arriba en pantalla.
+     * Arriba en pantalla = norte local girado `bearing` hacia el este.
+     */
+    function mapBasis(lngDeg, latDeg, bearingDeg) {
+        const lo = lngDeg * DEG; const la = latDeg * DEG; const b = bearingDeg * DEG;
+        const dir = [Math.cos(la) * Math.sin(lo), Math.sin(la), Math.cos(la) * Math.cos(lo)];
+        const north = [-Math.sin(la) * Math.sin(lo), Math.cos(la), -Math.sin(la) * Math.cos(lo)];
+        const east = [Math.cos(lo), 0, -Math.sin(lo)];
+        return { dir, up: [north[0] * Math.cos(b) + east[0] * Math.sin(b), north[1] * Math.cos(b) + east[1] * Math.sin(b), north[2] * Math.cos(b) + east[2] * Math.sin(b)] };
+    }
+    /** Inversa de mapBasis: base en el marco del globo -> {lng, lat, bearing} (grados; bearing en (-180, 180]). */
+    function mapFromBasis(dir, up) {
+        const d = norm(dir);
+        const la = Math.asin(clampUnit(d[1])); const lo = Math.atan2(d[0], d[2]);
+        const north = [-Math.sin(la) * Math.sin(lo), Math.cos(la), -Math.sin(la) * Math.cos(lo)];
+        const east = [Math.cos(lo), 0, -Math.sin(lo)];
+        return { lng: lo / DEG, lat: la / DEG, bearing: Math.atan2(dot(up, east), dot(up, north)) / DEG };
+    }
+    const clampUnit = (v) => Math.max(-1, Math.min(1, v));
+
+    /**
+     * El globo de MapLibre como camara en perspectiva (la misma cuenta que ChronosSpace.makeProjector): el centro del mapa esta a
+     * Dpx de la camara y el centro de la Tierra a Dpx + Rpx, con Rpx = 512 * 2^zoom / (2 pi) / cos(lat). Devuelve la distancia de la camara al
+     * centro de la Tierra en radios terrestres (dER) y el radio en pantalla del contorno de la Tierra (silPx).
+     */
+    function globe({ zoom, latDeg, width, height, fovDeg = 36.86989764584402 }) {
+        const half = Math.tan(fovDeg * DEG / 2);
+        const Dpx = 0.5 / half * height;
+        const Rpx = 512 * Math.pow(2, zoom) / (2 * Math.PI) / Math.cos(latDeg * DEG);
+        const dER = 1 + Dpx / Rpx;
+        return { Rpx, Dpx, dER, silPx: (height / 2 / half) / Math.sqrt(dER * dER - 1) };
+    }
+    /** Zoom del mapa que da esa distancia (radios terrestres) al centro de la Tierra: inversa de globe(). */
+    function zoomForDistance({ dER, latDeg, height, fovDeg = 36.86989764584402 }) {
+        const Dpx = 0.5 / Math.tan(fovDeg * DEG / 2) * height;
+        const Rpx = Dpx / (dER - 1);
+        return Math.log2(Rpx * 2 * Math.PI * Math.cos(latDeg * DEG) / 512);
+    }
+
+    /* ---------------------------------------------------------------- */
     /* Exactitud medida                                                  */
     /* ---------------------------------------------------------------- */
     function bandOf(year) { return year > 2200 ? 'despues de 2200' : year >= 1700 ? '1700-2200' : year >= 0 ? '0-1699' : 'antes de 0'; }
@@ -168,5 +241,6 @@
     /** Direccion ecuatorial J2000 (x, y, z) -> ecliptica J2000, para dibujar las estrellas en el mismo marco que los cuerpos. */
     const eclFromEq = (x, y, z) => toEcl(x, y, z);
 
-    return { BODIES, PLANETS, byId, WINDOW, AU_KM, positions, trail, timeFromJD, makeCamera, lighting, accuracy, bandOf, lightMinutes, periodDays, eclFromEq };
+    return { BODIES, PLANETS, byId, WINDOW, AU_KM, positions, trail, timeFromJD, makeCamera, lighting, accuracy, bandOf, lightMinutes, periodDays, eclFromEq,
+        earthFrame, eclToGlobe, globeToEcl, mapBasis, mapFromBasis, globe, zoomForDistance };
 });

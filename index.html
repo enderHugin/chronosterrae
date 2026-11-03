@@ -105,21 +105,23 @@
 
         [hidden] { display: none !important; }
         #space { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-        /* Sistema solar: pantalla propia sobre el mapa (el mapa sigue debajo, oculto, y vuelve al salir) */
-        #solar { position: absolute; inset: 0; z-index: 6; background: #03050b; }
+        /* Sistema solar: continuacion del zoom del globo. El lienzo de detras es #space; el mapa (la Tierra) queda entre ese y este */
+        #solar { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
         #solar[hidden] { display: none; }
-        #solar-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+        #solar-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; pointer-events: auto; }
         #solar-canvas:active { cursor: grabbing; }
-        #solar-chips { position: absolute; top: 56px; left: 14px; z-index: 7; display: flex; gap: 5px; flex-wrap: wrap; max-width: calc(100% - 28px); }
+        #solar-chips { position: absolute; top: 56px; left: 14px; z-index: 7; pointer-events: auto; display: flex; gap: 5px; flex-wrap: wrap; max-width: calc(100% - 28px); }
         #solar-chips .btn { padding: 4px 9px; font-size: 12px; }
         #solar-chips .btn.on { background: var(--accent); color: var(--bg); }
-        #solar-info { position: absolute; top: 100px; left: 14px; z-index: 7; width: 290px; max-width: calc(100% - 28px); padding: 10px 14px 12px; box-sizing: border-box; }
+        #solar-info { position: absolute; top: 100px; left: 14px; z-index: 7; pointer-events: auto; width: 290px; max-width: calc(100% - 28px); padding: 10px 14px 12px; box-sizing: border-box; }
         #solar-info h2 { margin: 0 0 4px; font: 700 18px var(--font); color: var(--accent); }
         #solar-info .solar-lines div { font-size: 12px; line-height: 1.45; margin-top: 3px; }
         #solar-zoom { width: 100%; margin: 10px 0 8px; accent-color: var(--accent); }
         #solar-back { padding: 4px 10px; font-size: 12px; }
-        #solar-note { position: absolute; left: 14px; bottom: 168px; z-index: 7; max-width: 360px; padding: 8px 12px; font-size: 11.5px; line-height: 1.4; border-left: 4px solid #1565c0; }
-        body.solar-on #map, body.solar-on #space, body.solar-on #space-note, body.solar-on #status, body.solar-on #info { visibility: hidden; pointer-events: none; }
+        #solar-note { position: absolute; left: 14px; bottom: 214px; z-index: 7; max-width: 360px; padding: 8px 12px; font-size: 11.5px; line-height: 1.4; border-left: 4px solid #1565c0; }
+        body.solar-on #space-note, body.solar-on #status, body.solar-on #info { visibility: hidden; pointer-events: none; }
+        body.solar-on .maplibregl-canvas-container { transition: opacity .25s ease; }
+        body.solar-on .maplibregl-ctrl-bottom-right { z-index: 8; }
         @media (max-width: 760px) { #solar-info { top: 130px; width: 250px; } #solar-note { display: none; } }
         #space-note { position: absolute; top: 56px; left: 50%; transform: translateX(-50%); z-index: 5; font-size: 11.5px; color: #9aa6c0; pointer-events: none; text-align: center; max-width: 80%; }
         .btn[aria-pressed="false"] { opacity: 0.6; }
@@ -198,7 +200,6 @@
     <div id="top-right">
         <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
         <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
-        <button class="btn" id="btn-solar" type="button" aria-pressed="false" data-i18n="solar.button"></button>
         <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
         <button class="btn" id="btn-lang" type="button">EN / ES</button>
         <button class="btn" id="btn-theme" type="button">Dark</button>
@@ -424,16 +425,17 @@ const i18n = {
         clock: { now: 'Ahora', play: 'Reproducir', pause: 'Pausa', rate: 'Velocidad', solar: 'hora solar local {t} (lon. {lon}°)', device: 'hora de tu equipo {t}', julian: 'juliano', back: 'hacia atrás' },
         step: { label: 'Cada pulsación de ← → mueve:', hint: 'con el deslizador seleccionado · Mayús = ×10', minYear: 'En esta época el instante tiene resolución de 1 año: el paso se redondea a 1 año.', clipped: 'Límite alcanzado.' },
         solar: {
-            button: 'Planetas', tip: 'El sistema solar para esta fecha: elige el cuerpo central (Sol, planetas, Tierra, Luna) y acércate desde todo el sistema hasta el propio cuerpo.',
-            title: 'Sistema solar', system: 'Todo el sistema', back: '← Volver al mapa de la Tierra', zoom: 'Distancia al cuerpo',
+            title: 'Sistema solar', system: 'Todo el sistema', back: '← Volver a la Tierra', zoom: 'Distancia al cuerpo',
+            earthIsMap: 'La Tierra es el mapa de esta fecha, orientado con la cámara (tiempo sidéreo real) y a su tamaño real.',
             outOfRange: 'Sin posiciones calculadas en esta época: el sistema solar se calcula entre {a} y {b}. Antes solo hay estrellas.',
             dist: 'Distancia a {name}: {d}', sunDist: 'Distancia al Sol: {au} AU · la luz tarda {light}', radius: 'Radio: {r} km ({src})',
             dots: 'Un punto con aro no está a escala: el cuerpo es más pequeño que un punto a esta distancia. Los discos sí.',
             acc: 'Error medido de la posición de su centro (JPL Horizons/DE441) en esta época ({band}): hasta {km} km.',
             accBary: 'Horizons da el baricentro de su sistema; el error incluye esa diferencia.',
             accSun: 'El Sol es el origen de este marco: no tiene error de posición propio.', accNone: 'Sin error medido para esta época.', accFail: 'No se pudo cargar el error medido de las posiciones.',
-            note: 'Cálculo (efemérides), no observación: posiciones y fases reales para la fecha del reloj; trayectorias reales de una revolución. Colores ilustrativos: sin texturas, ejes de rotación, anillos ni lunas de otros planetas.'
+            note: 'Cálculo (efemérides), no observación: posiciones y fases reales para la fecha del reloj; trayectorias reales de una revolución. Colores ilustrativos de los demás cuerpos: sin texturas, ejes de rotación, anillos ni lunas de otros planetas.'
         },
+        nav: { zoomIn: 'Acercar', zoomOut: 'Alejar (más allá de la Tierra: el sistema solar)' },
         space: {
             button: 'Estrellas', tip: 'Estrellas, Sol, Luna y planetas tras el globo, en su posición en ese instante, y la noche sobre la Tierra. Es un cálculo; los símbolos no están a escala.',
             outOfRange: 'Sin estrellas ni noche en esta época: el cielo se calcula entre {a} y {b}.'
@@ -523,16 +525,17 @@ const i18n = {
         clock: { now: 'Now', play: 'Play', pause: 'Pause', rate: 'Speed', solar: 'local solar time {t} (lon. {lon}°)', device: 'your device time {t}', julian: 'Julian', back: 'backwards' },
         step: { label: 'Each press of ← → moves:', hint: 'with the slider focused · Shift = ×10', minYear: 'In this era time has 1-year resolution: the step is rounded up to 1 year.', clipped: 'Limit reached.' },
         solar: {
-            button: 'Planets', tip: 'The solar system for this date: choose the central body (Sun, planets, Earth, Moon) and zoom from the whole system down to the body itself.',
-            title: 'Solar system', system: 'Whole system', back: '← Back to the Earth map', zoom: 'Distance to the body',
+            title: 'Solar system', system: 'Whole system', back: '← Back to Earth', zoom: 'Distance to the body',
+            earthIsMap: 'The Earth is the map of this date, oriented with the camera (real sidereal time) and at its true size.',
             outOfRange: 'No computed positions in this era: the solar system is computed between {a} and {b}. Before that there are only stars.',
             dist: 'Distance to {name}: {d}', sunDist: 'Distance to the Sun: {au} AU · light takes {light}', radius: 'Radius: {r} km ({src})',
             dots: 'A dot with a ring is not to scale: the body is smaller than a dot at this distance. Discs are.',
             acc: 'Measured error of the position of its centre (JPL Horizons/DE441) in this era ({band}): up to {km} km.',
             accBary: 'Horizons gives the barycentre of its system; the error includes that difference.',
             accSun: 'The Sun is the origin of this frame: it has no position error of its own.', accNone: 'No measured error for this era.', accFail: 'Could not load the measured position error.',
-            note: 'A calculation (ephemerides), not an observation: real positions and phases for the clock date; real trajectories of one revolution. Illustrative colours: no textures, rotation axes, rings or other planets\' moons.'
+            note: 'A calculation (ephemerides), not an observation: real positions and phases for the clock date; real trajectories of one revolution. Illustrative colours for the other bodies: no textures, rotation axes, rings or other planets\' moons.'
         },
+        nav: { zoomIn: 'Zoom in', zoomOut: 'Zoom out (beyond Earth: the solar system)' },
         space: {
             button: 'Stars', tip: 'Stars, Sun, Moon and planets behind the globe, where they are at that instant, and the night over the Earth. A calculation; symbols are not to scale.',
             outOfRange: 'No stars or night in this era: the sky is computed between {a} and {b}.'
@@ -800,7 +803,6 @@ const map = new maplibregl.Map({
         layers: [{ id: 'ocean', type: 'background', paint: { 'background-color': palette().ocean } }]
     }
 });
-map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right');
 
 const mapReady = new Promise((resolve) => map.on('load', resolve));
 let currentFocus = null;
@@ -1540,8 +1542,8 @@ function applyStrings() {
     renderCredits();
     skyTexts();
     $('btn-space').title = t('space.tip');
-    $('btn-solar').title = t('solar.tip');
     keyStepTexts();
+    zoomControl.texts();
     solarView.texts();
     syncClockUI();
     toastsTick();
@@ -1833,35 +1835,132 @@ function setSkyOpen(open) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Sistema solar (pantalla propia: ver sky/solar.js y solar/solar-view.js)  */
+/* Sistema solar: la continuacion del zoom del globo (sky/solar.js y solar/solar-view.js) */
 /* ------------------------------------------------------------------ */
+// No es un modo: al alejarse con el mapa en su zoom minimo, la Tierra (este mismo mapa, escalado y orientado) queda en medio del sistema solar.
+// Al volver a acercarse hasta el tamano del zoom minimo, el mapa recupera el control exactamente en la misma vista.
 let solarAccuracy = null;
+const earthMap = {
+    applied: null,
+    size: () => ({ w: map.getContainer().clientWidth, h: map.getContainer().clientHeight }),
+    fovDeg: () => (map.transform && typeof map.transform.fov === 'number' ? map.transform.fov : 36.86989764584402),
+    minZoom: () => map.getMinZoom(),
+    // El mapa se queda en su zoom minimo; lo que cambia es la escala CSS de su lienzo (la camara del sistema solar manda el tamano real de la Tierra).
+    place(p) {
+        const cc = map.getCanvasContainer();
+        if (p.orientation) {
+            const o = p.orientation; const a = earthMap.applied;
+            if (!a || a.lng !== o.lng || a.lat !== o.lat || a.bearing !== o.bearing || map.getZoom() !== map.getMinZoom()) {
+                map.jumpTo({ center: [o.lng, o.lat], bearing: o.bearing, pitch: 0, zoom: map.getMinZoom() });
+                earthMap.applied = { lng: o.lng, lat: o.lat, bearing: o.bearing };
+            }
+        }
+        const sz = earthMap.size(); cc.style.transformOrigin = (sz.w / 2) + 'px ' + (sz.h / 2) + 'px';      // el contenedor del lienzo no tiene alto propio: el centro hay que darlo en px
+        cc.style.transform = 'translate(' + p.dx.toFixed(2) + 'px,' + p.dy.toFixed(2) + 'px) scale(' + p.scale + ')';
+        cc.style.opacity = p.active ? '1' : '0';
+        if (p.active) updateNight(false);
+    },
+    handOff(p) {
+        const cc = map.getCanvasContainer();
+        cc.style.transform = ''; cc.style.transformOrigin = ''; cc.style.opacity = '';
+        map.jumpTo({ center: [p.lng, p.lat], bearing: p.bearing, pitch: 0, zoom: p.zoom });
+        earthMap.applied = null;
+    }
+};
 const solarView = ChronosSolarView.create({
-    root: $('solar'),
+    root: $('solar'), back: $('space'), earthMap,
     getJD: () => (clockUsable() ? clock.jd : NaN),
-    getCatalog: () => sky.catalog || null,
+    getCatalog: () => (space.on ? sky.catalog || null : null),
     starColor: (bv) => ChronosSkyView.starColor(bv),
+    starStyle: (mag) => ChronosSkyView.starStyle(mag),
+    skyOptions: () => ({ lines: !!sky.lines }),
     t, fmt, lang: () => lang, nf,
     loadAccuracy: () => {
         if (!solarAccuracy) solarAccuracy = fetch('./data/sky/validation-helio.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
         return solarAccuracy;
     },
-    onExit: () => setSolarOpen(false)
+    onClose: () => { document.body.classList.remove('solar-on'); map.keyboard.enable(); scheduleSpace(); updateNight(false); },
+    onUnavailable: () => solarHint()
 });
-function setSolarOpen(open) {
-    document.body.classList.toggle('solar-on', open);
-    $('btn-solar').setAttribute('aria-pressed', String(open));
-    if (open) {
-        if (sky.open) setSkyOpen(false);
-        if (events.open) setEventsOpen(false);
-        if (sky.catalogState === 'idle') skyLoadCatalog();
-        solarView.open();
-    } else {
-        solarView.close();
-        map.resize(); scheduleSpace(); updateNight(false);
-    }
+// Posiciones de cuerpos solo dentro de la ventana calculada (-2000..3000); antes solo hay estrellas.
+const solarAvailable = () => {
+    if (!clockFull()) return false;
+    try { ChronosSolar.timeFromJD(clock.jd); return true; } catch (e) { return false; }
+};
+const atMinZoom = () => map.getZoom() <= map.getMinZoom() + 1e-3;
+let solarHintTimer = 0;
+function solarHint() {
+    const W = ChronosSolar.WINDOW; const note = $('space-note');
+    note.textContent = fmt('solar.outOfRange', { a: formatYear(W.minYear), b: formatYear(W.maxYear) });
+    clearTimeout(solarHintTimer); solarHintTimer = setTimeout(() => scheduleSpace(), 6000);
 }
-$('btn-solar').addEventListener('click', () => setSolarOpen(!document.body.classList.contains('solar-on')));
+// Alejarse mas alla del zoom minimo del mapa: abre la escena (o, si ya esta abierta, sigue alejando).
+function solarZoomOut(deltaLog) {
+    if (solarView.isOpen) { solarView.zoomBy(deltaLog); return true; }
+    if (!solarAvailable()) { solarHint(); return false; }
+    if (sky.open) setSkyOpen(false);
+    if (events.open) setEventsOpen(false);
+    if (sky.catalogState === 'idle') skyLoadCatalog();
+    map.stop();
+    const c = map.getCenter();
+    map.jumpTo({ center: c, pitch: 0, zoom: map.getMinZoom() });            // la camara de la escena mira al centro de la Tierra: sin inclinacion
+    if (typeof map.setRoll === 'function') map.setRoll(0);
+    document.body.classList.add('solar-on');
+    map.keyboard.disable();
+    solarView.enter({ orientation: { lng: c.lng, lat: c.lat, bearing: map.getBearing() }, deltaLog });
+    return true;
+}
+{
+    const box = map.getContainer();
+    // Rueda
+    box.addEventListener('wheel', (e) => {
+        if (e.deltaY <= 0 || !atMinZoom() || e.target.closest('.maplibregl-control-container')) return;
+        e.preventDefault(); e.stopPropagation();
+        solarZoomOut(Math.min(0.3, e.deltaY * 0.0014 * (e.deltaMode === 1 ? 16 : 1)));
+    }, { capture: true, passive: false });
+    // Pellizco (dos dedos): mismo reparto que en la escena, desde el mapa en su zoom minimo
+    let pinch = null;
+    const span = (ts) => Math.hypot(ts[0].clientX - ts[1].clientX, ts[0].clientY - ts[1].clientY);
+    box.addEventListener('touchstart', (e) => { pinch = e.touches.length === 2 ? { d: span(e.touches), taken: false } : null; }, { capture: true, passive: true });
+    box.addEventListener('touchmove', (e) => {
+        if (!pinch || e.touches.length !== 2) return;
+        const d = span(e.touches); const ratio = d / pinch.d;
+        if (pinch.taken || (ratio < 1 && atMinZoom())) {
+            if (!pinch.taken && !solarZoomOut(-Math.log10(ratio))) { pinch.d = d; return; }
+            if (pinch.taken) solarView.zoomBy(-Math.log10(ratio));
+            pinch.taken = true; pinch.d = d; e.preventDefault(); e.stopPropagation();
+        } else pinch.d = d;
+    }, { capture: true, passive: false });
+    box.addEventListener('touchend', () => { pinch = null; }, { capture: true, passive: true });
+}
+// Teclado: + y - (los mismos que usa el mapa)
+window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const tag = e.target && e.target.tagName; if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+    const minus = e.key === '-' || e.key === '_'; const plus = e.key === '+' || e.key === '=';
+    if (!minus && !plus) return;
+    if (solarView.isOpen) { solarView.zoomBy(minus ? 0.12 : -0.12); e.preventDefault(); e.stopPropagation(); return; }
+    if (minus && atMinZoom() && e.target && e.target.classList && e.target.classList.contains('maplibregl-canvas')) { if (solarZoomOut(0.12)) { e.preventDefault(); e.stopPropagation(); } }
+}, true);
+// Botones de zoom propios: los de MapLibre se desactivan en el zoom minimo y no dejarian alejarse del planeta
+class ZoomControl {
+    onAdd() {
+        const c = document.createElement('div'); c.className = 'maplibregl-ctrl maplibregl-ctrl-group'; this._c = c;
+        const mk = (cls, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'maplibregl-ctrl-' + cls; const i = document.createElement('span'); i.className = 'maplibregl-ctrl-icon'; i.setAttribute('aria-hidden', 'true'); b.appendChild(i); b.addEventListener('click', fn); c.appendChild(b); return b; };
+        this._in = mk('zoom-in', () => (solarView.isOpen ? solarView.zoomBy(-0.3) : map.zoomIn()));
+        this._out = mk('zoom-out', () => (solarView.isOpen ? solarView.zoomBy(0.3) : (atMinZoom() ? solarZoomOut(0.3) : map.zoomOut())));
+        this.texts();
+        return c;
+    }
+    onRemove() { this._c.remove(); }
+    texts() { if (!this._in) return; this._in.title = this._in.ariaLabel = t('nav.zoomIn'); this._out.title = this._out.ariaLabel = t('nav.zoomOut'); }
+}
+const zoomControl = new ZoomControl();
+map.addControl(zoomControl, 'bottom-right');
+map.addControl(new maplibregl.NavigationControl({ showZoom: false, visualizePitch: true }), 'bottom-right');
+document.addEventListener('click', (e) => {          // brujula con la escena abierta: norte arriba en la camara de la escena
+    if (solarView.isOpen && e.target.closest && e.target.closest('.maplibregl-ctrl-compass')) { solarView.northUp(); e.stopPropagation(); e.preventDefault(); }
+}, true);
 $('btn-sky').addEventListener('click', () => setSkyOpen(!sky.open));
 $('sky-close').addEventListener('click', () => setSkyOpen(false));
 // Los campos del panel son la hora solar media local en el lugar elegido; el reloj guarda el instante en UT.
@@ -2004,7 +2103,7 @@ function clockChanged({ tick = false } = {}) {
     const secChanged = sec !== clock.lastSec;
     clock.lastSec = sec;
     if (sky.open && (!tick || secChanged || clock.rate >= 3600)) { skyFieldsFromClock(); scheduleSky(); }
-    if (document.body.classList.contains('solar-on')) solarView.invalidate();      // con el sistema solar abierto el mapa esta oculto: no se repinta
+    if (solarView.isOpen) solarView.invalidate();      // con la escena abierta la pinta ella (el mapa de la Tierra se actualiza al colocarlo)
     else { scheduleSpace(); updateNight(false); }
     eventsEnsureData();
     eventsRefresh();
@@ -2069,6 +2168,7 @@ function scheduleSpace() {
 
 function drawSpace() {
     space.raf = 0;
+    if (solarView.isOpen) return;          // con el sistema solar abierto, este lienzo lo pinta la escena
     const cv = $('space');
     const box = map.getContainer();
     const w = box.clientWidth; const h = box.clientHeight;
@@ -2126,8 +2226,8 @@ function drawSpace() {
             const x = px[i]; const y = py[i];
             if (Number.isNaN(x) || x < -4 || y < -4 || x > w + 4 || y > h + 4) continue;
             const mag = cat.mag[i];
-            const r = Math.max(0.5, Math.min(2.7, 2.5 - 0.36 * mag));
-            ctx.globalAlpha = Math.max(0.4, Math.min(1, 1.15 - 0.13 * mag));
+            const sty = ChronosSkyView.starStyle(mag); const r = sty.r;
+            ctx.globalAlpha = sty.alpha;
             ctx.fillStyle = space.colors[i];
             if (r < 1.1) ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
             else { ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); }
