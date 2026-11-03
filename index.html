@@ -198,6 +198,7 @@
     </div>
 
     <div id="top-right">
+        <button class="btn" id="btn-borders" type="button" aria-pressed="false" hidden data-i18n="borders.button"></button>
         <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
         <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
         <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
@@ -298,6 +299,7 @@
 <script src="./sky/timed.js"></script>
 <script src="./map/borders-gap.js"></script>
 <script src="./map/borders-inner.js"></script>
+<script src="./map/borders-resolution.js"></script>
 <script src="./sky/sky-view.js"></script>
 <script src="./sky/timestep.js"></script>
 <script src="./sky/solar.js"></script>
@@ -346,6 +348,7 @@ const parsePrefs = (raw) => {
     if (Array.isArray(p.c) && p.c.length === 2 && p.c.every((n) => typeof n === 'number' && Number.isFinite(n)) && Math.abs(p.c[0]) <= 180 && Math.abs(p.c[1]) <= 85) out.c = [p.c[0], p.c[1]];
     if (typeof p.z === 'number' && p.z >= 0 && p.z <= 22) out.z = p.z;
     if (p.sp === 0 || p.sp === 1) out.sp = p.sp === 1;
+    if (p.bf === 0 || p.bf === 1) out.bf = p.bf === 1;   // fronteras historicas forzadas por encima de la resolucion del dato
     if (typeof p.ks === 'string' && /^[0-9A-Za-z]{1,5}$/.test(p.ks)) out.ks = p.ks;   // paso de las flechas (id; se valida al usarlo)
     if (Number.isInteger(p.vf) && p.vf >= 0 && p.vf <= 127) out.vf = p.vf;   // filtros de verificacion de sucesos (mascara de bits)
     if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
@@ -360,7 +363,7 @@ const readPrefs = () => {
 const prefs = readPrefs();
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bf: prefs.bf === undefined ? undefined : (prefs.bf ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -390,6 +393,8 @@ const i18n = {
         bordersNE: 'Fronteras vigentes: Natural Earth 10m (dominio público), resolución mediana ~{km} km.',
         neBackdate: 'Para 2016–2019 se aplican las fronteras vigentes: no se han comprobado una a una las diferencias menores de esos años.',
         neNote: 'Fronteras vigentes según Natural Earth. En zonas en disputa se muestra la convención de esa fuente (campo «Tipo»), sin juicio sobre soberanía.', resolution: 'Resolución de la fuente', typeLabel: 'Tipo según la fuente',
+        bordersCut: 'A este zoom las fronteras de {y} ya no tienen más detalle: sus polígonos tienen un vértice cada ~{km} km de mediana. Solo se muestra el mapa físico; el botón Fronteras las dibuja como aproximación.',
+        bordersForced: 'Fronteras de {y} dibujadas por encima de su resolución (un vértice cada ~{km} km de mediana): son una aproximación y se ven facetadas.',
         bordersSnapshot: 'Fronteras: instantánea de {y} ({d}).', exact: 'misma fecha', apart: 'a {n} años',
         noResults: 'Sin resultados para «{q}». Pronto una búsqueda sin resultado podrá convertirse en una petición de datos.',
         found: '«{n}» aparece en {c} épocas. Mostrando {y}.', badTime: 'No entiendo esa fecha. Prueba: 1789, 44 a.C., 12 ka, 250 Ma.',
@@ -436,6 +441,9 @@ const i18n = {
             note: 'Cálculo (efemérides), no observación: posiciones y fases reales para la fecha del reloj; trayectorias reales de una revolución. Colores ilustrativos de los demás cuerpos: sin texturas, ejes de rotación, anillos ni lunas de otros planetas.'
         },
         nav: { zoomIn: 'Acercar', zoomOut: 'Alejar (más allá de la Tierra: el sistema solar)' },
+        borders: {
+            button: 'Fronteras', tip: 'Dibuja las fronteras históricas aunque el zoom pase de la resolución de sus polígonos. Es una aproximación: se verán facetadas y desajustadas con la costa.'
+        },
         space: {
             button: 'Estrellas', tip: 'Estrellas, Sol, Luna y planetas tras el globo, en su posición en ese instante, y la noche sobre la Tierra. Es un cálculo; los símbolos no están a escala.',
             outOfRange: 'Sin estrellas ni noche en esta época: el cielo se calcula entre {a} y {b}.'
@@ -490,6 +498,8 @@ const i18n = {
         bordersNE: 'Current borders: Natural Earth 10m (public domain), median resolution ~{km} km.',
         neBackdate: 'For 2016–2019 the current borders are applied: minor differences in those years have not been checked one by one.',
         neNote: 'Current borders per Natural Earth. In disputed areas the source\'s own convention is shown ("Type" field), with no judgement on sovereignty.', resolution: 'Source resolution', typeLabel: 'Type per the source',
+        bordersCut: 'At this zoom the {y} borders have no more detail to give: their polygons have a vertex every ~{km} km (median). Only the physical map is shown; the Borders button draws them as an approximation.',
+        bordersForced: '{y} borders drawn beyond their resolution (a vertex every ~{km} km, median): an approximation, and they look faceted.',
         bordersSnapshot: 'Borders: snapshot of {y} ({d}).', exact: 'same date', apart: '{n} years apart',
         noResults: 'No results for "{q}". Soon an empty search will be able to become a data request.',
         found: '"{n}" appears in {c} eras. Showing {y}.', badTime: "I can't read that date. Try: 1789, 44 BC, 12 ka, 250 Ma.",
@@ -536,6 +546,9 @@ const i18n = {
             note: 'A calculation (ephemerides), not an observation: real positions and phases for the clock date; real trajectories of one revolution. Illustrative colours for the other bodies: no textures, rotation axes, rings or other planets\' moons.'
         },
         nav: { zoomIn: 'Zoom in', zoomOut: 'Zoom out (beyond Earth: the solar system)' },
+        borders: {
+            button: 'Borders', tip: 'Draws the historical borders even when the zoom exceeds the resolution of their polygons. An approximation: they will look faceted and offset from the coastline.'
+        },
         space: {
             button: 'Stars', tip: 'Stars, Sun, Moon and planets behind the globe, where they are at that instant, and the night over the Earth. A calculation; symbols are not to scale.',
             outOfRange: 'No stars or night in this era: the sky is computed between {a} and {b}.'
@@ -1034,7 +1047,7 @@ function gapHide() { gapSeq++; if (GAP.shown) { map.setLayoutProperty('gap-raste
 function gapDraw() {
     if (!map.getLayer('gap-raster') || !window.ChronosGap) return;
     const b = state.borders;
-    const want = Boolean(b && b.data && b.data.features.length);
+    const want = Boolean(b && b.data && b.data.features.length) && !BR.cut;
     if (!want) { gapHide(); return; }
     // Con el detalle de OpenStreetMap el agua va por encima y ya pone la costa; sin el, la costa la pone la tierra del mapa base.
     const L = DETAIL.shown ? null : (state.landError ? null : state.land);
@@ -1172,8 +1185,40 @@ function applyBorders(b) {
     map.getSource('borders-inner').setData(innerOf(data));
     state.bordersData = data;
     if (DETAIL.built) detailVisibility();
+    BR.lastApplied = false;   // dato nuevo: se reaplica la visibilidad de las capas aunque el corte no cambie
+    bordersView();
     gapRefresh();
 }
+
+/* ---- fronteras historicas y resolucion del dato ---- */
+// Un poligono historico trae un vertice cada ~13-20 km (medido en cada instantanea, ver map/borders-resolution.js). Por encima del zoom en
+// que ese tramo mide BORDER_SEG_PX pixeles ya no hay mas detalle que mostrar: se ve el mapa fisico y un boton permite forzar las fronteras
+// como aproximacion. Las vigentes (Natural Earth, 1,7 km) no se recortan: su resolucion llega mucho mas lejos.
+const BORDER_SEG_PX = 4; const BORDER_HYST = 0.15;
+const BR = { cut: false, forced: prefs.bf === true, resKm: null, zMax: null };
+function bordersRes(b) {
+    if (!b || b.source === 'ne' || !b.data || !window.ChronosBordersRes) return null;
+    if (b.data._resKm === undefined) b.data._resKm = ChronosBordersRes.medianSegmentKm(b.data);
+    return b.data._resKm;
+}
+function bordersView() {
+    const b = state.borders; const resKm = bordersRes(b);
+    BR.resKm = resKm; BR.zMax = null; let over = false;
+    if (resKm) {
+        BR.zMax = ChronosBordersRes.zoomLimit(resKm, map.getCenter().lat, BORDER_SEG_PX);
+        over = map.getZoom() > BR.zMax - (BR.cut || BR.forced ? BORDER_HYST : 0);
+    }
+    const cut = over && !BR.forced;
+    const btn = $('btn-borders'); btn.hidden = !over; btn.setAttribute('aria-pressed', String(BR.forced));
+    if (cut === BR.cut && BR.lastApplied) return;
+    BR.cut = cut; BR.lastApplied = true;
+    ['borders-fill', 'borders-line', 'borders-hl'].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', cut ? 'none' : 'visible'); });
+    if (cut) gapHide(); else gapRefresh();
+    renderStatus();
+}
+map.on('zoom', bordersView);
+map.on('moveend', bordersView);
+$('btn-borders').addEventListener('click', () => { BR.forced = !BR.forced; savePrefs({ bf: BR.forced }); bordersView(); renderStatus(); });
 
 function renderStatus() {
     const ybp = state.ybp;
@@ -1205,7 +1250,12 @@ function renderStatus() {
         if (b.source === 'ne') {
             messages.push(fmt('bordersNE', { km: nf().format(b.meta.segment_median_km) }));
             if (ybpToYear(state.ybp) < 2020) messages.push(t('neBackdate'));
-        } else messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
+        } else {
+            messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
+            const km = BR.resKm ? nf().format(Math.round(BR.resKm * 10) / 10) : '';
+            if (BR.cut) messages.push(fmt('bordersCut', { y: formatYear(b.year), km }));
+            else if (BR.forced && BR.zMax !== null && map.getZoom() > BR.zMax) messages.push(fmt('bordersForced', { y: formatYear(b.year), km }));
+        }
     } else if (ybp <= CFG.bordersMaxYbp) {
         messages.push(t('noBorders'));
     }
@@ -1542,6 +1592,7 @@ function applyStrings() {
     renderCredits();
     skyTexts();
     $('btn-space').title = t('space.tip');
+    $('btn-borders').title = t('borders.tip');
     keyStepTexts();
     zoomControl.texts();
     solarView.texts();

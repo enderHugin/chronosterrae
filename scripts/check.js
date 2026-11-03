@@ -201,6 +201,13 @@ check('cookie de preferencias: el paso de las flechas (ks) acepta un id corto y 
     return ok && bad;
 });
 
+check('cookie de preferencias: bf (fronteras forzadas) acepta 0/1 y rechaza lo demas', () => {
+    const { parsePrefs } = prefsFns();
+    const ok = parsePrefs(JSON.stringify({ bf: 1 })).bf === true && parsePrefs(JSON.stringify({ bf: 0 })).bf === false;
+    const bad = [2, -1, '1', true, null, [], {}].every((v) => !('bf' in parsePrefs(JSON.stringify({ bf: v }))));
+    return ok && bad;
+});
+
 check('cookie de preferencias: un campo malo no invalida los buenos', () => {
     const { parsePrefs } = prefsFns();
     const r = parsePrefs(JSON.stringify({ lang: 'es', ybp: 'x', z: 2 }));

@@ -13,7 +13,9 @@ const SUITE = [
     { id: 'pirineos-2026', year: 2026, lng: -1.35, lat: 43.05, zoom: 11 },
     { id: 'europa-1606', year: 1606, lng: 10, lat: 48, zoom: 3.3 },
     { id: 'estrecho-2026', year: 2026, lng: -5.6, lat: 36, zoom: 8 },
+    { id: 'europa-1945-lejos', year: 1945, lng: 12, lat: 50, zoom: 3 },
     { id: 'europa-1945', year: 1945, lng: 12, lat: 50, zoom: 4 },
+    { id: 'europa-1945-forzado', year: 1945, lng: 12, lat: 50, zoom: 4, forced: true },
     { id: 'mediterraneo-9010aC', year: -9010, lng: 20, lat: 38, zoom: 5 },
     { id: 'costa-9010aC-zoom', year: -9010, lng: 2.5, lat: 41.2, zoom: 9 },
     { id: 'globo-2026', year: 2026, lng: 0, lat: 20, zoom: 1.4 },
@@ -33,10 +35,12 @@ async function runSuite(page, out) {
         for (const v of SUITE) {
             await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
             await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
+            if (v.forced) await page.evaluate(() => { if (!BR.forced) document.getElementById('btn-borders').click(); });
             await settle(page);
             const name = v.id + (dark ? '-oscuro' : '-claro');
             await page.screenshot({ path: path.join(out, name + '.png') });
-            rows.push({ name, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            rows.push({ name, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, forced: BR.forced, zMax: BR.zMax, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            if (v.forced) await page.evaluate(() => { if (BR.forced) document.getElementById('btn-borders').click(); });
         }
     }
     // Alejar el zoom del globo (sin boton ni modo): del zoom minimo del mapa hacia el sistema solar, y a otros cuerpos. Claro y oscuro no cambian el espacio.
