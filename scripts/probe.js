@@ -31,6 +31,9 @@ const jsonHas = (...keys) => (text) => {
     }
 };
 
+// Imagen binaria: se comprueba la firma del archivo (no se lee como texto, que la corrompe).
+const isImage = (kind) => (buf) => (kind === 'jpeg' ? buf.length > 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff : kind === 'png' ? buf.length > 4 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47 : false);
+
 const targets = [
     { id: 'gplates-coastlines', area: 'paleogeografia', url: 'https://gws.gplates.org/reconstruct/coastlines/?time=250&model=MERDITH2021', full: true, expect: jsonHas('features') },
     { id: 'gplates-coastlines-default-model', area: 'paleogeografia', url: 'https://gws.gplates.org/reconstruct/coastlines/?time=250', full: true, expect: jsonHas('features') },
@@ -65,7 +68,15 @@ const targets = [
     { id: 'crossref-merdith2021', area: 'verificacion-doi', url: 'https://api.crossref.org/works/10.1016/j.earscirev.2020.103477', full: true, expect: jsonHas('message') },
     { id: 'crossref-kocsis-scotese', area: 'verificacion-doi', url: 'https://api.crossref.org/works/10.1016/j.earscirev.2020.103463', full: true, expect: jsonHas('message') },
     { id: 'crossref-renne2013', area: 'verificacion-doi', url: 'https://api.crossref.org/works/10.1126/science.1230492', full: true, expect: jsonHas('message') },
-    { id: 'zenodo-search-plate-model', area: 'paleogeografia', url: 'https://zenodo.org/api/records?q=Merdith2021%20plate%20model&size=1', expect: jsonHas('hits') }
+    { id: 'zenodo-search-plate-model', area: 'paleogeografia', url: 'https://zenodo.org/api/records?q=Merdith2021%20plate%20model&size=1', expect: jsonHas('hits') },
+    // Imagen natural de la Tierra (relieve y color) por teselas: NASA GIBS, WMTS en Web Mercator (el mismo esquema que MapLibre).
+    { id: 'gibs-bluemarble-shaded-relief-z2', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/2/1/1.jpeg', image: isImage('jpeg'), expect: () => true },
+    { id: 'gibs-bluemarble-shaded-relief-z5', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/5/11/16.jpeg', image: isImage('jpeg'), expect: () => true },
+    { id: 'gibs-bluemarble-shaded-relief-z8', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/8/96/128.jpeg', image: isImage('jpeg'), expect: () => true },
+    { id: 'gibs-bluemarble-nextgen-z3', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/3/2/4.jpeg', image: isImage('jpeg'), expect: () => true },
+    { id: 'gibs-wmts-capabilities', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml', expect: (t) => /BlueMarble_ShadedRelief_Bathymetry/.test(t) && /GoogleMapsCompatible_Level8/.test(t) },
+    { id: 'gibs-bluemarble-layer-detail', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/layers/BlueMarble_ShadedRelief_Bathymetry.json', expect: (t) => t.length > 2 },
+    { id: 'nasa-earthdata-data-policy', area: 'tierra-natural', url: 'https://www.earthdata.nasa.gov/engage/open-data-services-software/data-information-policy', expect: (t) => /Earth/i.test(t) }
 ];
 
 const log = (...args) => console.error(...args);
@@ -98,16 +109,18 @@ const probe = async (t) => {
                 ...(t.body ? { 'Content-Type': 'application/json' } : {})
             }
         });
-        const text = await res.text();
-        saveSample(t, text);
+        const buf = t.image ? Buffer.from(await res.arrayBuffer()) : null;
+        const text = t.image ? '' : await res.text();
+        if (!t.image) saveSample(t, text);
         const acao = res.headers.get('access-control-allow-origin');
         out.status = res.status;
         out.ok = res.ok;
-        out.bytes = Buffer.byteLength(text);
+        out.bytes = t.image ? buf.length : Buffer.byteLength(text);
         out.content_type = res.headers.get('content-type');
         out.cors_allow_origin = acao;
         out.browser_usable = res.ok && (acao === '*' || acao === ORIGIN);
-        out.shape_ok = res.ok ? Boolean(t.expect(text)) : false;
+        out.shape_ok = res.ok ? Boolean(t.image ? t.image(buf) : t.expect(text)) : false;
+        out.cache_control = res.headers.get('cache-control');
         if (!res.ok || !out.shape_ok) out.snippet = text.slice(0, 300);
     } catch (err) {
         out.ok = false;
