@@ -441,6 +441,7 @@ const i18n = {
         detailPhysical: 'Detalle: agua y vegetación de hoy como aproximación; no incluye lo que cambió desde entonces (ríos, lagos, bosques).',
         detailFail: 'No se pudo cargar el detalle del mapa ({err}). Se reintentará.',
         changes: {
+            datesTitle: 'Entre las dos últimas fechas que miraste: {a} y {b}', datesNote: 'Aquí no se compara ningún mapa: se listan los sucesos registrados en ese tramo de tiempo, con su relación declarada. Un cambio entre esas dos fechas no ocurre «en un día»: ocurre a lo largo del tramo.',
             button: 'Cambios', title: 'Qué cambia y qué lo rodea', tip: 'Qué cambia en el elemento centrado y qué sucesos registrados hay en ese intervalo',
             centred: 'Elemento centrado', shownDate: 'Fecha mostrada', earth: 'Tierra',
             noData: 'De {body} ChronosTerrae no tiene cambios ni sucesos registrados: su posición y su orientación se calculan para cada fecha, no se leen de ningún registro.',
@@ -464,15 +465,15 @@ const i18n = {
             noLinks: 'Ningún suceso cargado trae todavía vínculos documentados de causa o efecto: aún no se han recolectado de la fuente. Hasta entonces, «coincide» no significa «causa».',
             filters: 'Se aplican los filtros de estado y de evidencia de la lista de Sucesos.',
             tier: {
-                documented: 'Con vínculo documentado de causa o efecto', place: 'Ocurren en un territorio que cambió', name: 'Su nombre menciona un estado que cambió', time: 'Coinciden solo en el tiempo (los más notorios)'
+                documented: 'Con causa o efecto documentados por la fuente', place: 'Ocurren en un territorio que cambió', name: 'Su nombre menciona un estado que cambió', time: 'Coinciden solo en el tiempo (los más notorios)'
             },
             tierNote: {
-                documented: 'La fuente enlaza este suceso con una causa o un efecto.', place: 'Coincidencia de lugar y fecha: no prueba que sea la causa.',
+                documented: 'La fuente le atribuye causas o efectos (se ven al desplegar). Eso no prueba que causara este cambio de fronteras: indica que es un hecho con relaciones registradas.', place: 'Coincidencia de lugar y fecha: no prueba que sea la causa.',
                 name: 'Coincidencia de nombre y fecha: no prueba que sea la causa. Solo detecta el nombre exacto del estado.', time: 'Ocurrieron en el intervalo, sin relación comprobada con este cambio.'
             },
             more: '… y {n} más sin mostrar', relation: 'Relación', polities: 'Estados', deducedKind: 'Clase (deducida del nombre, no de la fuente)', sourcedKind: 'Clase (según la fuente)', precision: 'Precisión de la fecha', unc: '±{u} años', uncDays: '±{u} días',
             kinds: { treaty: 'Tratado o pacto', battle: 'Batalla o asedio', war: 'Guerra, campaña u operación', political: 'Revolución, rebelión o hecho político', violence: 'Matanza o atentado', natural: 'Fenómeno natural', other: 'Sin clase deducible' },
-            rel: { cause: 'Causa', effect: 'Efecto', part_of: 'Parte de', participant: 'Participante' },
+            rel: { cause: 'Causa', effect: 'Efecto', part_of: 'Parte de', participant: 'Participante' }, alsoListed: '(también está en esta lista)',
             open: 'Abrir ficha y centrar',
             layersTitle: 'Relieve y modelo de placas',
             naturalUntil: 'Imagen natural de la Tierra (NASA GIBS): se muestra hasta {y}; ese corte es un umbral de ChronosTerrae (hacia entonces el nivel del mar ya era estable, aproximadamente), no un suceso: antes de esa fecha se ve el mapa esquemático.',
@@ -596,6 +597,7 @@ const i18n = {
         detailPhysical: 'Detail: present-day water and vegetation as an approximation; it does not include what has changed since (rivers, lakes, forests).',
         detailFail: 'Could not load the map detail ({err}). Will retry.',
         changes: {
+            datesTitle: 'Between the last two dates you looked at: {a} and {b}', datesNote: 'No map is compared here: the events recorded in that stretch of time are listed, with their declared relation. A change between those two dates does not happen "in a day": it happens along the stretch.',
             button: 'Changes', title: 'What changes and what surrounds it', tip: 'What changes in the centred element and which recorded events fall in that interval',
             centred: 'Centred element', shownDate: 'Date shown', earth: 'Earth',
             noData: 'ChronosTerrae has no recorded changes or events for {body}: its position and orientation are calculated for each date, not read from any record.',
@@ -619,15 +621,15 @@ const i18n = {
             noLinks: 'No loaded event carries documented cause or effect links yet: they have not been harvested from the source. Until then, "coincides" does not mean "caused".',
             filters: 'The status and evidence filters of the Events list apply.',
             tier: {
-                documented: 'With a documented cause or effect link', place: 'Happen in a territory that changed', name: 'Their name mentions a state that changed', time: 'Coincide in time only (the most notable)'
+                documented: 'With causes or effects documented by the source', place: 'Happen in a territory that changed', name: 'Their name mentions a state that changed', time: 'Coincide in time only (the most notable)'
             },
             tierNote: {
-                documented: 'The source links this event to a cause or an effect.', place: 'Same place and date: this does not prove it is the cause.',
+                documented: 'The source gives it causes or effects (shown when expanded). That does not prove it caused this border change: it means the event has recorded relations.', place: 'Same place and date: this does not prove it is the cause.',
                 name: 'Same name and date: this does not prove it is the cause. Only the exact state name is detected.', time: 'They happened in the interval, with no verified relation to this change.'
             },
             more: '… and {n} more not shown', relation: 'Relation', polities: 'States', deducedKind: 'Class (deduced from the name, not from the source)', sourcedKind: 'Class (according to the source)', precision: 'Date precision', unc: '±{u} years', uncDays: '±{u} days',
             kinds: { treaty: 'Treaty or pact', battle: 'Battle or siege', war: 'War, campaign or operation', political: 'Revolution, rebellion or political event', violence: 'Massacre or attack', natural: 'Natural phenomenon', other: 'No class can be deduced' },
-            rel: { cause: 'Cause', effect: 'Effect', part_of: 'Part of', participant: 'Participant' },
+            rel: { cause: 'Cause', effect: 'Effect', part_of: 'Part of', participant: 'Participant' }, alsoListed: '(also in this list)',
             open: 'Open record and centre',
             layersTitle: 'Relief and plate model',
             naturalUntil: 'Natural image of the Earth (NASA GIBS): shown until {y}. That cut-off is a ChronosTerrae threshold (by then sea level was roughly stable), not an event: before that date the schematic map is shown.',
@@ -1342,7 +1344,7 @@ function innerOf(fc) {
     if (!fc._inner) fc._inner = ChronosInner.innerBorders(fc, (f) => (f.properties && (f.properties.SUBJECTO || f.properties.NAME)) || '?', 1.5);
     return fc._inner;
 }
-const CHG = { open: false, token: 0, key: '', prev: null, cur: null, diffs: new Map() };
+const CHG = { open: false, token: 0, key: '', prev: null, cur: null, diffs: new Map(), dates: [], cand: null };
 // Instantanea mostrada y la anterior: lo que el usuario acaba de ver cambiar. NE (2016+) cuenta como otra fuente.
 function chgTrack(b) {
     const cur = b ? { year: b.year, source: b.source || 'hb' } : null;
@@ -2918,19 +2920,21 @@ CHANGE_PROVIDERS.push({
     }
 });
 
-function chgEventItem(it) {
+function chgEventItem(it, listed) {
     const f = it.f; const p = f.properties;
     const sum = el('summary', {}, [el('span', { class: 'ev-dot', style: 'background:' + (KIND_COLORS[evKind(f)] || '#888') + ';display:inline-block;margin-right:6px' }), el('b', { text: evName(f) }), el('span', { class: 'chg-when', text: eventDateText(f) })]);
     const body = el('div', { class: 'chg-ev-body' });
     const rows = [{ label: t('changes.relation'), value: t('changes.tierNote.' + it.tier) }];
     if (it.polities.length) rows.push({ label: t('changes.polities'), value: it.polities.join(', ') });
-    rows.push({ label: t(it.kindSource === 'wikidata' ? 'changes.sourcedKind' : 'changes.deducedKind'), value: t('changes.kinds.' + it.kind) + (Array.isArray(p.classes) && p.classes.length ? ' (' + p.classes.map((c) => c.label || c.id).join(', ') + ')' : '') });
+    const srcClasses = Array.isArray(p.classes) ? p.classes.map((c) => c.label || c.id).join(', ') : '';
+    if (it.kindSource === 'wikidata') rows.push({ label: t('changes.sourcedKind'), value: (it.kind === 'other' ? '' : t('changes.kinds.' + it.kind) + ' — ') + srcClasses });
+    else rows.push({ label: t('changes.deducedKind'), value: t('changes.kinds.' + it.kind) });
     const u = p.time.uncertainty_yr;
     rows.push({ label: t('changes.precision'), value: p.time.precision + ' · ' + (u < 1 ? fmt('changes.uncDays', { u: nf().format(Math.round(u * 365.25 * 10) / 10) }) : fmt('changes.unc', { u: nf().format(u) })) });
     rows.push(...eventRows(f));
     (Array.isArray(p.links) ? p.links : []).forEach((l) => {
         const lab = (l.target.label ? l.target.label + ' ' : '') + (l.target.kind === 'wikidata' ? l.target.id : l.target.id);
-        const row = { label: t('changes.rel.' + l.rel), value: lab };
+        const row = { label: t('changes.rel.' + l.rel), value: lab + (listed && l.target.kind === 'wikidata' && listed.has(l.target.id) ? ' ' + t('changes.alsoListed') : '') };
         if (l.target.kind === 'wikidata') row.href = 'https://www.wikidata.org/wiki/' + l.target.id;
         rows.push(row, { label: t('source'), value: (l.source.citation || l.source.id) });
     });
@@ -2941,19 +2945,21 @@ function chgEventItem(it) {
     return el('details', { class: 'chg-ev' }, [sum, body]);
 }
 
-async function chgEvents(iv, terms, token) {
+async function chgEvents(iv, terms, token, { title, note, minImportance } = {}) {
     const frag = document.createDocumentFragment();
     const vars = { a: chgYear(iv.from), b: chgYear(iv.to) };
-    frag.appendChild(el('h3', { text: fmt('changes.eventsTitle', vars) }));
+    frag.appendChild(el('h3', { text: title || fmt('changes.eventsTitle', vars) }));
+    if (note) frag.appendChild(chgP(note, 'chg-note'));
     if (iv.to < 1) { frag.appendChild(chgP(t('changes.noEventsRange'))); return frag; }
     let y0 = Math.max(1, iv.from);
     if (iv.to - y0 > CHG_MAX_YEARS) { y0 = iv.to - CHG_MAX_YEARS; frag.appendChild(chgP(fmt('changes.capped', { n: CHG_MAX_YEARS }), 'chg-note')); }
     await eventsLoadRange(y0, iv.to);
     if (token !== CHG.token) return null;
-    const R = ChronosChanges.relatedEvents(events.all, terms, iv.from, iv.to);
+    const R = ChronosChanges.relatedEvents(events.all, terms, iv.from, iv.to, minImportance === undefined ? {} : { minImportance });
     if (R.inInterval && R.withGeometry === 0) frag.appendChild(el('div', { class: 'chg-warn', text: fmt('changes.noPlace', { n: R.inInterval }) }));
     else if (R.inInterval) frag.appendChild(chgP(fmt('changes.somePlace', { k: R.withGeometry, n: R.inInterval }), 'chg-note'));
     if (!events.all.some((f) => Array.isArray(f.properties.links) && f.properties.links.length)) frag.appendChild(el('div', { class: 'chg-warn', text: t('changes.noLinks') }));
+    const listed = new Set(R.items.map((it) => (/^wd\.(q\d+)\./.exec(it.f.properties.id) || [])[1]).filter(Boolean).map((q) => q.toUpperCase()));
     ChronosChanges.TIERS.forEach((tier) => {
         const group = R.items.filter((it) => it.tier === tier);
         if (!group.length) return;
@@ -2961,7 +2967,7 @@ async function chgEvents(iv, terms, token) {
         if (!(tier === 'documented' || tier === 'place')) d.removeAttribute('open');
         d.appendChild(el('summary', {}, [el('b', { text: t('changes.tier.' + tier) + ' (' + R.total[tier] + ')' })]));
         d.appendChild(chgP(t('changes.tierNote.' + tier), 'chg-note'));
-        group.forEach((it) => d.appendChild(chgEventItem(it)));
+        group.forEach((it) => d.appendChild(chgEventItem(it, listed)));
         if (R.total[tier] > group.length) d.appendChild(chgP(fmt('changes.more', { n: R.total[tier] - group.length }), 'chg-note'));
         frag.appendChild(d);
     });
@@ -2992,9 +2998,27 @@ async function chgRender() {
         const frag = await chgEvents(interval, terms, token);
         if (frag && token === CHG.token) { slot.textContent = ''; slot.appendChild(frag); }
     }
+    if (CHG.dates.length === 2 && CHG.dates[0] !== CHG.dates[1] && focus === 'Earth') {
+        const a = Math.min(...CHG.dates); const b = Math.max(...CHG.dates); const span = chgJdYear(b) - chgJdYear(a);
+        const slot = el('div', {}, [chgP(t('changes.loading'), 'chg-note')]); root.appendChild(slot);
+        const frag = await chgEvents({ from: chgJdYear(a), to: chgJdYear(b) }, { added: [], removed: [], changed: [] }, token,
+            { title: fmt('changes.datesTitle', { a: chgDateText(a), b: chgDateText(b) }), note: t('changes.datesNote'), minImportance: span <= 2 ? 0 : 0.5 });
+        if (frag && token === CHG.token) { slot.textContent = ''; slot.appendChild(frag); }
+    }
 }
 
-function chgKey() { return [chgFocus(), state.borders ? state.borders.year + ':' + (state.borders.source || 'hb') : '-', CHG.prev ? CHG.prev.year : '-', lang, state.ybp >= CFG.deepTimeFrom ? effectiveMa(state.ybp) : '-', NAT.on].join('|'); }
+const chgDateText = (jd) => { const c = ChronosSky.jdToCalendar(jd, 'auto'); const m = new Date(2001, c.month - 1, 1).toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { month: 'short' }); return c.day + ' ' + m + ' ' + formatYear(c.year) + (c.calendar === 'julian' ? ' (' + t('clock.julian') + ')' : ''); };
+const chgJdYear = (jd) => CFG.present + (jd - 2433282.5) / 365.25;   // misma convencion que ChronosTimed.span (JD de 1950-01-01 = 2433282.5, año de 365,25 d)
+// Las dos ultimas fechas en las que el reloj se quedo quieto (>= 0,5 s): lo que el usuario compara cuando salta de una a otra.
+function chgTrackDate() {
+    if (!clockUsable()) return;
+    const jd = clock.jd;
+    if (!CHG.cand || Math.abs(jd - CHG.cand.jd) > 1e-9) { CHG.cand = { jd, at: performance.now() }; return; }
+    if (performance.now() - CHG.cand.at < 500) return;
+    const last = CHG.dates[CHG.dates.length - 1];
+    if (last === undefined || Math.abs(last - jd) > 1e-9) { CHG.dates.push(jd); if (CHG.dates.length > 2) CHG.dates.shift(); }
+}
+function chgKey() { return [chgFocus(), state.borders ? state.borders.year + ':' + (state.borders.source || 'hb') : '-', CHG.prev ? CHG.prev.year : '-', lang, state.ybp >= CFG.deepTimeFrom ? effectiveMa(state.ybp) : '-', NAT.on, CHG.dates.join(',')].join('|'); }
 function chgRefresh() { if (!CHG.open) return; const k = chgKey(); if (k === CHG.key) return; CHG.key = k; chgRender(); }
 
 function setChangesOpen(open) {
@@ -3005,7 +3029,7 @@ function setChangesOpen(open) {
 }
 $('btn-changes').addEventListener('click', () => setChangesOpen(!CHG.open));
 $('changes-close').addEventListener('click', () => setChangesOpen(false));
-setInterval(chgRefresh, 700);   // barato: solo compara una clave; la pagina no avisa de cuando cambia el elemento centrado ni la instantanea
+setInterval(() => { chgTrackDate(); chgRefresh(); }, 350);   // barato: solo compara una clave; la pagina no avisa de cuando cambia el elemento centrado ni la instantanea
 
 /* ---- avisos ---- */
 function eventPhrase(f, form) {
