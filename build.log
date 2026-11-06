@@ -1,0 +1,13 @@
+OK  birth filas=8117 2856 ms
+OK  death filas=5461 1245 ms
+OK  publication filas=1386 1667 ms
+OK  composition filas=733 1802 ms
+OK  discovery filas=16180 1961 ms
+OK  event filas=9195 1510 ms
+OK  intervalos 3401 ms
+OK  relacion-classes 1513 ms
+OK  relacion-cause 308 ms
+OK  relacion-effect 300 ms
+OK  relacion-part_of 629 ms
+OK  relacion-place 622 ms
+{"perKind":{"birth":7343,"death":4974,"publication":1327,"composition":733,"discovery":7097,"event":6501},"queries":12,"failed":0,"skipped":{"duplicado (misma fecha, otro lugar)":787,"anterior al año 1 (numeracion sin calibrar)":1715,"asteroide numerado o provisional":9035,"etiqueta que es solo un año":2097,"intervalo: anterior al año 1 (numeracion sin calibrar)":45,"intervalo: calendarios distintos en inicio y fin":11,"intervalo: el fin es anterior al inicio":1}}

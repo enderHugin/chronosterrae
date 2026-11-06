@@ -1,0 +1,29 @@
+{
+  "checked": 27975,
+  "hard": 0,
+  "anomalies": 1,
+  "warnings": 2,
+  "details": {
+    "hard": [],
+    "anomalies": [
+      {
+        "id": "wd.q127641.death.2",
+        "name": "Vitus Bering",
+        "why": "edad de 228 años (1681-08-05 a 1909-12-05) (+1 mas)"
+      }
+    ],
+    "warnings": [
+      {
+        "id": "wd.q918415.event",
+        "name": "1959 South American Championship",
+        "why": "duplicado probable de wd.q907176.event"
+      },
+      {
+        "id": "wd.q44523.publication",
+        "name": "Twilight",
+        "why": "duplicado probable de wd.q189378.publication"
+      }
+    ]
+  },
+  "dropped": 1
+}
