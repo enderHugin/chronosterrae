@@ -411,6 +411,7 @@ const i18n = {
         paleoTitle: 'Costa paleogeográfica', paleoNote: 'Reconstrucción de las costas de esa época a partir de modelos de elevación del terreno (PaleoDEM), incluidas las zonas inundadas del continente. Es una reconstrucción publicada, no una observación.',
         paleoMargin: 'Margen continental', paleoMarginNote: 'Isóbata de −1400 m: hasta dónde llega la plataforma continental.', slice: 'Edad de la loncha', license: 'Licencia',
         loadingLand: 'Cargando costas del modelo de placas…', loadingBorders: 'Cargando fronteras históricas…',
+        loadingBordersKeep: 'Cargando las fronteras de esta fecha… mientras llegan se sigue viendo la instantánea de {y}, que no corresponde a la fecha elegida.',
         landFail: 'No se pudieron cargar las costas ({err}). Se conservan las anteriores.',
         bordersFail: 'No se pudieron cargar las fronteras ({err}).',
         landOk: 'Contornos actuales movidos por el modelo de placas {model}, {age}. No son las costas reales de la época.', seaLevel: 'Costas actuales. El nivel del mar y las glaciaciones no están modelados.',
@@ -567,6 +568,7 @@ const i18n = {
         paleoTitle: 'Palaeogeographic coastline', paleoNote: 'Reconstruction of the coastlines of that time from terrain-elevation models (PaleoDEM), including flooded parts of the continents. A published reconstruction, not an observation.',
         paleoMargin: 'Continental margin', paleoMarginNote: '−1400 m isobath: how far the continental shelf extends.', slice: 'Slice age', license: 'License',
         loadingLand: 'Loading plate-model coastlines…', loadingBorders: 'Loading historical borders…',
+        loadingBordersKeep: 'Loading the borders for this date… until they arrive the {y} snapshot stays on screen, and it does not match the chosen date.',
         landFail: 'Could not load coastlines ({err}). Keeping the previous ones.',
         bordersFail: 'Could not load borders ({err}).',
         landOk: 'Present-day outlines moved by plate model {model}, {age}. Not the real coastlines of that time.', seaLevel: 'Present-day coastlines. Sea level and ice ages are not modelled.',
@@ -1541,7 +1543,7 @@ function renderStatus() {
         level = 'warn';
         messages.push(fmt('bordersFail', { err: state.bordersError.message }));
     } else if (state.bordersLoading) {
-        messages.push(t('loadingBorders'));
+        messages.push(state.borders && state.borders.data ? fmt('loadingBordersKeep', { y: formatYear(state.borders.year) }) : t('loadingBorders'));
     } else if (state.borders) {
         const b = state.borders;
         if (b.source === 'ne') {
@@ -1598,8 +1600,9 @@ async function updateScene({ immediate = false } = {}) {
 }
 
 /* Fronteras: 1-3,6 MB por instantánea. Si ya están en memoria se aplican al instante;
-   si hay que descargarlas, se espera a que el slider se detenga. Mientras tanto no se deja en
-   pantalla la instantánea de otra época. */
+   si hay que descargarlas, se espera a que el slider se detenga. Mientras tanto SE MANTIENE la instantánea anterior (con su imagen de
+   franjas y sus nombres) y el estado lo dice: quitarla dejaba ver el mapa sin política entre dos mapas coloreados. Se sustituye de golpe
+   al llegar la nueva; clic y resaltado quedan inactivos mientras tanto (serían de otra época). */
 let bordersToken = 0;
 let bordersCtl = null;
 let bordersTimer = null;
@@ -1611,9 +1614,13 @@ function scheduleBorders(immediate) {
         runBorders();
         return;
     }
-    state.bordersLoading = true;   // antes de quitar las fronteras viejas: asi la imagen de NASA no se enciende para apagarse enseguida
-    if (state.borders) applyBorders(null);
+    // Hay que descargar: el mapa politico anterior (fronteras, color, nombres) SE QUEDA hasta que llegue el nuevo, y se sustituye de golpe.
+    // Quitarlo dejaba ver 0,3-2 s el mapa sin politica (tierra lisa o relieve de NASA) entre dos mapas coloreados. El estado dice que se esta
+    // enseñando la instantanea anterior y la ficha de un pais (clic, resaltado) se desactiva mientras tanto: seria de otra epoca.
+    state.bordersLoading = true;
+    setHoverKey(null);
     naturalView();
+    renderStatus();
     bordersTimer = setTimeout(runBorders, immediate ? 0 : CFG.bordersDebounceMs);
 }
 
@@ -1667,7 +1674,7 @@ function prefetchPaleo() {
 function prefetchNeighbours(b) {
     if (!b || saveData() || !state.polities) return;
     const near = state.polities.filter((p) => p.year !== b.year)
-        .sort((x, y) => Math.abs(x.year - b.year) - Math.abs(y.year - b.year)).slice(0, 2);
+        .sort((x, y) => Math.abs(x.year - b.year) - Math.abs(y.year - b.year)).slice(0, 4);
     whenIdle(() => near.forEach((p) => {
         const url = CFG.hbBase + 'geojson/' + p.file;
         if (!cache.has(url)) getJSON(url).catch(() => {});
@@ -1789,7 +1796,7 @@ function setHoverKey(key) {
 }
 function hoverUpdate() {
     hoverRaf = 0;
-    const e = hoverPt; if (!e || !map.getLayer('borders-fill') || BR.cut || pointInSky(e.x, e.y)) { setHoverKey(null); return; }
+    const e = hoverPt; if (!e || !map.getLayer('borders-fill') || BR.cut || state.bordersLoading || pointInSky(e.x, e.y)) { setHoverKey(null); return; }
     const hit = map.queryRenderedFeatures(e, { layers: ['events-circle', 'live-points', 'borders-fill'] })[0];
     const key = hit && hit.layer.id === 'borders-fill' ? polityKey(hit.properties) : null;
     setHoverKey(key && key !== GAP.sel ? key : null);
@@ -1804,6 +1811,7 @@ $('btn-center').addEventListener('click', () => { CENTER.on = !CENTER.on; $('btn
 map.on('click', (e) => {
     if (!map.getLayer('borders-fill')) return;
     const hit = map.queryRenderedFeatures(e.point, { layers: ['events-circle', 'live-points', 'borders-fill', 'land-fill', 'margin-fill'] })[0];
+    if (state.bordersLoading && hit && hit.layer.id === 'borders-fill') return;   // se ve el mapa de la instantanea anterior hasta que llegue la nueva
     clearHighlight(); setHoverKey(null);
     if (!hit) { hideInfo(); return; }
     if (hit.layer.id === 'events-circle') { const f = events.byId.get(hit.properties.id); if (f) showEvent(f); }
