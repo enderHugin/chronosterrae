@@ -827,23 +827,37 @@ const hideInfo = () => { $('info').style.display = 'none'; clearHighlight(); };
 const cache = new Map();     // url -> JSON ya descargado (no se vuelve a pedir en toda la sesión)
 const pending = new Map();   // url -> descarga en curso sin señal de cancelación, compartida por quien la pida
 
+// Una sola descarga por URL, la pida quien la pida (precarga o la fecha elegida). Cancelar al que ESPERA (el slider se movio) no cancela la
+// descarga: termina, entra en la cache y la siguiente vez que se pida esa fecha es instantanea. Antes se cortaba a medias (se perdia lo
+// bajado) y una precarga y una peticion con señal bajaban el mismo archivo dos veces.
+function abortable(p, signal) {
+    if (!signal) return p;
+    return new Promise((resolve, reject) => {
+        const stop = () => reject(new DOMException('Aborted', 'AbortError'));
+        if (signal.aborted) return stop();
+        signal.addEventListener('abort', stop, { once: true });
+        p.then((v) => { signal.removeEventListener('abort', stop); resolve(v); }, (e) => { signal.removeEventListener('abort', stop); reject(e); });
+    });
+}
 function getJSON(url, signal) {
     if (cache.has(url)) return Promise.resolve(cache.get(url));
-    if (!signal && pending.has(url)) return pending.get(url);
-    const timeout = AbortSignal.timeout(CFG.fetchTimeoutMs);
-    const p = (async () => {
-        const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timeout]) : timeout });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = JSON.parse(await res.text());
-        cache.set(url, data);
-        return data;
-    })();
-    if (!signal) {
+    let p = pending.get(url);
+    if (!p) {
+        // Las instantaneas estan fijadas a un commit (no cambian nunca): si el navegador ya las tiene, se usan sin revalidar.
+        const opts = { signal: AbortSignal.timeout(CFG.fetchTimeoutMs) };
+        if (url.startsWith(CFG.hbBase)) opts.cache = 'force-cache';
+        p = (async () => {
+            const res = await fetch(url, opts);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = JSON.parse(await res.text());
+            cache.set(url, data);
+            return data;
+        })();
         pending.set(url, p);
         const done = () => pending.delete(url);
         p.then(done, done);
     }
-    return p;
+    return abortable(p, signal);
 }
 
 const emptyFC = () => ({ type: 'FeatureCollection', features: [] });
@@ -1188,7 +1202,7 @@ const GAP_MAX_SPAN_DEG = 200;    // vistas mas anchas (el globo entero): las fra
 const GAP_CELL_PX = 1.5;         // tamano de celda objetivo en pixeles de pantalla (para que la costa no salga escalonada)
 const GAP_CELLS_MIN = 200; const GAP_CELLS_MAX = 1100;
 let gapSeq = 0;                   // el PNG se codifica fuera del hilo principal: solo vale el ultimo
-const GAP = { timer: 0, shown: false, ctx: null, sel: null, url: null, cache: new Map(), t: null };
+const GAP = { timer: 0, shown: false, ctx: null, sel: null, url: null, cache: new Map(), t: null, dirty: false, dirtyTimer: 0 };
 function gapColor(css) {
     if (!GAP.ctx) { const c = document.createElement('canvas'); c.width = c.height = 1; GAP.ctx = c.getContext('2d', { willReadFrequently: true }); }
     GAP.ctx.clearRect(0, 0, 1, 1); GAP.ctx.fillStyle = css; GAP.ctx.fillRect(0, 0, 1, 1);
@@ -1215,7 +1229,13 @@ function setHighlightKey(key) {
     if (GAP.shown) gapRefresh();
 }
 function gapHide() { gapSeq++; if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visibility', 'none'); GAP.shown = false; gapFillPaint(); renderStatus(); } }
-function gapDraw() {
+// "dirty": llego un mapa politico nuevo y su imagen de franjas aun no esta pintada. Hasta entonces el relieve espera (politicsFirst).
+function gapSettled() {
+    clearTimeout(GAP.dirtyTimer);
+    if (GAP.dirty) { GAP.dirty = false; naturalView(); }
+}
+function gapDraw() { try { gapDrawNow(); } finally { gapSettled(); } }
+function gapDrawNow() {
     if (!map.getLayer('gap-raster') || !window.ChronosGap) return;
     const b = state.borders;
     const want = Boolean(b && b.data && b.data.features.length) && !BR.cut;
@@ -1387,6 +1407,8 @@ function applyBorders(b) {
     state.bordersData = data;
     if (DETAIL.built) detailVisibility();
     BR.lastApplied = false;   // dato nuevo: se reaplica la visibilidad de las capas aunque el corte no cambie
+    GAP.dirty = Boolean(data && data.features.length);   // el relieve espera a que lo politico este pintado (cota: 2 s)
+    clearTimeout(GAP.dirtyTimer); GAP.dirtyTimer = setTimeout(gapSettled, 2000);
     bordersView();
     // La imagen de franjas es de la fecha ANTERIOR: dejarla hasta que llegue la nueva (1,6-3,5 s medidos con red real, informe timing.json
     // del render real) enseñaba territorio viejo bajo fronteras nuevas. Se quita ya: el relleno vectorial (90 ms) se ve al instante y la
@@ -1419,12 +1441,14 @@ function bordersView() {
     const btn = $('btn-borders'); btn.hidden = !BR.near; btn.setAttribute('aria-pressed', String(!BR.off));
     const cut = has && (BR.far || BR.off);
     if (cut === BR.cut && BR.lastApplied) { naturalView(); return; }
+    const wasCut = BR.cut;
     BR.cut = cut; BR.lastApplied = true;
     ['borders-fill', 'borders-line', 'borders-hl', 'borders-hover', 'borders-labels'].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', cut ? 'none' : 'visible'); });
     setHoverKey(null);
-    if (cut) gapHide(); else gapRefresh();
+    if (cut) { gapHide(); gapSettled(); } else gapRefresh();
     naturalView();
     renderStatus();
+    if (wasCut && !cut) labelsUpdate();   // vuelven a verse las fronteras: ahora si se calculan los nombres
 }
 
 
@@ -1474,15 +1498,18 @@ function labelsData(b) {
     return { type: 'FeatureCollection', features: fc._labels.map((l) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [l.lng, l.lat] }, properties: { text: l.text, k: -l.areaKm2 } })) };
 }
 async function labelsUpdate() {
-    if (!state.borders || !state.borders.data) { if (LBL.ready) map.getSource('borders-labels').setData(emptyFC()); return; }
+    if (BR.cut) { if (LBL.ready) map.setLayoutProperty('borders-labels', 'visibility', 'none'); return; }   // fronteras ocultas o lejos: no se calcula nada
+    if (!state.borders || !state.borders.data) { LBL.data = null; if (LBL.ready) map.getSource('borders-labels').setData(emptyFC()); return; }
     if (!(await labelsEnsure())) return;
-    map.getSource('borders-labels').setData(labelsData(state.borders));
+    if (BR.cut) return;
+    if (LBL.data !== state.borders.data || LBL.lang !== lang) { LBL.data = state.borders.data; LBL.lang = lang; map.getSource('borders-labels').setData(labelsData(state.borders)); }
     map.setLayoutProperty('borders-labels', 'visibility', BR.cut ? 'none' : 'visible');
 }
 
 /* ---- Tierra natural ---- */
-// Sin mapa politico a la vista (de lejos, ocultas, o sin datos), y para una epoca en que la costa de hoy sigue valiendo, el planeta se ve
-// como es: color y relieve de la imagen de NASA (Blue Marble con relieve y batimetria). Con el detalle de OpenStreetMap manda el mapa vectorial.
+// Para una epoca en que la costa de hoy sigue valiendo (~6000 anos), el planeta se ve como es: color y relieve de la imagen de NASA (Blue Marble
+// con relieve y batimetria), tambien DEBAJO del color politico, que la deja ver. Con el detalle de OpenStreetMap manda el mapa vectorial.
+// Orden (politicsFirst): con las fronteras activas lo politico se pinta primero y el relieve despues; ocultas o lejos, solo el relieve.
 const NAT = { on: false, failed: false, errors: 0, applied: false };
 // Con el mapa politico en camino (se esta descargando y, al llegar, se dibujara a este zoom) la imagen de NASA no se enciende: se bajaria
 // (decenas de teselas) para apagarla 0,3-2 s despues. Mientras tanto se ve la tierra vectorial del mapa base, que no cuesta nada.
@@ -1495,8 +1522,15 @@ function bordersExpected() {
 }
 function naturalWanted() {
     if (NAT.failed || !state.land || state.ybp > NATURAL_MAX_YBP || DETAIL.shown) return false;
-    if (state.bordersLoading && bordersExpected()) return false;
-    return !(state.borders && state.borders.data && !BR.cut);
+    return NAT.on || !politicsFirst();   // si ya esta puesto, sigue (no depende de la fecha): apagarlo y encenderlo seria un parpadeo
+}
+// El orden lo marca el boton Fronteras. Con las fronteras activas (y a un zoom en que se dibujan) lo politico va primero y el relieve se
+// enciende cuando ya estan en pantalla (llegada de la instantanea e imagen de franjas); el relieve queda DEBAJO, a traves del color.
+// Con las fronteras ocultas o lejos, el relieve es lo unico que se pide y no se calcula nada politico.
+function politicsFirst() {
+    if (BR.off) return false;
+    if (state.bordersLoading && bordersExpected()) return true;
+    return GAP.dirty;
 }
 function naturalView() {
     if (!map.getLayer('natural-raster')) return;
@@ -1888,7 +1922,7 @@ function renderCredits() {
     if (NAT.on) {
         box.appendChild(document.createTextNode('   |   ' + t('creditsNatural') + ': '));
         box.appendChild(el('a', { href: 'https://earthdata.nasa.gov/gibs/', target: '_blank', rel: 'noopener', text: 'NASA GIBS' }));
-        box.appendChild(document.createTextNode(' · Blue Marble'));
+        box.appendChild(document.createTextNode(' · Blue Marble Shaded Relief and Bathymetry (MODIS)'));
     }
     if (DETAIL.shown) {
         box.appendChild(document.createTextNode('   |   ' + t('creditsDetail') + ': '));
