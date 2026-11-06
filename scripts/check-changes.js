@@ -55,23 +55,26 @@ check('classify: por el nombre en ingles; lo que no da pista es «other» (no se
 const evs = [
     ev('a', 'Guerra de Polonia', 1795),                                   // nombre contiene «Polonia» y cae dentro
     ev('b', 'Guerras de Francia', 1792, { importance: 0.3 }),             // nombre contiene «Francia»; poca notoriedad pero entra por nombre
-    ev('c', 'Suceso lejano sin relacion', 1790, { importance: 0.9 }),     // solo tiempo, notoriedad alta
-    ev('d', 'Suceso menor', 1790, { importance: 0.2 }),                   // solo tiempo, poca notoriedad: fuera
+    ev('c', 'Battle of Elsewhere', 1790, { importance: 0.9 }),            // solo tiempo, notoriedad alta, clase deducible
+    ev('d', 'Minor battle', 1790, { importance: 0.2 }),                   // solo tiempo, poca notoriedad: fuera
+    ev('k', '1790 Grand Prix', 1790, { importance: 0.95 }),               // solo tiempo, muy notorio pero sin clase deducible: fuera
+    { ...ev('l', 'Himno nacional de Polonia', 1795), properties: { ...ev('l', 'x', 1795).properties, name: 'Himno nacional de Polonia', kind: 'publication' } },   // nombra a Polonia, pero es una publicacion: fuera
     ev('e', 'Fuera de intervalo Francia', 1750),                          // antes de 1783
     ev('f', 'Posterior', 1801),                                           // despues de 1800
     ev('g', 'Algo en el territorio', 1795, { geometry: { type: 'Point', coordinates: [22, 52] } }),   // dentro de Polonia
     ev('h', 'Con vinculo', 1796, { links: [{ rel: 'cause', target: { kind: 'wikidata', id: 'Q2' }, source: { kind: 'wikidata', id: 'Q1' } }] }),
     ev('i', 'Solo parte de otro', 1796, { importance: 0.1, links: [{ rel: 'part_of', target: { kind: 'wikidata', id: 'Q3' } }] }),   // part_of no es causa
-    ev('j', 'Largo: de 1780 a 1790', 1780, { endYear: 1790 })             // el intervalo solo toca su final
+    ev('j', 'Siege of Long', 1780, { endYear: 1790 })             // el intervalo solo toca su final
 ];
 const R = C.relatedEvents(evs, D, 1783, 1800);
 const ids = R.items.map((i) => i.f.properties.id);
 check('sucesos: se incluyen los del intervalo (incluidos los que solo lo rozan) y se excluyen los de fuera', () => !ids.includes('e') && !ids.includes('f') && ids.includes('j') ? true : ids.join());
 check('nivel exacto de cada suceso', () => { const t = Object.fromEntries(R.items.map((i) => [i.f.properties.id, i.tier])); return t.h === 'documented' && t.g === 'place' && t.a === 'name' && t.b === 'name' && t.c === 'time' && t.j === 'time' ? true : JSON.stringify(t); });
+check('solo cuentan los registros de clase `event`: una publicacion que nombra a Polonia no sale; un suceso notorio sin clase deducible (Grand Prix) tampoco sale solo por la fecha', () => !ids.includes('l') && !ids.includes('k'));
 check('«part_of» NO cuenta como vinculo causal, y un suceso poco notorio sin otra relacion no entra', () => !ids.includes('i') && !ids.includes('d'));
 check('orden: documentado, lugar, nombre, tiempo', () => { const order = R.items.map((i) => C.TIERS.indexOf(i.tier)); return order.every((v, k) => k === 0 || order[k - 1] <= v) ? true : order.join(); });
 check('el suceso por lugar declara el territorio que cambio; el de nombre, el estado', () => R.items.find((i) => i.f.properties.id === 'g').polities.includes('Polonia') && R.items.find((i) => i.f.properties.id === 'a').polities.join() === 'Polonia');
-check('se cuenta cuantos sucesos del intervalo tienen coordenadas (para avisar de que el lugar no se pudo comprobar)', () => R.withGeometry === 1 && R.inInterval === 8 ? true : [R.withGeometry, R.inInterval]);
+check('se cuenta cuantos sucesos del intervalo tienen coordenadas (para avisar de que el lugar no se pudo comprobar)', () => R.withGeometry === 1 && R.inInterval === 9 ? true : [R.withGeometry, R.inInterval]);
 check('sin sucesos con coordenadas: withGeometry = 0 y nadie sale como «lugar»', () => { const r = C.relatedEvents(evs.filter((e) => !e.geometry), D, 1783, 1800); return r.withGeometry === 0 && r.items.every((i) => i.tier !== 'place'); });
 check('un nombre de estado muy corto (<4 letras) no se busca en los nombres de sucesos (evita falsos «Ur» dentro de «Durante»)', () => {
     const d = C.diffPolities(fc(poly('Ur', sq(0, 0, 5))), fc());
@@ -79,7 +82,7 @@ check('un nombre de estado muy corto (<4 letras) no se busca en los nombres de s
 });
 check('el nombre se busca como palabra entera: «Francia» no casa con «Franciacorta»', () => { const r = C.relatedEvents([ev('y', 'Vinos de Franciacorta', 1795, { importance: 0.1 })], D, 1783, 1800); return r.items.length === 0; });
 check('tope por grupo: se limita lo mostrado pero se informa del total', () => {
-    const many = Array.from({ length: 40 }, (_, i) => ev('m' + i, 'Evento ' + i, 1790, { importance: 0.9 }));
+    const many = Array.from({ length: 40 }, (_, i) => ev('m' + i, 'Battle of ' + i, 1790, { importance: 0.9 }));
     const r = C.relatedEvents(many, D, 1783, 1800, { max: { documented: 5, place: 5, name: 5, time: 7 } }); return r.items.length === 7 && r.total.time === 40 ? true : [r.items.length, r.total.time];
 });
 

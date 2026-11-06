@@ -151,17 +151,19 @@
 
     /**
      * Sucesos que caen dentro de [fromYear, toYear] y su relacion con el cambio `diff`.
+     * opts.kinds: clases de registro que cuentan (por defecto solo `event`).
      * opts.minImportance: umbral de notoriedad para el grupo «time» (que sin él sería una lista de todo lo ocurrido); max por grupo.
      * Devuelve { items, counts, withGeometry }: `withGeometry` dice cuantos sucesos del intervalo tenian coordenadas (si es 0 no se pudo
      * comprobar el lugar y la interfaz tiene que decirlo).
      */
-    function relatedEvents(events, diff, fromYear, toYear, { minImportance = 0.5, max = { documented: 50, place: 30, name: 30, time: 25 } } = {}) {
+    function relatedEvents(events, diff, fromYear, toYear, { minImportance = 0.5, kinds = ['event'], max = { documented: 50, place: 30, name: 30, time: 25 } } = {}) {
         if (!(fromYear <= toYear)) throw fail('BAD_INTERVAL', 'intervalo invertido o no numerico');
         const polities = [...diff.added, ...diff.removed, ...diff.changed];
         const patterns = polities.filter((p) => norm(p.name).replace(/[^a-z]/g, '').length >= 4)
             .map((p) => ({ p, re: new RegExp('(^|[^a-z0-9])' + esc(norm(p.name)) + '($|[^a-z0-9])') }));
         const items = []; let withGeometry = 0; let inInterval = 0;
         for (const f of events) {
+            if (!kinds.includes(f.properties.kind)) continue;   // nacimientos, obras o descubrimientos no cambian fronteras: solo los «sucesos»
             const y = eventYears(f);
             if (y.to < fromYear || y.from > toYear) continue;
             inInterval++;
@@ -179,8 +181,10 @@
                 hits = patterns.filter((q) => q.re.test(hay)).map((q) => q.p.name);
                 if (hits.length) tier = 'name';
             }
-            if (tier === 'time' && !(f.properties.importance >= minImportance)) continue;
-            items.push({ f, tier, polities: hits, years: y, kind: classify(f.properties.name) });
+            const kind = classify(f.properties.name);
+            // Solo coincidencia de fecha: se exige notoriedad Y una clase deducible; si no, la lista seria todo lo ocurrido (olimpiadas, grandes premios...)
+            if (tier === 'time' && (!(f.properties.importance >= minImportance) || kind === 'other')) continue;
+            items.push({ f, tier, polities: hits, years: y, kind });
         }
         items.sort((a, b) => TIERS.indexOf(a.tier) - TIERS.indexOf(b.tier) || (b.f.properties.importance || 0) - (a.f.properties.importance || 0));
         const counts = { documented: 0, place: 0, name: 0, time: 0 };

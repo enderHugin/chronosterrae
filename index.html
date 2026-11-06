@@ -141,6 +141,22 @@
         #events-verif label { display: flex; gap: 7px; align-items: flex-start; padding: 2px 0; line-height: 1.3; }
         #events-verif .vf-n { color: var(--muted); }
         #events-verif .vf-sep { margin: 6px 0 2px; color: var(--muted); font-size: 11.5px; }
+        #changes { position: absolute; top: 60px; left: 14px; width: 372px; max-width: calc(100% - 28px); max-height: calc(100% - 300px); overflow: auto; padding: 12px 14px 10px; z-index: 11; display: none; box-sizing: border-box; font-size: 13px; line-height: 1.4; }
+        #changes.open { display: block; }
+        #changes h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
+        #changes .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #changes h3 { margin: 12px 0 4px; font: 700 13.5px var(--font); }
+        #changes p { margin: 4px 0; }
+        #changes .chg-note { color: var(--muted); font-size: 11.5px; }
+        #changes .chg-warn { border-left: 3px solid var(--accent); padding: 2px 8px; margin: 6px 0; background: rgba(128, 128, 128, 0.1); }
+        #changes details.chg-ev, #changes details.chg-grp { border-top: 1px solid rgba(128, 128, 128, 0.25); padding: 4px 0; }
+        #changes summary { cursor: pointer; }
+        #changes summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+        #changes .chg-when { display: block; font-size: 11.5px; color: var(--muted); }
+        #changes .chg-ev-body { padding: 4px 0 4px 18px; font-size: 12.5px; }
+        #changes .chg-ev-body .row { margin: 2px 0; }
+        #changes ul.chg-names { margin: 4px 0 4px 18px; padding: 0; }
+        #changes button.chg-go { margin-top: 4px; cursor: pointer; }
         #events-list { list-style: none; margin: 6px 0; padding: 0; }
         #events-list li { display: grid; grid-template-columns: 12px 1fr; gap: 0 8px; padding: 6px 4px; border-top: 1px solid rgba(128, 128, 128, 0.25); cursor: pointer; font-size: 13px; }
         #events-list li:hover, #events-list li:focus { background: rgba(128, 128, 128, 0.12); outline: none; }
@@ -200,6 +216,7 @@
     <div id="top-right">
         <button class="btn" id="btn-borders" type="button" aria-pressed="false" hidden data-i18n="borders.button"></button>
         <button class="btn" id="btn-center" type="button" aria-pressed="false" data-i18n="center.button"></button>
+        <button class="btn" id="btn-changes" type="button" aria-pressed="false" data-i18n="changes.button"></button>
         <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
         <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
         <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
@@ -213,6 +230,12 @@
         <details id="events-verif" open><summary data-i18n="events.verif.title"></summary><div id="events-verif-box"></div></details>
         <ul id="events-list"></ul>
         <div id="events-note"></div>
+    </div>
+
+    <div id="changes" class="panel" role="region" aria-label="Changes">
+        <button class="close" id="changes-close" type="button" aria-label="Close">&times;</button>
+        <h2 data-i18n="changes.title"></h2>
+        <div id="changes-body"></div>
     </div>
 
     <div id="toasts" aria-live="polite"></div>
@@ -301,6 +324,7 @@
 <script src="./map/borders-gap.js"></script>
 <script src="./map/borders-inner.js"></script>
 <script src="./map/borders-resolution.js"></script>
+<script src="./map/changes.js"></script>
 <script src="./sky/sky-view.js"></script>
 <script src="./sky/timestep.js"></script>
 <script src="./sky/solar.js"></script>
@@ -416,6 +440,46 @@ const i18n = {
         detailFull: 'Detalle: mapa actual de OpenStreetMap, no una reconstrucción.',
         detailPhysical: 'Detalle: agua y vegetación de hoy como aproximación; no incluye lo que cambió desde entonces (ríos, lagos, bosques).',
         detailFail: 'No se pudo cargar el detalle del mapa ({err}). Se reintentará.',
+        changes: {
+            button: 'Cambios', title: 'Qué cambia y qué lo rodea', tip: 'Qué cambia en el elemento centrado y qué sucesos registrados hay en ese intervalo',
+            centred: 'Elemento centrado', shownDate: 'Fecha mostrada', earth: 'Tierra',
+            noData: 'De {body} ChronosTerrae no tiene cambios ni sucesos registrados: su posición y su orientación se calculan para cada fecha, no se leen de ningún registro.',
+            bordersTitle: 'Fronteras', noBorders: 'Para esta fecha no se muestran fronteras: no hay una instantánea lo bastante cercana.',
+            window: 'Las fronteras de esta fecha son la instantánea de {y}, la más cercana (entre {from} y {to}).',
+            open0: 'el comienzo de los datos', open1: 'el final de los datos',
+            step: 'Lo que ves cambiar al cruzar esa frontera de fechas es la sustitución de la instantánea de {a} por la de {b}; son dos fotografías separadas {n} años: lo que cambió, cambió en algún momento de esos años, y los datos no dicen cuándo. No ocurre en un día.',
+            stepTracked: 'Acabas de pasar de la instantánea de {a} a la de {b}, separadas {n} años.',
+            ne: 'Desde 2016 se usan las fronteras vigentes (Natural Earth). Cambia la fuente respecto de la compilación histórica: nombres y precisión no son comparables, así que no se calcula una diferencia entre ambas.',
+            first: 'Es la primera instantánea disponible: no hay una anterior con la que compararla.',
+            loading: 'Calculando…', loadFail: 'No se pudo cargar la instantánea de {y} ({e}).',
+            diffTitle: 'Qué cambió entre {a} y {b}', added: 'Aparecen ({n})', removed: 'Desaparecen ({n})', sizeChanged: 'Cambian de superficie ({n})',
+            same: '{n} estados sin cambio apreciable.', noneChanged: 'Ningún estado cambia de forma apreciable (menos de un 10 % y de 5 000 km²).',
+            diffNote: 'Los estados se emparejan por nombre: uno que cambia de nombre sale como «desaparece» y «aparece». Las superficies son aproximadas (polígonos toscos). Esto mide QUÉ cambió, no POR QUÉ.',
+            km2: '{a} → {b} km²', km2one: '≈ {a} km²',
+            eventsTitle: 'Sucesos registrados entre {a} y {b}',
+            noEventsRange: 'Los sucesos con fecha empiezan en el año 1: antes no hay registros que listar.',
+            capped: 'El intervalo es muy largo: solo se cargan los sucesos de los últimos {n} años.',
+            noPlace: 'Ninguno de los {n} sucesos del intervalo trae coordenadas: no se puede comprobar si ocurrieron en un territorio que cambió. Solo se compara por fecha y por nombre.',
+            somePlace: '{k} de los {n} sucesos del intervalo traen coordenadas.',
+            noLinks: 'Ningún suceso cargado trae todavía vínculos documentados de causa o efecto: aún no se han recolectado de la fuente. Hasta entonces, «coincide» no significa «causa».',
+            filters: 'Se aplican los filtros de estado y de evidencia de la lista de Sucesos.',
+            tier: {
+                documented: 'Con vínculo documentado de causa o efecto', place: 'Ocurren en un territorio que cambió', name: 'Su nombre menciona un estado que cambió', time: 'Coinciden solo en el tiempo (los más notorios)'
+            },
+            tierNote: {
+                documented: 'La fuente enlaza este suceso con una causa o un efecto.', place: 'Coincidencia de lugar y fecha: no prueba que sea la causa.',
+                name: 'Coincidencia de nombre y fecha: no prueba que sea la causa. Solo detecta el nombre exacto del estado.', time: 'Ocurrieron en el intervalo, sin relación comprobada con este cambio.'
+            },
+            more: '… y {n} más sin mostrar', relation: 'Relación', polities: 'Estados', deducedKind: 'Clase (deducida del nombre, no de la fuente)', precision: 'Precisión de la fecha', unc: '±{u} años', uncDays: '±{u} días',
+            kinds: { treaty: 'Tratado o pacto', battle: 'Batalla o asedio', war: 'Guerra o levantamiento', political: 'Hecho político', natural: 'Fenómeno natural', other: 'Sin clase deducible' },
+            rel: { cause: 'Causa', effect: 'Efecto', part_of: 'Parte de', participant: 'Participante' },
+            open: 'Abrir ficha y centrar',
+            layersTitle: 'Relieve y modelo de placas',
+            naturalUntil: 'Imagen natural de la Tierra (NASA GIBS): se muestra hasta {y}; ese corte es un umbral de ChronosTerrae (hacia entonces el nivel del mar ya era estable, aproximadamente), no un suceso: antes de esa fecha se ve el mapa esquemático.',
+            naturalShown: 'Ahora se muestra la imagen natural.', naturalHidden: 'Ahora no se muestra la imagen natural.',
+            plates: 'Modelo de placas: el mapa se calcula para {ma} Ma y se redondea a Ma enteros; dos fechas que difieren menos de 1 Ma muestran el mismo mapa.',
+            noGeo: 'Sucesos geológicos (terremotos, impactos, erupciones): ChronosTerrae no registra ninguno para esta época.'
+        },
         events: {
             button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
             basisUtc: 'UTC/GMT', basisLocal: 'hora oficial del lugar (UTC{off})', noPlace: 'sin lugar', empty: 'No hay sucesos con fuente cerca de este instante a esta escala. Acércate o cambia de año.',
@@ -531,6 +595,46 @@ const i18n = {
         detailFull: 'Detail: current OpenStreetMap map, not a reconstruction.',
         detailPhysical: 'Detail: present-day water and vegetation as an approximation; it does not include what has changed since (rivers, lakes, forests).',
         detailFail: 'Could not load the map detail ({err}). Will retry.',
+        changes: {
+            button: 'Changes', title: 'What changes and what surrounds it', tip: 'What changes in the centred element and which recorded events fall in that interval',
+            centred: 'Centred element', shownDate: 'Date shown', earth: 'Earth',
+            noData: 'ChronosTerrae has no recorded changes or events for {body}: its position and orientation are calculated for each date, not read from any record.',
+            bordersTitle: 'Borders', noBorders: 'No borders are shown for this date: there is no snapshot close enough.',
+            window: 'The borders for this date are the snapshot of {y}, the nearest one (between {from} and {to}).',
+            open0: 'the start of the data', open1: 'the end of the data',
+            step: 'What you see change when crossing that date boundary is the replacement of the {a} snapshot by the {b} one. They are two photographs {n} years apart: whatever changed, changed at some point within those years, and the data do not say when. It does not happen in one day.',
+            stepTracked: 'You have just moved from the {a} snapshot to the {b} one, {n} years apart.',
+            ne: 'From 2016 the current borders (Natural Earth) are used. The source differs from the historical compilation: names and precision are not comparable, so no difference between them is computed.',
+            first: 'This is the first snapshot available: there is no earlier one to compare with.',
+            loading: 'Computing…', loadFail: 'Could not load the {y} snapshot ({e}).',
+            diffTitle: 'What changed between {a} and {b}', added: 'Appear ({n})', removed: 'Disappear ({n})', sizeChanged: 'Change in area ({n})',
+            same: '{n} states without appreciable change.', noneChanged: 'No state changes appreciably (less than 10 % and 5,000 km²).',
+            diffNote: 'States are matched by name: one that is renamed shows as "disappears" and "appears". Areas are approximate (coarse polygons). This measures WHAT changed, not WHY.',
+            km2: '{a} → {b} km²', km2one: '≈ {a} km²',
+            eventsTitle: 'Events recorded between {a} and {b}',
+            noEventsRange: 'Dated events start in year 1: before that there are no records to list.',
+            capped: 'The interval is very long: only events of its last {n} years are loaded.',
+            noPlace: 'None of the {n} events in the interval has coordinates: it cannot be checked whether they happened in a territory that changed. They are compared by date and by name only.',
+            somePlace: '{k} of the {n} events in the interval have coordinates.',
+            noLinks: 'No loaded event carries documented cause or effect links yet: they have not been harvested from the source. Until then, "coincides" does not mean "caused".',
+            filters: 'The status and evidence filters of the Events list apply.',
+            tier: {
+                documented: 'With a documented cause or effect link', place: 'Happen in a territory that changed', name: 'Their name mentions a state that changed', time: 'Coincide in time only (the most notable)'
+            },
+            tierNote: {
+                documented: 'The source links this event to a cause or an effect.', place: 'Same place and date: this does not prove it is the cause.',
+                name: 'Same name and date: this does not prove it is the cause. Only the exact state name is detected.', time: 'They happened in the interval, with no verified relation to this change.'
+            },
+            more: '… and {n} more not shown', relation: 'Relation', polities: 'States', deducedKind: 'Class (deduced from the name, not from the source)', precision: 'Date precision', unc: '±{u} years', uncDays: '±{u} days',
+            kinds: { treaty: 'Treaty or pact', battle: 'Battle or siege', war: 'War or uprising', political: 'Political event', natural: 'Natural phenomenon', other: 'No class can be deduced' },
+            rel: { cause: 'Cause', effect: 'Effect', part_of: 'Part of', participant: 'Participant' },
+            open: 'Open record and centre',
+            layersTitle: 'Relief and plate model',
+            naturalUntil: 'Natural image of the Earth (NASA GIBS): shown until {y}. That cut-off is a ChronosTerrae threshold (by then sea level was roughly stable), not an event: before that date the schematic map is shown.',
+            naturalShown: 'The natural image is shown now.', naturalHidden: 'The natural image is not shown now.',
+            plates: 'Plate model: the map is computed for {ma} Ma and rounded to whole Ma; two dates less than 1 Ma apart show the same map.',
+            noGeo: 'Geological events (earthquakes, impacts, eruptions): ChronosTerrae records none for this epoch.'
+        },
         events: {
             button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
             basisUtc: 'UTC/GMT', basisLocal: 'official local time (UTC{off})', noPlace: 'no place', empty: 'No sourced events near this instant at this scale. Zoom in or change the year.',
@@ -670,10 +774,7 @@ function el(tag, props, children) {
     return node;
 }
 
-function showInfo(title, rows) {
-    $('info-title').textContent = title;
-    const body = $('info-body');
-    body.textContent = '';
+function fillRows(body, rows) {
     rows.forEach((r) => {
         const row = el('div', { class: 'row' }, [el('b', { text: r.label + ': ' })]);
         if (r.badge) row.appendChild(el('span', { class: 'badge ' + r.badge, text: t('ev.' + r.badge) }));
@@ -682,6 +783,12 @@ function showInfo(title, rows) {
         if (r.note) body.appendChild(row), body.appendChild(el('div', { class: 'row', text: r.note, style: 'color:var(--muted);font-size:12px' }));
         else body.appendChild(row);
     });
+}
+function showInfo(title, rows) {
+    $('info-title').textContent = title;
+    const body = $('info-body');
+    body.textContent = '';
+    fillRows(body, rows);
     $('info').style.display = 'block';
 }
 // Un punto de pantalla fuera del disco de la Tierra es cielo, no mapa (MapLibre desproyecta ahi a lng/lat falsos)
@@ -1235,7 +1342,16 @@ function innerOf(fc) {
     if (!fc._inner) fc._inner = ChronosInner.innerBorders(fc, (f) => (f.properties && (f.properties.SUBJECTO || f.properties.NAME)) || '?', 1.5);
     return fc._inner;
 }
+const CHG = { open: false, token: 0, key: '', prev: null, cur: null, diffs: new Map() };
+// Instantanea mostrada y la anterior: lo que el usuario acaba de ver cambiar. NE (2016+) cuenta como otra fuente.
+function chgTrack(b) {
+    const cur = b ? { year: b.year, source: b.source || 'hb' } : null;
+    if (!cur || (CHG.cur && CHG.cur.year === cur.year && CHG.cur.source === cur.source)) return;
+    if (CHG.cur) CHG.prev = CHG.cur;
+    CHG.cur = cur;
+}
 function applyBorders(b) {
+    chgTrack(b);
     state.borders = b;
     const data = b ? b.data : null;
     if (state.bordersData === data) return;
@@ -1714,6 +1830,7 @@ function applyStrings() {
     $('btn-space').title = t('space.tip');
     $('btn-borders').title = t('borders.tip');
     $('btn-center').title = $('btn-center').ariaLabel = t('center.tip');
+    $('btn-changes').title = t('changes.tip');
     keyStepTexts();
     zoomControl.texts();
     solarView.texts();
@@ -1996,6 +2113,7 @@ function setSkyOpen(open) {
     $('sky').classList.toggle('open', open);
     if (!open) return;
     if (events.open) setEventsOpen(false);
+    if (CHG.open) setChangesOpen(false);
     if (!sky.ready) { updateSky(); return; }
     syncPlace();
     sky.started = true;
@@ -2564,8 +2682,9 @@ async function eventsFetch(url) {
     return parsed;
 }
 
-async function eventsEnsureData() {
-    if (!window.ChronosTimed || !clockFull()) return;
+// Carga lo que falta de los sucesos para los años [y0, y1] (un fichero por siglo: crece con el tiempo, no con la cantidad total).
+async function eventsLoadRange(y0, y1) {
+    if (!window.ChronosTimed) return false;
     let changed = false;
     if (!events.seed.length && !events.loading.has('seed')) {
         events.loading.add('seed');
@@ -2576,15 +2695,20 @@ async function eventsEnsureData() {
         try { events.index = (await eventsFetch('./data/events/index.json')).shards; } catch (e) { events.index = null; }
     }
     if (events.index) {
-        const year = ChronosSky.jdToCalendar(clock.jd, 'auto').year;
-        for (const key of ChronosTimed.shardKeys(year - 1, year + 1)) {
-            const entry = events.index[key];
-            if (!entry || events.shards.has(key) || events.loading.has(key)) continue;
+        const keys = ChronosTimed.shardKeys(y0, y1).filter((key) => events.index[key] && !events.shards.has(key) && !events.loading.has(key));
+        await Promise.all(keys.map(async (key) => {
             events.loading.add(key);
-            try { events.shards.set(key, (await eventsFetch('./data/events/' + entry.file)).features); changed = true; } catch (e) { console.warn('[EVENTS]', key, e.message); }
-        }
+            try { events.shards.set(key, (await eventsFetch('./data/events/' + events.index[key].file)).features); changed = true; } catch (e) { console.warn('[EVENTS]', key, e.message); }
+        }));
     }
     if (changed) eventsRebuild();
+    return changed;
+}
+
+async function eventsEnsureData() {
+    if (!window.ChronosTimed || !clockFull()) return;
+    const year = ChronosSky.jdToCalendar(clock.jd, 'auto').year;
+    await eventsLoadRange(year - 1, year + 1);
     eventsRefresh();
 }
 
@@ -2625,7 +2749,7 @@ function eventDateText(f) {
     return (tm.iso || '') + cal;
 }
 
-function showEvent(f) {
+function eventRows(f) {
     const p = f.properties; const tm = p.time;
     const rows = [{ label: t('evidence'), badge: p.evidence }];
     rows.push({ label: t('events.kindLabel'), value: t('events.kind.' + evKind(f)) });
@@ -2643,8 +2767,9 @@ function showEvent(f) {
         rows.push(row);
         if (s.citation) rows.push({ label: t('events.citation'), value: s.citation });
     });
-    showInfo(evName(f), rows);
+    return rows;
 }
+function showEvent(f) { showInfo(evName(f), eventRows(f)); }
 
 function eventFocus(f) {
     if (f.geometry) map.flyTo({ center: f.geometry.coordinates, zoom: Math.max(map.getZoom(), 4.5), duration: 1400 });
@@ -2701,10 +2826,186 @@ function setEventsOpen(open) {
     events.open = open;
     $('events').classList.toggle('open', open);
     $('btn-events').setAttribute('aria-pressed', String(open));
-    if (open) { if (sky.open) setSkyOpen(false); eventsEnsureData(); renderEventsPanel(); }
+    if (open) { if (sky.open) setSkyOpen(false); if (CHG.open) setChangesOpen(false); eventsEnsureData(); renderEventsPanel(); }
 }
 $('btn-events').addEventListener('click', () => setEventsOpen(!events.open));
 $('events-close').addEventListener('click', () => setEventsOpen(false));
+
+/* ------------------------------------------------------------------ */
+/* Cambios del elemento centrado                                      */
+/* ------------------------------------------------------------------ */
+// Contrato de un proveedor de cambios (cada capa que cambia con el tiempo implementa uno; el panel no sabe de capas):
+//   applies(focus)        -> bool: ¿esta capa tiene algo que decir del elemento centrado?
+//   describe(ctx)         -> Promise<{ title, nodes:[DOM], interval:{from,to}|null, terms:{added,removed,changed} }>
+//                            interval = años entre los que se produce el cambio (las fotografías, no un dia); terms = territorios
+//                            o entidades que cambiaron (nombre + geometrias) para relacionar sucesos. La relacion es siempre declarada:
+//                            documentada, de lugar, de nombre o solo de fecha (ver map/changes.js). Nunca se afirma una causa sin fuente.
+// Los sucesos se piden por intervalo y por siglo (data/events/c<N>.json): el coste crece con el intervalo, no con el total de datos.
+const CHANGE_PROVIDERS = [];
+const CHG_MAX_YEARS = 1200;    // intervalo maximo cuyos sucesos se cargan (12 ficheros de siglo)
+const nfYear = () => new Intl.NumberFormat(lang === 'es' ? 'es-ES' : 'en-GB', { maximumFractionDigits: 1, useGrouping: false });   // un año no lleva separador de millares
+const chgYear = (y) => (y === null || y === undefined ? '' : y >= 1 ? nfYear().format(Math.round(y * 10) / 10) + ' ' + t('ce') : nfYear().format(Math.round((1 - y) * 10) / 10) + ' ' + t('bce'));
+const chgFocus = () => (solarView && solarView.isOpen && solarView.state.focus) || 'Earth';
+const chgBodyName = (id) => (id === 'Earth' ? t('changes.earth') : (t('solar.body.' + id) || id));
+const chgP = (text, cls) => el('p', cls ? { class: cls, text } : { text });
+
+function chgSnapshotData(year) {
+    const entry = state.polities && state.polities.find((p) => p.year === year);
+    if (!entry) return Promise.reject(new Error('sin instantanea ' + year));
+    return getJSON(snapshotUrl({ p: entry }));
+}
+
+function chgNames(title, list, kind) {
+    const d = el('details', { class: 'chg-grp' }, [el('summary', { text: title })]);
+    const ul = el('ul', { class: 'chg-names' });
+    list.slice(0, 40).forEach((x) => {
+        const area = kind === 'changed' ? fmt('changes.km2', { a: nf().format(Math.round(x.areaA)), b: nf().format(Math.round(x.areaB)) }) : fmt('changes.km2one', { a: nf().format(Math.round(x.areaKm2)) });
+        ul.appendChild(el('li', { text: x.name + ' · ' + area }));
+    });
+    if (list.length > 40) ul.appendChild(el('li', { text: fmt('changes.more', { n: list.length - 40 }) }));
+    d.appendChild(ul); return d;
+}
+
+CHANGE_PROVIDERS.push({
+    id: 'borders',
+    applies: (focus) => focus === 'Earth',
+    async describe() {
+        const nodes = []; const b = state.borders;
+        const none = { title: t('changes.bordersTitle'), nodes, interval: null, terms: { added: [], removed: [], changed: [] } };
+        if (!b) { nodes.push(chgP(t('changes.noBorders'))); return none; }
+        const years = state.polities ? state.polities.map((p) => p.year) : null;
+        if (b.source === 'ne') {
+            nodes.push(chgP(t('changes.ne')));
+            const hb = CHG.prev && CHG.prev.source !== 'ne' ? CHG.prev.year : (years ? Math.max(...years.filter((y) => y < CFG.neFromYear)) : null);
+            if (hb !== null) none.interval = { from: hb, to: CFG.neFromYear };
+            return none;
+        }
+        if (!years) { nodes.push(chgP(t('changes.loading'))); return none; }
+        const Y = b.year; const W = window.ChronosChanges.displayWindow(years, Y);
+        nodes.push(chgP(fmt('changes.window', { y: chgYear(Y), from: W.from === null ? t('changes.open0') : chgYear(W.from), to: W.to === null ? t('changes.open1') : chgYear(W.to) })));
+        const tracked = CHG.prev && CHG.prev.source !== 'ne' && CHG.prev.year !== Y && years.includes(CHG.prev.year) ? CHG.prev.year : null;
+        const A = tracked !== null ? Math.min(tracked, Y) : W.prev; const B = tracked !== null ? Math.max(tracked, Y) : Y;
+        if (A === null) { nodes.push(chgP(t('changes.first'))); return none; }
+        const vars = { a: chgYear(A), b: chgYear(B), n: nfYear().format(Math.round((B - A) * 10) / 10) };
+        nodes.push(el('div', { class: 'chg-warn', text: fmt(tracked !== null ? 'changes.stepTracked' : 'changes.step', vars) }));
+        none.interval = { from: A, to: B };
+        let fcA; let fcB;
+        try { [fcA, fcB] = await Promise.all([chgSnapshotData(A), chgSnapshotData(B)]); } catch (e) { nodes.push(chgP(fmt('changes.loadFail', { y: chgYear(A) + '–' + chgYear(B), e: e.message }), 'chg-note')); return none; }
+        const key = A + '|' + B;
+        const diff = CHG.diffs.get(key) || (CHG.diffs.set(key, ChronosChanges.diffPolities(fcA, fcB)), CHG.diffs.get(key));
+        none.terms = diff;
+        nodes.push(el('h3', { text: fmt('changes.diffTitle', vars) }));
+        if (!diff.added.length && !diff.removed.length && !diff.changed.length) nodes.push(chgP(t('changes.noneChanged')));
+        if (diff.added.length) nodes.push(chgNames(fmt('changes.added', { n: diff.added.length }), diff.added, 'added'));
+        if (diff.removed.length) nodes.push(chgNames(fmt('changes.removed', { n: diff.removed.length }), diff.removed, 'removed'));
+        if (diff.changed.length) nodes.push(chgNames(fmt('changes.sizeChanged', { n: diff.changed.length }), diff.changed, 'changed'));
+        nodes.push(chgP(fmt('changes.same', { n: diff.same }), 'chg-note'));
+        nodes.push(chgP(t('changes.diffNote'), 'chg-note'));
+        return none;
+    }
+});
+
+CHANGE_PROVIDERS.push({
+    id: 'relief',
+    applies: (focus) => focus === 'Earth',
+    async describe() {
+        const nodes = [];
+        const cut = formatYear(ybpToYear(NATURAL_MAX_YBP));
+        nodes.push(chgP(fmt('changes.naturalUntil', { y: cut })));
+        nodes.push(chgP(t(NAT.on ? 'changes.naturalShown' : 'changes.naturalHidden'), 'chg-note'));
+        if (state.ybp >= CFG.deepTimeFrom) { nodes.push(chgP(fmt('changes.plates', { ma: effectiveMa(state.ybp) }))); nodes.push(chgP(t('changes.noGeo'), 'chg-note')); }
+        return { title: t('changes.layersTitle'), nodes, interval: null, terms: { added: [], removed: [], changed: [] } };
+    }
+});
+
+function chgEventItem(it) {
+    const f = it.f; const p = f.properties;
+    const sum = el('summary', {}, [el('span', { class: 'ev-dot', style: 'background:' + (KIND_COLORS[evKind(f)] || '#888') + ';display:inline-block;margin-right:6px' }), el('b', { text: evName(f) }), el('span', { class: 'chg-when', text: eventDateText(f) })]);
+    const body = el('div', { class: 'chg-ev-body' });
+    const rows = [{ label: t('changes.relation'), value: t('changes.tierNote.' + it.tier) }];
+    if (it.polities.length) rows.push({ label: t('changes.polities'), value: it.polities.join(', ') });
+    rows.push({ label: t('changes.deducedKind'), value: t('changes.kinds.' + it.kind) });
+    const u = p.time.uncertainty_yr;
+    rows.push({ label: t('changes.precision'), value: p.time.precision + ' · ' + (u < 1 ? fmt('changes.uncDays', { u: nf().format(Math.round(u * 365.25 * 10) / 10) }) : fmt('changes.unc', { u: nf().format(u) })) });
+    rows.push(...eventRows(f));
+    (Array.isArray(p.links) ? p.links : []).forEach((l) => {
+        const lab = (l.target.label ? l.target.label + ' ' : '') + (l.target.kind === 'wikidata' ? l.target.id : l.target.id);
+        const row = { label: t('changes.rel.' + l.rel), value: lab };
+        if (l.target.kind === 'wikidata') row.href = 'https://www.wikidata.org/wiki/' + l.target.id;
+        rows.push(row, { label: t('source'), value: (l.source.citation || l.source.id) });
+    });
+    fillRows(body, rows);
+    const go = el('button', { class: 'btn chg-go', type: 'button', text: t('changes.open') });
+    go.addEventListener('click', () => eventFocus(f));
+    body.appendChild(go);
+    return el('details', { class: 'chg-ev' }, [sum, body]);
+}
+
+async function chgEvents(iv, terms, token) {
+    const frag = document.createDocumentFragment();
+    const vars = { a: chgYear(iv.from), b: chgYear(iv.to) };
+    frag.appendChild(el('h3', { text: fmt('changes.eventsTitle', vars) }));
+    if (iv.to < 1) { frag.appendChild(chgP(t('changes.noEventsRange'))); return frag; }
+    let y0 = Math.max(1, iv.from);
+    if (iv.to - y0 > CHG_MAX_YEARS) { y0 = iv.to - CHG_MAX_YEARS; frag.appendChild(chgP(fmt('changes.capped', { n: CHG_MAX_YEARS }), 'chg-note')); }
+    await eventsLoadRange(y0, iv.to);
+    if (token !== CHG.token) return null;
+    const R = ChronosChanges.relatedEvents(events.all, terms, iv.from, iv.to);
+    if (R.inInterval && R.withGeometry === 0) frag.appendChild(el('div', { class: 'chg-warn', text: fmt('changes.noPlace', { n: R.inInterval }) }));
+    else if (R.inInterval) frag.appendChild(chgP(fmt('changes.somePlace', { k: R.withGeometry, n: R.inInterval }), 'chg-note'));
+    if (!events.all.some((f) => Array.isArray(f.properties.links) && f.properties.links.length)) frag.appendChild(el('div', { class: 'chg-warn', text: t('changes.noLinks') }));
+    ChronosChanges.TIERS.forEach((tier) => {
+        const group = R.items.filter((it) => it.tier === tier);
+        if (!group.length) return;
+        const d = el('details', { class: 'chg-grp', open: tier === 'documented' || tier === 'place' ? 'open' : undefined });
+        if (!(tier === 'documented' || tier === 'place')) d.removeAttribute('open');
+        d.appendChild(el('summary', {}, [el('b', { text: t('changes.tier.' + tier) + ' (' + R.total[tier] + ')' })]));
+        d.appendChild(chgP(t('changes.tierNote.' + tier), 'chg-note'));
+        group.forEach((it) => d.appendChild(chgEventItem(it)));
+        if (R.total[tier] > group.length) d.appendChild(chgP(fmt('changes.more', { n: R.total[tier] - group.length }), 'chg-note'));
+        frag.appendChild(d);
+    });
+    frag.appendChild(chgP(t('changes.filters'), 'chg-note'));
+    return frag;
+}
+
+async function chgRender() {
+    if (!CHG.open) return;
+    const token = ++CHG.token; const root = $('changes-body');
+    const focus = chgFocus();
+    const head = el('div', {}, [el('p', {}, [el('b', { text: t('changes.centred') + ': ' }), document.createTextNode(chgBodyName(focus))]),
+        el('p', {}, [el('b', { text: t('changes.shownDate') + ': ' }), document.createTextNode(chgYear(ybpToYear(state.ybp)))])]);
+    root.textContent = ''; root.appendChild(head);
+    const providers = CHANGE_PROVIDERS.filter((pr) => pr.applies(focus));
+    if (!providers.length) { root.appendChild(chgP(fmt('changes.noData', { body: chgBodyName(focus) }))); return; }
+    const slots = providers.map((pr) => { const slot = el('div', {}, [chgP(t('changes.loading'), 'chg-note')]); root.appendChild(slot); return slot; });
+    const terms = { added: [], removed: [], changed: [] }; let interval = null;
+    for (let i = 0; i < providers.length; i++) {
+        let res;
+        try { res = await providers[i].describe({ focus }); } catch (e) { res = { title: providers[i].id, nodes: [chgP(e.message, 'chg-note')], interval: null, terms }; }
+        if (token !== CHG.token) return;
+        slots[i].textContent = ''; slots[i].appendChild(el('h3', { text: res.title })); res.nodes.forEach((n) => slots[i].appendChild(n));
+        if (res.interval && !interval) { interval = res.interval; Object.assign(terms, res.terms); }
+    }
+    if (interval) {
+        const slot = el('div', {}, [chgP(t('changes.loading'), 'chg-note')]); root.appendChild(slot);
+        const frag = await chgEvents(interval, terms, token);
+        if (frag && token === CHG.token) { slot.textContent = ''; slot.appendChild(frag); }
+    }
+}
+
+function chgKey() { return [chgFocus(), state.borders ? state.borders.year + ':' + (state.borders.source || 'hb') : '-', CHG.prev ? CHG.prev.year : '-', lang, state.ybp >= CFG.deepTimeFrom ? effectiveMa(state.ybp) : '-', NAT.on].join('|'); }
+function chgRefresh() { if (!CHG.open) return; const k = chgKey(); if (k === CHG.key) return; CHG.key = k; chgRender(); }
+
+function setChangesOpen(open) {
+    CHG.open = open;
+    $('changes').classList.toggle('open', open);
+    $('btn-changes').setAttribute('aria-pressed', String(open));
+    if (open) { if (events.open) setEventsOpen(false); if (sky.open) setSkyOpen(false); CHG.key = chgKey(); chgRender(); }
+}
+$('btn-changes').addEventListener('click', () => setChangesOpen(!CHG.open));
+$('changes-close').addEventListener('click', () => setChangesOpen(false));
+setInterval(chgRefresh, 700);   // barato: solo compara una clave; la pagina no avisa de cuando cambia el elemento centrado ni la instantanea
 
 /* ---- avisos ---- */
 function eventPhrase(f, form) {
