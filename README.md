@@ -95,7 +95,7 @@ sale y cuánto se puede fiar de él.
 - Los **sucesos** vienen de Wikidata con notoriedad ≥ 25 enlaces: faltan los poco conocidos. Las **guerras** (intervalo con inicio y
   fin) entran solo si son de una clase histórica medida (guerra, batalla, asedio, guerra civil, operación, rebelión, campaña, serie de
   guerras, brote). El **lugar** de un suceso es su coordenada propia o, si no la tiene y su lugar (P276) es único, la de ese lugar
-  (declarado en la cita: no es el punto exacto). Los **vínculos** de causa y efecto existen para ~0,4 mil sucesos: casi todo lo que
+  (declarado en la cita: no es el punto exacto). Los **vínculos** de causa y efecto existen para unos 800 vínculos (381 de causa y 385 de efecto): casi todo lo que
   se lista por lugar, nombre o fecha es coincidencia, no causa, y se rotula así. El emparejado por nombre solo detecta el nombre
   exacto del estado en inglés o español del suceso.
 - Sin personas, obras, fauna o flora todavía. Están en la hoja de ruta.
