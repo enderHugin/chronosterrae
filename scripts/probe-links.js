@@ -13,14 +13,14 @@ const describe = (e) => e.message + (e.cause ? ' [' + (e.cause.code || e.cause.n
 const QLEVER = 'https://qlever.cs.uni-freiburg.de/api/wikidata';
 const PRE = 'PREFIX wd: <http://www.wikidata.org/entity/> PREFIX wdt: <http://www.wikidata.org/prop/direct/> PREFIX p: <http://www.wikidata.org/prop/> PREFIX ps: <http://www.wikidata.org/prop/statement/> PREFIX psv: <http://www.wikidata.org/prop/statement/value/> PREFIX wikibase: <http://wikiba.se/ontology#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ';
 
-async function run(q, timeoutMs, nRaw) {
+async function run(q, timeoutMs, nRaw, nSample = 15) {
     const t0 = Date.now();
     try {
         const res = await fetch(QLEVER + '?query=' + encodeURIComponent(PRE + q), { headers: { 'User-Agent': UA, Accept: 'application/sparql-results+json' }, signal: AbortSignal.timeout(timeoutMs) });
         const text = await res.text(); const ms = Date.now() - t0;
         if (!res.ok) return { status: res.status, ms, error: text.slice(0, 500) };
         const rows = (JSON.parse(text).results || {}).bindings || [];
-        return { status: res.status, ms, rows: rows.length, raw: rows.slice(0, nRaw), sample: rows.slice(0, 15).map((b) => Object.fromEntries(Object.entries(b).map(([k, v]) => [k, v.value]))) };
+        return { status: res.status, ms, rows: rows.length, raw: rows.slice(0, nRaw), sample: rows.slice(0, nSample).map((b) => Object.fromEntries(Object.entries(b).map(([k, v]) => [k, v.value]))) };
     } catch (e) { return { ms: Date.now() - t0, error: describe(e) }; }
 }
 
@@ -31,7 +31,7 @@ const count = (body) => `SELECT (COUNT(DISTINCT ?item) AS ?n) WHERE { ${NOTABLE(
 
 async function main() {
     const out = { probed_at: new Date().toISOString(), steps: {} };
-    const step = async (name, q, timeoutMs = 240000, nRaw = 3) => { out.steps[name] = await run(q, timeoutMs, nRaw); console.error(name, JSON.stringify({ status: out.steps[name].status, ms: out.steps[name].ms, rows: out.steps[name].rows, error: out.steps[name].error })); };
+    const step = async (name, q, timeoutMs = 240000, nRaw = 3, nSample = 15) => { out.steps[name] = await run(q, timeoutMs, nRaw, nSample); console.error(name, JSON.stringify({ status: out.steps[name].status, ms: out.steps[name].ms, rows: out.steps[name].rows, error: out.steps[name].error })); };
 
     // 1. forma de P625 en un suceso con momento: valor crudo completo (type, datatype, value)
     await step('coord-raw-p585', `SELECT ?item ?coord WHERE { ?item wikibase:sitelinks ?sl . FILTER(?sl >= 100) ?item wdt:P585 ?w . ?item wdt:P625 ?coord } LIMIT 5`, 120000, 5);
@@ -48,7 +48,12 @@ async function main() {
     await step('p828-muestra', `SELECT ?item ?label ?cause ?causeLabel WHERE { ?item wikibase:sitelinks ?sl . FILTER(?sl >= 25) ${EVENT_TIME} ?item wdt:P828 ?cause . ?item rdfs:label ?label . FILTER(LANG(?label)="en") ?cause rdfs:label ?causeLabel . FILTER(LANG(?causeLabel)="en") } LIMIT 20`, 180000, 3);
     await step('p1542-muestra', `SELECT ?item ?label ?eff ?effLabel WHERE { ?item wikibase:sitelinks ?sl . FILTER(?sl >= 25) ${EVENT_TIME} ?item wdt:P1542 ?eff . ?item rdfs:label ?label . FILTER(LANG(?label)="en") ?eff rdfs:label ?effLabel . FILTER(LANG(?effLabel)="en") } LIMIT 20`, 180000, 3);
     // 4. clases (P31) de los sucesos notorios, las 60 mas frecuentes
-    await step('clases-p31', `SELECT ?cls ?clsLabel (COUNT(DISTINCT ?item) AS ?n) WHERE { ${NOTABLE(EVENT_TIME + ' ?item wdt:P31 ?cls .')} OPTIONAL { ?cls rdfs:label ?clsLabel . FILTER(LANG(?clsLabel)="en") } } GROUP BY ?cls ?clsLabel ORDER BY DESC(?n) LIMIT 60`, 300000, 2);
+    await step('clases-p31', `SELECT ?cls ?clsLabel (COUNT(DISTINCT ?item) AS ?n) WHERE { ${NOTABLE(EVENT_TIME + ' ?item wdt:P31 ?cls .')} OPTIONAL { ?cls rdfs:label ?clsLabel . FILTER(LANG(?clsLabel)="en") } } GROUP BY ?cls ?clsLabel ORDER BY DESC(?n) LIMIT 80`, 300000, 2, 80);
+    // clases de los que se dan como intervalo (sin momento): guerras, reinados, movimientos...
+    await step('clases-intervalo', `SELECT ?cls ?clsLabel (COUNT(DISTINCT ?item) AS ?n) WHERE { ${NOTABLE('?item wdt:P580 ?a . FILTER NOT EXISTS { ?item wdt:P585 ?w } ?item wdt:P31 ?cls .')} OPTIONAL { ?cls rdfs:label ?clsLabel . FILTER(LANG(?clsLabel)="en") } } GROUP BY ?cls ?clsLabel ORDER BY DESC(?n) LIMIT 80`, 300000, 2, 80);
+    // Las consultas que usara el build, para medir forma y coste ANTES de escribirlas: intervalo con clase y lote de relaciones por VALUES
+    await step('intervalo-guerras-batallas', `SELECT ?item ?label ?sl ?a ?pa ?b ?pb ?cls WHERE { VALUES ?cls { wd:Q198 wd:Q178561 } ?item wdt:P31 ?cls ; wikibase:sitelinks ?sl . FILTER(?sl >= 25) FILTER NOT EXISTS { ?item wdt:P585 ?w } ?item p:P580 ?s1 . ?s1 psv:P580 ?v1 . ?v1 wikibase:timeValue ?a ; wikibase:timePrecision ?pa . OPTIONAL { ?item p:P582 ?s2 . ?s2 psv:P582 ?v2 . ?v2 wikibase:timeValue ?b ; wikibase:timePrecision ?pb } ?item rdfs:label ?label . FILTER(LANG(?label)="en") }`, 240000, 3, 15);
+    await step('relaciones-lote', `SELECT ?item ?cause ?causeLabel ?effect ?effectLabel ?part ?partLabel ?cls ?clsLabel ?country ?place ?coord WHERE { { SELECT ?item WHERE { ?item wikibase:sitelinks ?sl . FILTER(?sl >= 60) ?item wdt:P585 ?w } LIMIT 300 } OPTIONAL { ?item wdt:P828 ?cause . OPTIONAL { ?cause rdfs:label ?causeLabel . FILTER(LANG(?causeLabel)="en") } } OPTIONAL { ?item wdt:P1542 ?effect . OPTIONAL { ?effect rdfs:label ?effectLabel . FILTER(LANG(?effectLabel)="en") } } OPTIONAL { ?item wdt:P361 ?part . OPTIONAL { ?part rdfs:label ?partLabel . FILTER(LANG(?partLabel)="en") } } OPTIONAL { ?item wdt:P31 ?cls . OPTIONAL { ?cls rdfs:label ?clsLabel . FILTER(LANG(?clsLabel)="en") } } OPTIONAL { ?item wdt:P17 ?country } OPTIONAL { ?item wdt:P276 ?place . ?place wdt:P625 ?coord } }`, 240000, 5, 15);
     process.stdout.write(JSON.stringify(out, null, 2) + '\n');
 }
 main().catch((e) => { console.error('[ERR] ' + describe(e)); process.exitCode = 1; });
