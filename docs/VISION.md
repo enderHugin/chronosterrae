@@ -236,3 +236,17 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
 ## Fronteras históricas y resolución (2026-11-03)
 
 Los polígonos de historical-basemaps traen un vértice cada 13–20 km de mediana (solo −5000 llega a ~2,5 km; medido en las 100+ fechas). Decisión del creador: de lejos (zoom < 4) solo mapa físico; de cerca, fronteras con un botón para ocultarlas. (Una primera versión lo hizo al revés —cortar de cerca— y se corrigió.) Pendiente: fronteras de mejor resolución para el tramo reciente (OpenHistoricalMap, sin sondear).
+
+
+## Cambios, causas y escala (2026-11-06)
+
+Petición del creador: para el elemento centrado, listar los sucesos que provocan sus cambios (geológicos: el terremoto o impacto si está registrado; históricos: la guerra, el pacto…), cada uno desplegable, con el nivel de detalle que atraiga a historiadores y científicos, y **diseñado para escalar a infinito**.
+
+Decisiones:
+- **Un cambio es un intervalo, no un día.** Las fotografías de fronteras están separadas años; el panel lo dice y nunca atribuye el salto a una fecha.
+- **Causa solo con fuente.** El esquema tiene `links` (cause, effect, part_of, participant) con fuente por vínculo. Lo demás (lugar, nombre, fecha) se muestra como coincidencia, en este orden de fuerza: documentado > lugar > nombre > fecha. Nunca se infiere causalidad.
+- **Relaciones como datos, no cálculo del cliente.** Se recolectan en el build (`scripts/build-events.js`, una consulta por propiedad: juntas con OPTIONAL la sonda midió 86 344 filas y 20 s para 300 elementos) y viajan en los fragmentos por siglo. El cliente pide solo el intervalo que mira.
+- **Proveedores de cambios.** Cada capa (fronteras, relieve/placas, y las que vengan: nivel del mar, hielo, estrellas…) implementa `applies / describe`; el panel las recorre sin conocerlas.
+- **La clase viene de la fuente** (`classes`, Wikidata P31, tabla `CLASS_KINDS` con QID de la sonda); el nombre solo se usa cuando falta y se rotula como deducido.
+- **Pendiente para historiadores y científicos:** causas más allá de P828/P1542 (participantes P710/P1344, país P17), fuentes primarias por suceso (más allá de Wikidata), sucesos geológicos (terremotos, impactos, erupciones: hoy ninguno antes del año 1), diferencia de fronteras por identificador estable y no por nombre, geometrías de lugar con incertidumbre, y el fundido gradual del relieve natural en lugar del corte seco de 4051 a. C.
+- Datos derivados de historical-basemaps (GPL) no se guardan en el repositorio: la diferencia entre instantáneas se calcula en el navegador al vuelo.

@@ -63,6 +63,14 @@ sale y cuánto se puede fiar de él.
   «acaba de…»; si solo se conoce el día, avisa al entrar en ese día («hora desconocida»). **Nunca se
   inventa una hora.** Hoy la semilla verificada tiene 5 sucesos con hora; la carga masiva desde Wikidata
   (CC0) se está construyendo en Actions.
+- **Cambios del elemento centrado** (botón *Cambios*): qué cambia y qué sucesos lo rodean. Las fronteras son
+  fotografías sueltas (1715, 1783, 1800…), así que un salto entre ellas **no ocurre en un día**: el panel dice
+  qué instantánea se muestra y hasta qué fechas, qué estados aparecen, desaparecen o cambian de superficie entre
+  las dos fotografías, y lista los sucesos de ese tramo con la relación **declarada**: causa/efecto documentados
+  por la fuente (Wikidata P828/P1542, con enlace a su destino), mismo lugar, mismo nombre o solo la fecha. Solo lo
+  primero viene de la fuente; lo demás es coincidencia y se rotula así. Cada suceso se despliega con evidencia,
+  incertidumbre de la fecha y fuente. También lista los sucesos entre las dos últimas fechas en que miraste. Cada capa
+  que cambia implementa un proveedor (`CHANGE_PROVIDERS` en `index.html`); el panel no conoce las capas.
 - **Detalle al acercar**: desde zoom 4,6 se superpone el mapa vectorial actual de OpenFreeMap
   (OpenStreetMap, ODbL): estilo completo desde 1950, solo agua y vegetación hasta hace 11 000 años (como
   aproximación, y así se rotula) y nada antes, porque el nivel del mar era otro.
@@ -84,6 +92,12 @@ sale y cuánto se puede fiar de él.
   en tema oscuro conserva el estilo Liberty con colores adaptados.
 - La precisión del cielo se degrada hacia el pasado (efemérides analíticas truncadas y ΔT, la
   rotación de la Tierra, que es una estimación antes de ~1600): la web muestra el error medido, no una promesa.
+- Los **sucesos** vienen de Wikidata con notoriedad ≥ 25 enlaces: faltan los poco conocidos. Las **guerras** (intervalo con inicio y
+  fin) entran solo si son de una clase histórica medida (guerra, batalla, asedio, guerra civil, operación, rebelión, campaña, serie de
+  guerras, brote). El **lugar** de un suceso es su coordenada propia o, si no la tiene y su lugar (P276) es único, la de ese lugar
+  (declarado en la cita: no es el punto exacto). Los **vínculos** de causa y efecto existen para ~0,4 mil sucesos: casi todo lo que
+  se lista por lugar, nombre o fecha es coincidencia, no causa, y se rotula así. El emparejado por nombre solo detecta el nombre
+  exacto del estado en inglés o español del suceso.
 - Sin personas, obras, fauna o flora todavía. Están en la hoja de ruta.
 
 ## Hoja de ruta
