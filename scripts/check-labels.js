@@ -33,5 +33,17 @@ check('la tierra sin nombre y la geometria nula no se rotulan', () => !out.some(
 check('superficie y anchura: 10x10 grados en el ecuador ≈ 1,24 millones de km² y ≈ 1112 km de ancho; la suma incluye la colonia', () => { const o = out.find((x) => x.key === 'Imperio'); return o.areaKm2 > 1.2e6 && o.widthKm > 1100 && o.widthKm < 1125 && o.areaKm2 > 1.2364e6 + 40000 ? true : JSON.stringify(o); });
 check('el texto puede venir de otra funcion (p. ej. el nombre en el idioma de la interfaz)', () => L.polityLabels(fc, key, (f) => 'X-' + f.properties.NAME).find((o) => o.key === 'En C').text === 'X-En C');
 check('RECHAZOS: coleccion no valida -> BAD_COLLECTION; sin funcion de clave -> BAD_KEY', () => rejects(() => L.polityLabels(null, key), 'BAD_COLLECTION') === true && rejects(() => L.polityLabels({}, key), 'BAD_COLLECTION') === true && rejects(() => L.polityLabels(fc), 'BAD_KEY') === true);
+
+// Estilo con la estructura real de OpenFreeMap (capa de agua en cursiva primero, luego lugares); los ids son ilustrativos: se elige por estructura
+const sym = (id, font, srcLayer, filter) => ({ id, type: 'symbol', 'source-layer': srcLayer, filter, layout: { 'text-font': font, 'text-field': '{name}' } });
+const style = { layers: [{ id: 'bg', type: 'background' }, sym('water_name', ['Noto Sans Italic'], 'water_name'), sym('road_label', ['Noto Sans Regular'], 'transportation_name'), sym('label_town', ['Noto Sans Regular'], 'place', ['==', 'class', 'town']), sym('label_country_big', ['Noto Sans Bold'], 'place', ['==', 'class', 'country']), sym('expr', [{ x: 1 }], 'place')] };
+check('tipografia: no es la de la primera capa de texto (agua, cursiva) sino la de paises, recta', () => { const f = L.pickFont(style); return f && f[0] === 'Noto Sans Bold' ? true : JSON.stringify(f); });
+check('tipografia: sin capa de paises, la de lugares recta; sin lugares, la primera recta', () => {
+    const a = L.pickFont({ layers: style.layers.filter((l) => l.id !== 'label_country_big') }); const b = L.pickFont({ layers: style.layers.filter((l) => ['water_name', 'road_label'].includes(l.id)) });
+    return a[0] === 'Noto Sans Regular' && b[0] === 'Noto Sans Regular' ? true : JSON.stringify([a, b]);
+});
+check('tipografia: si todas son cursivas se usa la primera (no se inventa una fuente); sin capas de texto, null', () => L.pickFont({ layers: [sym('a', ['Foo Italic'], 'water_name')] })[0] === 'Foo Italic' && L.pickFont({ layers: [{ id: 'bg', type: 'background' }] }) === null && L.pickFont(null) === null && L.pickFont({}) === null);
+check('tipografia: una capa con la fuente dada por expresion (no una lista de cadenas) no se toma', () => { const f = L.pickFont({ layers: [sym('e', [{ x: 1 }], 'place')] }); return f === null ? true : JSON.stringify(f); });
+check('capa de paises: por id o por filtro, solo de `place` y solo texto', () => L.isCountryLabel(sym('label_country_1', ['x'], 'place')) && L.isCountryLabel(sym('foo', ['x'], 'place', ['==', 'class', 'country'])) === true && !L.isCountryLabel(sym('label_town', ['x'], 'place', ['==', 'class', 'town'])) && !L.isCountryLabel(sym('country_x', ['x'], 'water_name')) && !L.isCountryLabel({ id: 'label_country', type: 'line', 'source-layer': 'place' }) && !L.isCountryLabel(null));
 console.log(fails ? '\n' + fails + ' fallo(s)' : '\ntodo bien');
 process.exit(fails ? 1 : 0);

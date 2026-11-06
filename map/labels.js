@@ -89,5 +89,24 @@
         return out.sort((a, b) => b.areaKm2 - a.areaKm2);
     }
 
-    return { labelPoint, polityLabels };
+    /**
+     * Tipografia para los nombres, leida del estilo de OpenFreeMap (no se supone ningun nombre de fuente). La primera capa de texto de un
+     * estilo suele ser de agua y en cursiva: se prefieren las de paises/lugares y, dentro de ellas, las de trazo recto. Si todas son
+     * cursivas se devuelve la primera (mejor cursiva que nada); sin capas de texto utilizables, null.
+     */
+    function pickFont(style) {
+        const syms = ((style && style.layers) || []).filter((l) => l && l.type === 'symbol' && l.layout && Array.isArray(l.layout['text-font']) && l.layout['text-font'].length && l.layout['text-font'].every((f) => typeof f === 'string'));
+        const upright = (l) => !/italic|oblique/i.test(l.layout['text-font'].join(' '));
+        const place = (l) => l['source-layer'] === 'place';
+        const l = syms.find((x) => isCountryLabel(x) && upright(x)) || syms.find((x) => place(x) && upright(x)) || syms.find(upright) || syms[0];
+        return l ? l.layout['text-font'] : null;
+    }
+
+    /** ¿Es una capa de nombres de PAIS del estilo? (los de hoy: sobre un mapa historico serian de otra epoca y duplicarian los propios). Por estructura: capa `place` con "country" en el id o en el filtro. */
+    function isCountryLabel(layer) {
+        if (!layer || layer.type !== 'symbol' || layer['source-layer'] !== 'place') return false;
+        return /country/i.test(String(layer.id || '')) || /country/i.test(JSON.stringify(layer.filter || null));
+    }
+
+    return { labelPoint, polityLabels, pickFont, isCountryLabel };
 });
