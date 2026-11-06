@@ -445,6 +445,11 @@ const i18n = {
         borders: {
             button: 'Fronteras', tip: 'Muestra u oculta las fronteras históricas (de cerca). Es una aproximación: sus polígonos son toscos.'
         },
+        star: {
+            hip: 'Hipparcos', mag: 'Magnitud aparente (V)', bv: 'Índice de color B−V', plx: 'Paralaje (hoy)', dist: 'Distancia (hoy)', ly: '{n} años luz',
+            ra: 'Ascensión recta (de la fecha)', dec: 'Declinación (de la fecha)',
+            note: 'Catálogo Hipparcos. La posición es un cálculo para la fecha mostrada (movimiento propio extrapolado); la distancia sale de la paralaje medida hoy y solo se da si es ≥ 3 mas.'
+        },
         space: {
             button: 'Estrellas', tip: 'Estrellas, Sol, Luna y planetas tras el globo, en su posición en ese instante, y la noche sobre la Tierra. Es un cálculo; los símbolos no están a escala.',
             outOfRange: 'Sin estrellas ni noche en esta época: el cielo se calcula entre {a} y {b}.'
@@ -550,6 +555,11 @@ const i18n = {
         nav: { zoomIn: 'Zoom in', zoomOut: 'Zoom out (beyond Earth: the solar system)' },
         borders: {
             button: 'Borders', tip: 'Shows or hides the historical borders (when zoomed in). An approximation: their polygons are coarse.'
+        },
+        star: {
+            hip: 'Hipparcos', mag: 'Apparent magnitude (V)', bv: 'Colour index B−V', plx: 'Parallax (today)', dist: 'Distance (today)', ly: '{n} light-years',
+            ra: 'Right ascension (of date)', dec: 'Declination (of date)',
+            note: 'Hipparcos catalogue. The position is a calculation for the date shown (proper motion extrapolated); the distance comes from today\'s parallax and is only given when it is ≥ 3 mas.'
         },
         space: {
             button: 'Stars', tip: 'Stars, Sun, Moon and planets behind the globe, where they are at that instant, and the night over the Earth. A calculation; symbols are not to scale.',
@@ -663,6 +673,27 @@ function showInfo(title, rows) {
         else body.appendChild(row);
     });
     $('info').style.display = 'block';
+}
+function showStar(i) {
+    const S = space.stars; if (!S || i < 0 || i >= S.cat.n) return;
+    const cat = S.cat; const hip = cat.hip[i]; const nm = cat.names && cat.names[hip];
+    const name = nm ? ((lang === 'es' && nm[1]) || nm[0]) : '';
+    const rows = [{ label: t('evidence'), badge: 'measurement' }, { label: t('star.hip'), value: 'HIP ' + hip }];
+    if (Number.isFinite(cat.mag[i])) rows.push({ label: t('star.mag'), value: nf().format(Math.round(cat.mag[i] * 100) / 100) });
+    if (Number.isFinite(cat.bv[i])) rows.push({ label: t('star.bv'), value: nf().format(Math.round(cat.bv[i] * 100) / 100) });
+    const plx = cat.plx && cat.plx[i];
+    if (plx > 0) {
+        rows.push({ label: t('star.plx'), value: nf().format(Math.round(plx * 100) / 100) + ' mas' });
+        if (plx >= 3) rows.push({ label: t('star.dist'), value: fmt('star.ly', { n: nf().format(Math.round(3261.56 / plx)) }) });
+    }
+    const eq = space.eq;
+    if (eq && eq.ra && space.eqCat === cat && Number.isFinite(eq.ra[i])) {
+        const hh = ((eq.ra[i] / (2 * Math.PI)) % 1 + 1) % 1 * 24; const H = Math.floor(hh); const M = Math.floor((hh - H) * 60);
+        rows.push({ label: t('star.ra'), value: H + ' h ' + String(M).padStart(2, '0') + ' m' });
+        rows.push({ label: t('star.dec'), value: (eq.dec[i] >= 0 ? '+' : '−') + nf().format(Math.round(Math.abs(eq.dec[i]) * 1800 / Math.PI) / 10) + '°' });
+    }
+    rows[rows.length - 1].note = t('star.note');
+    showInfo(name || ('HIP ' + hip), rows);
 }
 const hideInfo = () => { $('info').style.display = 'none'; clearHighlight(); };
 
@@ -1995,18 +2026,37 @@ function flyToBody(id) {
 }
 {
     const box = map.getContainer(); let down = null;
-    const hitAt = (e) => {
-        if (solarView.isOpen || !space.hits.length || e.target.closest('.maplibregl-control-container')) return null;
-        const r = box.getBoundingClientRect(); const x = e.clientX - r.left; const y = e.clientY - r.top; let best = null; let bd = 1e9;
-        for (const h of space.hits) { const d = Math.hypot(h.x - x, h.y - y); if (d <= h.r + 4 && d < bd) { bd = d; best = h; } }
+    const local = (e) => { const r = box.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    const inSky = (x, y) => Boolean(space.earth && Math.hypot(x - space.earth.x, y - space.earth.y) > space.earth.r);   // fuera del disco de la Tierra
+    // La estrella visible mas brillante a menos de ~7 px (solo en el cielo, nunca delante del globo)
+    const starAt = (x, y) => {
+        const S = space.stars; if (!S || !inSky(x, y)) return -1;
+        let best = -1; let bm = 1e9;
+        for (let i = 0; i < S.cat.n; i++) {
+            const dx = S.px[i] - x; if (!(Math.abs(dx) <= 7)) continue;
+            const dy = S.py[i] - y; if (dx * dx + dy * dy > 49) continue;
+            if (S.cat.mag[i] < bm) { bm = S.cat.mag[i]; best = i; }
+        }
         return best;
+    };
+    const hitAt = (e) => {
+        if (solarView.isOpen || e.target.closest('.maplibregl-control-container')) return null;
+        const { x, y } = local(e); let best = null; let bd = 1e9;
+        for (const h of space.hits) { const d = Math.hypot(h.x - x, h.y - y); if (d <= h.r + 4 && d < bd) { bd = d; best = h; } }
+        if (best) return best;
+        const i = starAt(x, y); if (i >= 0) return { star: i };
+        return null;
     };
     box.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY }; }, true);
     box.addEventListener('click', (e) => {
+        if (solarView.isOpen || e.target.closest('.maplibregl-control-container')) return;
         if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 4) return;      // un arrastre no es un toque
-        const h = hitAt(e); if (!h) return;
-        e.stopPropagation(); e.preventDefault(); flyToBody(h.id);
+        const h = hitAt(e); const { x, y } = local(e);
+        if (h && h.id) { e.stopPropagation(); e.preventDefault(); flyToBody(h.id); return; }
+        if (h && h.star !== undefined) { e.stopPropagation(); e.preventDefault(); clearHighlight(); showStar(h.star); return; }
+        if (inSky(x, y)) { e.stopPropagation(); e.preventDefault(); clearHighlight(); hideInfo(); }     // cielo vacio: no es el mapa
     }, true);
+    box.addEventListener('dblclick', (e) => { if (!solarView.isOpen && inSky(local(e).x, local(e).y)) { e.stopPropagation(); e.preventDefault(); } }, true);
     box.addEventListener('mousemove', (e) => { map.getCanvasContainer().style.cursor = hitAt(e) ? 'pointer' : ''; });
 }
 // Teclado: + y - (los mismos que usa el mapa)
@@ -2228,7 +2278,7 @@ function initClock() {
 /* ------------------------------------------------------------------ */
 // Un lienzo bajo el mapa (el mapa es transparente fuera del globo). Los cuerpos y las estrellas se proyectan con la
 // misma camara que el globo; el propio globo tapa lo que queda detras de la Tierra.
-const space = { on: prefs.sp !== false, hits: [], raf: 0, frameJD: NaN, frame: null, eqJD: NaN, eq: null, eqCat: null, dirs: null, dirsJD: NaN, colors: null };
+const space = { on: prefs.sp !== false, hits: [], earth: null, stars: null, raf: 0, frameJD: NaN, frame: null, eqJD: NaN, eq: null, eqCat: null, dirs: null, dirsJD: NaN, colors: null };
 
 function spaceFrame(jd) {
     if (jd === space.frameJD && space.frame) return space.frame;
@@ -2245,6 +2295,7 @@ function scheduleSpace() {
 function drawSpace() {
     space.raf = 0;
     space.hits = [];
+    space.earth = null; space.stars = null;
     if (solarView.isOpen) return;          // con el sistema solar abierto, este lienzo lo pinta la escena
     const cv = $('space');
     const box = map.getContainer();
@@ -2269,6 +2320,8 @@ function drawSpace() {
         worldSize: tr && typeof tr.worldSize === 'number' ? tr.worldSize : 512 * Math.pow(2, map.getZoom()),
         fovDeg: tr && typeof tr.fov === 'number' ? tr.fov : undefined, width: w, height: h
     });
+    // Disco de la Tierra en pantalla: lo que cae fuera es cielo, no mapa (para los toques)
+    { const ec = pr.near(0, 0, 0); if (ec) space.earth = { x: ec.x, y: ec.y, r: pr.cameraDistancePx / Math.sqrt(Math.pow((pr.cameraDistancePx + pr.globeRadiusPx) / pr.globeRadiusPx, 2) - 1) }; }
     const jd = clock.jd;
     const starsOnly = clockStarsOnly();
     if (starsOnly) {
@@ -2291,6 +2344,7 @@ function drawSpace() {
             const s = pr.infinity(space.dirs[3 * i], space.dirs[3 * i + 1], space.dirs[3 * i + 2]);
             if (s) { px[i] = s[0]; py[i] = s[1]; } else px[i] = NaN;
         }
+        space.stars = { cat, px, py };
         if (sky.lines && cat.constellations.length) {
             ctx.strokeStyle = 'rgba(150,175,235,0.16)'; ctx.lineWidth = 1; ctx.beginPath();
             cat.constellations.forEach((cn) => cn.lines.forEach(([a, b]) => {
