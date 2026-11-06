@@ -955,7 +955,8 @@ async function loadBorders(ybp, signal) {
 /* ------------------------------------------------------------------ */
 const NATURAL_URL = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg';
 const NATURAL_MAX_YBP = 6000;    // la imagen es de hoy: desde hace ~6000 anos el nivel del mar esta estabilizado; antes cambian costas y hielos y no se muestra
-const GAP_BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+// La imagen de franjas se pinta en este lienzo y MapLibre lo lee directo como textura: se evita codificar un PNG (2-10 s en el render real, medido).
+const GAP_CANVAS = document.createElement('canvas'); GAP_CANVAS.width = GAP_CANVAS.height = 1;
 const palette = () => state.dark
     ? { ocean: '#0b1a26', shelf: '#17303f', land: '#2d3338', landLine: '#59636b', line: '#e6e2d8' }
     : { ocean: '#c3dbe9', shelf: '#dbeaf2', land: '#ece4cf', landLine: '#b9ab87', line: '#3a2a1a' };
@@ -999,7 +1000,7 @@ mapReady.then(() => {
     map.addLayer({ id: 'borders-fill', type: 'fill', source: 'borders', paint: { 'fill-color': ['get', '_c'], 'fill-opacity': ['get', '_o'] } });
     map.addLayer({ id: 'borders-line', type: 'line', source: 'borders-inner', paint: { 'line-color': p.line, 'line-width': 0.6, 'line-opacity': 0.55 } });
     // Franja entre un poligono de frontera demasiado simplificado y la costa real (ver gapDraw): imagen georreferenciada por sus cuatro esquinas.
-    map.addSource('gap', { type: 'image', url: GAP_BLANK, coordinates: [[-1, 1], [1, 1], [1, -1], [-1, -1]] });
+    map.addSource('gap', { type: 'canvas', canvas: GAP_CANVAS, animate: false, coordinates: [[-1, 1], [1, 1], [1, -1], [-1, -1]] });
     map.addLayer({ id: 'gap-raster', type: 'raster', source: 'gap', layout: { visibility: 'none' }, paint: { 'raster-opacity': 1, 'raster-fade-duration': 0, 'raster-resampling': 'linear' } }, 'borders-line');
     map.addLayer({ id: 'borders-hover', type: 'line', source: 'borders-inner', filter: ['==', ['get', 'key'], '\u0000'], paint: { 'line-color': '#ffb300', 'line-width': 2.4, 'line-opacity': 0.95 } });
     map.addLayer({ id: 'borders-hl', type: 'line', source: 'borders-inner', filter: ['==', ['get', 'key'], '\u0000'], paint: { 'line-color': '#e53935', 'line-width': 3 } });
@@ -1184,15 +1185,16 @@ const GAP_MAX_SPAN_DEG = 200;    // vistas mas anchas (el globo entero): las fra
 const GAP_CELL_PX = 1.5;         // tamano de celda objetivo en pixeles de pantalla (para que la costa no salga escalonada)
 const GAP_CELLS_MIN = 200; const GAP_CELLS_MAX = 1100;
 let gapSeq = 0;                   // el PNG se codifica fuera del hilo principal: solo vale el ultimo
-const GAP = { timer: 0, shown: false, ctx: null, sel: null, url: null };
+const GAP = { timer: 0, shown: false, ctx: null, sel: null, url: null, cache: new Map(), t: null };
 function gapColor(css) {
     if (!GAP.ctx) { const c = document.createElement('canvas'); c.width = c.height = 1; GAP.ctx = c.getContext('2d', { willReadFrequently: true }); }
     GAP.ctx.clearRect(0, 0, 1, 1); GAP.ctx.fillStyle = css; GAP.ctx.fillRect(0, 0, 1, 1);
     const d = GAP.ctx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]];
 }
-function gapRefresh() {
+// Mover la camara: espera 220 ms a que pare. Cambiar de fecha (datos nuevos): casi de inmediato, que es lo que se espera ver.
+function gapRefresh(delay = 220) {
     clearTimeout(GAP.timer);
-    GAP.timer = setTimeout(gapDraw, 220);
+    GAP.timer = setTimeout(gapDraw, delay);
 }
 // Mientras la imagen pinta todo el territorio, el relleno vectorial queda casi invisible (0,01: con 0 MapLibre deja de detectar clics).
 // Pais resaltado: sus fronteras TERRESTRES en rojo (nunca el contorno tosco que da al mar) y su territorio algo mas opaco.
@@ -1228,6 +1230,16 @@ function gapDraw() {
     const viewWm = (view[2] - view[0]) * 111320 * Math.cos((view[1] + view[3]) / 2 * Math.PI / 180);
     const maxCells = Math.round(Math.max(GAP_CELLS_MIN, Math.min(GAP_CELLS_MAX, (view[2] - view[0]) / (GAP_CELL_PX * degPerPx))));
     const padM = Math.min(capM, 0.05 * viewWm);
+    const tStart = performance.now();
+    // Cache por instantanea + vista + resaltado: volver a una fecha o a una vista ya calculada no repite la clasificacion ni la codificacion
+    const gkey = [b.year, b.source || 'hb', DETAIL.shown ? 'd' : 'p', GAP.sel || '', maxCells, view.map((v) => Math.round(v * 200) / 200).join(',')].join('|');
+    const hit = GAP.cache.get(gkey);
+    if (hit) {
+        GAP.cache.delete(gkey); GAP.cache.set(gkey, hit);     // el mas reciente al final
+        gapShowImage(hit.img, hit.corners, ++gapSeq);
+        GAP.t = { cached: true, total: Math.round(performance.now() - tStart) };
+        return;
+    }
     const groups = new Map();
     for (const f of b.data.features) {
         if (!f.geometry) continue;
@@ -1258,10 +1270,11 @@ function gapDraw() {
         }
         if (!landPolys.length) { gapHide(); return; }
     }
+    const t0 = tStart;
     const res = ChronosGap.classify(list, view, { distM: capM, padM, maxCells, coarseCells: 640, resolve: 'nearest', land: landPolys });
+    const tClassify = performance.now();
     const { cols, rows } = res.grid;
-    const cv = document.createElement('canvas'); cv.width = cols; cv.height = rows;
-    const cx = cv.getContext('2d'); const img = cx.createImageData(cols, rows);
+    const img = new ImageData(cols, rows);
     const rgb = list.map((g) => gapColor(g.css || '#8a8a8a'));
     let filled = 0;
     for (let i = 0; i < res.cls.length; i++) {
@@ -1269,20 +1282,27 @@ function gapDraw() {
         const o = i * 4; const k = rgb[c - 1];
         img.data[o] = k[0]; img.data[o + 1] = k[1]; img.data[o + 2] = k[2]; img.data[o + 3] = list[c - 1].alpha; filled++;
     }
-    cx.putImageData(img, 0, 0);
     if (!filled) { gapHide(); return; }
+    const tPaint = performance.now();
     const seq = ++gapSeq;
-    cv.toBlob((blob) => {
-        if (!blob || seq !== gapSeq) return;     // llego tarde: ya hay una vista mas nueva en camino
-        const url = URL.createObjectURL(blob);
-        const old = GAP.url; GAP.url = url;
-        map.getSource('gap').updateImage({ url, coordinates: res.grid.corners });
-        const was = GAP.shown; GAP.shown = true;
-        map.setLayoutProperty('gap-raster', 'visibility', 'visible');
-        gapFillPaint();
-        if (was !== GAP.shown) renderStatus();
-        if (old) setTimeout(() => URL.revokeObjectURL(old), 4000);
-    }, 'image/png');
+    GAP.t = { cached: false, classifyMs: Math.round(tClassify - t0), paintMs: Math.round(tPaint - tClassify), cells: cols * rows, polities: list.length };
+    GAP.cache.set(gkey, { img, corners: res.grid.corners }); gapTrim();
+    gapShowImage(img, res.grid.corners, seq);
+}
+function gapTrim() { while (GAP.cache.size > 10) GAP.cache.delete(GAP.cache.keys().next().value); }
+// Pone los pixeles (ImageData) en el lienzo que MapLibre lee como textura. Con animate:false la textura solo se vuelve a leer en play()/pause().
+function gapShowImage(img, corners, seq) {
+    if (seq !== gapSeq) return;
+    if (GAP_CANVAS.width !== img.width || GAP_CANVAS.height !== img.height) { GAP_CANVAS.width = img.width; GAP_CANVAS.height = img.height; }
+    GAP_CANVAS.getContext('2d').putImageData(img, 0, 0);
+    const src = map.getSource('gap');
+    src.setCoordinates(corners);
+    const was = GAP.shown; GAP.shown = true; GAP.year = state.borders ? state.borders.year : null;
+    map.setLayoutProperty('gap-raster', 'visibility', 'visible');
+    src.play(); src.pause();
+    map.triggerRepaint();
+    gapFillPaint();
+    if (was !== GAP.shown) renderStatus();
 }
 map.on('moveend', gapRefresh);
 
@@ -1363,7 +1383,11 @@ function applyBorders(b) {
     if (DETAIL.built) detailVisibility();
     BR.lastApplied = false;   // dato nuevo: se reaplica la visibilidad de las capas aunque el corte no cambie
     bordersView();
-    gapRefresh();
+    // La imagen de franjas es de la fecha ANTERIOR: dejarla hasta que llegue la nueva (1,6-3,5 s medidos con red real, informe timing.json
+    // del render real) enseñaba territorio viejo bajo fronteras nuevas. Se quita ya: el relleno vectorial (90 ms) se ve al instante y la
+    // imagen lo sustituye al llegar. Si la imagen de esta fecha ya se calculo antes, vuelve sin recalcular (cache de gapDraw).
+    gapHide();
+    gapRefresh(60);
 }
 
 /* ---- fronteras historicas: solo de cerca, y ocultables ---- */

@@ -41,13 +41,15 @@ async function runTiming(page, out) {
     await page.evaluate(() => map.jumpTo({ center: [10, 50], zoom: 4.6 }));
     const one = (label, year, kind) => page.evaluate(async ({ label, year, kind }) => {
         const t0 = performance.now(); const n0 = performance.getEntriesByType('resource').length;
-        const prevB = state.borders; const prevL = state.land; const gap0 = GAP.url;
+        const prevB = state.borders; const prevL = state.land;
         const waitFor = (fn, ms) => new Promise((res) => { const s = performance.now(); (function p() { if (fn()) return res(Math.round(performance.now() - t0)); if (performance.now() - s > ms) return res(null); setTimeout(p, 10); })(); });
         setTime(yearToYbp(year), { immediate: false });
         const out = { label, year, kind };
         if (kind === 'borders') {
             out.msBordersApplied = await waitFor(() => !state.bordersLoading && state.borders && state.borders !== prevB, 60000);
-            out.msGapImage = await waitFor(() => GAP.url !== gap0, 60000);
+            // la imagen de franjas es un lienzo (sin PNG): esta lista cuando se muestra y es de la fecha pedida
+            out.msGapImage = await waitFor(() => GAP.shown && state.borders && state.borders !== prevB && GAP.year === state.borders.year, 60000);
+            out.gapPhases = GAP.t;
         } else {
             out.msLandApplied = await waitFor(() => state.land !== prevL, 60000);
         }
