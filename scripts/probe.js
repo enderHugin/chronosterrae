@@ -75,7 +75,12 @@ const targets = [
     { id: 'gibs-bluemarble-shaded-relief-z8', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/8/96/128.jpeg', image: isImage('jpeg'), expect: () => true },
     { id: 'gibs-bluemarble-nextgen-z3', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/3/2/4.jpeg', image: isImage('jpeg'), expect: () => true },
     { id: 'gibs-wmts-capabilities', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml', expect: (t) => /BlueMarble_ShadedRelief_Bathymetry/.test(t) && /GoogleMapsCompatible_Level8/.test(t) },
-    { id: 'gibs-bluemarble-layer-detail', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/layers/BlueMarble_ShadedRelief_Bathymetry.json', expect: (t) => t.length > 2 },
+    { id: 'gibs-layer-blue-marble-block', area: 'tierra-natural', url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml', expect: (t) => /BlueMarble_ShadedRelief_Bathymetry/.test(t),
+        extract: (t) => { const i = t.indexOf('<ows:Identifier>BlueMarble_ShadedRelief_Bathymetry</ows:Identifier>'); const a = t.lastIndexOf('<Layer', i); const b = t.indexOf('</Layer>', i);
+            const m = t.indexOf('<ows:Identifier>GoogleMapsCompatible_Level8</ows:Identifier>'); const mm = t.indexOf('</TileMatrixSet>', m);
+            return t.slice(a, b + 8) + '\n=====TILEMATRIXSET=====\n' + t.slice(t.lastIndexOf('<TileMatrixSet>', m), mm + 16).replace(/<TileMatrix>[\s\S]*?<\/TileMatrix>/g, (x, off) => (/<ows:Identifier>(0|2|7|8)<\/ows:Identifier>/.test(x) ? x : '')); } },
+    { id: 'gibs-api-docs', area: 'tierra-natural', url: 'https://nasa-gibs.github.io/gibs-api-docs/available-visualizations/', expect: (t) => /BlueMarble/.test(t), extract: (t) => t.split(/\r?\n/).filter((l) => /BlueMarble|Blue Marble/.test(l)).slice(0, 40).join('\n') },
+    { id: 'gibs-api-docs-home', area: 'tierra-natural', url: 'https://nasa-gibs.github.io/gibs-api-docs/', expect: (t) => /GIBS/.test(t), extract: (t) => t.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 3000) },
     { id: 'horizons-rotation-mercury', area: 'rotacion', url: "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&QUANTITIES='14,17,13'&ANG_FORMAT='DEG'&CSV_FORMAT='YES'&TLIST_TYPE='JD'&TLIST='2415020.5 2433282.5 2451545.0 2461000.5 2470000.5 2488069.5'&COMMAND='199'", full: true, expect: (t) => /\$\$SOE/.test(t) && /\$\$EOE/.test(t) },
     { id: 'horizons-rotation-venus', area: 'rotacion', url: "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&QUANTITIES='14,17,13'&ANG_FORMAT='DEG'&CSV_FORMAT='YES'&TLIST_TYPE='JD'&TLIST='2415020.5 2433282.5 2451545.0 2461000.5 2470000.5 2488069.5'&COMMAND='299'", full: true, expect: (t) => /\$\$SOE/.test(t) && /\$\$EOE/.test(t) },
     { id: 'horizons-rotation-mars', area: 'rotacion', url: "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&QUANTITIES='14,17,13'&ANG_FORMAT='DEG'&CSV_FORMAT='YES'&TLIST_TYPE='JD'&TLIST='2415020.5 2433282.5 2451545.0 2461000.5 2470000.5 2488069.5'&COMMAND='499'", full: true, expect: (t) => /\$\$SOE/.test(t) && /\$\$EOE/.test(t) },
@@ -119,7 +124,7 @@ const probe = async (t) => {
         });
         const buf = t.image ? Buffer.from(await res.arrayBuffer()) : null;
         const text = t.image ? '' : await res.text();
-        if (!t.image) saveSample(t, text);
+        if (!t.image) saveSample(t, t.extract ? t.extract(text) : text);
         const acao = res.headers.get('access-control-allow-origin');
         out.status = res.status;
         out.ok = res.ok;
