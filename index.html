@@ -1482,8 +1482,18 @@ async function labelsUpdate() {
 // Sin mapa politico a la vista (de lejos, ocultas, o sin datos), y para una epoca en que la costa de hoy sigue valiendo, el planeta se ve
 // como es: color y relieve de la imagen de NASA (Blue Marble con relieve y batimetria). Con el detalle de OpenStreetMap manda el mapa vectorial.
 const NAT = { on: false, failed: false, errors: 0, applied: false };
+// Con el mapa politico en camino (se esta descargando y, al llegar, se dibujara a este zoom) la imagen de NASA no se enciende: se bajaria
+// (decenas de teselas) para apagarla 0,3-2 s despues. Mientras tanto se ve la tierra vectorial del mapa base, que no cuesta nada.
+function bordersExpected() {
+    if (BR.off || state.bordersError) return false;
+    const ybp = state.ybp; const ne = usesNE(ybp);
+    if (!ne && ybp > CFG.bordersMaxYbp) return false;
+    if (!ne && state.polities && !pickSnapshot(ybp)) return false;
+    return map.getZoom() >= (ne ? BORDER_MIN_ZOOM_NE : BORDER_MIN_ZOOM) - (BR.near ? BORDER_HYST : 0);
+}
 function naturalWanted() {
     if (NAT.failed || !state.land || state.ybp > NATURAL_MAX_YBP || DETAIL.shown) return false;
+    if (state.bordersLoading && bordersExpected()) return false;
     return !(state.borders && state.borders.data && !BR.cut);
 }
 function naturalView() {
@@ -1601,8 +1611,9 @@ function scheduleBorders(immediate) {
         runBorders();
         return;
     }
+    state.bordersLoading = true;   // antes de quitar las fronteras viejas: asi la imagen de NASA no se enciende para apagarse enseguida
     if (state.borders) applyBorders(null);
-    state.bordersLoading = true;
+    naturalView();
     bordersTimer = setTimeout(runBorders, immediate ? 0 : CFG.bordersDebounceMs);
 }
 
@@ -1621,6 +1632,7 @@ async function runBorders() {
         applyBorders(null);
     }
     state.bordersLoading = false;
+    naturalView();   // si no llegaron fronteras (error, sin datos), la imagen que se retuvo vuelve
     if (currentFocus) { const f = currentFocus; currentFocus = null; focusPolity(f); }
     renderStatus();
     prefetchNeighbours(state.borders);
