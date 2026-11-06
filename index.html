@@ -199,6 +199,7 @@
 
     <div id="top-right">
         <button class="btn" id="btn-borders" type="button" aria-pressed="false" hidden data-i18n="borders.button"></button>
+        <button class="btn" id="btn-center" type="button" aria-pressed="false" data-i18n="center.button"></button>
         <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
         <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
         <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
@@ -348,6 +349,7 @@ const parsePrefs = (raw) => {
     if (Array.isArray(p.c) && p.c.length === 2 && p.c.every((n) => typeof n === 'number' && Number.isFinite(n)) && Math.abs(p.c[0]) <= 180 && Math.abs(p.c[1]) <= 85) out.c = [p.c[0], p.c[1]];
     if (typeof p.z === 'number' && p.z >= 0 && p.z <= 22) out.z = p.z;
     if (p.sp === 0 || p.sp === 1) out.sp = p.sp === 1;
+    if (p.cc === 0 || p.cc === 1) out.cc = p.cc === 1;   // centrar al hacer clic
     if (p.bh === 0 || p.bh === 1) out.bh = p.bh === 1;   // fronteras historicas ocultas por el usuario (de cerca)
     if (typeof p.ks === 'string' && /^[0-9A-Za-z]{1,5}$/.test(p.ks)) out.ks = p.ks;   // paso de las flechas (id; se valida al usarlo)
     if (Number.isInteger(p.vf) && p.vf >= 0 && p.vf <= 127) out.vf = p.vf;   // filtros de verificacion de sucesos (mascara de bits)
@@ -363,7 +365,7 @@ const readPrefs = () => {
 const prefs = readPrefs();
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -445,6 +447,7 @@ const i18n = {
         borders: {
             button: 'Fronteras', tip: 'Muestra u oculta las fronteras históricas (de cerca). Es una aproximación: sus polígonos son toscos.'
         },
+        center: { button: 'Centrar', tip: 'Centrar al hacer clic: un clic sobre un elemento del mapa lleva el centro hasta ese punto (el doble clic siempre centra)' },
         star: {
             hip: 'Hipparcos', mag: 'Magnitud aparente (V)', bv: 'Índice de color B−V', plx: 'Paralaje (hoy)', dist: 'Distancia (hoy)', ly: '{n} años luz',
             ra: 'Ascensión recta (de la fecha)', dec: 'Declinación (de la fecha)',
@@ -556,6 +559,7 @@ const i18n = {
         borders: {
             button: 'Borders', tip: 'Shows or hides the historical borders (when zoomed in). An approximation: their polygons are coarse.'
         },
+        center: { button: 'Centre', tip: 'Centre on click: a click on a map element moves the centre to that point (a double click always centres)' },
         star: {
             hip: 'Hipparcos', mag: 'Apparent magnitude (V)', bv: 'Colour index B−V', plx: 'Parallax (today)', dist: 'Distance (today)', ly: '{n} light-years',
             ra: 'Right ascension (of date)', dec: 'Declination (of date)',
@@ -674,6 +678,8 @@ function showInfo(title, rows) {
     });
     $('info').style.display = 'block';
 }
+// Un punto de pantalla fuera del disco de la Tierra es cielo, no mapa (MapLibre desproyecta ahi a lng/lat falsos)
+function pointInSky(x, y) { return Boolean(space.earth && Math.hypot(x - space.earth.x, y - space.earth.y) > space.earth.r); }
 function showStar(i) {
     const S = space.stars; if (!S || i < 0 || i >= S.cat.n) return;
     const cat = S.cat; const hip = cat.hip[i]; const nm = cat.names && cat.names[hip];
@@ -869,6 +875,7 @@ mapReady.then(() => {
     // Franja entre un poligono de frontera demasiado simplificado y la costa real (ver gapDraw): imagen georreferenciada por sus cuatro esquinas.
     map.addSource('gap', { type: 'image', url: GAP_BLANK, coordinates: [[-1, 1], [1, 1], [1, -1], [-1, -1]] });
     map.addLayer({ id: 'gap-raster', type: 'raster', source: 'gap', layout: { visibility: 'none' }, paint: { 'raster-opacity': 1, 'raster-fade-duration': 0, 'raster-resampling': 'linear' } }, 'borders-line');
+    map.addLayer({ id: 'borders-hover', type: 'line', source: 'borders-inner', filter: ['==', ['get', 'key'], '\u0000'], paint: { 'line-color': '#ffb300', 'line-width': 2.4, 'line-opacity': 0.95 } });
     map.addLayer({ id: 'borders-hl', type: 'line', source: 'borders-inner', filter: ['==', ['get', 'key'], '\u0000'], paint: { 'line-color': '#e53935', 'line-width': 3 } });
     map.addLayer({ id: 'live-points', type: 'circle', source: 'live', paint: { 'circle-radius': 6, 'circle-color': '#e53935', 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff' } });
     map.addSource('night', { type: 'geojson', data: emptyFC() });
@@ -1244,7 +1251,8 @@ function bordersView() {
     const cut = hist && (BR.far || BR.off);
     if (cut === BR.cut && BR.lastApplied) return;
     BR.cut = cut; BR.lastApplied = true;
-    ['borders-fill', 'borders-line', 'borders-hl'].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', cut ? 'none' : 'visible'); });
+    ['borders-fill', 'borders-line', 'borders-hl', 'borders-hover'].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', cut ? 'none' : 'visible'); });
+    setHoverKey(null);
     if (cut) gapHide(); else gapRefresh();
     renderStatus();
 }
@@ -1509,16 +1517,38 @@ function showLive(p) {
     showInfo(p.name || t('liveTitle'), rows);
 }
 
+// Remarcar al pasar: el contorno del pais bajo el cursor (solo sus fronteras terrestres, como el resaltado de la seleccion)
+let hoverKey = null; let hoverRaf = 0; let hoverPt = null;
+function setHoverKey(key) {
+    if (key === hoverKey) return;
+    hoverKey = key;
+    if (map.getLayer('borders-hover')) map.setFilter('borders-hover', ['==', ['get', 'key'], key || '\u0000']);
+}
+function hoverUpdate() {
+    hoverRaf = 0;
+    const e = hoverPt; if (!e || !map.getLayer('borders-fill') || BR.cut || pointInSky(e.x, e.y)) { setHoverKey(null); return; }
+    const hit = map.queryRenderedFeatures(e, { layers: ['events-circle', 'live-points', 'borders-fill'] })[0];
+    const key = hit && hit.layer.id === 'borders-fill' ? polityKey(hit.properties) : null;
+    setHoverKey(key && key !== GAP.sel ? key : null);
+}
+map.on('mousemove', (e) => { hoverPt = e.point; if (!hoverRaf) hoverRaf = requestAnimationFrame(hoverUpdate); });
+map.getCanvas().addEventListener('mouseleave', () => { hoverPt = null; setHoverKey(null); });
+map.on('dragstart', () => { hoverPt = null; setHoverKey(null); });
+// Centrar al hacer clic (ajuste): un clic sobre un elemento del mapa lleva el centro a ese punto, sin cambiar el zoom
+const CENTER = { on: prefs.cc === true };
+$('btn-center').setAttribute('aria-pressed', String(CENTER.on));
+$('btn-center').addEventListener('click', () => { CENTER.on = !CENTER.on; $('btn-center').setAttribute('aria-pressed', String(CENTER.on)); savePrefs({ cc: CENTER.on }); });
 map.on('click', (e) => {
     if (!map.getLayer('borders-fill')) return;
     const hit = map.queryRenderedFeatures(e.point, { layers: ['events-circle', 'live-points', 'borders-fill', 'land-fill', 'margin-fill'] })[0];
-    clearHighlight();
+    clearHighlight(); setHoverKey(null);
     if (!hit) { hideInfo(); return; }
     if (hit.layer.id === 'events-circle') { const f = events.byId.get(hit.properties.id); if (f) showEvent(f); }
     else if (hit.layer.id === 'live-points') showLive(hit.properties);
     else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { setHighlightKey(polityKey(hit.properties)); showPolity(hit.properties); }
     else if (hit.layer.id === 'borders-fill') showPolity(hit.properties);
     else showCoast(hit.properties);
+    if (CENTER.on) map.easeTo({ center: e.lngLat, duration: 600 });
 });
 ['events-circle', 'live-points', 'borders-fill'].forEach((id) => {
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
@@ -1626,6 +1656,7 @@ function applyStrings() {
     skyTexts();
     $('btn-space').title = t('space.tip');
     $('btn-borders').title = t('borders.tip');
+    $('btn-center').title = $('btn-center').ariaLabel = t('center.tip');
     keyStepTexts();
     zoomControl.texts();
     solarView.texts();
@@ -2027,7 +2058,7 @@ function flyToBody(id) {
 {
     const box = map.getContainer(); let down = null;
     const local = (e) => { const r = box.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-    const inSky = (x, y) => Boolean(space.earth && Math.hypot(x - space.earth.x, y - space.earth.y) > space.earth.r);   // fuera del disco de la Tierra
+    const inSky = pointInSky;
     // La estrella visible mas brillante a menos de ~7 px (solo en el cielo, nunca delante del globo)
     const starAt = (x, y) => {
         const S = space.stars; if (!S || !inSky(x, y)) return -1;

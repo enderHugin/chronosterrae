@@ -208,6 +208,11 @@ check('cookie de preferencias: bh (fronteras ocultas) acepta 0/1 y rechaza lo de
     return ok && bad;
 });
 
+check('cookie de preferencias: cc (centrar al clic) acepta 0/1 y rechaza lo demas', () => {
+    const { parsePrefs } = prefsFns();
+    return parsePrefs(JSON.stringify({ cc: 1 })).cc === true && parsePrefs(JSON.stringify({ cc: 0 })).cc === false && [2, '1', true, null, {}].every((v) => !('cc' in parsePrefs(JSON.stringify({ cc: v }))));
+});
+
 check('cookie de preferencias: un campo malo no invalida los buenos', () => {
     const { parsePrefs } = prefsFns();
     const r = parsePrefs(JSON.stringify({ lang: 'es', ybp: 'x', z: 2 }));
