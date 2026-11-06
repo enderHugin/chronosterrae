@@ -135,18 +135,31 @@
         return { from: Math.min(a, b), to: Math.max(a, b) };
     }
 
+    // Clases de Wikidata (P31) -> clase de la interfaz. Cada QID sale de las listas «clases-p31» y «clases-intervalo» de la sonda
+    // links-probe del 2026-11-06 (etiquetas y conteos reales); no se añade ninguna de memoria.
+    const CLASS_KINDS = {
+        Q131569: 'treaty', Q625298: 'treaty',
+        Q178561: 'battle', Q1261499: 'battle', Q188055: 'battle',
+        Q198: 'war', Q8465: 'war', Q104212151: 'war', Q645883: 'war', Q831663: 'war', Q467011: 'war',
+        Q10931: 'political', Q124734: 'political', Q45382: 'political', Q273120: 'political',
+        Q7944: 'natural', Q8065: 'natural', Q3241045: 'natural', Q3839081: 'natural',
+        Q3199915: 'violence', Q750215: 'violence', Q2223653: 'violence', Q21480300: 'violence'
+    };
+
     /**
-     * Tipo de suceso deducido SOLO del nombre en ingles (los datos no traen tipo): se rotula como deducido, y «other» cuando no hay pista.
-     * No es una clasificacion de Wikidata.
+     * Clase del suceso. Si la fuente trae clases (`classes`, Wikidata P31) se usa la primera reconocida: source = 'wikidata'. Si no, se DEDUCE del
+     * nombre en ingles (los datos antiguos no traen clase): source = 'name', y la interfaz lo rotula como deducido. Sin pista: 'other'.
      */
-    function classify(name) {
-        const n = norm(name);
-        if (/\b(treaty|peace of|peace treaty|accord|pact|concordat|convention of|edict|armistice|capitulation)\b/.test(n)) return 'treaty';
-        if (/\b(battle|siege|sack of)\b/.test(n)) return 'battle';
-        if (/\b(war|wars|campaign|invasion|conquest|uprising|rebellion|revolt|mutiny)\b/.test(n)) return 'war';
-        if (/\b(revolution|coup|independence|declaration|proclamation|abdication|coronation|partition)\b/.test(n)) return 'political';
-        if (/\b(earthquake|tsunami|eruption|flood|famine|plague|epidemic|pandemic|hurricane|cyclone|meteorite|impact)\b/.test(n)) return 'natural';
-        return 'other';
+    function classify(name, classes) {
+        if (Array.isArray(classes)) for (const c of classes) if (c && CLASS_KINDS[c.id]) return { kind: CLASS_KINDS[c.id], source: 'wikidata' };
+        if (Array.isArray(classes) && classes.length) return { kind: 'other', source: 'wikidata' };   // la fuente la clasifica y no es de las que interesan (deporte, serie...)
+        const n = norm(name); let kind = 'other';
+        if (/\b(treaty|peace of|peace treaty|accord|pact|concordat|convention of|edict|armistice|capitulation)\b/.test(n)) kind = 'treaty';
+        else if (/\b(battle|siege|sack of)\b/.test(n)) kind = 'battle';
+        else if (/\b(war|wars|campaign|invasion|conquest|uprising|rebellion|revolt|mutiny)\b/.test(n)) kind = 'war';
+        else if (/\b(revolution|coup|independence|declaration|proclamation|abdication|coronation|partition)\b/.test(n)) kind = 'political';
+        else if (/\b(earthquake|tsunami|eruption|flood|famine|plague|epidemic|pandemic|hurricane|cyclone|meteorite|impact)\b/.test(n)) kind = 'natural';
+        return { kind, source: 'name' };
     }
 
     /**
@@ -181,10 +194,10 @@
                 hits = patterns.filter((q) => q.re.test(hay)).map((q) => q.p.name);
                 if (hits.length) tier = 'name';
             }
-            const kind = classify(f.properties.name);
+            const cl = classify(f.properties.name, f.properties.classes); const kind = cl.kind;
             // Solo coincidencia de fecha: se exige notoriedad Y una clase deducible; si no, la lista seria todo lo ocurrido (olimpiadas, grandes premios...)
             if (tier === 'time' && (!(f.properties.importance >= minImportance) || kind === 'other')) continue;
-            items.push({ f, tier, polities: hits, years: y, kind });
+            items.push({ f, tier, polities: hits, years: y, kind, kindSource: cl.source });
         }
         items.sort((a, b) => TIERS.indexOf(a.tier) - TIERS.indexOf(b.tier) || (b.f.properties.importance || 0) - (a.f.properties.importance || 0));
         const counts = { documented: 0, place: 0, name: 0, time: 0 };
@@ -196,5 +209,5 @@
     /** Resumen legible del cambio: cuantos estados aparecen, desaparecen o cambian. */
     function summarize(diff) { return { added: diff.added.length, removed: diff.removed.length, changed: diff.changed.length, same: diff.same }; }
 
-    return { sortedYears, nearest, displayWindow, areaKm2, pointInGeometry, byPolity, diffPolities, eventYears, classify, relatedEvents, summarize, TIERS, PRESENT };
+    return { sortedYears, nearest, displayWindow, areaKm2, pointInGeometry, byPolity, diffPolities, eventYears, classify, relatedEvents, summarize, CLASS_KINDS, TIERS, PRESENT };
 });

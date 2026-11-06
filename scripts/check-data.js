@@ -23,6 +23,11 @@ const ybpOf = (jd) => (JD_1950 - jd) / 365.25;
 const yearsOf = (tm) => [1950 - tm.start_ybp, 1950 - tm.end_ybp];   // [inicio, fin] en años
 
 function isoToSpan(iso, cal) {
+    // intervalo ISO 8601 «inicio/fin» (guerras, asedios): de donde empieza el inicio a donde acaba el fin
+    if (typeof iso === 'string' && iso.includes('/')) {
+        const [a, b] = iso.split('/'); const sa = isoToSpan(a, cal); const sb = isoToSpan(b, cal);
+        return sa && sb ? [sa[0], sb[1]] : null;
+    }
     const m = /^(-?\d{4,})(?:-(\d{2}))?(?:-(\d{2}))?/.exec(iso || '');
     if (!m) return null;
     const year = parseInt(m[1], 10);

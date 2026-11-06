@@ -138,6 +138,12 @@ check('wikidata: no entran años sueltos ni asteroides numerados, pero si suceso
     return /a.o/.test(sk('1999', 'event')) && /asteroide/.test(sk('3537 Jürgen', 'discovery')) && /asteroide/.test(sk('(5131) 1990 BG', 'discovery')) && /asteroide/.test(sk('2000 AB1', 'discovery'))
         && sk('1968 Winter Olympics', 'event') === undefined && sk('2001 Mars Odyssey', 'discovery') === undefined && sk('Pluto', 'discovery') === undefined;
 });
+check('wikidata: las coordenadas llegan como QLever las da de verdad, «POINT(lng lat)» en mayusculas con seis decimales (forma medida con la sonda, 2026-11-06)', () => {
+    const r = B.bindingToFeature('event', row({ coord: 'POINT(-75.150000 39.948900)' }), '2026-11-01T00:00:00Z');
+    return r.feature && r.feature.geometry && r.feature.geometry.coordinates[0] === -75.15 && r.feature.geometry.coordinates[1] === 39.9489;
+});
+check('wikidata: una coordenada ilegible o fuera de rango NO se convierte en lugar (se conserva el suceso sin geometria)', () =>
+    ['POINT(abc def)', 'POINT(200 10)', 'POINT(10 95)', 'LINESTRING(1 2, 3 4)', 'POINT(1)'].every((c) => { const r = B.bindingToFeature('event', row({ coord: c }), '2026-11-01T00:00:00Z'); return r.feature && r.feature.geometry === null; }));
 check('wikidata: sin coordenadas el suceso se conserva con geometria nula (fecha sin lugar)', () => {
     const r = B.bindingToFeature('birth', row({}), '2026-11-01T00:00:00Z');
     return r.feature.geometry === null && validate(r.feature) === true;
@@ -231,6 +237,77 @@ const mk = (id, imp, lng, lat, jd, precision = 'day', extra = {}) => ({
     });
     check('avisos: la cuenta atras se escribe en horas, minutos o segundos', () => T.formatCountdown(3725, 'es') === '1 h 02 min' && T.formatCountdown(252, 'es') === '4 min 12 s' && T.formatCountdown(37, 'en') === '37 s' && T.formatCountdown(-5, 'es') === '0 s');
     check('ficheros: las claves de siglo cubren un rango de años', () => JSON.stringify(T.shardKeys(1799, 1801)) === '["c17","c18"]' && JSON.stringify(T.shardKeys(-300, 150)) === '["c0","c1"]');
+}
+
+/* ---------- Intervalos (guerras) y relaciones: filas con la forma medida por la sonda links-probe (2026-11-06) ---------- */
+{
+    const GREG = 'http://www.wikidata.org/entity/Q1985727'; const JUL = 'http://www.wikidata.org/entity/Q1985786';
+    const E = 'http://www.wikidata.org/entity/';
+    const srow = (o) => ({ item: { value: E + (o.q || 'Q1018969') }, label: { value: o.label === undefined ? 'Siege of Van' : o.label }, sl: { value: '28' },
+        a: { value: o.a || '1915-04-19T00:00:00Z' }, pa: { value: String(o.pa || 11) }, ca: { value: o.ca || GREG },
+        ...(o.b === null ? {} : { b: { value: o.b || '1915-05-17T00:00:00Z' }, pb: { value: String(o.pb || 11) }, cb: { value: o.cb || GREG } }), ...(o.coord ? { coord: { value: o.coord } } : {}) });
+    const conv = (rows) => B.spanRowsToFeatures(rows, '2026-11-06T00:00:00Z');
+    check('intervalo: un asedio con inicio y fin al dia es UN registro que cumple el esquema, con iso «inicio/fin» y tramo que va del primer al ultimo dia', () => {
+        const r = conv([srow({})]); const f = r.features[0];
+        if (!f) throw new Error('no convirtio ' + JSON.stringify(r.skipped));
+        if (!validate(f)) throw new Error(reasons(f));
+        const tm = f.properties.time;
+        return tm.iso === '1915-04-19/1915-05-17' && tm.precision === 'day' && Math.abs((tm.start_ybp - tm.end_ybp) * 365.25 - 28) < 0.01 && f.properties.id === 'wd.q1018969.event';
+    });
+    check('intervalo: el iso «inicio/fin» pasa la comprobacion de coherencia de check-data (iso y años-antes-del-presente coinciden)', () => {
+        const f = conv([srow({})]).features[0]; const g = conv([srow({ q: 'Q2', a: '1609-01-01T00:00:00Z', pa: 9, b: '1618-01-01T00:00:00Z', pb: 9 })]).features[0];
+        return D.analyze([{ feature: f, file: null }, { feature: g, file: null }], 2026).hard.length === 0 ? true : JSON.stringify(D.analyze([{ feature: f, file: null }, { feature: g, file: null }], 2026).hard);
+    });
+    check('intervalo: un elemento con dos fechas de inicio (1605 y 1609) da UN registro que abarca 1605-1618 y lo declara; no elige una al azar', () => {
+        const r = conv([srow({ q: 'Q1044829', label: 'Polish–Muscovite War', a: '1609-01-01T00:00:00Z', pa: 9, b: '1618-01-01T00:00:00Z', pb: 9 }), srow({ q: 'Q1044829', label: 'Polish–Muscovite War', a: '1605-01-01T00:00:00Z', pa: 9, b: '1618-01-01T00:00:00Z', pb: 9 })]);
+        const f = r.features[0]; const tm = f.properties.time;
+        return r.features.length === 1 && validate(f) && tm.iso === '1605/1618' && tm.precision === 'year' && /varias fechas/.test(f.properties.sources[0].citation) ? true : JSON.stringify(f);
+    });
+    check('intervalo: el fin es anterior al inicio -> descartado con ese motivo (no roto)', () => { const r = conv([srow({ a: '1915-05-17T00:00:00Z', b: '1915-04-19T00:00:00Z' })]); return r.features.length === 0 && r.skipped['el fin es anterior al inicio'] === 1 ? true : JSON.stringify(r); });
+    check('intervalo: sin fin en la fila -> descartado como fecha ilegible, no se inventa un fin', () => { const r = conv([srow({ b: null })]); return r.features.length === 0 && /ilegible/.test(Object.keys(r.skipped).join()) ? true : JSON.stringify(r); });
+    check('intervalo: calendarios distintos en inicio y fin -> descartado con ese motivo', () => { const r = conv([srow({ cb: JUL })]); return r.features.length === 0 && r.skipped['calendarios distintos en inicio y fin'] === 1 ? true : JSON.stringify(r); });
+    check('intervalo: calendario desconocido, etiqueta ausente o que es un QID, id que no es Q<n>, anterior al año 1 -> descartados cada uno por su motivo', () => {
+        const r = conv([srow({ ca: E + 'Q9', cb: E + 'Q9' }), srow({ q: 'Q3', label: 'Q123' }), { ...srow({ q: 'Q4' }), item: { value: E + 'xyz' } }, srow({ q: 'Q5', a: '-0100-01-01T00:00:00Z', b: '-0050-01-01T00:00:00Z' })]);
+        return r.features.length === 0 && r.skipped['calendario desconocido'] === 1 && r.skipped['sin etiqueta'] === 1 && r.skipped['sin identificador de Wikidata'] === 1 && r.skipped['anterior al año 1 (numeracion sin calibrar)'] === 1 ? true : JSON.stringify(r.skipped);
+    });
+    check('intervalo: las coordenadas POINT(...) de la fila pasan a geometria', () => { const f = conv([srow({ coord: 'POINT(43.38 38.5)' })]).features[0]; return f.geometry && f.geometry.coordinates[0] === 43.38 && validate(f); });
+    check('consulta de intervalos: solo clases de la lista medida, fin obligatorio (P582 no es OPTIONAL) y se excluyen los que ya tienen momento (P585)', () => {
+        const q = B.spanQuery(); const vals = (/VALUES \?cls \{([^}]*)\}/.exec(q) || [])[1] || '';
+        const ids = vals.match(/Q\d+/g) || [];
+        return ids.length === Object.keys(B.SPAN_CLASSES).length && ids.every((x) => x in B.SPAN_CLASSES) && !/OPTIONAL \{ \?item p:P582/.test(q) && /FILTER NOT EXISTS \{ \?item wdt:P585/.test(q) && /P582/.test(q);
+    });
+    check('las clases de intervalo son las verificadas en la sonda (guerra, batalla, guerra civil, asedio, operacion, rebelion, campaña, serie de guerras, brote)', () => ['Q198', 'Q178561', 'Q8465', 'Q188055', 'Q645883', 'Q124734', 'Q831663', 'Q104212151', 'Q3241045'].every((q) => q in B.SPAN_CLASSES) && Object.keys(B.SPAN_CLASSES).length === 9);
+
+    // relaciones
+    const rrow = (q, o, label, coord) => ({ item: { value: E + q }, o: { value: E + o }, ...(label ? { oLabel: { value: label } } : {}), ...(coord ? { coord: { value: coord } } : {}) });
+    const base = (id, geometry) => ({ type: 'Feature', geometry: geometry || null, properties: { id, name: 'Evento', layer: 'event', kind: 'event', importance: 0.7, evidence: 'documentary', time: { start_ybp: 100, end_ybp: 100, uncertainty_yr: 0.5, precision: 'year', iso: '1850', calendar: 'gregorian' }, scale: { min_m: 100, max_m: 2e7 }, sources: [{ kind: 'wikidata', id: id.split('.')[1].toUpperCase(), citation: 'Wikidata' }], status: 'raw' } });
+    check('relaciones: se agrupan por elemento, sin repetidos, con tope, y se ignora lo que no es Q<n>', () => {
+        const m = B.relationRows([rrow('Q1', 'Q2', 'a'), rrow('Q1', 'Q2', 'a'), rrow('Q1', 'Q3'), rrow('Q1', 'Q4', 'd'), rrow('Q1', 'xyz', 'x'), rrow('bad', 'Q9')], 3);
+        return m.get('Q1').length === 3 && m.get('Q1')[0].id === 'Q2' && m.get('Q1')[1].label === undefined && !m.has('bad');
+    });
+    check('enriquecer: clase, causa, efecto y «parte de» se añaden con su fuente y el registro sigue cumpliendo el esquema', () => {
+        const f = base('wd.q10.event');
+        const rel = { classes: B.relationRows([rrow('Q10', 'Q178561', 'battle')], 6), cause: B.relationRows([rrow('Q10', 'Q77', 'a dam failure')], 6), effect: B.relationRows([rrow('Q10', 'Q78', 'a ceasefire')], 8), part_of: B.relationRows([rrow('Q10', 'Q79')], 4) };
+        const out = B.enrichEvents([f], rel); const p = f.properties;
+        if (!validate(f)) throw new Error(reasons(f));
+        return out.classes === 1 && p.classes[0].id === 'Q178561' && p.links.length === 3 && p.links.map((l) => l.rel).join() === 'cause,effect,part_of' && p.links.every((l) => l.source.kind === 'wikidata' && /P828|P1542|P361/.test(l.source.citation)) && p.links[2].target.label === undefined ? true : JSON.stringify(p);
+    });
+    check('enriquecer: lo que Wikidata no tiene NO aparece (sin relaciones no hay `links` ni `classes`)', () => { const f = base('wd.q11.event'); const out = B.enrichEvents([f], { classes: new Map(), cause: new Map() }); return !('links' in f.properties) && !('classes' in f.properties) && out.links === 0; });
+    check('enriquecer: un lugar con UNA coordenada pone geometria y lo declara en la cita; con DOS lugares distintos NO elige uno y se cuenta', () => {
+        const a = base('wd.q12.event'); const b = base('wd.q13.event');
+        const rel = { place: B.relationRows([rrow('Q12', 'Q100', null, 'POINT(-71.057778 42.360278)'), rrow('Q13', 'Q100', null, 'POINT(-71.057778 42.360278)'), rrow('Q13', 'Q101', null, 'POINT(2.35 48.85)')], 50) };
+        const out = B.enrichEvents([a, b], rel);
+        return a.geometry && a.geometry.coordinates[0] === -71.05778 && /P276\/P625/.test(a.properties.sources[0].citation) && b.geometry === null && out.placed === 1 && out.ambiguousPlace === 1 && validate(a) ? true : JSON.stringify({ a: a.geometry, b: b.geometry, out });
+    });
+    check('enriquecer: las coordenadas propias del suceso NO se pisan con las de su lugar', () => {
+        const f = base('wd.q14.event', { type: 'Point', coordinates: [1, 2] });
+        B.enrichEvents([f], { place: B.relationRows([rrow('Q14', 'Q100', null, 'POINT(30 40)')], 50) }); return f.geometry.coordinates[0] === 1;
+    });
+    check('enriquecer: solo los sucesos (kind event); un nacimiento no recibe relaciones de otro elemento', () => {
+        const f = base('wd.q15.birth'); f.properties.kind = 'birth'; B.enrichEvents([f], { cause: B.relationRows([rrow('Q15', 'Q9', 'x')], 6) }); return !('links' in f.properties);
+    });
+    check('DISEÑO: cada consulta de relacion pide UNA propiedad (nunca varias con OPTIONAL: la sonda midio 86 344 filas y 20 s para 300 elementos)', () =>
+        Object.entries(B.RELATIONS).every(([k, def]) => { const q = def.query(); const props = new Set(q.match(/wdt:P(?:31|828|1542|361|276)\b/g) || []); return props.size === 1 && !/OPTIONAL \{ \?item wdt:/.test(q); }));
 }
 
 console.log('\nPASS ' + passes.length);

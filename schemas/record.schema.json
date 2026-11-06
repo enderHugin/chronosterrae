@@ -157,6 +157,14 @@
             "gbif_id": { "type": "integer" }
           }
         },
+        "classes": {
+          "type": "array",
+          "description": "Clases del suceso tal como las declara la fuente (Wikidata P31: «battle», «treaty»...). Sirven para clasificar por dato y no por el nombre.",
+          "items": {
+            "type": "object", "required": ["id"], "additionalProperties": false,
+            "properties": { "id": { "type": "string", "pattern": "^Q\\d+$" }, "label": { "type": "string" } }
+          }
+        },
         "links": {
           "type": "array",
           "description": "Vinculos DOCUMENTADOS con otros sucesos, cada uno con su fuente. Solo cause y effect se presentan como causa o efecto; part_of (parte de) y participant (participante) son contexto. Una coincidencia en fecha o nombre NO es un vinculo y no va aqui. Vacio hasta que se recolecten de la fuente (p. ej. Wikidata P828 «tiene causa», P1542 «tiene efecto»).",

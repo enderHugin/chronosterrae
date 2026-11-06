@@ -49,8 +49,17 @@ check('umbral: un cambio de superficie pequeño (<10 % y <5000 km²) no cuenta c
 check('RECHAZOS: coleccion nula o sin features -> BAD_COLLECTION; intervalo invertido -> BAD_INTERVAL', () =>
     rejects(() => C.diffPolities(null, B), 'BAD_COLLECTION') === true && rejects(() => C.diffPolities(A, {}), 'BAD_COLLECTION') === true && rejects(() => C.relatedEvents([], D, 1800, 1700), 'BAD_INTERVAL') === true && rejects(() => C.relatedEvents([], D, NaN, 1700), 'BAD_INTERVAL') === true);
 
-check('classify: por el nombre en ingles; lo que no da pista es «other» (no se adivina)', () =>
-    C.classify('Treaty of Ghent') === 'treaty' && C.classify('Battle of Boyacá') === 'battle' && C.classify('Swabian War') === 'war' && C.classify('French Revolution') === 'political' && C.classify('2011 Tarlay earthquake') === 'natural' && C.classify('1928 Summer Olympics medal table') === 'other');
+check('classify sin clases de la fuente: se deduce del nombre en ingles (source = name); lo que no da pista es «other» (no se adivina)', () => {
+    const k = (n) => C.classify(n);
+    return k('Treaty of Ghent').kind === 'treaty' && k('Battle of Boyacá').kind === 'battle' && k('Swabian War').kind === 'war' && k('French Revolution').kind === 'political' && k('2011 Tarlay earthquake').kind === 'natural' && k('1928 Summer Olympics medal table').kind === 'other' && k('Treaty of Ghent').source === 'name';
+});
+check('classify con clases de Wikidata: manda la clase de la fuente (source = wikidata), aunque el nombre diga otra cosa', () => {
+    const r = C.classify('Peace of Nothing', [{ id: 'Q178561', label: 'battle' }]); return r.kind === 'battle' && r.source === 'wikidata';
+});
+check('classify: si la fuente clasifica el suceso con una clase que no interesa (deporte, serie...), es «other» y NO se recurre al nombre', () => {
+    const r = C.classify('Battle of the Sexes (tennis)', [{ id: 'Q47345468', label: 'tennis tournament edition' }]); return r.kind === 'other' && r.source === 'wikidata';
+});
+check('toda clase de CLASS_KINDS tiene un QID bien formado y un valor conocido', () => Object.entries(C.CLASS_KINDS).every(([q, k]) => /^Q\d+$/.test(q) && ['treaty', 'battle', 'war', 'political', 'natural', 'violence'].includes(k)));
 
 const evs = [
     ev('a', 'Guerra de Polonia', 1795),                                   // nombre contiene «Polonia» y cae dentro
@@ -71,6 +80,12 @@ const ids = R.items.map((i) => i.f.properties.id);
 check('sucesos: se incluyen los del intervalo (incluidos los que solo lo rozan) y se excluyen los de fuera', () => !ids.includes('e') && !ids.includes('f') && ids.includes('j') ? true : ids.join());
 check('nivel exacto de cada suceso', () => { const t = Object.fromEntries(R.items.map((i) => [i.f.properties.id, i.tier])); return t.h === 'documented' && t.g === 'place' && t.a === 'name' && t.b === 'name' && t.c === 'time' && t.j === 'time' ? true : JSON.stringify(t); });
 check('solo cuentan los registros de clase `event`: una publicacion que nombra a Polonia no sale; un suceso notorio sin clase deducible (Grand Prix) tampoco sale solo por la fecha', () => !ids.includes('l') && !ids.includes('k'));
+check('con clases de la fuente, un suceso solo-fecha sin clase historica (aunque el nombre diga «Battle») no entra y uno con clase historica si', () => {
+    const sport = ev('s1x', 'Battle of the Sexes', 1790, { importance: 0.9 }); sport.properties.classes = [{ id: 'Q47345468' }];
+    const war = ev('s2x', 'Algo sin pista', 1790, { importance: 0.9 }); war.properties.classes = [{ id: 'Q198' }];
+    const r = C.relatedEvents([sport, war], D, 1783, 1800); const t = r.items.map((i) => i.f.properties.id + ':' + i.kindSource);
+    return t.join() === 's2x:wikidata' ? true : t.join();
+});
 check('«part_of» NO cuenta como vinculo causal, y un suceso poco notorio sin otra relacion no entra', () => !ids.includes('i') && !ids.includes('d'));
 check('orden: documentado, lugar, nombre, tiempo', () => { const order = R.items.map((i) => C.TIERS.indexOf(i.tier)); return order.every((v, k) => k === 0 || order[k - 1] <= v) ? true : order.join(); });
 check('el suceso por lugar declara el territorio que cambio; el de nombre, el estado', () => R.items.find((i) => i.f.properties.id === 'g').polities.includes('Polonia') && R.items.find((i) => i.f.properties.id === 'a').polities.join() === 'Polonia');

@@ -470,8 +470,8 @@ const i18n = {
                 documented: 'La fuente enlaza este suceso con una causa o un efecto.', place: 'Coincidencia de lugar y fecha: no prueba que sea la causa.',
                 name: 'Coincidencia de nombre y fecha: no prueba que sea la causa. Solo detecta el nombre exacto del estado.', time: 'Ocurrieron en el intervalo, sin relación comprobada con este cambio.'
             },
-            more: '… y {n} más sin mostrar', relation: 'Relación', polities: 'Estados', deducedKind: 'Clase (deducida del nombre, no de la fuente)', precision: 'Precisión de la fecha', unc: '±{u} años', uncDays: '±{u} días',
-            kinds: { treaty: 'Tratado o pacto', battle: 'Batalla o asedio', war: 'Guerra o levantamiento', political: 'Hecho político', natural: 'Fenómeno natural', other: 'Sin clase deducible' },
+            more: '… y {n} más sin mostrar', relation: 'Relación', polities: 'Estados', deducedKind: 'Clase (deducida del nombre, no de la fuente)', sourcedKind: 'Clase (según la fuente)', precision: 'Precisión de la fecha', unc: '±{u} años', uncDays: '±{u} días',
+            kinds: { treaty: 'Tratado o pacto', battle: 'Batalla o asedio', war: 'Guerra, campaña u operación', political: 'Revolución, rebelión o hecho político', violence: 'Matanza o atentado', natural: 'Fenómeno natural', other: 'Sin clase deducible' },
             rel: { cause: 'Causa', effect: 'Efecto', part_of: 'Parte de', participant: 'Participante' },
             open: 'Abrir ficha y centrar',
             layersTitle: 'Relieve y modelo de placas',
@@ -625,8 +625,8 @@ const i18n = {
                 documented: 'The source links this event to a cause or an effect.', place: 'Same place and date: this does not prove it is the cause.',
                 name: 'Same name and date: this does not prove it is the cause. Only the exact state name is detected.', time: 'They happened in the interval, with no verified relation to this change.'
             },
-            more: '… and {n} more not shown', relation: 'Relation', polities: 'States', deducedKind: 'Class (deduced from the name, not from the source)', precision: 'Date precision', unc: '±{u} years', uncDays: '±{u} days',
-            kinds: { treaty: 'Treaty or pact', battle: 'Battle or siege', war: 'War or uprising', political: 'Political event', natural: 'Natural phenomenon', other: 'No class can be deduced' },
+            more: '… and {n} more not shown', relation: 'Relation', polities: 'States', deducedKind: 'Class (deduced from the name, not from the source)', sourcedKind: 'Class (according to the source)', precision: 'Date precision', unc: '±{u} years', uncDays: '±{u} days',
+            kinds: { treaty: 'Treaty or pact', battle: 'Battle or siege', war: 'War, campaign or operation', political: 'Revolution, rebellion or political event', violence: 'Massacre or attack', natural: 'Natural phenomenon', other: 'No class can be deduced' },
             rel: { cause: 'Cause', effect: 'Effect', part_of: 'Part of', participant: 'Participant' },
             open: 'Open record and centre',
             layersTitle: 'Relief and plate model',
@@ -2924,7 +2924,7 @@ function chgEventItem(it) {
     const body = el('div', { class: 'chg-ev-body' });
     const rows = [{ label: t('changes.relation'), value: t('changes.tierNote.' + it.tier) }];
     if (it.polities.length) rows.push({ label: t('changes.polities'), value: it.polities.join(', ') });
-    rows.push({ label: t('changes.deducedKind'), value: t('changes.kinds.' + it.kind) });
+    rows.push({ label: t(it.kindSource === 'wikidata' ? 'changes.sourcedKind' : 'changes.deducedKind'), value: t('changes.kinds.' + it.kind) + (Array.isArray(p.classes) && p.classes.length ? ' (' + p.classes.map((c) => c.label || c.id).join(', ') + ')' : '') });
     const u = p.time.uncertainty_yr;
     rows.push({ label: t('changes.precision'), value: p.time.precision + ' · ' + (u < 1 ? fmt('changes.uncDays', { u: nf().format(Math.round(u * 365.25 * 10) / 10) }) : fmt('changes.unc', { u: nf().format(u) })) });
     rows.push(...eventRows(f));

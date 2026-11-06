@@ -91,6 +91,7 @@ function queryAll(kind, withRank = true) {
 /* Conversion de una fila de resultados a registro                      */
 /* ------------------------------------------------------------------ */
 const CAL = { Q1985727: 'gregorian', Q1985786: 'julian' };
+const COORD_RE = /^POINT\s*\(\s*(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s*\)$/i;
 const bindingValue = (b, k) => (b[k] ? b[k].value : undefined);
 
 function ybpOf(jd) { return (JD_1950 - jd) / 365.25; }
@@ -129,7 +130,9 @@ function bindingToFeature(kind, b, retrievedAt) {
         }
     } catch (e) { return { skip: 'fecha invalida: ' + e.message }; }
     let geometry = null;
-    const c = /^Point\((-?[\d.]+) (-?[\d.]+)\)$/.exec(bindingValue(b, 'coord') || '');
+    // QLever da las coordenadas como «POINT(lng lat)» en MAYUSCULAS con seis decimales (sonda links-probe del 2026-11-06, geo:wktLiteral);
+    // la version anterior esperaba «Point(...)» y descartaba TODAS: los 27 421 sucesos salieron sin lugar.
+    const c = COORD_RE.exec(bindingValue(b, 'coord') || '');
     if (c) {
         const lng = parseFloat(c[1]); const lat = parseFloat(c[2]);
         if (Math.abs(lng) <= 180 && Math.abs(lat) <= 90) geometry = { type: 'Point', coordinates: [Math.round(lng * 1e5) / 1e5, Math.round(lat * 1e5) / 1e5] };
@@ -154,6 +157,166 @@ function bindingToFeature(kind, b, retrievedAt) {
         },
         jd: (start + end) / 2, sitelinks: sl
     };
+}
+
+/* ------------------------------------------------------------------ */
+/* Sucesos con inicio y fin (guerras, batallas, asedios...)             */
+/* ------------------------------------------------------------------ */
+// Wikidata da las guerras como intervalo (P580 inicio, P582 fin), no como «momento» (P585): la sonda links-probe del 2026-11-06 midio 3 784
+// sucesos notorios asi, que este build ignoraba. P580 lo usan tambien series de TV, temporadas y monedas, asi que se limita a las clases
+// de la lista «clases-intervalo» de esa sonda que son sucesos historicos. Sin fin (P582) no se inventa uno: se descarta y se cuenta.
+const SPAN_CLASSES = { Q198: 'war', Q178561: 'battle', Q8465: 'civil war', Q188055: 'siege', Q645883: 'military operation', Q124734: 'rebellion', Q831663: 'military campaign', Q104212151: 'series of wars', Q3241045: 'disease outbreak' };
+const SPAN_MIN_SL = 25; const SPAN_NORM = 2.2;
+
+function spanQuery() {
+    return PREFIXES + `SELECT DISTINCT ?item ?label ?es ?sl ?a ?pa ?ca ?b ?pb ?cb ?coord WHERE {
+  VALUES ?cls { ${Object.keys(SPAN_CLASSES).map((q) => 'wd:' + q).join(' ')} }
+  ?item wdt:P31 ?cls ; wikibase:sitelinks ?sl . FILTER(?sl >= ${SPAN_MIN_SL})
+  FILTER NOT EXISTS { ?item wdt:P585 ?w }
+  ?item p:P580 ?s1 . ?s1 psv:P580 ?v1 . ?v1 wikibase:timeValue ?a ; wikibase:timePrecision ?pa ; wikibase:timeCalendarModel ?ca .
+  ?item p:P582 ?s2 . ?s2 psv:P582 ?v2 . ?v2 wikibase:timeValue ?b ; wikibase:timePrecision ?pb ; wikibase:timeCalendarModel ?cb .
+  FILTER(?pa >= 9 && ?pb >= 9)
+  OPTIONAL { ?item wdt:P625 ?coord }
+  ?item rdfs:label ?label . FILTER(LANG(?label) = "en")
+  OPTIONAL { ?item rdfs:label ?es . FILTER(LANG(?es) = "es") }
+}`;
+}
+
+const isoOf = (m, prec) => (prec >= 11 ? m[1] + '-' + m[2] + '-' + m[3] : prec === 10 ? m[1] + '-' + m[2] : m[1]);
+// Inicio de un tiempo de Wikidata (JD) y fin de su precision: dia = el mismo dia; mes = siguiente mes; año = siguiente año
+function timeBounds(value, prec, cal) {
+    const m = /^(-?\d{4,})-(\d{2})-(\d{2})T/.exec(value || ''); if (!m) return null;
+    const year = parseInt(m[1], 10); const month = parseInt(m[2], 10); const day = parseInt(m[3], 10);
+    if (year < FIRST_YEAR) return { skip: 'anterior al año 1 (numeracion sin calibrar)' };
+    if (prec >= 11) { const jd = S.calendarToJD({ year, month, day }, cal).jd; return { m, a: jd, b: jd, prec: 11 }; }
+    if (prec === 10) { const a = S.calendarToJD({ year, month, day: 1 }, cal).jd; const b = month === 12 ? S.calendarToJD({ year: year + 1, month: 1, day: 1 }, cal).jd : S.calendarToJD({ year, month: month + 1, day: 1 }, cal).jd; return { m, a, b, prec: 10 }; }
+    return { m, a: S.calendarToJD({ year, month: 1, day: 1 }, cal).jd, b: S.calendarToJD({ year: year + 1, month: 1, day: 1 }, cal).jd, prec: 9 };
+}
+
+/**
+ * Filas de la consulta de intervalos -> registros. Un elemento con varias fechas de inicio o de fin (Wikidata las admite) se agrupa en UN
+ * registro que abarca desde el inicio mas temprano hasta el fin mas tardio: se ensancha, no se elige una al azar. Devuelve { features, skipped }.
+ */
+function spanRowsToFeatures(rows, retrievedAt) {
+    const skipped = {}; const skip = (why) => { skipped[why] = (skipped[why] || 0) + 1; };
+    const byItem = new Map();
+    for (const b of rows) {
+        const qid = (bindingValue(b, 'item') || '').split('/').pop();
+        if (!/^Q\d+$/.test(qid)) { skip('sin identificador de Wikidata'); continue; }
+        if (!byItem.has(qid)) byItem.set(qid, []);
+        byItem.get(qid).push(b);
+    }
+    const features = [];
+    for (const [qid, list] of byItem) {
+        const b0 = list[0];
+        const label = bindingValue(b0, 'label');
+        if (!label || /^Q\d+$/.test(label)) { skip('sin etiqueta'); continue; }
+        const calA = list.map((b) => CAL[(bindingValue(b, 'ca') || '').split('/').pop()]); const calB = list.map((b) => CAL[(bindingValue(b, 'cb') || '').split('/').pop()]);
+        const cals = new Set([...calA, ...calB]);
+        if (cals.has(undefined)) { skip('calendario desconocido'); continue; }
+        if (cals.size > 1) { skip('calendarios distintos en inicio y fin'); continue; }
+        const cal = [...cals][0];
+        let start = null; let end = null; let first = null; let last = null; let prec = 11; let bad = null;
+        try {
+            for (const b of list) {
+                const A = timeBounds(bindingValue(b, 'a'), parseInt(bindingValue(b, 'pa'), 10), cal); const B = timeBounds(bindingValue(b, 'b'), parseInt(bindingValue(b, 'pb'), 10), cal);
+                if (!A || !B) { bad = 'fecha ilegible'; break; }
+                if (A.skip || B.skip) { bad = A.skip || B.skip; break; }
+                if (start === null || A.a < start) { start = A.a; first = { m: A.m, prec: A.prec }; }
+                if (end === null || B.b > end) { end = B.b; last = { m: B.m, prec: B.prec }; }
+                prec = Math.min(prec, A.prec, B.prec);
+            }
+        } catch (e) { bad = 'fecha invalida: ' + e.message; }
+        if (bad) { skip(bad); continue; }
+        if (end < start) { skip('el fin es anterior al inicio'); continue; }
+        const sl = parseInt(bindingValue(b0, 'sl'), 10) || 0;
+        let geometry = null;
+        const c = COORD_RE.exec(bindingValue(b0, 'coord') || '');
+        if (c) { const lng = parseFloat(c[1]); const lat = parseFloat(c[2]); if (Math.abs(lng) <= 180 && Math.abs(lat) <= 90) geometry = { type: 'Point', coordinates: [Math.round(lng * 1e5) / 1e5, Math.round(lat * 1e5) / 1e5] }; }
+        const precision = prec >= 11 ? 'day' : prec === 10 ? 'month' : 'year';
+        const labels = { en: label }; const es = bindingValue(b0, 'es'); if (es) labels.es = es;
+        features.push({
+            type: 'Feature', geometry,
+            properties: {
+                id: 'wd.' + qid.toLowerCase() + '.event', name: label, labels, layer: 'event', kind: 'event',
+                importance: Math.round(Math.max(0, Math.min(1, Math.log10(Math.max(sl, 1)) / SPAN_NORM)) * 100) / 100,
+                evidence: 'documentary',
+                time: {
+                    start_ybp: +ybpOf(start).toFixed(6), end_ybp: +ybpOf(end).toFixed(6), uncertainty_yr: +(prec >= 11 ? 0.5 / 365.25 : prec === 10 ? 15 / 365.25 : 0.5).toFixed(6), precision,
+                    iso: isoOf(first.m, first.prec) + '/' + isoOf(last.m, last.prec), calendar: cal
+                },
+                scale: { min_m: 100, max_m: 20000000 },
+                sources: [{ kind: 'wikidata', id: qid, citation: 'Wikidata ' + qid + ', P580 y P582' + (list.length > 1 ? ' (varias fechas: se abarca de la primera a la ultima)' : '') + (geometry ? ' y lugar (P625)' : ''), retrieved_at: retrievedAt }],
+                status: 'raw'
+            }
+        });
+    }
+    return { features, skipped };
+}
+
+/* ------------------------------------------------------------------ */
+/* Relaciones: clase, causa, efecto, parte de y lugar                   */
+/* ------------------------------------------------------------------ */
+// Una consulta POR PROPIEDAD, nunca todas juntas con OPTIONAL: la sonda links-probe midio 86 344 filas y 20 s para 300 elementos (producto
+// cartesiano de sus valores), contra 449 filas en 0,4 s para P828 sola. El coste crece con el numero de relaciones, no con su producto.
+const REL_NOTABLE = '?item wikibase:sitelinks ?sl . FILTER(?sl >= 25) { ?item wdt:P585 ?w } UNION { ?item wdt:P580 ?w }';
+const REL_LABEL = (v) => `OPTIONAL { ?${v} rdfs:label ?${v}Label . FILTER(LANG(?${v}Label) = "en") }`;
+const RELATIONS = {
+    classes: { query: () => PREFIXES + `SELECT DISTINCT ?item ?o ?oLabel WHERE { ${REL_NOTABLE} ?item wdt:P31 ?o . ${REL_LABEL('o')} }`, cap: 6 },
+    cause: { query: () => PREFIXES + `SELECT DISTINCT ?item ?o ?oLabel WHERE { ${REL_NOTABLE} ?item wdt:P828 ?o . ${REL_LABEL('o')} }`, cap: 6, prop: 'P828' },
+    effect: { query: () => PREFIXES + `SELECT DISTINCT ?item ?o ?oLabel WHERE { ${REL_NOTABLE} ?item wdt:P1542 ?o . ${REL_LABEL('o')} }`, cap: 8, prop: 'P1542' },
+    part_of: { query: () => PREFIXES + `SELECT DISTINCT ?item ?o ?oLabel WHERE { ${REL_NOTABLE} ?item wdt:P361 ?o . ${REL_LABEL('o')} }`, cap: 4, prop: 'P361' },
+    place: { query: () => PREFIXES + `SELECT DISTINCT ?item ?o ?coord WHERE { ${REL_NOTABLE} ?item wdt:P276 ?o . ?o wdt:P625 ?coord }`, cap: 50 }
+};
+
+/** Filas (?item ?o ?oLabel) -> Map qid -> [{id, label}] sin repetidos y con tope. */
+function relationRows(rows, cap) {
+    const m = new Map();
+    for (const b of rows) {
+        const q = (bindingValue(b, 'item') || '').split('/').pop(); const o = (bindingValue(b, 'o') || '').split('/').pop();
+        if (!/^Q\d+$/.test(q) || !/^Q\d+$/.test(o)) continue;
+        const list = m.get(q) || []; if (!m.has(q)) m.set(q, list);
+        if (list.length < cap && !list.some((x) => x.id === o)) { const l = bindingValue(b, 'oLabel'); list.push({ id: o, label: l && !/^Q\d+$/.test(l) ? l : undefined, coord: bindingValue(b, 'coord') }); }
+    }
+    return m;
+}
+
+const qidOf = (f) => (/^wd\.(q\d+)\./.exec(f.properties.id) || [])[1];
+
+/**
+ * Añade a los sucesos lo que Wikidata declara de ellos. Nada se deduce: una relacion que Wikidata no tiene no aparece.
+ *  - classes: P31 (etiqueta en ingles);   - links: causa (P828), efecto (P1542) y «parte de» (P361), cada uno con su fuente;
+ *  - geometria: si el suceso no tiene coordenadas propias y su lugar (P276) tiene UNA sola coordenada distinta, se usa esa y se declara en la cita
+ *    (es el lugar donde ocurrio, no el punto exacto); con varios lugares se deja sin geometria en vez de elegir uno.
+ * Devuelve { classes, links, placed, ambiguousPlace } (conteos para el manifiesto).
+ */
+function enrichEvents(features, rel) {
+    const out = { classes: 0, links: 0, placed: 0, ambiguousPlace: 0 };
+    for (const f of features) {
+        if (f.properties.kind !== 'event') continue;
+        const q = qidOf(f); if (!q) continue; const Q = q.toUpperCase();
+        const cls = rel.classes && rel.classes.get(Q);
+        if (cls && cls.length) { f.properties.classes = cls.map((c) => (c.label ? { id: c.id, label: c.label } : { id: c.id })); out.classes++; }
+        const links = [];
+        for (const [name, rl, prop] of [['cause', 'cause', 'P828'], ['effect', 'effect', 'P1542'], ['part_of', 'part_of', 'P361']]) {
+            for (const x of (rel[name] && rel[name].get(Q)) || []) links.push({ rel: rl, target: x.label ? { kind: 'wikidata', id: x.id, label: x.label } : { kind: 'wikidata', id: x.id }, source: { kind: 'wikidata', id: Q, citation: 'Wikidata ' + Q + ', ' + prop } });
+        }
+        if (links.length) { f.properties.links = links; out.links += links.length; }
+        if (!f.geometry && rel.place && rel.place.get(Q)) {
+            const coords = [...new Set(rel.place.get(Q).map((x) => x.coord))];
+            const c = coords.length === 1 ? COORD_RE.exec(coords[0] || '') : null;
+            if (coords.length > 1) out.ambiguousPlace++;
+            else if (c) {
+                const lng = parseFloat(c[1]); const lat = parseFloat(c[2]);
+                if (Math.abs(lng) <= 180 && Math.abs(lat) <= 90) {
+                    f.geometry = { type: 'Point', coordinates: [Math.round(lng * 1e5) / 1e5, Math.round(lat * 1e5) / 1e5] };
+                    f.properties.sources[0].citation += ' y lugar (P276/P625: coordenada del lugar donde ocurrio, no del punto exacto)';
+                    out.placed++;
+                }
+            }
+        }
+    }
+    return out;
 }
 
 /* ------------------------------------------------------------------ */
@@ -212,6 +375,36 @@ async function main() {
             byShard.get(key).push(f); perKind[kind]++;
         }
     }
+    // Intervalos (guerras, batallas...) y relaciones: solo si se piden sucesos. Cada consulta es independiente y su fallo se anota sin tirar el resto.
+    const addFeature = (f) => {
+        const century = Math.floor(ybpToYear(f.properties.time.start_ybp, f.properties.time.end_ybp) / 100);
+        const key = 'c' + (century < 0 ? 'm' + (-century) : century);
+        if (!byShard.has(key)) byShard.set(key, []);
+        byShard.get(key).push(f); perKind.event = (perKind.event || 0) + 1;
+    };
+    const retry = async (name, fn) => {
+        for (let attempt = 0; attempt < 2; attempt++) {
+            try { const t0 = Date.now(); const r = await fn(); log('OK  ' + name + ' ' + (Date.now() - t0) + ' ms'); stats.queries++; return r; } catch (e) { log('..  ' + name + ' intento ' + (attempt + 1) + ': ' + describe(e)); await sleep(3000 * (attempt + 1)); }
+        }
+        stats.failed.push({ kind: name, error: 'agotados los intentos' }); return null;
+    };
+    if (kinds.includes('event')) {
+        const rows = await retry('intervalos', () => sparql(spanQuery()));
+        if (rows) {
+            const r = spanRowsToFeatures(rows, retrievedAt); stats.rows += rows.length;
+            const have = new Set([...byShard.values()].flat().map((f) => f.properties.id));
+            let added = 0;
+            for (const f of r.features) { if (have.has(f.properties.id)) { stats.skipped['intervalo repetido'] = (stats.skipped['intervalo repetido'] || 0) + 1; continue; } addFeature(f); added++; }
+            for (const [why, n] of Object.entries(r.skipped)) stats.skipped['intervalo: ' + why] = (stats.skipped['intervalo: ' + why] || 0) + n;
+            stats.intervals = added;
+        }
+        const rel = {};
+        for (const [name, def] of Object.entries(RELATIONS)) {
+            const rows2 = await retry('relacion-' + name, () => sparql(def.query()));
+            if (rows2) { rel[name] = relationRows(rows2, def.cap); stats.rows += rows2.length; }
+        }
+        stats.enriched = enrichEvents([...byShard.values()].flat(), rel);
+    }
     fs.mkdirSync(out, { recursive: true });
     const index = { shards: {}, generated_at: retrievedAt };
     for (const [key, feats] of byShard) {
@@ -229,4 +422,4 @@ async function main() {
 function ybpToYear(startYbp, endYbp) { return Math.floor(1950 - (startYbp + endYbp) / 2); }
 
 if (require.main === module) main().catch((e) => { console.error('[ERR] ' + describe(e)); process.exitCode = 1; });
-module.exports = { KINDS, query, queryAll, bindingToFeature, windows, ybpToYear };
+module.exports = { KINDS, query, queryAll, bindingToFeature, windows, ybpToYear, spanQuery, spanRowsToFeatures, SPAN_CLASSES, RELATIONS, relationRows, enrichEvents };
