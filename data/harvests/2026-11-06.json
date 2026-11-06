@@ -1,0 +1,11 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "harvest_date": "2026-11-06T10:40:40.476Z",
+    "source_date": "2026/11/05",
+    "node_origin": "ChronosTerrae_Harvester_0.2",
+    "total_anomalies_detected": 0,
+    "status": "empty"
+  },
+  "features": []
+}
