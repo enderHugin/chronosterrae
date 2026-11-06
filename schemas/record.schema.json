@@ -157,6 +157,41 @@
             "gbif_id": { "type": "integer" }
           }
         },
+        "links": {
+          "type": "array",
+          "description": "Vinculos DOCUMENTADOS con otros sucesos, cada uno con su fuente. Solo cause y effect se presentan como causa o efecto; part_of (parte de) y participant (participante) son contexto. Una coincidencia en fecha o nombre NO es un vinculo y no va aqui. Vacio hasta que se recolecten de la fuente (p. ej. Wikidata P828 «tiene causa», P1542 «tiene efecto»).",
+          "items": {
+            "type": "object",
+            "required": ["rel", "target", "source"],
+            "additionalProperties": false,
+            "properties": {
+              "rel": { "enum": ["cause", "effect", "part_of", "participant"] },
+              "target": {
+                "type": "object",
+                "required": ["kind", "id"],
+                "additionalProperties": false,
+                "properties": {
+                  "kind": { "enum": ["wikidata", "record"] },
+                  "id": { "type": "string", "minLength": 1 },
+                  "label": { "type": "string" }
+                },
+                "allOf": [
+                  { "if": { "properties": { "kind": { "const": "wikidata" } } }, "then": { "properties": { "id": { "type": "string", "pattern": "^Q\\d+$" } } } }
+                ]
+              },
+              "source": {
+                "type": "object",
+                "required": ["kind", "id"],
+                "additionalProperties": false,
+                "properties": {
+                  "kind": { "enum": ["doi", "url", "wikidata", "dataset", "observation"] },
+                  "id": { "type": "string", "minLength": 1 },
+                  "citation": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
         "contributors": {
           "type": "array",
           "items": {

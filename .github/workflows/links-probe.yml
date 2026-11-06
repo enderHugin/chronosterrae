@@ -1,0 +1,42 @@
+name: Sonda de vínculos de sucesos (lugar, causa, clase)
+
+# Mide tiempo y filas de consultas masivas por banda de notoriedad; informe en la rama `links-probe`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: links-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear vinculos
+        run: node scripts/probe-links.js > /tmp/links.json 2> /tmp/links.log
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 30 /tmp/links.log || true
+          head -c 800 /tmp/links.json || true
+      - name: Informe en la rama links-probe
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/links.json || echo '{"error":"sin salida"}' > /tmp/links.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan links-probe
+          cp /tmp/links.json report.json
+          cp /tmp/links.log report.log || true
+          git add report.json report.log
+          git commit -m "Sonda de vinculos $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin links-probe
