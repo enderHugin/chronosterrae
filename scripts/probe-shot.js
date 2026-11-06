@@ -30,6 +30,31 @@ async function settle(page) {
     await page.waitForTimeout(3500);
 }
 
+// Tiempos REALES (red de verdad, cache frio) de cambiar de epoca: fronteras historicas (descarga + proceso + imagen del hueco) y costas de Pangea.
+// Mide por fases desde que se pide el cambio y recoge de cada archivo el tamano transferido (comprimido) y el descomprimido.
+async function runTiming(page, out) {
+    const rows = [];
+    await page.evaluate(() => map.jumpTo({ center: [10, 50], zoom: 4.6 }));
+    const one = (label, year, kind) => page.evaluate(async ({ label, year, kind }) => {
+        const t0 = performance.now(); const n0 = performance.getEntriesByType('resource').length;
+        const prevB = state.borders; const prevL = state.land; const gap0 = GAP.url;
+        const waitFor = (fn, ms) => new Promise((res) => { const s = performance.now(); (function p() { if (fn()) return res(Math.round(performance.now() - t0)); if (performance.now() - s > ms) return res(null); setTimeout(p, 10); })(); });
+        setTime(yearToYbp(year), { immediate: false });
+        const out = { label, year, kind };
+        if (kind === 'borders') {
+            out.msBordersApplied = await waitFor(() => !state.bordersLoading && state.borders && state.borders !== prevB, 60000);
+            out.msGapImage = await waitFor(() => GAP.url !== gap0, 60000);
+        } else {
+            out.msLandApplied = await waitFor(() => state.land !== prevL, 60000);
+        }
+        out.files = performance.getEntriesByType('resource').slice(n0).filter((e) => /geojson\/|paleocoastlines\//.test(e.name)).map((e) => ({ f: e.name.split('/').pop(), transferKB: Math.round(e.transferSize / 1024), encodedKB: Math.round(e.encodedBodySize / 1024), decodedKB: Math.round(e.decodedBodySize / 1024), fetchMs: Math.round(e.duration) }));
+        return out;
+    }, { label, year, kind });
+    for (const [label, year] of [['frio', 1914], ['frio', 1880], ['frio', 1815], ['frio', 1783], ['en-memoria', 1914], ['en-memoria', 1880]]) rows.push(await one(label, year, 'borders'));
+    for (const [label, year] of [['pangea', -250e6 + 2000], ['pangea-otro', -120e6 + 2000], ['pangea-otro', -66e6 + 2000]]) rows.push(await one(label, year, 'land'));
+    fs.writeFileSync(path.join(out, 'timing.json'), JSON.stringify(rows, null, 2));
+}
+
 async function runSuite(page, out) {
     const rows = [];
     for (const dark of [true, false]) {
@@ -45,6 +70,7 @@ async function runSuite(page, out) {
             if (v.hide) await page.evaluate(() => { if (BR.off) document.getElementById('btn-borders').click(); });
         }
     }
+    try { await runTiming(page, out); } catch (e) { fs.writeFileSync(path.join(out, 'timing-error.txt'), String(e)); }
     // Alejar el zoom del globo (sin boton ni modo): del zoom minimo del mapa hacia el sistema solar, y a otros cuerpos. Claro y oscuro no cambian el espacio.
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); map.jumpTo({ center: [-3.7, 40.4], zoom: map.getMinZoom(), bearing: 0, pitch: 0 }); });
     await page.waitForTimeout(2500);
