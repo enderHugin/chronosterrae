@@ -325,6 +325,7 @@
 <script src="./map/borders-inner.js"></script>
 <script src="./map/borders-resolution.js"></script>
 <script src="./map/changes.js"></script>
+<script src="./map/labels.js"></script>
 <script src="./sky/sky-view.js"></script>
 <script src="./sky/timestep.js"></script>
 <script src="./sky/solar.js"></script>
@@ -1336,6 +1337,7 @@ function applyTheme() {
     map.setPaintProperty('land-fill', 'fill-color', p.land);
     map.setPaintProperty('land-line', 'line-color', p.landLine);
     map.setPaintProperty('borders-line', 'line-color', p.line);
+    if (LBL.ready) Object.entries(labelPaint()).forEach(([k, v]) => map.setPaintProperty('borders-labels', k, v));
     detailTheme();
 }
 
@@ -1364,6 +1366,7 @@ function innerOf(fc) {
     if (!fc._inner) fc._inner = ChronosInner.innerBorders(fc, (f) => (f.properties && (f.properties.SUBJECTO || f.properties.NAME)) || '?', 1.5);
     return fc._inner;
 }
+const LBL = { ready: false, failed: false, loading: null };
 const CHG = { open: false, token: 0, key: '', prev: null, cur: null, diffs: new Map(), dates: [], cand: null };
 // Instantanea mostrada y la anterior: lo que el usuario acaba de ver cambiar. NE (2016+) cuenta como otra fuente.
 function chgTrack(b) {
@@ -1388,6 +1391,7 @@ function applyBorders(b) {
     // imagen lo sustituye al llegar. Si la imagen de esta fecha ya se calculo antes, vuelve sin recalcular (cache de gapDraw).
     gapHide();
     gapRefresh(60);
+    labelsUpdate();
 }
 
 /* ---- fronteras historicas: solo de cerca, y ocultables ---- */
@@ -1414,11 +1418,64 @@ function bordersView() {
     const cut = has && (BR.far || BR.off);
     if (cut === BR.cut && BR.lastApplied) { naturalView(); return; }
     BR.cut = cut; BR.lastApplied = true;
-    ['borders-fill', 'borders-line', 'borders-hl', 'borders-hover'].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', cut ? 'none' : 'visible'); });
+    ['borders-fill', 'borders-line', 'borders-hl', 'borders-hover', 'borders-labels'].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', cut ? 'none' : 'visible'); });
     setHoverKey(null);
     if (cut) gapHide(); else gapRefresh();
     naturalView();
     renderStatus();
+}
+
+
+/* ---- nombres de los estados ---- */
+// El color no dice como se llama un territorio: cada estado lleva su nombre, colocado dentro de su poligono mayor (map/labels.js). Los grandes se
+// ven de lejos; los pequeños, al acercar (MapLibre descarta los que chocan, empezando por el menor). La fuente de letra sale del estilo de
+// OpenFreeMap (el mismo del detalle): no se supone ningun servidor de tipografias, se lee de su estilo. Si no se puede, no hay nombres y se dice en consola.
+const labelFontOf = (style) => {
+    const l = (style.layers || []).find((x) => x.type === 'symbol' && x.layout && Array.isArray(x.layout['text-font']) && x.layout['text-font'].every((f) => typeof f === 'string'));
+    return l ? l.layout['text-font'] : null;
+};
+const labelPaint = () => (state.dark ? { 'text-color': '#f3eee2', 'text-halo-color': 'rgba(8, 12, 18, 0.88)' } : { 'text-color': '#2a2016', 'text-halo-color': 'rgba(255, 255, 255, 0.88)' });
+async function labelsEnsure() {
+    if (LBL.ready) return true;
+    if (LBL.failed || !window.ChronosLabels) return false;
+    if (!LBL.loading) {
+        LBL.loading = (async () => {
+            try {
+                const style = await detailFetchStyle();
+                const font = labelFontOf(style);
+                if (!style.glyphs || !font) throw new Error('el estilo de OpenFreeMap no da tipografia utilizable');
+                map.setGlyphs(style.glyphs);
+                map.addSource('borders-labels', { type: 'geojson', data: emptyFC() });
+                map.addLayer({
+                    id: 'borders-labels', type: 'symbol', source: 'borders-labels',
+                    layout: {
+                        visibility: BR.cut ? 'none' : 'visible', 'text-field': ['get', 'text'], 'text-font': font, 'symbol-sort-key': ['get', 'k'],
+                        'text-size': ['interpolate', ['linear'], ['zoom'], 1, 9, 4, 12, 7, 16], 'text-max-width': 7, 'text-padding': 3, 'text-optional': true
+                    },
+                    paint: { ...labelPaint(), 'text-halo-width': 1.6 }
+                }, 'live-points');
+                LBL.ready = true;
+            } catch (e) { LBL.failed = true; console.warn('[LABELS]', e.message); }
+        })();
+    }
+    await LBL.loading;
+    return LBL.ready;
+}
+function labelsData(b) {
+    if (!b || !b.data || !window.ChronosLabels) return emptyFC();
+    const fc = b.data; const ne = b.source === 'ne';
+    if (fc._labelsFor !== lang || !fc._labels) {
+        const key = (f) => polityKey(f.properties);
+        const text = ne ? (f) => (lang === 'es' && f.properties.NAME_ES) || f.properties.NAME || key(f) : key;
+        fc._labels = ChronosLabels.polityLabels(fc, key, text); fc._labelsFor = lang;
+    }
+    return { type: 'FeatureCollection', features: fc._labels.map((l) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [l.lng, l.lat] }, properties: { text: l.text, k: -l.areaKm2 } })) };
+}
+async function labelsUpdate() {
+    if (!state.borders || !state.borders.data) { if (LBL.ready) map.getSource('borders-labels').setData(emptyFC()); return; }
+    if (!(await labelsEnsure())) return;
+    map.getSource('borders-labels').setData(labelsData(state.borders));
+    map.setLayoutProperty('borders-labels', 'visibility', BR.cut ? 'none' : 'visible');
 }
 
 /* ---- Tierra natural ---- */
@@ -1857,6 +1914,7 @@ function applyStrings() {
     $('btn-borders').title = t('borders.tip');
     $('btn-center').title = $('btn-center').ariaLabel = t('center.tip');
     $('btn-changes').title = t('changes.tip');
+    if (typeof labelsUpdate === 'function' && LBL.ready) labelsUpdate();
     keyStepTexts();
     zoomControl.texts();
     solarView.texts();
