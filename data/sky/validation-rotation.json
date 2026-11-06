@@ -1,0 +1,470 @@
+{
+ "source": "NASA/JPL Horizons API (ssd.jpl.nasa.gov/api/horizons.api), consultado por el workflow probe.yml",
+ "license": "Datos de la NASA/JPL (sin restricciones de uso; se cita la fuente)",
+ "query": "EPHEM_TYPE='OBSERVER', CENTER='500@399' (geocentrico), QUANTITIES='14,17,13' (sub-observador lon/lat, angulo de posicion del polo norte y distancia, diametro angular), ANG_FORMAT='DEG', TLIST_TYPE='JD', TLIST='2415020.5 2433282.5 2451545 2461000.5 2470000.5 2488069.5'",
+ "timeScale": "Horizons da la hora en UT (UT1 antes de 1962, UTC despues); el futuro usa el ultimo segundo intercalar conocido",
+ "bodies": {
+  "Mercury": {
+   "horizonsId": 199,
+   "frame": "IAU_MERCURY",
+   "longitudePositive": "west",
+   "radiiKm": {
+    "a": 2440.53,
+    "b": 2440.53,
+    "c": 2438.26
+   },
+   "rows": [
+    {
+     "jdUT": 2415020.5,
+     "horizonsTime": "1900-Jan-01 00:00:00.000",
+     "subLonDeg": 333.388199,
+     "subLatDeg": -4.845292,
+     "npAngDeg": 10.6814,
+     "npDistArcsec": -2.933,
+     "angDiamArcsec": 5.89281
+    },
+    {
+     "jdUT": 2433282.5,
+     "horizonsTime": "1950-Jan-01 00:00:00.000",
+     "subLonDeg": 74.860743,
+     "subLatDeg": -5.469471,
+     "npAngDeg": 350.067,
+     "npDistArcsec": -3.337,
+     "angDiamArcsec": 6.709967
+    },
+    {
+     "jdUT": 2451545,
+     "horizonsTime": "2000-Jan-01 12:00:00.000",
+     "subLonDeg": 247.693887,
+     "subLatDeg": -3.868321,
+     "npAngDeg": 4.2714,
+     "npDistArcsec": -2.37,
+     "angDiamArcsec": 4.754593
+    },
+    {
+     "jdUT": 2461000.5,
+     "horizonsTime": "2025-Nov-21 00:00:00.000",
+     "subLonDeg": 5.200063,
+     "subLatDeg": -1.835068,
+     "npAngDeg": 20.0143,
+     "npDistArcsec": -4.946,
+     "angDiamArcsec": 9.905485
+    },
+    {
+     "jdUT": 2470000.5,
+     "horizonsTime": "2050-Jul-13 00:00:00.000",
+     "subLonDeg": 276.39881,
+     "subLatDeg": 5.757398,
+     "npAngDeg": 15.8984,
+     "npDistArcsec": 3.044,
+     "angDiamArcsec": 6.12555
+    },
+    {
+     "jdUT": 2488069.5,
+     "horizonsTime": "2100-Jan-01 00:00:00.000",
+     "subLonDeg": 158.907223,
+     "subLatDeg": -3.902058,
+     "npAngDeg": 355.92,
+     "npDistArcsec": -2.42,
+     "angDiamArcsec": 4.855306
+    }
+   ]
+  },
+  "Venus": {
+   "horizonsId": 299,
+   "frame": "IAU_VENUS",
+   "longitudePositive": "east",
+   "radiiKm": {
+    "a": 6051.8,
+    "b": 6051.8,
+    "c": 6051.8
+   },
+   "rows": [
+    {
+     "jdUT": 2415020.5,
+     "horizonsTime": "1900-Jan-01 00:00:00.000",
+     "subLonDeg": 218.800783,
+     "subLatDeg": 1.528705,
+     "npAngDeg": 346.6603,
+     "npDistArcsec": 5.695,
+     "angDiamArcsec": 11.39453
+    },
+    {
+     "jdUT": 2433282.5,
+     "horizonsTime": "1950-Jan-01 00:00:00.000",
+     "subLonDeg": 281.4281,
+     "subLatDeg": -0.999137,
+     "npAngDeg": 343.6455,
+     "npDistArcsec": -22.267,
+     "angDiamArcsec": 44.53996
+    },
+    {
+     "jdUT": 2451545,
+     "horizonsTime": "2000-Jan-01 12:00:00.000",
+     "subLonDeg": 258.810154,
+     "subLatDeg": -1.008679,
+     "npAngDeg": 12.1618,
+     "npDistArcsec": -7.334,
+     "angDiamArcsec": 14.67008
+    },
+    {
+     "jdUT": 2461000.5,
+     "horizonsTime": "2025-Nov-21 00:00:00.000",
+     "subLonDeg": 211.601897,
+     "subLatDeg": 0.14266,
+     "npAngDeg": 16.5658,
+     "npDistArcsec": 5.013,
+     "angDiamArcsec": 10.02561
+    },
+    {
+     "jdUT": 2470000.5,
+     "horizonsTime": "2050-Jul-13 00:00:00.000",
+     "subLonDeg": 150.70993,
+     "subLatDeg": -0.489553,
+     "npAngDeg": 20.4585,
+     "npDistArcsec": -9.3,
+     "angDiamArcsec": 18.60117
+    },
+    {
+     "jdUT": 2488069.5,
+     "horizonsTime": "2100-Jan-01 00:00:00.000",
+     "subLonDeg": 82.218501,
+     "subLatDeg": 1.451334,
+     "npAngDeg": 342.619,
+     "npDistArcsec": 7.41,
+     "angDiamArcsec": 14.82432
+    }
+   ]
+  },
+  "Mars": {
+   "horizonsId": 499,
+   "frame": "IAU_MARS",
+   "longitudePositive": "west",
+   "radiiKm": {
+    "a": 3396.19,
+    "b": 3396.19,
+    "c": 3376.2
+   },
+   "rows": [
+    {
+     "jdUT": 2415020.5,
+     "horizonsTime": "1900-Jan-01 00:00:00.000",
+     "subLonDeg": 316.205402,
+     "subLatDeg": -9.015674,
+     "npAngDeg": 18.9531,
+     "npDistArcsec": -1.915,
+     "angDiamArcsec": 3.900643
+    },
+    {
+     "jdUT": 2433282.5,
+     "horizonsTime": "1950-Jan-01 00:00:00.000",
+     "subLonDeg": 47.730835,
+     "subLatDeg": 24.035146,
+     "npAngDeg": 28.278,
+     "npDistArcsec": 3.498,
+     "angDiamArcsec": 7.704785
+    },
+    {
+     "jdUT": 2451545,
+     "horizonsTime": "2000-Jan-01 12:00:00.000",
+     "subLonDeg": 69.543497,
+     "subLatDeg": -23.259282,
+     "npAngDeg": 351.6251,
+     "npDistArcsec": -2.312,
+     "angDiamArcsec": 5.063179
+    },
+    {
+     "jdUT": 2461000.5,
+     "horizonsTime": "2025-Nov-21 00:00:00.000",
+     "subLonDeg": 240.164243,
+     "subLatDeg": 5.630538,
+     "npAngDeg": 33.9897,
+     "npDistArcsec": 1.912,
+     "angDiamArcsec": 3.866031
+    },
+    {
+     "jdUT": 2470000.5,
+     "horizonsTime": "2050-Jul-13 00:00:00.000",
+     "subLonDeg": 280.432778,
+     "subLatDeg": -18.483965,
+     "npAngDeg": 351.9189,
+     "npDistArcsec": -9.855,
+     "angDiamArcsec": 20.90421
+    },
+    {
+     "jdUT": 2488069.5,
+     "horizonsTime": "2100-Jan-01 00:00:00.000",
+     "subLonDeg": 159.784089,
+     "subLatDeg": -22.642281,
+     "npAngDeg": 322.8871,
+     "npDistArcsec": -4.939,
+     "angDiamArcsec": 10.7652
+    }
+   ]
+  },
+  "Jupiter": {
+   "horizonsId": 599,
+   "frame": "IAU_JUPITER",
+   "longitudePositive": "west",
+   "radiiKm": {
+    "a": 71492,
+    "b": 71492,
+    "c": 66854
+   },
+   "rows": [
+    {
+     "jdUT": 2415020.5,
+     "horizonsTime": "1900-Jan-01 00:00:00.000",
+     "subLonDeg": 217.778003,
+     "subLatDeg": -3.439636,
+     "npAngDeg": 11.9699,
+     "npDistArcsec": -15.052,
+     "angDiamArcsec": 32.2499
+    },
+    {
+     "jdUT": 2433282.5,
+     "horizonsTime": "1950-Jan-01 00:00:00.000",
+     "subLonDeg": 282.726906,
+     "subLatDeg": -0.619081,
+     "npAngDeg": 343.579,
+     "npDistArcsec": -15.529,
+     "angDiamArcsec": 33.21541
+    },
+    {
+     "jdUT": 2451545,
+     "horizonsTime": "2000-Jan-01 12:00:00.000",
+     "subLonDeg": 55.395133,
+     "subLatDeg": 3.308067,
+     "npAngDeg": 337.1642,
+     "npDistArcsec": 19.914,
+     "angDiamArcsec": 42.66136
+    },
+    {
+     "jdUT": 2461000.5,
+     "horizonsTime": "2025-Nov-21 00:00:00.000",
+     "subLonDeg": 279.340013,
+     "subLatDeg": 1.583352,
+     "npAngDeg": 12.0121,
+     "npDistArcsec": 20.116,
+     "angDiamArcsec": 43.04029
+    },
+    {
+     "jdUT": 2470000.5,
+     "horizonsTime": "2050-Jul-13 00:00:00.000",
+     "subLonDeg": 40.423197,
+     "subLatDeg": 0.543928,
+     "npAngDeg": 17.519,
+     "npDistArcsec": 14.729,
+     "angDiamArcsec": 31.50333
+    },
+    {
+     "jdUT": 2488069.5,
+     "horizonsTime": "2100-Jan-01 00:00:00.000",
+     "subLonDeg": 208.372634,
+     "subLatDeg": -3.162652,
+     "npAngDeg": 23.5923,
+     "npDistArcsec": -16.596,
+     "angDiamArcsec": 35.54836
+    }
+   ]
+  },
+  "Saturn": {
+   "horizonsId": 699,
+   "frame": "IAU_SATURN",
+   "longitudePositive": "west",
+   "radiiKm": {
+    "a": 60268,
+    "b": 60268,
+    "c": 54364
+   },
+   "rows": [
+    {
+     "jdUT": 2415020.5,
+     "horizonsTime": "1900-Jan-01 00:00:00.000",
+     "subLonDeg": 144.706698,
+     "subLatDeg": 31.65022,
+     "npAngDeg": 6.001,
+     "npDistArcsec": 5.788,
+     "angDiamArcsec": 15.07478
+    },
+    {
+     "jdUT": 2433282.5,
+     "horizonsTime": "1950-Jan-01 00:00:00.000",
+     "subLonDeg": 172.134025,
+     "subLatDeg": -1.828974,
+     "npAngDeg": 355.0961,
+     "npDistArcsec": -8.359,
+     "angDiamArcsec": 18.54334
+    },
+    {
+     "jdUT": 2451545,
+     "horizonsTime": "2000-Jan-01 12:00:00.000",
+     "subLonDeg": 270.867645,
+     "subLatDeg": -23.025474,
+     "npAngDeg": 0.217,
+     "npDistArcsec": -7.973,
+     "angDiamArcsec": 19.20702
+    },
+    {
+     "jdUT": 2461000.5,
+     "horizonsTime": "2025-Nov-21 00:00:00.000",
+     "subLonDeg": 213.111774,
+     "subLatDeg": -0.458709,
+     "npAngDeg": 4.5032,
+     "npDistArcsec": -8.28,
+     "angDiamArcsec": 18.35796
+    },
+    {
+     "jdUT": 2470000.5,
+     "horizonsTime": "2050-Jul-13 00:00:00.000",
+     "subLonDeg": 204.180173,
+     "subLatDeg": 23.383953,
+     "npAngDeg": 6.6189,
+     "npDistArcsec": 7.666,
+     "angDiamArcsec": 18.51803
+    },
+    {
+     "jdUT": 2488069.5,
+     "horizonsTime": "2100-Jan-01 00:00:00.000",
+     "subLonDeg": 342.763417,
+     "subLatDeg": 16.211045,
+     "npAngDeg": 357.8109,
+     "npDistArcsec": 7.289,
+     "angDiamArcsec": 16.83151
+    }
+   ]
+  },
+  "Uranus": {
+   "horizonsId": 799,
+   "frame": "IAU_URANUS",
+   "longitudePositive": "east",
+   "radiiKm": {
+    "a": 25559,
+    "b": 25559,
+    "c": 24973
+   },
+   "rows": [
+    {
+     "jdUT": 2415020.5,
+     "horizonsTime": "1900-Jan-01 00:00:00.000",
+     "subLonDeg": 83.16011,
+     "subLatDeg": -80.640159,
+     "npAngDeg": 46.7157,
+     "npDistArcsec": -0.282,
+     "angDiamArcsec": 3.552873
+    },
+    {
+     "jdUT": 2433282.5,
+     "horizonsTime": "1950-Jan-01 00:00:00.000",
+     "subLonDeg": 276.77336,
+     "subLatDeg": 73.147244,
+     "npAngDeg": 63.8238,
+     "npDistArcsec": 0.556,
+     "angDiamArcsec": 3.922192
+    },
+    {
+     "jdUT": 2451545,
+     "horizonsTime": "2000-Jan-01 12:00:00.000",
+     "subLonDeg": 265.786212,
+     "subLatDeg": -33.600879,
+     "npAngDeg": 262.533,
+     "npDistArcsec": -1.384,
+     "angDiamArcsec": 3.400428
+    },
+    {
+     "jdUT": 2461000.5,
+     "horizonsTime": "2025-Nov-21 00:00:00.000",
+     "subLonDeg": 338.474681,
+     "subLatDeg": 70.880433,
+     "npAngDeg": 280.1554,
+     "npDistArcsec": 0.609,
+     "angDiamArcsec": 3.807858
+    },
+    {
+     "jdUT": 2470000.5,
+     "horizonsTime": "2050-Jul-13 00:00:00.000",
+     "subLonDeg": 136.322053,
+     "subLatDeg": 0.609864,
+     "npAngDeg": 105.2491,
+     "npDistArcsec": 1.83,
+     "angDiamArcsec": 3.745117
+    },
+    {
+     "jdUT": 2488069.5,
+     "horizonsTime": "2100-Jan-01 00:00:00.000",
+     "subLonDeg": 339.453869,
+     "subLatDeg": 29.635264,
+     "npAngDeg": 256.036,
+     "npDistArcsec": 1.51,
+     "angDiamArcsec": 3.555213
+    }
+   ]
+  },
+  "Neptune": {
+   "horizonsId": 899,
+   "frame": "IAU_NEPTUNE",
+   "longitudePositive": "west",
+   "radiiKm": {
+    "a": 24764,
+    "b": 24764,
+    "c": 24341
+   },
+   "rows": [
+    {
+     "jdUT": 2415020.5,
+     "horizonsTime": "1900-Jan-01 00:00:00.000",
+     "subLonDeg": 141.795501,
+     "subLatDeg": 18.819702,
+     "npAngDeg": 335.0707,
+     "npDistArcsec": 1.098,
+     "angDiamArcsec": 2.361287
+    },
+    {
+     "jdUT": 2433282.5,
+     "horizonsTime": "1950-Jan-01 00:00:00.000",
+     "subLonDeg": 314.22483,
+     "subLatDeg": 12.882838,
+     "npAngDeg": 47.2134,
+     "npDistArcsec": 1.076,
+     "angDiamArcsec": 2.246073
+    },
+    {
+     "jdUT": 2451545,
+     "horizonsTime": "2000-Jan-01 12:00:00.000",
+     "subLonDeg": 56.925608,
+     "subLatDeg": -28.401366,
+     "npAngDeg": 354.9652,
+     "npDistArcsec": -0.952,
+     "angDiamArcsec": 2.20113
+    },
+    {
+     "jdUT": 2461000.5,
+     "horizonsTime": "2025-Nov-21 00:00:00.000",
+     "subLonDeg": 68.127244,
+     "subLatDeg": -20.780503,
+     "npAngDeg": 317.4187,
+     "npDistArcsec": -1.068,
+     "angDiamArcsec": 2.32499
+    },
+    {
+     "jdUT": 2470000.5,
+     "horizonsTime": "2050-Jul-13 00:00:00.000",
+     "subLonDeg": 189.912199,
+     "subLatDeg": 5.37742,
+     "npAngDeg": 318.72,
+     "npDistArcsec": 1.099,
+     "angDiamArcsec": 2.245199
+    },
+    {
+     "jdUT": 2488069.5,
+     "horizonsTime": "2100-Jan-01 00:00:00.000",
+     "subLonDeg": 333.080469,
+     "subLatDeg": 25.154968,
+     "npAngDeg": 36.3291,
+     "npDistArcsec": 1.019,
+     "angDiamArcsec": 2.291193
+    }
+   ]
+  }
+ }
+}
