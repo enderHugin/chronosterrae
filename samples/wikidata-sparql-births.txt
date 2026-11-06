@@ -1,0 +1,58 @@
+{
+  "head" : {
+    "vars" : [ "p", "pLabel" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "p" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q254"
+      },
+      "pLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Wolfgang Amadeus Mozart"
+      }
+    }, {
+      "p" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q2972127"
+      },
+      "pLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Hosoda Eishi"
+      }
+    }, {
+      "p" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q30597755"
+      },
+      "pLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Noah Smith"
+      }
+    }, {
+      "p" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q76281626"
+      },
+      "pLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Johanna Wilhelmina Clifford"
+      }
+    }, {
+      "p" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q95665500"
+      },
+      "pLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Anna Hölzel"
+      }
+    } ]
+  }
+}
