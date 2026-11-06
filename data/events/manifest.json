@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-01T20:33:07.917Z",
+  "generated_at": "2026-11-06T15:47:45.958Z",
   "source": "Wikidata (CC0) via QLever (qlever.cs.uni-freiburg.de/api/wikidata)",
   "kinds": [
     "birth",
@@ -10,22 +10,32 @@
     "event"
   ],
   "per_kind": {
-    "birth": 7340,
-    "death": 4969,
-    "publication": 1326,
-    "composition": 731,
+    "birth": 7343,
+    "death": 4974,
+    "publication": 1327,
+    "composition": 733,
     "discovery": 7097,
-    "event": 5959
+    "event": 6501
   },
   "stats": {
-    "queries": 6,
+    "queries": 12,
     "failed": [],
     "skipped": {
-      "duplicado (misma fecha, otro lugar)": 785,
+      "duplicado (misma fecha, otro lugar)": 787,
       "anterior al año 1 (numeracion sin calibrar)": 1715,
-      "asteroide numerado o provisional": 8954,
-      "etiqueta que es solo un año": 2097
+      "asteroide numerado o provisional": 9035,
+      "etiqueta que es solo un año": 2097,
+      "intervalo: anterior al año 1 (numeracion sin calibrar)": 45,
+      "intervalo: calendarios distintos en inicio y fin": 11,
+      "intervalo: el fin es anterior al inicio": 1
     },
-    "rows": 40973
+    "rows": 80687,
+    "intervals": 537,
+    "enriched": {
+      "classes": 6487,
+      "links": 4343,
+      "placed": 1504,
+      "ambiguousPlace": 363
+    }
   }
 }
