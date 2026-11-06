@@ -395,6 +395,9 @@ const i18n = {
         bordersNE: 'Fronteras vigentes: Natural Earth 10m (dominio público), resolución mediana ~{km} km.',
         neBackdate: 'Para 2016–2019 se aplican las fronteras vigentes: no se han comprobado una a una las diferencias menores de esos años.',
         neNote: 'Fronteras vigentes según Natural Earth. En zonas en disputa se muestra la convención de esa fuente (campo «Tipo»), sin juicio sobre soberanía.', resolution: 'Resolución de la fuente', typeLabel: 'Tipo según la fuente',
+        bordersFarNE: 'De lejos (zoom < {z}) no se dibujan las fronteras: se ve la Tierra. Acércate para verlas.',
+        naturalNote: 'Tierra natural: imagen actual de NASA (color y relieve, con batimetría). Solo se usa hasta hace ~6000 años; antes cambian costas y hielos.',
+        naturalFail: 'No se pudo cargar la imagen natural de la Tierra (NASA GIBS); se muestra el mapa de colores.',
         bordersFar: 'Fronteras de {y}: sus polígonos son toscos (un vértice cada ~{km} km de mediana), así que de lejos se muestra solo el mapa físico. Acércate (zoom ≥ {z}) para verlas como aproximación.',
         bordersNear: 'Las fronteras históricas son una aproximación: un vértice cada ~{km} km de mediana, por lo que se ven facetadas de cerca. El botón Fronteras las oculta.',
         bordersOff: 'Fronteras ocultas: solo el mapa físico. El botón Fronteras las vuelve a mostrar.',
@@ -409,7 +412,7 @@ const i18n = {
         bordersNote: 'Mapa histórico compilado por su autor y en elaboración: contrástalo antes de citarlo.',
         prec: { 1: 'aproximada', 2: 'moderada', 3: 'fijada por tratado' },
         unnamed: 'Sin nombre en el conjunto de datos', liveTitle: 'Dato reciente', event: 'Fecha del suceso', harvested: 'Recogido', tier: 'Nivel', unknown: 'Desconocida',
-        creditsLand: 'Costas', creditsBorders: 'Fronteras', creditsDetail: 'Detalle',
+        creditsLand: 'Costas', creditsBorders: 'Fronteras', creditsDetail: 'Detalle', creditsNatural: 'Imagen',
         detailFull: 'Detalle: mapa actual de OpenStreetMap, no una reconstrucción.',
         detailPhysical: 'Detalle: agua y vegetación de hoy como aproximación; no incluye lo que cambió desde entonces (ríos, lagos, bosques).',
         detailFail: 'No se pudo cargar el detalle del mapa ({err}). Se reintentará.',
@@ -507,6 +510,9 @@ const i18n = {
         bordersNE: 'Current borders: Natural Earth 10m (public domain), median resolution ~{km} km.',
         neBackdate: 'For 2016–2019 the current borders are applied: minor differences in those years have not been checked one by one.',
         neNote: 'Current borders per Natural Earth. In disputed areas the source\'s own convention is shown ("Type" field), with no judgement on sovereignty.', resolution: 'Source resolution', typeLabel: 'Type per the source',
+        bordersFarNE: 'From afar (zoom < {z}) borders are not drawn: you see the Earth. Zoom in to see them.',
+        naturalNote: 'Natural Earth view: current NASA imagery (colour and relief, with bathymetry). Used only back to ~6000 years ago; before that coasts and ice change.',
+        naturalFail: 'The natural Earth imagery (NASA GIBS) could not be loaded; showing the colour map.',
         bordersFar: '{y} borders: their polygons are coarse (a vertex every ~{km} km, median), so from afar only the physical map is shown. Zoom in (zoom ≥ {z}) to see them as an approximation.',
         bordersNear: 'Historical borders are an approximation: a vertex every ~{km} km (median), so they look faceted up close. The Borders button hides them.',
         bordersOff: 'Borders hidden: physical map only. The Borders button shows them again.',
@@ -521,7 +527,7 @@ const i18n = {
         bordersNote: 'Historical map compiled by its author and work in progress: cross-check before citing.',
         prec: { 1: 'approximate', 2: 'moderate', 3: 'set by treaty' },
         unnamed: 'Unnamed in the dataset', liveTitle: 'Recent data', event: 'Event date', harvested: 'Harvested', tier: 'Tier', unknown: 'Unknown',
-        creditsLand: 'Coastlines', creditsBorders: 'Borders', creditsDetail: 'Detail',
+        creditsLand: 'Coastlines', creditsBorders: 'Borders', creditsDetail: 'Detail', creditsNatural: 'Imagery',
         detailFull: 'Detail: current OpenStreetMap map, not a reconstruction.',
         detailPhysical: 'Detail: present-day water and vegetation as an approximation; it does not include what has changed since (rivers, lakes, forests).',
         detailFail: 'Could not load the map detail ({err}). Will retry.',
@@ -838,6 +844,8 @@ async function loadBorders(ybp, signal) {
 /* ------------------------------------------------------------------ */
 /* Mapa                                                               */
 /* ------------------------------------------------------------------ */
+const NATURAL_URL = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg';
+const NATURAL_MAX_YBP = 6000;    // la imagen es de hoy: desde hace ~6000 anos el nivel del mar esta estabilizado; antes cambian costas y hielos y no se muestra
 const GAP_BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 const palette = () => state.dark
     ? { ocean: '#0b1a26', shelf: '#17303f', land: '#2d3338', landLine: '#59636b', line: '#e6e2d8' }
@@ -867,6 +875,15 @@ mapReady.then(() => {
     map.addSource('live', { type: 'geojson', data: emptyFC() });
     const isMargin = ['==', ['get', 'kind'], 'margin'];
     const notMargin = ['!=', ['get', 'kind'], 'margin'];   // los contornos rigidos de GPlates no traen 'kind'
+    // Tierra natural (relieve y color reales de hoy) cuando no se dibuja el mapa politico: teselas de NASA GIBS, comprobadas con la sonda (JPEG, CORS abierto).
+    map.addSource('natural', { type: 'raster', tiles: [NATURAL_URL], tileSize: 256, maxzoom: 8, minzoom: 0 });
+    map.addLayer({ id: 'natural-raster', type: 'raster', source: 'natural', layout: { visibility: 'none' }, paint: { 'raster-fade-duration': 0, 'raster-resampling': 'linear' } });
+    // Las teselas (EPSG:3857) acaban en 85,05 grados: los casquetes polares (hielo) se rellenan lisos, sin imagen
+    map.addSource('natural-caps', { type: 'geojson', data: { type: 'FeatureCollection', features: [
+        { type: 'Feature', properties: { c: '#a9bccb' }, geometry: { type: 'Polygon', coordinates: [[[-180, 85.0511], [180, 85.0511], [180, 90], [-180, 90], [-180, 85.0511]]] } },
+        { type: 'Feature', properties: { c: '#e4ebf1' }, geometry: { type: 'Polygon', coordinates: [[[-180, -85.0511], [-180, -90], [180, -90], [180, -85.0511], [-180, -85.0511]]] } }] } });
+    map.addLayer({ id: 'natural-cap-n', type: 'fill', source: 'natural-caps', filter: ['==', ['get', 'c'], '#a9bccb'], layout: { visibility: 'none' }, paint: { 'fill-color': '#a9bccb' } });
+    map.addLayer({ id: 'natural-cap-s', type: 'fill', source: 'natural-caps', filter: ['==', ['get', 'c'], '#e4ebf1'], layout: { visibility: 'none' }, paint: { 'fill-color': '#e4ebf1' } });
     map.addLayer({ id: 'margin-fill', type: 'fill', source: 'land', filter: isMargin, paint: { 'fill-color': p.shelf, 'fill-opacity': 1 } });
     map.addLayer({ id: 'land-fill', type: 'fill', source: 'land', filter: notMargin, paint: { 'fill-color': p.land, 'fill-opacity': 1 } });
     map.addLayer({ id: 'land-line', type: 'line', source: 'land', filter: notMargin, paint: { 'line-color': p.landLine, 'line-width': 0.8 } });
@@ -1174,6 +1191,7 @@ async function detailApply() {
     ['margin-fill', 'land-fill', 'land-line'].forEach((id) => map.setLayoutProperty(id, 'visibility', mode ? 'none' : 'visible'));
     if (mode && !was) detailFade();
     gapRefresh();
+    naturalView();
     renderStatus();
 }
 map.on('zoom', detailApply);
@@ -1234,28 +1252,58 @@ function applyBorders(b) {
 // Un poligono historico trae un vertice cada ~13-20 km (medido en cada instantanea, ver map/borders-resolution.js) y su borde al mar es una
 // costa aproximada. De lejos eso no se sostiene: se ve solo el mapa fisico. A partir de BORDER_MIN_ZOOM se dibujan las fronteras, con un
 // boton para ocultarlas y ver solo el fisico. Las vigentes (Natural Earth, 1,7 km) no se tocan.
-const BORDER_MIN_ZOOM = 4; const BORDER_HYST = 0.15;
-const BR = { cut: false, far: false, off: prefs.bh === true, resKm: null, near: false };
+const BORDER_MIN_ZOOM = 4;      // fronteras historicas (poligonos toscos)
+const BORDER_MIN_ZOOM_NE = 2.5; // vigentes: de mas lejos son ruido sobre la Tierra
+const BORDER_HYST = 0.15;
+const BR = { cut: false, far: false, off: prefs.bh === true, resKm: null, near: false, minZoom: null };
 function bordersRes(b) {
     if (!b || b.source === 'ne' || !b.data || !window.ChronosBordersRes) return null;
     if (b.data._resKm === undefined) b.data._resKm = ChronosBordersRes.medianSegmentKm(b.data);
     return b.data._resKm;
 }
 function bordersView() {
-    const b = state.borders; const hist = Boolean(b && b.source !== 'ne' && b.data);
+    const b = state.borders; const has = Boolean(b && b.data); const hist = has && b.source !== 'ne';
     BR.resKm = hist ? bordersRes(b) : null;
+    BR.minZoom = has ? (hist ? BORDER_MIN_ZOOM : BORDER_MIN_ZOOM_NE) : null;
     const z = map.getZoom();
-    BR.near = hist && z >= BORDER_MIN_ZOOM - (BR.near ? BORDER_HYST : 0);
-    BR.far = hist && !BR.near;
+    BR.near = has && z >= BR.minZoom - (BR.near ? BORDER_HYST : 0);
+    BR.far = has && !BR.near;
     const btn = $('btn-borders'); btn.hidden = !BR.near; btn.setAttribute('aria-pressed', String(!BR.off));
-    const cut = hist && (BR.far || BR.off);
-    if (cut === BR.cut && BR.lastApplied) return;
+    const cut = has && (BR.far || BR.off);
+    if (cut === BR.cut && BR.lastApplied) { naturalView(); return; }
     BR.cut = cut; BR.lastApplied = true;
     ['borders-fill', 'borders-line', 'borders-hl', 'borders-hover'].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', cut ? 'none' : 'visible'); });
     setHoverKey(null);
     if (cut) gapHide(); else gapRefresh();
+    naturalView();
     renderStatus();
 }
+
+/* ---- Tierra natural ---- */
+// Sin mapa politico a la vista (de lejos, ocultas, o sin datos), y para una epoca en que la costa de hoy sigue valiendo, el planeta se ve
+// como es: color y relieve de la imagen de NASA (Blue Marble con relieve y batimetria). Con el detalle de OpenStreetMap manda el mapa vectorial.
+const NAT = { on: false, failed: false, errors: 0, applied: false };
+function naturalWanted() {
+    if (NAT.failed || !state.land || state.ybp > NATURAL_MAX_YBP || DETAIL.shown) return false;
+    return !(state.borders && state.borders.data && !BR.cut);
+}
+function naturalView() {
+    if (!map.getLayer('natural-raster')) return;
+    const on = Boolean(naturalWanted());
+    if (on === NAT.on && NAT.applied) return;
+    NAT.on = on; NAT.applied = true;
+    map.setLayoutProperty('natural-raster', 'visibility', on ? 'visible' : 'none');
+    ['natural-cap-n', 'natural-cap-s'].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none'); });
+    // La tierra del mapa base queda casi invisible (0,01: con 0 MapLibre deja de detectar clics) para seguir dando su ficha
+    map.setPaintProperty('margin-fill', 'fill-opacity', on ? 0.01 : 1);
+    map.setPaintProperty('land-fill', 'fill-opacity', on ? 0.01 : 1);
+    map.setPaintProperty('land-line', 'line-opacity', on ? 0.25 : 1);
+    renderCredits(); renderStatus();
+}
+map.on('error', (e) => {
+    if (!e || e.sourceId !== 'natural' || NAT.failed) return;
+    if (++NAT.errors >= 4) { NAT.failed = true; naturalView(); }   // varias teselas sin cargar: se vuelve al mapa de colores y se avisa
+});
 map.on('zoom', bordersView);
 map.on('moveend', bordersView);
 $('btn-borders').addEventListener('click', () => { BR.off = !BR.off; savePrefs({ bh: BR.off }); bordersView(); renderStatus(); });
@@ -1290,6 +1338,8 @@ function renderStatus() {
         if (b.source === 'ne') {
             messages.push(fmt('bordersNE', { km: nf().format(b.meta.segment_median_km) }));
             if (ybpToYear(state.ybp) < 2020) messages.push(t('neBackdate'));
+            if (BR.far) messages.push(fmt('bordersFarNE', { z: BR.minZoom }));
+            else if (BR.off) messages.push(t('bordersOff'));
         } else {
             messages.push(fmt('bordersSnapshot', { y: formatYear(b.year), d: b.delta === 0 ? t('exact') : fmt('apart', { n: nf().format(b.delta) }) }));
             const km = BR.resKm ? nf().format(Math.round(BR.resKm * 10) / 10) : '';
@@ -1302,6 +1352,8 @@ function renderStatus() {
     }
     if (GAP.shown) messages.push(t(state.borders && state.borders.source === 'ne' ? 'gapNoteNE' : 'gapNote'));
     if (DETAIL.shown) messages.push(t(DETAIL.shown === 'full' ? 'detailFull' : 'detailPhysical'));
+    if (NAT.on) messages.push(t('naturalNote'));
+    else if (NAT.failed) messages.push(t('naturalFail'));
     else if (DETAIL.error && detailMode()) { level = 'warn'; messages.push(fmt('detailFail', { err: DETAIL.error.message })); }
     if (messages.length) setStatus(level, messages.join(' '));
     renderCredits();
@@ -1613,6 +1665,11 @@ function renderCredits() {
     } else {
         box.appendChild(el('a', { href: 'https://github.com/aourednik/historical-basemaps', target: '_blank', rel: 'noopener', text: 'historical-basemaps' }));
         box.appendChild(document.createTextNode(' (A. Ourednik, GPL-3.0)'));
+    }
+    if (NAT.on) {
+        box.appendChild(document.createTextNode('   |   ' + t('creditsNatural') + ': '));
+        box.appendChild(el('a', { href: 'https://earthdata.nasa.gov/gibs/', target: '_blank', rel: 'noopener', text: 'NASA GIBS' }));
+        box.appendChild(document.createTextNode(' · Blue Marble'));
     }
     if (DETAIL.shown) {
         box.appendChild(document.createTextNode('   |   ' + t('creditsDetail') + ': '));

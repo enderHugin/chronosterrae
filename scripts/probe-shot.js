@@ -21,6 +21,10 @@ const SUITE = [
     { id: 'mediterraneo-9010aC', year: -9010, lng: 20, lat: 38, zoom: 5 },
     { id: 'costa-9010aC-zoom', year: -9010, lng: 2.5, lat: 41.2, zoom: 9 },
     { id: 'globo-2026', year: 2026, lng: 0, lat: 20, zoom: 1.4 },
+    { id: 'africa-2026-lejos', year: 2026, lng: 20, lat: 5, zoom: 2.2 },
+    { id: 'africa-2026-cerca', year: 2026, lng: 20, lat: 5, zoom: 3.2 },
+    { id: 'antartida-2026', year: 2026, lng: 0, lat: -75, zoom: 2 },
+    { id: 'artico-2026', year: 2026, lng: 0, lat: 75, zoom: 2 },
     { id: 'pangea-250Ma', year: -250e6 + 2000, lng: 0, lat: 0, zoom: 1.4 }
 ];
 
@@ -66,7 +70,7 @@ async function runSuite(page, out) {
             await settle(page);
             const name = v.id + (dark ? '-oscuro' : '-claro');
             await page.screenshot({ path: path.join(out, name + '.png') });
-            rows.push({ name, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            rows.push({ name, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
             if (v.hide) await page.evaluate(() => { if (BR.off) document.getElementById('btn-borders').click(); });
         }
     }
