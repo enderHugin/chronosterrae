@@ -1,0 +1,42 @@
+name: Sonda de fuentes de texturas planetarias
+
+# Comprueba URL, tamano y CORS de fuentes NASA/USGS (regla 6); informe en la rama `textures-probe`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: textures-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear texturas
+        run: node scripts/probe-textures.js > /tmp/links.json 2> /tmp/links.log
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 30 /tmp/links.log || true
+          head -c 800 /tmp/links.json || true
+      - name: Informe en la rama textures-probe
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/links.json || echo '{"error":"sin salida"}' > /tmp/links.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan textures-probe
+          cp /tmp/links.json report.json
+          cp /tmp/links.log report.log || true
+          git add report.json report.log
+          git commit -m "Sonda de vinculos $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin textures-probe
