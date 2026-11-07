@@ -1253,7 +1253,7 @@ function setHighlightKey(key) {
     gapFillPaint();
     if (GAP.shown) gapRefresh();
 }
-function gapHide() { gapSeq++; if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visibility', 'none'); GAP.shown = false; gapFillPaint(); renderStatus(); } }
+function gapHide() { gapSeq++; if (BR.swap) commitBorders(); if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visibility', 'none'); GAP.shown = false; gapFillPaint(); renderStatus(); } }
 // "dirty": llego un mapa politico nuevo y su imagen de franjas aun no esta pintada. Hasta entonces el relieve espera (politicsFirst).
 function gapSettled() {
     clearTimeout(GAP.dirtyTimer);
@@ -1341,6 +1341,7 @@ function gapTrim() { while (GAP.cache.size > 10) GAP.cache.delete(GAP.cache.keys
 // Pone los pixeles (ImageData) en el lienzo que MapLibre lee como textura. Con animate:false la textura solo se vuelve a leer en play()/pause().
 function gapShowImage(img, corners, seq) {
     if (seq !== gapSeq) return;
+    if (BR.swap) commitBorders();    // la imagen nueva esta lista: los datos vectoriales nuevos entran con ella, en el mismo paso
     if (GAP_CANVAS.width !== img.width || GAP_CANVAS.height !== img.height) { GAP_CANVAS.width = img.width; GAP_CANVAS.height = img.height; }
     GAP_CANVAS.getContext('2d').putImageData(img, 0, 0);
     const src = map.getSource('gap');
@@ -1422,11 +1423,17 @@ function chgTrack(b) {
     if (CHG.cur) CHG.prev = CHG.cur;
     CHG.cur = cur;
 }
-function applyBorders(b) {
-    chgTrack(b);
-    state.borders = b;
-    const data = b ? b.data : null;
-    if (state.bordersData === data) return;
+// Cambio de mapa politico SIN HUECO (pedido del creador: ni un instante de geografico sin politico, estorba para ver los cambios de frontera).
+// Medido con los pixeles del render: quitar la imagen de franjas vieja al aplicar la instantanea nueva dejaba 15 % de politico visible hasta
+// que llegaban las teselas vectoriales nuevas y se calculaba la imagen nueva. Ahora, si hay una imagen puesta y va a venir otra, TODO lo
+// politico antiguo (imagen, relleno, lineas, nombres) se queda a la vista y la sustitucion es una sola: cuando la imagen nueva esta lista se
+// cambian a la vez los datos vectoriales y la imagen (commitBorders). Mientras tanto el estado avisa de que se ve la instantanea anterior
+// y clic/resaltado estan inactivos (serian de otra epoca). Cota de seguridad: si la imagen no llega en 1,5 s se cambia igualmente.
+function bordersStale() { return state.bordersLoading || Boolean(BR.swap); }
+function commitBorders() {
+    const sw = BR.swap; if (!sw) return;
+    BR.swap = null; clearTimeout(BR.swapTimer);
+    const data = sw.data;
     map.getSource('borders').setData(data || emptyFC());
     map.getSource('borders-inner').setData(innerOf(data));
     state.bordersData = data;
@@ -1435,12 +1442,29 @@ function applyBorders(b) {
     GAP.dirty = Boolean(data && data.features.length);   // el relieve espera a que lo politico este pintado (cota: 2 s)
     clearTimeout(GAP.dirtyTimer); GAP.dirtyTimer = setTimeout(gapSettled, 2000);
     bordersView();
-    // La imagen de franjas es de la fecha ANTERIOR: dejarla hasta que llegue la nueva (1,6-3,5 s medidos con red real, informe timing.json
-    // del render real) enseñaba territorio viejo bajo fronteras nuevas. Se quita ya: el relleno vectorial (90 ms) se ve al instante y la
-    // imagen lo sustituye al llegar. Si la imagen de esta fecha ya se calculo antes, vuelve sin recalcular (cache de gapDraw).
+    labelsUpdate();
+    renderStatus();
+}
+function applyBorders(b) {
+    chgTrack(b);
+    state.borders = b;
+    const data = b ? b.data : null;
+    if (BR.swap && BR.swap.data === data) return;                 // ya esta de camino
+    if (state.bordersData === data && !BR.swap) return;
+    const hold = Boolean(GAP.shown && data && data.features.length && !BR.cut && window.ChronosGap);
+    BR.swap = { data };
+    clearTimeout(BR.swapTimer);
+    if (hold) {
+        BR.swapTimer = setTimeout(commitBorders, 1500);
+        gapSeq++;                                                 // lo que se estuviera calculando era de otra fecha
+        gapRefresh(0);
+        renderStatus();
+        return;
+    }
+    commitBorders();
+    // Sin imagen a la vista que conservar: el relleno vectorial (90 ms) se ve al instante y la imagen lo sustituye al llegar.
     gapHide();
     gapRefresh(60);
-    labelsUpdate();
 }
 
 /* ---- fronteras historicas: solo de cerca, y ocultables ---- */
@@ -1455,7 +1479,7 @@ const BORDER_COVER_HYST = 0.02;  // al alejarse se apagan a 78 %: evita el parpa
 const BORDER_MIN_ZOOM = 4;       // reserva: fronteras historicas (poligonos toscos)
 const BORDER_MIN_ZOOM_NE = 2.5;  // reserva: vigentes
 const BORDER_HYST = 0.15;
-const BR = { cut: false, far: false, off: prefs.bh === true, resKm: null, near: false, minZoom: null, cover: null };
+const BR = { cut: false, far: false, off: prefs.bh === true, resKm: null, near: false, minZoom: null, cover: null, swap: null, swapTimer: 0 };
 function bordersRes(b) {
     if (!b || b.source === 'ne' || !b.data || !window.ChronosBordersRes) return null;
     if (b.data._resKm === undefined) b.data._resKm = ChronosBordersRes.medianSegmentKm(b.data);
@@ -1610,8 +1634,9 @@ function renderStatus() {
     if (state.bordersError) {
         level = 'warn';
         messages.push(fmt('bordersFail', { err: state.bordersError.message }));
-    } else if (state.bordersLoading) {
-        messages.push(state.borders && state.borders.data ? fmt('loadingBordersKeep', { y: formatYear(state.borders.year) }) : t('loadingBorders'));
+    } else if (bordersStale()) {
+        const shownY = BR.swap && GAP.year != null ? GAP.year : (state.borders && state.borders.data ? state.borders.year : null);   // la que SE VE, no la que viene
+        messages.push(shownY !== null ? fmt('loadingBordersKeep', { y: formatYear(shownY) }) : t('loadingBorders'));
     } else if (state.borders) {
         const b = state.borders;
         if (b.source === 'ne') {
@@ -1864,7 +1889,7 @@ function setHoverKey(key) {
 }
 function hoverUpdate() {
     hoverRaf = 0;
-    const e = hoverPt; if (!e || !map.getLayer('borders-fill') || BR.cut || state.bordersLoading || pointInSky(e.x, e.y)) { setHoverKey(null); return; }
+    const e = hoverPt; if (!e || !map.getLayer('borders-fill') || BR.cut || bordersStale() || pointInSky(e.x, e.y)) { setHoverKey(null); return; }
     const hit = map.queryRenderedFeatures(e, { layers: ['events-circle', 'live-points', 'borders-fill'] })[0];
     const key = hit && hit.layer.id === 'borders-fill' ? polityKey(hit.properties) : null;
     setHoverKey(key && key !== GAP.sel ? key : null);
@@ -1879,7 +1904,7 @@ $('btn-center').addEventListener('click', () => { CENTER.on = !CENTER.on; $('btn
 map.on('click', (e) => {
     if (!map.getLayer('borders-fill')) return;
     const hit = map.queryRenderedFeatures(e.point, { layers: ['events-circle', 'live-points', 'borders-fill', 'land-fill', 'margin-fill'] })[0];
-    if (state.bordersLoading && hit && hit.layer.id === 'borders-fill') return;   // se ve el mapa de la instantanea anterior hasta que llegue la nueva
+    if (bordersStale() && hit && hit.layer.id === 'borders-fill') return;   // se ve el mapa de la instantanea anterior hasta que llegue la nueva
     clearHighlight(); setHoverKey(null);
     if (!hit) { hideInfo(); return; }
     if (hit.layer.id === 'events-circle') { const f = events.byId.get(hit.properties.id); if (f) showEvent(f); }

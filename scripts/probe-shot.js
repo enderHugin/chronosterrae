@@ -61,6 +61,49 @@ async function runTiming(page, out) {
     fs.writeFileSync(path.join(out, 'timing.json'), JSON.stringify(rows, null, 2));
 }
 
+// Continuidad de lo politico en un cambio de fecha (regla 8: se mide en el render real, con red real). En cada fotograma se leen los pixeles de
+// puntos que caen dentro de territorios y se cuenta en cuantos se distingue el color politico del mapa fisico solo (referencia con las fronteras
+// ocultas). Si en algun fotograma baja, hay un instante de "geografico sin politico". Salida: continuity.json (minimos y serie comprimida).
+async function runContinuity(page, out) {
+    const res = await page.evaluate(async () => {
+        const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+        const until = async (fn, ms) => { const s = performance.now(); while (!fn()) { if (performance.now() - s > ms) return false; await sleep(50); } return true; };
+        if (state.dark) document.getElementById('btn-theme').click();
+        if (BR.off) document.getElementById('btn-borders').click();
+        setTime(yearToYbp(1945), { immediate: true }); map.jumpTo({ center: [12, 47], zoom: 4.3, pitch: 0, bearing: 0 });
+        if (!(await until(() => state.borders && state.borders.year === 1945 && !state.bordersLoading && GAP.shown && LBL.ready, 60000))) return { error: 'no llego a 1945 con imagen de franjas' };
+        await sleep(2500);
+        const box = map.getContainer(); const W = box.clientWidth; const H = box.clientHeight; const dpr = window.devicePixelRatio || 1;
+        const pts = labelsData(state.borders).features.map((f) => map.project(f.geometry.coordinates)).filter((q) => q.x > W * 0.34 && q.x < W - 30 && q.y > 80 && q.y < H * 0.7).map((q) => ({ x: Math.round(q.x), y: Math.round(q.y) }));
+        for (let x = Math.round(W * 0.38); x < W - 40; x += 110) for (let y = 100; y < H * 0.68; y += 90) pts.push({ x, y });
+        const gl = map.painter.context.gl; const buf = new Uint8Array(4);
+        const readPts = () => pts.map((q) => { gl.readPixels(Math.round(q.x * dpr), Math.round(gl.drawingBufferHeight - q.y * dpr), 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf); return [buf[0], buf[1], buf[2]]; });
+        const grab = () => new Promise((resolve) => { const h = () => { map.off('render', h); resolve(readPts()); }; map.on('render', h); map.triggerRepaint(); });
+        const base = await grab();
+        document.getElementById('btn-borders').click(); await sleep(1500); const phys = await grab(); document.getElementById('btn-borders').click(); await sleep(1500);
+        const dist = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+        const land = base.map((c, k) => dist(c, phys[k]) > 40); const nLand = land.filter(Boolean).length;
+        if (nLand < 10) return { error: 'pocos puntos donde se distinga politico de fisico: ' + nLand, W, H };
+        const tinted = (px) => px.reduce((n, c, k) => n + (land[k] && dist(c, phys[k]) > 40 ? 1 : 0), 0) / nLand;
+        const record = async (label, year, doneFn) => {
+            const frames = []; const t0 = performance.now(); let loop = true;
+            const onRender = () => frames.push({ t: Math.round(performance.now() - t0), pct: Math.round(tinted(readPts()) * 100), src: map.isSourceLoaded('borders'), gap: GAP.shown, by: state.borders && state.borders.year, load: state.bordersLoading, swap: Boolean(BR.swap) });
+            map.on('render', onRender); (function tick() { if (!loop) return; map.triggerRepaint(); requestAnimationFrame(tick); })();
+            setTime(yearToYbp(year), { immediate: false });
+            const ok = await until(doneFn, 60000); await sleep(1500);
+            loop = false; map.off('render', onRender);
+            const series = []; let prev = ''; for (const f of frames) { const k = [f.pct, f.src, f.gap, f.by, f.load, f.swap].join('|'); if (k !== prev) { series.push(f); prev = k; } }
+            return { label, year, completed: ok, frames: frames.length, minPct: frames.length ? Math.min(...frames.map((f) => f.pct)) : null, series };
+        };
+        const cold = state.polities.filter((p) => p.year > 1300 && p.year < 1715 && !cache.has(CFG.hbBase + 'geojson/' + p.file)).map((p) => p.year);
+        const out = { W, H, points: pts.length, pointsWithPolitics: nLand, basePct: Math.round(tinted(base) * 100), runs: [] };
+        if (cold.length) out.runs.push(await record('frio', cold[0], () => state.borders && state.borders.year !== 1945 && GAP.shown && !state.bordersLoading && !BR.swap));
+        out.runs.push(await record('en-memoria', 1945, () => state.borders && state.borders.year === 1945 && GAP.shown && !state.bordersLoading && !BR.swap));
+        return out;
+    });
+    fs.writeFileSync(path.join(out, 'continuity.json'), JSON.stringify(res, null, 2));
+}
+
 async function runSuite(page, out) {
     const rows = [];
     for (const dark of [true, false]) {
@@ -77,6 +120,7 @@ async function runSuite(page, out) {
         }
     }
     try { await runTiming(page, out); } catch (e) { fs.writeFileSync(path.join(out, 'timing-error.txt'), String(e)); }
+    try { await runContinuity(page, out); } catch (e) { fs.writeFileSync(path.join(out, 'continuity-error.txt'), String(e)); }
     // Alejar el zoom del globo (sin boton ni modo): del zoom minimo del mapa hacia el sistema solar, y a otros cuerpos. Claro y oscuro no cambian el espacio.
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); map.jumpTo({ center: [-3.7, 40.4], zoom: map.getMinZoom(), bearing: 0, pitch: 0 }); });
     await page.waitForTimeout(2500);
