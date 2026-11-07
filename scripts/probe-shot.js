@@ -171,7 +171,15 @@ async function runSuite(page, out, only) {
     const log = []; const counts = new Map();
     const note = (msg) => { const c = counts.get(msg) || 0; counts.set(msg, c + 1); if (c === 0 && log.length < 300) log.push(msg); };
     page.on('pageerror', (e) => note('PAGEERROR ' + String(e.message).slice(0, 300)));
-    page.on('console', (m) => { if (m.type() === 'error') note('CONSOLE ' + m.text().slice(0, 200)); });
+    // Diagnostico: el proceso murio por memoria SIN que el recuento de errores creciera: se cuentan TODOS los mensajes de consola (tipo + texto), se vuelcan a disco cada 3 s
+    // (sobrevive a una muerte por memoria) y, si hay una inundacion, se corta con el culpable ya escrito.
+    const all = new Map(); let total = 0; const dump = () => { try { fs.writeFileSync(path.join(out, 'console-counts.json'), JSON.stringify({ total, top: [...all].sort((a, b) => b[1] - a[1]).slice(0, 25).map(([m, n]) => ({ n, m })) }, null, 2)); } catch (e) { /* nada */ } };
+    setInterval(dump, 3000).unref();
+    page.on('console', (m) => {
+        const k = m.type() + ' ' + m.text().slice(0, 160); total++; if (all.size < 5000 || all.has(k)) all.set(k, (all.get(k) || 0) + 1);
+        if (m.type() === 'error') note('CONSOLE ' + m.text().slice(0, 200));
+        if (total > 300000) { dump(); console.error('INUNDACION de consola: ' + total); process.exit(3); }
+    });
     globalThis.__logCounts = () => [...counts].filter(([, c]) => c > 1).map(([m, c]) => ({ n: c, m }));
     await page.goto(url, { waitUntil: 'load' });
     await page.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
