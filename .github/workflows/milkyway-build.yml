@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Dependencias
-        run: pip install --quiet opencv-python-headless numpy
+        run: pip install --quiet OpenEXR opencv-python-headless numpy
       - name: Convertir
         run: python3 scripts/build-milkyway.py /tmp/mw 2>&1 | tee /tmp/mw.log
       - name: Publicar en la rama milkyway-build

@@ -17,6 +17,23 @@ BASE = 'https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/'
 FILE = 'milkyway_2020_4k.exr'
 UA = 'ChronosTerrae-build/1.0 (+https://github.com/enderHugin/chronosterrae)'
 
+def read_exr(path):
+    """Lee un EXR (half/float) como RGB float32. Prueba el paquete OpenEXR (API 3.x) y, si no, OpenCV."""
+    try:
+        import OpenEXR
+        f = OpenEXR.File(path)
+        ch = f.channels()
+        print('canales EXR:', {k: str(getattr(v, 'pixels', v).dtype) for k, v in ch.items()}, flush=True)
+        if 'RGB' in ch: return np.asarray(ch['RGB'].pixels, dtype=np.float32)[:, :, :3]
+        names = [n for n in ('R', 'G', 'B') if n in ch]
+        if len(names) == 3: return np.stack([np.asarray(ch[n].pixels, dtype=np.float32) for n in names], axis=-1)
+        raise RuntimeError('canales inesperados: %s' % list(ch))
+    except ImportError:
+        pass
+    img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+    if img is None: raise SystemExit('no se pudo leer el EXR')
+    return img[:, :, :3].astype(np.float32)[:, :, ::-1]
+
 def main(out):
     os.makedirs(out, exist_ok=True)
     src = os.path.join(out, FILE)
@@ -27,9 +44,7 @@ def main(out):
             if not b: break
             f.write(b)
     h = hashlib.sha256(open(src, 'rb').read()).hexdigest()
-    img = cv2.imread(src, cv2.IMREAD_UNCHANGED)             # BGR(A) float
-    if img is None: raise SystemExit('no se pudo leer el EXR')
-    img = img[:, :, :3].astype(np.float32)[:, :, ::-1]      # RGB
+    img = read_exr(src)
     lum = 0.2126 * img[:, :, 0] + 0.7152 * img[:, :, 1] + 0.0722 * img[:, :, 2]
     stats = dict(shape=list(img.shape), min=float(img.min()), max=float(img.max()), mean=float(img.mean()),
                  p50=float(np.percentile(lum, 50)), p99=float(np.percentile(lum, 99)), p995=float(np.percentile(lum, 99.5)), p999=float(np.percentile(lum, 99.9)))
