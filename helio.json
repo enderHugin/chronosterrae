@@ -1,0 +1,1301 @@
+{
+  "generated_at": "2026-11-07T04:09:54.831Z",
+  "reference": "JPL Horizons (https://ssd.jpl.nasa.gov/api/horizons.api), vectores geometricos, ICRF/J2000 ecuatorial, km, escala TT; centro: Sol (Luna: Tierra)",
+  "engine": "astronomy-engine 2.1.19",
+  "note": "Marte y los gigantes: Horizons es el BARICENTRO de su sistema; el motor da el planeta. El error incluye ese desplazamiento.",
+  "epochs": [
+    {
+      "year": -2000,
+      "calendar": "julian",
+      "jd": 990730
+    },
+    {
+      "year": -1500,
+      "calendar": "julian",
+      "jd": 1173355
+    },
+    {
+      "year": -1000,
+      "calendar": "julian",
+      "jd": 1355980
+    },
+    {
+      "year": -500,
+      "calendar": "julian",
+      "jd": 1538605
+    },
+    {
+      "year": 0,
+      "calendar": "julian",
+      "jd": 1721230
+    },
+    {
+      "year": 500,
+      "calendar": "julian",
+      "jd": 1903855
+    },
+    {
+      "year": 1000,
+      "calendar": "julian",
+      "jd": 2086480
+    },
+    {
+      "year": 1500,
+      "calendar": "julian",
+      "jd": 2269105
+    },
+    {
+      "year": 1700,
+      "calendar": "gregorian",
+      "jd": 2342144
+    },
+    {
+      "year": 1900,
+      "calendar": "gregorian",
+      "jd": 2415192
+    },
+    {
+      "year": 2000,
+      "calendar": "gregorian",
+      "jd": 2451717
+    },
+    {
+      "year": 2026,
+      "calendar": "gregorian",
+      "jd": 2461213
+    },
+    {
+      "year": 2100,
+      "calendar": "gregorian",
+      "jd": 2488241
+    },
+    {
+      "year": 2300,
+      "calendar": "gregorian",
+      "jd": 2561289
+    },
+    {
+      "year": 2600,
+      "calendar": "gregorian",
+      "jd": 2670862
+    },
+    {
+      "year": 3000,
+      "calendar": "gregorian",
+      "jd": 2816959
+    }
+  ],
+  "cases": [
+    {
+      "body": "Mercury",
+      "year": -2000,
+      "barycenter": false,
+      "distance_km": 69609896,
+      "error_km": 109625.5,
+      "error_arcsec": 324.837
+    },
+    {
+      "body": "Mercury",
+      "year": -1500,
+      "barycenter": false,
+      "distance_km": 69536237,
+      "error_km": 96036.4,
+      "error_arcsec": 284.872
+    },
+    {
+      "body": "Mercury",
+      "year": -1000,
+      "barycenter": false,
+      "distance_km": 69446096,
+      "error_km": 81591,
+      "error_arcsec": 242.337
+    },
+    {
+      "body": "Mercury",
+      "year": -500,
+      "barycenter": false,
+      "distance_km": 69338365,
+      "error_km": 67426.3,
+      "error_arcsec": 200.577
+    },
+    {
+      "body": "Mercury",
+      "year": 0,
+      "barycenter": false,
+      "distance_km": 69214396,
+      "error_km": 52931.9,
+      "error_arcsec": 157.741
+    },
+    {
+      "body": "Mercury",
+      "year": 500,
+      "barycenter": false,
+      "distance_km": 69075735,
+      "error_km": 37437.3,
+      "error_arcsec": 111.79
+    },
+    {
+      "body": "Mercury",
+      "year": 1000,
+      "barycenter": false,
+      "distance_km": 68918793,
+      "error_km": 24059.5,
+      "error_arcsec": 72.007
+    },
+    {
+      "body": "Mercury",
+      "year": 1500,
+      "barycenter": false,
+      "distance_km": 68745050,
+      "error_km": 11701.1,
+      "error_arcsec": 35.108
+    },
+    {
+      "body": "Mercury",
+      "year": 1700,
+      "barycenter": false,
+      "distance_km": 52136286,
+      "error_km": 6210.5,
+      "error_arcsec": 24.57
+    },
+    {
+      "body": "Mercury",
+      "year": 1900,
+      "barycenter": false,
+      "distance_km": 59531888,
+      "error_km": 2327.3,
+      "error_arcsec": 8.064
+    },
+    {
+      "body": "Mercury",
+      "year": 2000,
+      "barycenter": false,
+      "distance_km": 69251375,
+      "error_km": 1771.1,
+      "error_arcsec": 5.275
+    },
+    {
+      "body": "Mercury",
+      "year": 2026,
+      "barycenter": false,
+      "distance_km": 67788668,
+      "error_km": 1125.8,
+      "error_arcsec": 3.425
+    },
+    {
+      "body": "Mercury",
+      "year": 2100,
+      "barycenter": false,
+      "distance_km": 67085815,
+      "error_km": 2988.3,
+      "error_arcsec": 9.188
+    },
+    {
+      "body": "Mercury",
+      "year": 2300,
+      "barycenter": false,
+      "distance_km": 46042747,
+      "error_km": 7793.6,
+      "error_arcsec": 34.914
+    },
+    {
+      "body": "Mercury",
+      "year": 2600,
+      "barycenter": false,
+      "distance_km": 68448297,
+      "error_km": 11305.1,
+      "error_arcsec": 34.067
+    },
+    {
+      "body": "Mercury",
+      "year": 3000,
+      "barycenter": false,
+      "distance_km": 66885550,
+      "error_km": 11848.7,
+      "error_arcsec": 36.54
+    },
+    {
+      "body": "Venus",
+      "year": -2000,
+      "barycenter": false,
+      "distance_km": 107259574,
+      "error_km": 153726.6,
+      "error_arcsec": 295.623
+    },
+    {
+      "body": "Venus",
+      "year": -1500,
+      "barycenter": false,
+      "distance_km": 108296274,
+      "error_km": 132959,
+      "error_arcsec": 253.238
+    },
+    {
+      "body": "Venus",
+      "year": -1000,
+      "barycenter": false,
+      "distance_km": 109098385,
+      "error_km": 81704.6,
+      "error_arcsec": 154.473
+    },
+    {
+      "body": "Venus",
+      "year": -500,
+      "barycenter": false,
+      "distance_km": 108097560,
+      "error_km": 72183.9,
+      "error_arcsec": 137.737
+    },
+    {
+      "body": "Venus",
+      "year": 0,
+      "barycenter": false,
+      "distance_km": 107382491,
+      "error_km": 39722.9,
+      "error_arcsec": 76.301
+    },
+    {
+      "body": "Venus",
+      "year": 500,
+      "barycenter": false,
+      "distance_km": 108352076,
+      "error_km": 23888.4,
+      "error_arcsec": 45.475
+    },
+    {
+      "body": "Venus",
+      "year": 1000,
+      "barycenter": false,
+      "distance_km": 108980066,
+      "error_km": 8034.1,
+      "error_arcsec": 15.206
+    },
+    {
+      "body": "Venus",
+      "year": 1500,
+      "barycenter": false,
+      "distance_km": 108051517,
+      "error_km": 4762.6,
+      "error_arcsec": 9.091
+    },
+    {
+      "body": "Venus",
+      "year": 1700,
+      "barycenter": false,
+      "distance_km": 108292281,
+      "error_km": 3052.3,
+      "error_arcsec": 5.814
+    },
+    {
+      "body": "Venus",
+      "year": 1900,
+      "barycenter": false,
+      "distance_km": 108668543,
+      "error_km": 711.7,
+      "error_arcsec": 1.351
+    },
+    {
+      "body": "Venus",
+      "year": 2000,
+      "barycenter": false,
+      "distance_km": 107606718,
+      "error_km": 1469.2,
+      "error_arcsec": 2.816
+    },
+    {
+      "body": "Venus",
+      "year": 2026,
+      "barycenter": false,
+      "distance_km": 107843972,
+      "error_km": 770.7,
+      "error_arcsec": 1.474
+    },
+    {
+      "body": "Venus",
+      "year": 2100,
+      "barycenter": false,
+      "distance_km": 108904055,
+      "error_km": 1544.2,
+      "error_arcsec": 2.925
+    },
+    {
+      "body": "Venus",
+      "year": 2300,
+      "barycenter": false,
+      "distance_km": 108903927,
+      "error_km": 2337.6,
+      "error_arcsec": 4.427
+    },
+    {
+      "body": "Venus",
+      "year": 2600,
+      "barycenter": false,
+      "distance_km": 107916404,
+      "error_km": 6180.4,
+      "error_arcsec": 11.813
+    },
+    {
+      "body": "Venus",
+      "year": 3000,
+      "barycenter": false,
+      "distance_km": 108662673,
+      "error_km": 6992.4,
+      "error_arcsec": 13.273
+    },
+    {
+      "body": "Earth",
+      "year": -2000,
+      "barycenter": false,
+      "distance_km": 151778014,
+      "error_km": 198501,
+      "error_arcsec": 269.761
+    },
+    {
+      "body": "Earth",
+      "year": -1500,
+      "barycenter": false,
+      "distance_km": 151874546,
+      "error_km": 149329.4,
+      "error_arcsec": 202.808
+    },
+    {
+      "body": "Earth",
+      "year": -1000,
+      "barycenter": false,
+      "distance_km": 151957005,
+      "error_km": 108248.6,
+      "error_arcsec": 146.935
+    },
+    {
+      "body": "Earth",
+      "year": -500,
+      "barycenter": false,
+      "distance_km": 152025155,
+      "error_km": 74747.4,
+      "error_arcsec": 101.416
+    },
+    {
+      "body": "Earth",
+      "year": 0,
+      "barycenter": false,
+      "distance_km": 152087281,
+      "error_km": 47844.5,
+      "error_arcsec": 64.888
+    },
+    {
+      "body": "Earth",
+      "year": 500,
+      "barycenter": false,
+      "distance_km": 152111435,
+      "error_km": 27562,
+      "error_arcsec": 37.374
+    },
+    {
+      "body": "Earth",
+      "year": 1000,
+      "barycenter": false,
+      "distance_km": 152124386,
+      "error_km": 13523.1,
+      "error_arcsec": 18.336
+    },
+    {
+      "body": "Earth",
+      "year": 1500,
+      "barycenter": false,
+      "distance_km": 152121897,
+      "error_km": 4602.3,
+      "error_arcsec": 6.24
+    },
+    {
+      "body": "Earth",
+      "year": 1700,
+      "barycenter": false,
+      "distance_km": 152094760,
+      "error_km": 2491.9,
+      "error_arcsec": 3.379
+    },
+    {
+      "body": "Earth",
+      "year": 1900,
+      "barycenter": false,
+      "distance_km": 152055963,
+      "error_km": 1871.3,
+      "error_arcsec": 2.538
+    },
+    {
+      "body": "Earth",
+      "year": 2000,
+      "barycenter": false,
+      "distance_km": 152033370,
+      "error_km": 1413.8,
+      "error_arcsec": 1.918
+    },
+    {
+      "body": "Earth",
+      "year": 2026,
+      "barycenter": false,
+      "distance_km": 152021761,
+      "error_km": 1317.3,
+      "error_arcsec": 1.787
+    },
+    {
+      "body": "Earth",
+      "year": 2100,
+      "barycenter": false,
+      "distance_km": 152007613,
+      "error_km": 1322.7,
+      "error_arcsec": 1.795
+    },
+    {
+      "body": "Earth",
+      "year": 2300,
+      "barycenter": false,
+      "distance_km": 151951712,
+      "error_km": 2152.9,
+      "error_arcsec": 2.922
+    },
+    {
+      "body": "Earth",
+      "year": 2600,
+      "barycenter": false,
+      "distance_km": 151855217,
+      "error_km": 3230.6,
+      "error_arcsec": 4.388
+    },
+    {
+      "body": "Earth",
+      "year": 3000,
+      "barycenter": false,
+      "distance_km": 151714782,
+      "error_km": 5502.2,
+      "error_arcsec": 7.481
+    },
+    {
+      "body": "Moon",
+      "year": -2000,
+      "barycenter": false,
+      "distance_km": 358646,
+      "error_km": 7634.1,
+      "error_arcsec": 4390.533
+    },
+    {
+      "body": "Moon",
+      "year": -1500,
+      "barycenter": false,
+      "distance_km": 385625,
+      "error_km": 4930.5,
+      "error_arcsec": 2637.225
+    },
+    {
+      "body": "Moon",
+      "year": -1000,
+      "barycenter": false,
+      "distance_km": 405696,
+      "error_km": 3055.5,
+      "error_arcsec": 1553.466
+    },
+    {
+      "body": "Moon",
+      "year": -500,
+      "barycenter": false,
+      "distance_km": 393564,
+      "error_km": 2205.7,
+      "error_arcsec": 1155.979
+    },
+    {
+      "body": "Moon",
+      "year": 0,
+      "barycenter": false,
+      "distance_km": 358742,
+      "error_km": 1627.8,
+      "error_arcsec": 935.908
+    },
+    {
+      "body": "Moon",
+      "year": 500,
+      "barycenter": false,
+      "distance_km": 379799,
+      "error_km": 808.9,
+      "error_arcsec": 439.301
+    },
+    {
+      "body": "Moon",
+      "year": 1000,
+      "barycenter": false,
+      "distance_km": 405234,
+      "error_km": 318.6,
+      "error_arcsec": 162.171
+    },
+    {
+      "body": "Moon",
+      "year": 1500,
+      "barycenter": false,
+      "distance_km": 398302,
+      "error_km": 83.9,
+      "error_arcsec": 43.426
+    },
+    {
+      "body": "Moon",
+      "year": 1700,
+      "barycenter": false,
+      "distance_km": 366206,
+      "error_km": 35.7,
+      "error_arcsec": 20.121
+    },
+    {
+      "body": "Moon",
+      "year": 1900,
+      "barycenter": false,
+      "distance_km": 370982,
+      "error_km": 9.1,
+      "error_arcsec": 5.053
+    },
+    {
+      "body": "Moon",
+      "year": 2000,
+      "barycenter": false,
+      "distance_km": 402592,
+      "error_km": 13.2,
+      "error_arcsec": 6.772
+    },
+    {
+      "body": "Moon",
+      "year": 2026,
+      "barycenter": false,
+      "distance_km": 386061,
+      "error_km": 12.4,
+      "error_arcsec": 6.612
+    },
+    {
+      "body": "Moon",
+      "year": 2100,
+      "barycenter": false,
+      "distance_km": 366691,
+      "error_km": 11.2,
+      "error_arcsec": 6.304
+    },
+    {
+      "body": "Moon",
+      "year": 2300,
+      "barycenter": false,
+      "distance_km": 371074,
+      "error_km": 20.9,
+      "error_arcsec": 11.637
+    },
+    {
+      "body": "Moon",
+      "year": 2600,
+      "barycenter": false,
+      "distance_km": 387661,
+      "error_km": 94.6,
+      "error_arcsec": 50.316
+    },
+    {
+      "body": "Moon",
+      "year": 3000,
+      "barycenter": false,
+      "distance_km": 368288,
+      "error_km": 286.3,
+      "error_arcsec": 160.341
+    },
+    {
+      "body": "Mars",
+      "year": -2000,
+      "barycenter": true,
+      "distance_km": 238753112,
+      "error_km": 280295.5,
+      "error_arcsec": 242.154
+    },
+    {
+      "body": "Mars",
+      "year": -1500,
+      "barycenter": true,
+      "distance_km": 248486364,
+      "error_km": 303763.8,
+      "error_arcsec": 252.15
+    },
+    {
+      "body": "Mars",
+      "year": -1000,
+      "barycenter": true,
+      "distance_km": 239813377,
+      "error_km": 246507.6,
+      "error_arcsec": 212.023
+    },
+    {
+      "body": "Mars",
+      "year": -500,
+      "barycenter": true,
+      "distance_km": 219087425,
+      "error_km": 53940.5,
+      "error_arcsec": 50.783
+    },
+    {
+      "body": "Mars",
+      "year": 0,
+      "barycenter": true,
+      "distance_km": 207061260,
+      "error_km": 49194.3,
+      "error_arcsec": 49.005
+    },
+    {
+      "body": "Mars",
+      "year": 500,
+      "barycenter": true,
+      "distance_km": 219506047,
+      "error_km": 21796.5,
+      "error_arcsec": 20.482
+    },
+    {
+      "body": "Mars",
+      "year": 1000,
+      "barycenter": true,
+      "distance_km": 240477377,
+      "error_km": 7816.2,
+      "error_arcsec": 6.704
+    },
+    {
+      "body": "Mars",
+      "year": 1500,
+      "barycenter": true,
+      "distance_km": 249091565,
+      "error_km": 3875.7,
+      "error_arcsec": 3.209
+    },
+    {
+      "body": "Mars",
+      "year": 1700,
+      "barycenter": true,
+      "distance_km": 222133106,
+      "error_km": 1043.5,
+      "error_arcsec": 0.969
+    },
+    {
+      "body": "Mars",
+      "year": 1900,
+      "barycenter": true,
+      "distance_km": 215429384,
+      "error_km": 2238.4,
+      "error_arcsec": 2.143
+    },
+    {
+      "body": "Mars",
+      "year": 2000,
+      "barycenter": true,
+      "distance_km": 236736640,
+      "error_km": 2716,
+      "error_arcsec": 2.366
+    },
+    {
+      "body": "Mars",
+      "year": 2026,
+      "barycenter": true,
+      "distance_km": 214181964,
+      "error_km": 4017.4,
+      "error_arcsec": 3.869
+    },
+    {
+      "body": "Mars",
+      "year": 2100,
+      "barycenter": true,
+      "distance_km": 248923615,
+      "error_km": 1080.8,
+      "error_arcsec": 0.896
+    },
+    {
+      "body": "Mars",
+      "year": 2300,
+      "barycenter": true,
+      "distance_km": 223405336,
+      "error_km": 3003.5,
+      "error_arcsec": 2.773
+    },
+    {
+      "body": "Mars",
+      "year": 2600,
+      "barycenter": true,
+      "distance_km": 235613077,
+      "error_km": 8163.9,
+      "error_arcsec": 7.147
+    },
+    {
+      "body": "Mars",
+      "year": 3000,
+      "barycenter": true,
+      "distance_km": 207449347,
+      "error_km": 19264,
+      "error_arcsec": 19.154
+    },
+    {
+      "body": "Jupiter",
+      "year": -2000,
+      "barycenter": true,
+      "distance_km": 751322540,
+      "error_km": 4336407.1,
+      "error_arcsec": 1190.498
+    },
+    {
+      "body": "Jupiter",
+      "year": -1500,
+      "barycenter": true,
+      "distance_km": 748058283,
+      "error_km": 2346374.4,
+      "error_arcsec": 646.974
+    },
+    {
+      "body": "Jupiter",
+      "year": -1000,
+      "barycenter": true,
+      "distance_km": 770397317,
+      "error_km": 1490401.6,
+      "error_arcsec": 399.037
+    },
+    {
+      "body": "Jupiter",
+      "year": -500,
+      "barycenter": true,
+      "distance_km": 799961110,
+      "error_km": 1085032.4,
+      "error_arcsec": 279.769
+    },
+    {
+      "body": "Jupiter",
+      "year": 0,
+      "barycenter": true,
+      "distance_km": 813825671,
+      "error_km": 323610.1,
+      "error_arcsec": 82.019
+    },
+    {
+      "body": "Jupiter",
+      "year": 500,
+      "barycenter": true,
+      "distance_km": 799508123,
+      "error_km": 141823.5,
+      "error_arcsec": 36.589
+    },
+    {
+      "body": "Jupiter",
+      "year": 1000,
+      "barycenter": true,
+      "distance_km": 768350758,
+      "error_km": 148963.9,
+      "error_arcsec": 39.99
+    },
+    {
+      "body": "Jupiter",
+      "year": 1500,
+      "barycenter": true,
+      "distance_km": 743626641,
+      "error_km": 36169.4,
+      "error_arcsec": 10.033
+    },
+    {
+      "body": "Jupiter",
+      "year": 1700,
+      "barycenter": true,
+      "distance_km": 766709804,
+      "error_km": 16788.3,
+      "error_arcsec": 4.516
+    },
+    {
+      "body": "Jupiter",
+      "year": 1900,
+      "barycenter": true,
+      "distance_km": 798481050,
+      "error_km": 24165.7,
+      "error_arcsec": 6.243
+    },
+    {
+      "body": "Jupiter",
+      "year": 2000,
+      "barycenter": true,
+      "distance_km": 747335072,
+      "error_km": 29212.7,
+      "error_arcsec": 8.063
+    },
+    {
+      "body": "Jupiter",
+      "year": 2026,
+      "barycenter": true,
+      "distance_km": 788817058,
+      "error_km": 18882.4,
+      "error_arcsec": 4.937
+    },
+    {
+      "body": "Jupiter",
+      "year": 2100,
+      "barycenter": true,
+      "distance_km": 815326289,
+      "error_km": 15551.7,
+      "error_arcsec": 3.934
+    },
+    {
+      "body": "Jupiter",
+      "year": 2300,
+      "barycenter": true,
+      "distance_km": 807285812,
+      "error_km": 15729.7,
+      "error_arcsec": 4.019
+    },
+    {
+      "body": "Jupiter",
+      "year": 2600,
+      "barycenter": true,
+      "distance_km": 798228355,
+      "error_km": 62009.5,
+      "error_arcsec": 16.023
+    },
+    {
+      "body": "Jupiter",
+      "year": 3000,
+      "barycenter": true,
+      "distance_km": 809054704,
+      "error_km": 173024.1,
+      "error_arcsec": 44.112
+    },
+    {
+      "body": "Saturn",
+      "year": -2000,
+      "barycenter": true,
+      "distance_km": 1381584032,
+      "error_km": 10574185.5,
+      "error_arcsec": 1578.682
+    },
+    {
+      "body": "Saturn",
+      "year": -1500,
+      "barycenter": true,
+      "distance_km": 1370603981,
+      "error_km": 15570423.8,
+      "error_arcsec": 2343.223
+    },
+    {
+      "body": "Saturn",
+      "year": -1000,
+      "barycenter": true,
+      "distance_km": 1354432442,
+      "error_km": 5248231.5,
+      "error_arcsec": 799.247
+    },
+    {
+      "body": "Saturn",
+      "year": -500,
+      "barycenter": true,
+      "distance_km": 1347084448,
+      "error_km": 4708879.9,
+      "error_arcsec": 721.021
+    },
+    {
+      "body": "Saturn",
+      "year": 0,
+      "barycenter": true,
+      "distance_km": 1342654570,
+      "error_km": 1654573.9,
+      "error_arcsec": 254.183
+    },
+    {
+      "body": "Saturn",
+      "year": 500,
+      "barycenter": true,
+      "distance_km": 1338792240,
+      "error_km": 273979.8,
+      "error_arcsec": 42.211
+    },
+    {
+      "body": "Saturn",
+      "year": 1000,
+      "barycenter": true,
+      "distance_km": 1346511680,
+      "error_km": 391839.3,
+      "error_arcsec": 60.024
+    },
+    {
+      "body": "Saturn",
+      "year": 1500,
+      "barycenter": true,
+      "distance_km": 1352002688,
+      "error_km": 43338.3,
+      "error_arcsec": 6.612
+    },
+    {
+      "body": "Saturn",
+      "year": 1700,
+      "barycenter": true,
+      "distance_km": 1453173826,
+      "error_km": 55005.5,
+      "error_arcsec": 7.808
+    },
+    {
+      "body": "Saturn",
+      "year": 1900,
+      "barycenter": true,
+      "distance_km": 1506426486,
+      "error_km": 71940.5,
+      "error_arcsec": 9.85
+    },
+    {
+      "body": "Saturn",
+      "year": 2000,
+      "barycenter": true,
+      "distance_km": 1368609703,
+      "error_km": 45981,
+      "error_arcsec": 6.93
+    },
+    {
+      "body": "Saturn",
+      "year": 2026,
+      "barycenter": true,
+      "distance_km": 1416047920,
+      "error_km": 63320.3,
+      "error_arcsec": 9.223
+    },
+    {
+      "body": "Saturn",
+      "year": 2100,
+      "barycenter": true,
+      "distance_km": 1453424560,
+      "error_km": 105393.6,
+      "error_arcsec": 14.957
+    },
+    {
+      "body": "Saturn",
+      "year": 2300,
+      "barycenter": true,
+      "distance_km": 1360678021,
+      "error_km": 119985.8,
+      "error_arcsec": 18.189
+    },
+    {
+      "body": "Saturn",
+      "year": 2600,
+      "barycenter": true,
+      "distance_km": 1431641609,
+      "error_km": 89005.2,
+      "error_arcsec": 12.823
+    },
+    {
+      "body": "Saturn",
+      "year": 3000,
+      "barycenter": true,
+      "distance_km": 1393940828,
+      "error_km": 357036.3,
+      "error_arcsec": 52.832
+    },
+    {
+      "body": "Uranus",
+      "year": -2000,
+      "barycenter": true,
+      "distance_km": 2831200199,
+      "error_km": 917211.6,
+      "error_arcsec": 66.823
+    },
+    {
+      "body": "Uranus",
+      "year": -1500,
+      "barycenter": true,
+      "distance_km": 2879841323,
+      "error_km": 1151009.7,
+      "error_arcsec": 82.44
+    },
+    {
+      "body": "Uranus",
+      "year": -1000,
+      "barycenter": true,
+      "distance_km": 2924838785,
+      "error_km": 1142900.4,
+      "error_arcsec": 80.599
+    },
+    {
+      "body": "Uranus",
+      "year": -500,
+      "barycenter": true,
+      "distance_km": 2957983340,
+      "error_km": 1079053.6,
+      "error_arcsec": 75.244
+    },
+    {
+      "body": "Uranus",
+      "year": 0,
+      "barycenter": true,
+      "distance_km": 2979611349,
+      "error_km": 1149040.8,
+      "error_arcsec": 79.543
+    },
+    {
+      "body": "Uranus",
+      "year": 500,
+      "barycenter": true,
+      "distance_km": 2993214591,
+      "error_km": 708428,
+      "error_arcsec": 48.818
+    },
+    {
+      "body": "Uranus",
+      "year": 1000,
+      "barycenter": true,
+      "distance_km": 3000172708,
+      "error_km": 174259,
+      "error_arcsec": 11.98
+    },
+    {
+      "body": "Uranus",
+      "year": 1500,
+      "barycenter": true,
+      "distance_km": 2997822020,
+      "error_km": 57071.4,
+      "error_arcsec": 3.927
+    },
+    {
+      "body": "Uranus",
+      "year": 1700,
+      "barycenter": true,
+      "distance_km": 2807637024,
+      "error_km": 119376.1,
+      "error_arcsec": 8.77
+    },
+    {
+      "body": "Uranus",
+      "year": 1900,
+      "barycenter": true,
+      "distance_km": 2845983210,
+      "error_km": 103252.7,
+      "error_arcsec": 7.483
+    },
+    {
+      "body": "Uranus",
+      "year": 2000,
+      "barycenter": true,
+      "distance_km": 2983042584,
+      "error_km": 172555.1,
+      "error_arcsec": 11.931
+    },
+    {
+      "body": "Uranus",
+      "year": 2026,
+      "barycenter": true,
+      "distance_km": 2911111799,
+      "error_km": 79106.1,
+      "error_arcsec": 5.605
+    },
+    {
+      "body": "Uranus",
+      "year": 2100,
+      "barycenter": true,
+      "distance_km": 2985234148,
+      "error_km": 50418.7,
+      "error_arcsec": 3.484
+    },
+    {
+      "body": "Uranus",
+      "year": 2300,
+      "barycenter": true,
+      "distance_km": 2736213496,
+      "error_km": 197259.2,
+      "error_arcsec": 14.87
+    },
+    {
+      "body": "Uranus",
+      "year": 2600,
+      "barycenter": true,
+      "distance_km": 3004879598,
+      "error_km": 231484.2,
+      "error_arcsec": 15.89
+    },
+    {
+      "body": "Uranus",
+      "year": 3000,
+      "barycenter": true,
+      "distance_km": 2914233770,
+      "error_km": 329873.9,
+      "error_arcsec": 23.348
+    },
+    {
+      "body": "Neptune",
+      "year": -2000,
+      "barycenter": true,
+      "distance_km": 4535885199,
+      "error_km": 2002955.9,
+      "error_arcsec": 91.082
+    },
+    {
+      "body": "Neptune",
+      "year": -1500,
+      "barycenter": true,
+      "distance_km": 4540268496,
+      "error_km": 1323980.7,
+      "error_arcsec": 60.149
+    },
+    {
+      "body": "Neptune",
+      "year": -1000,
+      "barycenter": true,
+      "distance_km": 4541107115,
+      "error_km": 1532298.3,
+      "error_arcsec": 69.6
+    },
+    {
+      "body": "Neptune",
+      "year": -500,
+      "barycenter": true,
+      "distance_km": 4538259004,
+      "error_km": 1742775.8,
+      "error_arcsec": 79.21
+    },
+    {
+      "body": "Neptune",
+      "year": 0,
+      "barycenter": true,
+      "distance_km": 4533568490,
+      "error_km": 1145680.1,
+      "error_arcsec": 52.125
+    },
+    {
+      "body": "Neptune",
+      "year": 500,
+      "barycenter": true,
+      "distance_km": 4528083212,
+      "error_km": 715549.8,
+      "error_arcsec": 32.595
+    },
+    {
+      "body": "Neptune",
+      "year": 1000,
+      "barycenter": true,
+      "distance_km": 4521619674,
+      "error_km": 528846.7,
+      "error_arcsec": 24.125
+    },
+    {
+      "body": "Neptune",
+      "year": 1500,
+      "barycenter": true,
+      "distance_km": 4513792277,
+      "error_km": 383555.2,
+      "error_arcsec": 17.527
+    },
+    {
+      "body": "Neptune",
+      "year": 1700,
+      "barycenter": true,
+      "distance_km": 4468051575,
+      "error_km": 80241.7,
+      "error_arcsec": 3.704
+    },
+    {
+      "body": "Neptune",
+      "year": 1900,
+      "barycenter": true,
+      "distance_km": 4469049429,
+      "error_km": 116218.1,
+      "error_arcsec": 5.364
+    },
+    {
+      "body": "Neptune",
+      "year": 2000,
+      "barycenter": true,
+      "distance_km": 4505073416,
+      "error_km": 277525.7,
+      "error_arcsec": 12.707
+    },
+    {
+      "body": "Neptune",
+      "year": 2026,
+      "barycenter": true,
+      "distance_km": 4470060304,
+      "error_km": 338440.4,
+      "error_arcsec": 15.617
+    },
+    {
+      "body": "Neptune",
+      "year": 2100,
+      "barycenter": true,
+      "distance_km": 4519512314,
+      "error_km": 369670.3,
+      "error_arcsec": 16.871
+    },
+    {
+      "body": "Neptune",
+      "year": 2300,
+      "barycenter": true,
+      "distance_km": 4537256700,
+      "error_km": 223831.9,
+      "error_arcsec": 10.175
+    },
+    {
+      "body": "Neptune",
+      "year": 2600,
+      "barycenter": true,
+      "distance_km": 4528558872,
+      "error_km": 372747.8,
+      "error_arcsec": 16.978
+    },
+    {
+      "body": "Neptune",
+      "year": 3000,
+      "barycenter": true,
+      "distance_km": 4489134305,
+      "error_km": 245552.6,
+      "error_arcsec": 11.283
+    }
+  ],
+  "errors": [],
+  "sample_header": "\n\n*******************************************************************************\nEphemeris / API_USER Fri Nov  6 20:09:55 2026 Pasadena, USA      / Horizons\n*******************************************************************************\nTarget body name: Mercury (199)                   {source: DE441}\nCenter body name: Sun (10)                        {source: DE441}\nCenter-site name: BODY CENTER\n*******************************************************************************\nStart time      : B.C. 2001-Jun-21 12:00:00.0000 TT \nStop  time      : A.D. 3000-Jun-21 12:00:00.0000 TT \nStep-size       : DISCRETE TIME-LIST\n*******************************************************************************\nCenter geodetic : 0.0, 0.0, 0.0                   {E-lon(deg),Lat(deg),Alt(km)}\nCenter cylindric: 0.0, 0.0, 0.0                   {E-lon(deg),Dxy(km),Dz(km)}\nCenter radii    : 695700.0, 695700.0, 695700.0 km {Equator_a, b, pole_c}\nOutput units    : KM-S\nCalendar mode   : Mixed Julian/Gregorian\nOutput type     : GEOMETRIC cartesian states\nOutput format   : 1 (position only)\nReference frame : ICRF\n*******************************************************************************\n            JDTT ,            Calendar Date (TT ),                      X,                      Y,                      Z,\n**************************************************************************************************************************\n$$SOE\n 990730.000000000, B.C. 2001-Jun-21 12:00:00.0000, -1.384878328658298E+07, -6.099267310595170E+07, -3.055556635089364E+07,\n1173355.000000000, B.C. 1501-Jun-21 12:00:00.0000, -1.081484249287446E+07, -6.124247234817281E+07, -3.110766795941339E+07,\n1355980.000000000, B.C. 1001-Jun-21 12:00:00.0000, -7.755426231812516E+06, -6.136009512586650E+07, -3.158405128271411E+07,\n1538605.000000000, B.C. 0501-Jun-21 12:00:00.0000, -4.681760657787878E+06, -6.134352836029869E+07, -3.198220563761374E+07,\n1721230.000000000, B.C. 0001-Jun-21 12:00:00.0000, -1.601930581108321E+06, -6.119396251356192E+07, -3.230116654730133E+07,\n1903855.000000000, A.D. 0500-Jun-21 12:00:00.0000,  1.475674669248864E+06, -6.091312547369485E+07, -3.254029364996187E+07,\n2086480.000000000, A.D. 1000-Jun-21 12:00:00.0000,  4.551697743732080E+06, -6.049753404416142E+07, -3.269755968511487E+07,\n2269105.000000000, A.D. 1500-Jun-21 12:00:00.0000,  7.608632400894963E+06, -5.994970280814711E+07, -3.277230208596151E+07,\n2342144.000000000, A.D. 1700-Jun-21 12:00:00.0000,  5.173021158033741E+07,  6.133042029002590E+06, -2.136186182070778E+06,\n2415192.000000000, A.D. 1900-Jun-21 12:00:00.0000, -5.890067005061659E+07, -8.499293348457502E+06,  1.587064662782686E+06,\n2451717.000000000, A.D. 2000-Jun-21 12:00:00.0000, -3.151470846736852E+07, -5.569045661406127E+07, -2.647922061080315E+07,\n2461213.000000000, A.D. 2026-Jun-21 12:00:00.0000, -4.387539319042297E+07, -4.733096583246898E+07, -2.073723862835123E+07,\n2488241.000000000, A.D. 2100-Jun-21 12:00:00.0000,  2.282364528648434E+07, -5.462781252814398E+07, -3.154979935037769E+07,\n2561289.000000000, A.D. 2300-Jun-21 12:00:00.0000,  4.925245580337215E+06,  4.057930663690909E+07,  2.118953376043436E+07,\n2670862.000000000, A.D. 2600-Jun-21 12:00:00.0000,  1.291378257175443E+07, -5.870929909730309E+07, -3.273563472154644E+07,",
+  "summary": {
+    "Mercury": {
+      "1700-2200": 6211,
+      "0-1699": 52932,
+      "antes de 0": 109626,
+      "despues de 2200": 11849
+    },
+    "Venus": {
+      "1700-2200": 3052,
+      "0-1699": 39723,
+      "antes de 0": 153727,
+      "despues de 2200": 6992
+    },
+    "Earth": {
+      "1700-2200": 2492,
+      "0-1699": 47845,
+      "antes de 0": 198501,
+      "despues de 2200": 5502
+    },
+    "Moon": {
+      "1700-2200": 36,
+      "0-1699": 1628,
+      "antes de 0": 7634,
+      "despues de 2200": 286
+    },
+    "Mars": {
+      "1700-2200": 4017,
+      "0-1699": 49194,
+      "antes de 0": 303764,
+      "despues de 2200": 19264
+    },
+    "Jupiter": {
+      "1700-2200": 29213,
+      "0-1699": 323610,
+      "antes de 0": 4336407,
+      "despues de 2200": 173024
+    },
+    "Saturn": {
+      "1700-2200": 105394,
+      "0-1699": 1654574,
+      "antes de 0": 15570424,
+      "despues de 2200": 357036
+    },
+    "Uranus": {
+      "1700-2200": 172555,
+      "0-1699": 1149041,
+      "antes de 0": 1151010,
+      "despues de 2200": 329874
+    },
+    "Neptune": {
+      "1700-2200": 369670,
+      "0-1699": 1145680,
+      "antes de 0": 2002956,
+      "despues de 2200": 372748
+    }
+  },
+  "units": "km; error maximo del vector de posicion en cada franja (error_arcsec = ese error visto desde el centro de referencia)"
+}
