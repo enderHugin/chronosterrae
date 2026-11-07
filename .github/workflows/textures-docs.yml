@@ -1,0 +1,42 @@
+name: Documentos de origen de las texturas (etiquetas, figuras)
+
+# Comprueba URL, tamano y CORS de fuentes NASA/USGS (regla 6); informe en la rama `textures-docs`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: textures-docs
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear texturas
+        run: python3 scripts/fetch-docs.py scripts/textures-docs.txt /tmp/docs > /tmp/links.log 2>&1; echo "{}" > /tmp/links.json
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 30 /tmp/links.log || true
+          head -c 800 /tmp/links.json || true
+      - name: Informe en la rama textures-docs
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/links.json || echo '{"error":"sin salida"}' > /tmp/links.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan textures-docs
+          mkdir docs && cp /tmp/docs/* docs/
+          cp /tmp/links.log report.log || true
+          git add docs report.log
+          git commit -m "Documentos de texturas $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin textures-docs
