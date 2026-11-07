@@ -1,0 +1,42 @@
+name: Sonda de rotulos de OpenFreeMap (capas y clases)
+
+# Lee las capas de rotulos del estilo y las clases de nombre de las teselas. El resultado va a la rama `probe-ofm-labels`, nunca a `main`.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/probe-ofm-labels.js'
+      - '.github/workflows/probe-ofm-labels.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: probe-ofm-labels
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar decodificador de teselas (sin guardar en el repo)
+        run: npm install --no-save --no-package-lock @mapbox/vector-tile@2.0.3 pbf@4.0.1
+      - name: Ejecutar sonda
+        run: node scripts/probe-ofm-labels.js > /tmp/ofml.json 2> /tmp/ofml.log || true
+      - name: Publicar en la rama probe-ofm-labels
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/ofml.json || echo '{"error":"sin salida"}' > /tmp/ofml.json
+          git config user.name "ChronosTerrae-Probe"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan probe-ofm-labels
+          cp /tmp/ofml.json ofml.json; cp /tmp/ofml.log ofml.log || true
+          git add ofml.json ofml.log
+          git commit -m "Sonda OFM rotulos $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin probe-ofm-labels
