@@ -103,6 +103,12 @@ sale y cuánto se puede fiar de él.
   tienen hora documentada allí, así que no hay cuenta atrás para ellos, solo el aviso del día.
 - El detalle al acercar es la **geografía de hoy** (OpenStreetMap), no una reconstrucción de la época;
   en tema oscuro conserva el estilo Liberty con colores adaptados.
+  - **Nombres**: con *Fronteras* activo, los del mapa político propio; con *Fronteras* apagado, solo accidentes
+    geográficos (mares, bahías, estrechos, lagos, ríos, picos con su altitud e islas), nunca países ni ciudades.
+    Los ríos con nombre solo existen en el mapa actual (en épocas anteriores se dibuja el cauce, sin nombre).
+    OpenFreeMap no trae nombres de cordilleras, desiertos, cabos ni penínsulas.
+  - **Carreteras**: capa aparte, apagada por defecto y solo visible en el mapa actual y de cerca (botón *Carreteras*;
+    la preferencia se guarda en la cookie `ct_prefs`, campo `rd`). Incluye ferrocarril, caminos, sentidos, nombres y escudos.
 - La precisión del cielo se degrada hacia el pasado (efemérides analíticas truncadas y ΔT, la
   rotación de la Tierra, que es una estimación antes de ~1600): la web muestra el error medido, no una promesa.
 - Los **sucesos** vienen de Wikidata con notoriedad ≥ 25 enlaces: faltan los poco conocidos. Las **guerras** (intervalo con inicio y

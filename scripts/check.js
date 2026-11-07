@@ -208,6 +208,13 @@ check('cookie de preferencias: bh (fronteras ocultas) acepta 0/1 y rechaza lo de
     return ok && bad;
 });
 
+check('cookie de preferencias: rd (carreteras) acepta 0/1 y rechaza lo demas', () => {
+    const { parsePrefs } = prefsFns();
+    const ok = parsePrefs(JSON.stringify({ rd: 1 })).rd === true && parsePrefs(JSON.stringify({ rd: 0 })).rd === false;
+    const bad = [2, -1, '1', true, null, [], {}].every((v) => !('rd' in parsePrefs(JSON.stringify({ rd: v }))));
+    return ok && bad;
+});
+
 check('cookie de preferencias: cc (centrar al clic) acepta 0/1 y rechaza lo demas', () => {
     const { parsePrefs } = prefsFns();
     return parsePrefs(JSON.stringify({ cc: 1 })).cc === true && parsePrefs(JSON.stringify({ cc: 0 })).cc === false && [2, '1', true, null, {}].every((v) => !('cc' in parsePrefs(JSON.stringify({ cc: v }))));

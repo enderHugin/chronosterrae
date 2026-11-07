@@ -147,5 +147,9 @@
         };
     }
 
-    return { labelPoint, polityLabels, pickFont, isCountryLabel, geoNames, peakLayer, GEO_SOURCE_LAYERS, GEO_PLACE_CLASSES };
+    /** Capas de la red viaria (calzadas, ferrocarril, caminos, flechas de sentido, nombres de via y escudos): las gobierna el boton Carreteras, no la regla de nombres geograficos. Aeropuertos y puntos de interes NO. */
+    const ROAD_SOURCE_LAYERS = new Set(['transportation', 'transportation_name']);
+    const isRoadLayer = (layer) => ROAD_SOURCE_LAYERS.has(layer['source-layer']);
+
+    return { labelPoint, polityLabels, pickFont, isCountryLabel, geoNames, peakLayer, isRoadLayer, ROAD_SOURCE_LAYERS, GEO_SOURCE_LAYERS, GEO_PLACE_CLASSES };
 });

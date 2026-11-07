@@ -191,6 +191,7 @@
 
     <div id="top-right">
         <button class="btn" id="btn-borders" type="button" aria-pressed="false" hidden data-i18n="borders.button"></button>
+        <button class="btn" id="btn-roads" type="button" aria-pressed="false" hidden data-i18n="roads.button"></button>
         <button class="btn" id="btn-center" type="button" aria-pressed="false" data-i18n="center.button"></button>
         <button class="btn" id="btn-changes" type="button" aria-pressed="false" data-i18n="changes.button"></button>
         <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
@@ -315,6 +316,7 @@ const parsePrefs = (raw) => {
     if (p.sp === 0 || p.sp === 1) out.sp = p.sp === 1;
     if (p.cc === 0 || p.cc === 1) out.cc = p.cc === 1;   // centrar al hacer clic
     if (p.bh === 0 || p.bh === 1) out.bh = p.bh === 1;   // fronteras historicas ocultas por el usuario (de cerca)
+    if (p.rd === 0 || p.rd === 1) out.rd = p.rd === 1;   // capa de carreteras y ferrocarriles de hoy (apagada por defecto)
     if (typeof p.ks === 'string' && /^[0-9A-Za-z]{1,5}$/.test(p.ks)) out.ks = p.ks;   // paso de las flechas (id; se valida al usarlo)
     if (Number.isInteger(p.vf) && p.vf >= 0 && p.vf <= 127) out.vf = p.vf;   // filtros de verificacion de sucesos (mascara de bits)
     if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
@@ -329,7 +331,7 @@ const readPrefs = () => {
 const prefs = readPrefs();
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -472,6 +474,9 @@ const i18n = {
         nav: { zoomIn: 'Acercar', zoomOut: 'Alejar (más allá de la Tierra: el sistema solar)' },
         borders: {
             button: 'Fronteras', tip: 'Muestra u oculta las fronteras históricas (de cerca). Es una aproximación: sus polígonos son toscos.'
+        },
+        roads: {
+            button: 'Carreteras', tip: 'Muestra u oculta las carreteras, ferrocarriles y caminos de hoy (OpenStreetMap), con sus nombres y números. Solo en el mapa actual y de cerca: antes de hoy no existían como son ahora.'
         },
         center: { button: 'Centrar', tip: 'Centrar al hacer clic: un clic sobre un elemento del mapa lleva el centro hasta ese punto (el doble clic siempre centra)' },
         star: {
@@ -623,6 +628,9 @@ const i18n = {
         nav: { zoomIn: 'Zoom in', zoomOut: 'Zoom out (beyond Earth: the solar system)' },
         borders: {
             button: 'Borders', tip: 'Shows or hides the historical borders (when zoomed in). An approximation: their polygons are coarse.'
+        },
+        roads: {
+            button: 'Roads', tip: 'Shows or hides today\'s roads, railways and paths (OpenStreetMap), with their names and numbers. Only on the current map and zoomed in: they were not as they are now before today.'
         },
         center: { button: 'Centre', tip: 'Centre on click: a click on a map element moves the centre to that point (a double click always centres)' },
         star: {
@@ -1083,7 +1091,9 @@ function detailBuild(style) {
         if (role === 'fill') orig['fill-opacity'] = map.getPaintProperty(clone.id, 'fill-opacity');
         if (role === 'symbol') { orig['text-color'] = map.getPaintProperty(clone.id, 'text-color'); orig['text-halo-color'] = map.getPaintProperty(clone.id, 'text-halo-color'); }
         DETAIL.layers.push({ id: clone.id, role, physical, orig, filter: l.filter || null, country: window.ChronosLabels ? ChronosLabels.isCountryLabel(l) : false,
-            geo: role === 'symbol' && window.ChronosLabels ? ChronosLabels.geoNames(l) : null, onlyGeo: l.id === 'chronos_peak_name', geoApplied: false });
+            geo: role === 'symbol' && window.ChronosLabels ? ChronosLabels.geoNames(l) : null, onlyGeo: l.id === 'chronos_peak_name', geoApplied: false,
+            road: Boolean(window.ChronosLabels && ChronosLabels.isRoadLayer(l)),     // calzadas, ferrocarril, caminos, flechas, nombres y escudos: los gobierna el boton Carreteras
+            riverLabel: role === 'symbol' && l['source-layer'] === 'waterway', minzoom0: l.minzoom === undefined ? 0 : l.minzoom, maxzoom0: l.maxzoom === undefined ? 24 : l.maxzoom });
     });
     detailTheme();
 }
@@ -1140,9 +1150,15 @@ function detailVisibility() {
         const ownNames = l.country && LBL.ready && state.borders && !BR.cut;
         // Sin fronteras a la vista (apagadas, o la vista queda lejos): solo se nombran accidentes geograficos (map/labels.js geoNames); ningun pais, estado, ciudad, carretera ni POI.
         const geoOnly = BR.cut === true && l.role === 'symbol' && Boolean(l.geo);
-        const geoHidden = l.role === 'symbol' && ((geoOnly && !l.geo.show) || (l.onlyGeo && !BR.cut));
-        map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !(l.role === 'boundary' && state.borders) && !ownNames && !geoHidden ? 'visible' : 'none');
-        if (l.geo && l.geo.show && l.geoApplied !== geoOnly) { map.setFilter(l.id, geoOnly ? l.geo.filter : l.filter); l.geoApplied = geoOnly; }
+        // Las carreteras (con sus nombres y escudos) son una capa aparte: las gobierna su boton, no la regla de nombres geograficos.
+        const geoHidden = !l.road && l.role === 'symbol' && ((geoOnly && !l.geo.show) || (l.onlyGeo && !BR.cut));
+        const roadHidden = l.road && !ROADS.on;
+        map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !(l.role === 'boundary' && state.borders) && !ownNames && !geoHidden && !roadHidden ? 'visible' : 'none');
+        if (l.geo && l.geo.show && !l.road && l.geoApplied !== geoOnly) {
+            map.setFilter(l.id, geoOnly ? l.geo.filter : l.filter); l.geoApplied = geoOnly;
+            // Los rios con nombre ya vienen en las teselas desde z6 (comprobado con la sonda: Po, Brahmaputra...); el estilo los rotula desde z10. Sin fronteras, que se nombren desde z6.
+            if (l.riverLabel) map.setLayerZoomRange(l.id, geoOnly ? Math.min(6, l.minzoom0) : l.minzoom0, l.maxzoom0);
+        }
         // Antes de hoy no se dibujan dársenas ni piscinas: obras modernas (clases `dock` y `swimming_pool` del esquema de OpenFreeMap, comprobadas con la sonda).
         if (l.role === 'water') map.setFilter(l.id, mode === 'physical' ? (l.filter ? ['all', l.filter, DETAIL_NOT_MODERN_WATER] : DETAIL_NOT_MODERN_WATER) : (l.filter || null));
     });
@@ -1287,6 +1303,10 @@ function gapShowImage(img, corners, seq) {
 }
 map.on('moveend', gapRefresh);
 
+// El boton solo aparece donde las carreteras existen: el mapa actual y de cerca (en 'physical' el detalle no trae obra humana).
+function roadsButton() { const b = $('btn-roads'); b.hidden = DETAIL.shown !== 'full'; b.setAttribute('aria-pressed', String(ROADS.on)); }
+$('btn-roads').addEventListener('click', () => { ROADS.on = !ROADS.on; savePrefs({ rd: ROADS.on }); roadsButton(); if (DETAIL.built) detailVisibility(); });
+
 async function detailApply() {
     if (!map.getLayer('borders-fill')) return;
     let mode = detailMode();
@@ -1297,6 +1317,7 @@ async function detailApply() {
     if (mode === DETAIL.shown) return;
     const was = DETAIL.shown;
     DETAIL.shown = mode;
+    roadsButton();
     detailVisibility();
     ['margin-fill', 'land-fill', 'land-line'].forEach((id) => map.setLayoutProperty(id, 'visibility', mode ? 'none' : 'visible'));
     if (mode && !was) detailFade();
@@ -1414,6 +1435,7 @@ const BORDER_COVER_HYST = 0.02;  // al alejarse se apagan a 78 %: evita el parpa
 const BORDER_MIN_ZOOM = 4;       // reserva: fronteras historicas (poligonos toscos)
 const BORDER_MIN_ZOOM_NE = 2.5;  // reserva: vigentes
 const BORDER_HYST = 0.15;
+const ROADS = { on: prefs.rd === true };   // carreteras de hoy: apagadas por defecto
 const BR = { cut: false, far: false, off: prefs.bh === true, resKm: null, near: false, minZoom: null, cover: null, swap: null, swapTimer: 0 };
 function bordersRes(b) {
     if (!b || b.source === 'ne' || !b.data || !window.ChronosBordersRes) return null;
@@ -1964,6 +1986,7 @@ function applyStrings() {
     renderCredits();
     $('btn-space').title = t('space.tip');
     $('btn-borders').title = t('borders.tip');
+    $('btn-roads').title = t('roads.tip');
     $('btn-center').title = $('btn-center').ariaLabel = t('center.tip');
     $('btn-changes').title = t('changes.tip');
     if (typeof labelsUpdate === 'function' && LBL.ready) labelsUpdate();

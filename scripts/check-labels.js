@@ -113,5 +113,13 @@ check('picos: el texto lleva la altitud tal como la trae el dato (campo ele, met
         && ev(tf, feat({ name: '雅鲁藏布', 'name:latin': 'Yarlung', ele: 3000 })) === 'Yarlung\n3000 m';
 });
 check('picos: se ordenan por rank (menor primero = el mas alto de su tesela)', () => JSON.stringify(peak.layout['symbol-sort-key']) === JSON.stringify(['get', 'rank']));
+check('isRoadLayer: marca las flechas de sentido, los nombres de via y los escudos, y NINGUNA capa de nombres geograficos, aeropuertos ni puntos de interes', () => {
+    const roads = FIX.capas.filter((l) => L.isRoadLayer(l)).map((l) => l.id).sort().join();
+    const esperado = ['highway-name-major', 'highway-name-minor', 'highway-name-path', 'highway-shield-non-us', 'highway-shield-us-interstate', 'road_one_way_arrow', 'road_one_way_arrow_opposite', 'road_shield_us'].sort().join();
+    const noRoad = FIX.capas.filter((l) => !L.isRoadLayer(l)).every((l) => !/^(highway|road)/.test(l.id));
+    return roads === esperado && noRoad;
+});
+check('isRoadLayer distingue «no es carretera» de «roto»: una capa sin source-layer no es carretera y no lanza', () => L.isRoadLayer({ id: 'x' }) === false && L.isRoadLayer({ 'source-layer': 'transportation' }) === true);
+
 console.log(fails ? '\n' + fails + ' fallo(s)' : '\ntodo bien');
 process.exit(fails ? 1 : 0);
