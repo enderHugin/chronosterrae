@@ -1,0 +1,35 @@
+name: Fondo de la Via Lactea (NASA SVS Deep Star Maps 2020)
+
+# Convierte la capa milkyway_2020 (EXR lineal) a JPEG de 8 bits con una exposicion fija y documentada; resultado en la rama `milkyway-build`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: milkyway-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependencias
+        run: pip install --quiet opencv-python-headless numpy
+      - name: Convertir
+        run: python3 scripts/build-milkyway.py /tmp/mw 2>&1 | tee /tmp/mw.log
+      - name: Publicar en la rama milkyway-build
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan milkyway-build
+          mkdir out && cp /tmp/mw/* out/ 2>/dev/null || true
+          cp /tmp/mw.log out/build.log || true
+          git add out
+          git commit -m "Via Lactea $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin milkyway-build
