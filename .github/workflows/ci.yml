@@ -27,14 +27,13 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
-      - name: Regresiones del front y del harvester
-        run: npm run check
+      - name: Pruebas completas (npm test)
+        # Antes solo se ejecutaban check, check:sky, check:events y validate: las pruebas de datos, textos, vista solar, texturas,
+        # renderizador y Via Lactea no corrian en CI. npm test las encadena todas (y valida los registros al final).
+        run: npm test
 
-      - name: Cielo (calendario, precesion, Sol, Luna, planetas)
-        run: npm run check:sky
+      - name: Python 3 con pillow y numpy (comprobaciones de las imagenes reales)
+        run: python3 -m pip install --quiet pillow numpy
 
-      - name: Sucesos (seleccion, avisos, conversion)
-        run: npm run check:events
-
-      - name: Validar registros contra el esquema
-        run: npm run validate
+      - name: Via Lactea - orientacion de la textura real (Nubes de Magallanes y plano galactico)
+        run: python3 scripts/check-milkyway-data.py

@@ -666,6 +666,7 @@
  ],
  "milkyway": {
   "id": "milkyway",
+  "orientationCheck": {"script": "scripts/check-milkyway-data.py", "measuredOn": "2026-11-07", "method": "centroide de la LMC y la SMC frente a su posicion de referencia (centros opticos aproximados, SIMBAD/NED); brillo de la banda galactica frente al cielo alto; centroide de brillo en latitud galactica por longitud (definicion IAU/Hipparcos)", "lmcSeparationDeg": 0.57, "smcSeparationDeg": 0.39, "planeCentroidMedianBDeg": -0.72, "planeCentroidRmsBDeg": 1.09, "rejectsAlteredImages": "espejo en AR, espejo en Dec, giro de 180 grados y desplazamiento de 90 grados en AR (comprobado)", "limit": "verifica el marco a escala de ~1 grado, no a la de un pixel (5,3 minutos de arco por pixel en la imagen de 4096; la app usa la de 2048, 10,5 minutos)"},
   "sourcePage": "https://svs.gsfc.nasa.gov/4851/",
   "sourceUrl": "https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/milkyway_2020_4k.exr",
   "sourceSha256": "2eb802d6e68d170b410f766c7fec07f7518619f6b6708fdc81e9302d93e74fdb",

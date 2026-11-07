@@ -267,6 +267,7 @@
 <script src="./sky/solar.js"></script>
 <script src="./sky/planets.js"></script>
 <script src="./solar/sphere-render.js"></script>
+<script src="./sky/milkyway.js"></script>
 <script src="./solar/solar-view.js"></script>
 <script>
 'use strict';
@@ -376,7 +377,7 @@ const i18n = {
         bordersNote: 'Mapa histórico compilado por su autor y en elaboración: contrástalo antes de citarlo.',
         prec: { 1: 'aproximada', 2: 'moderada', 3: 'fijada por tratado' },
         unnamed: 'Sin nombre en el conjunto de datos', liveTitle: 'Dato reciente', event: 'Fecha del suceso', harvested: 'Recogido', tier: 'Nivel', unknown: 'Desconocida',
-        creditsLand: 'Costas', creditsBorders: 'Fronteras', creditsDetail: 'Detalle', creditsNatural: 'Imagen',
+        creditsLand: 'Costas', creditsBorders: 'Fronteras', creditsDetail: 'Detalle', creditsNatural: 'Imagen', creditsSky: 'Cielo', creditsSkyText: 'Vía Láctea sintetizada de catálogos (Hipparcos-2, Tycho-2, Gaia DR2), no una fotografía · ',
         detailFull: 'Detalle: mapa actual de OpenStreetMap, no una reconstrucción.',
         detailPhysical: 'Detalle: agua y vegetación de hoy como aproximación; no incluye lo que cambió desde entonces (ríos, lagos, bosques).',
         detailFail: 'No se pudo cargar el detalle del mapa ({err}). Se reintentará.',
@@ -526,7 +527,7 @@ const i18n = {
         bordersNote: 'Historical map compiled by its author and work in progress: cross-check before citing.',
         prec: { 1: 'approximate', 2: 'moderate', 3: 'set by treaty' },
         unnamed: 'Unnamed in the dataset', liveTitle: 'Recent data', event: 'Event date', harvested: 'Harvested', tier: 'Tier', unknown: 'Unknown',
-        creditsLand: 'Coastlines', creditsBorders: 'Borders', creditsDetail: 'Detail', creditsNatural: 'Imagery',
+        creditsLand: 'Coastlines', creditsBorders: 'Borders', creditsDetail: 'Detail', creditsNatural: 'Imagery', creditsSky: 'Sky', creditsSkyText: 'Milky Way synthesised from star catalogues (Hipparcos-2, Tycho-2, Gaia DR2), not a photograph · ',
         detailFull: 'Detail: current OpenStreetMap map, not a reconstruction.',
         detailPhysical: 'Detail: present-day water and vegetation as an approximation; it does not include what has changed since (rivers, lakes, forests).',
         detailFail: 'Could not load the map detail ({err}). Will retry.',
@@ -1908,6 +1909,11 @@ function renderCredits() {
         box.appendChild(el('a', { href: 'https://earthdata.nasa.gov/gibs/', target: '_blank', rel: 'noopener', text: 'NASA GIBS' }));
         box.appendChild(document.createTextNode(' · Blue Marble Shaded Relief and Bathymetry (MODIS)'));
     }
+    if (window.ChronosMilkyWay && ChronosMilkyWay.state() === 'ready') {
+        box.appendChild(document.createTextNode('   |   ' + t('creditsSky') + ': ' + t('creditsSkyText')));
+        box.appendChild(el('a', { href: 'https://svs.gsfc.nasa.gov/4851/', target: '_blank', rel: 'noopener', text: 'NASA/GSFC SVS 4851' }));
+        box.appendChild(document.createTextNode(' · ESA/Gaia/DPAC'));
+    }
     if (DETAIL.shown) {
         box.appendChild(document.createTextNode('   |   ' + t('creditsDetail') + ': '));
         box.appendChild(el('a', { href: 'https://openfreemap.org', target: '_blank', rel: 'noopener', text: 'OpenFreeMap' }));
@@ -2106,6 +2112,7 @@ const solarView = ChronosSolarView.create({
     starColor: (bv) => ChronosSkyView.starColor(bv),
     starStyle: (mag) => ChronosSkyView.starStyle(mag),
     skyOptions: () => ({ lines: true }),
+    onSkyReady: () => renderCredits(),
     t, fmt, lang: () => lang, nf,
     loadAccuracy: () => {
         if (!solarAccuracy) solarAccuracy = fetch('./data/sky/validation-helio.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
@@ -2373,10 +2380,12 @@ const space = { on: prefs.sp !== false, hits: [], earth: null, stars: null, raf:
 function spaceFrame(jd) {
     if (jd === space.frameJD && space.frame) return space.frame;
     const time = new Astronomy.AstroTime(jd - ChronosSky.J2000_JD);
-    space.frame = { time, gast: Astronomy.SiderealTime(time) * 15 * Math.PI / 180, bodies: ChronosSpace.bodiesGeocentric(time) };
+    space.frame = { time, gast: Astronomy.SiderealTime(time) * 15 * Math.PI / 180, rot: Astronomy.Rotation_EQJ_EQD(time).rot, bodies: ChronosSpace.bodiesGeocentric(time) };
     space.frameJD = jd;
     return space.frame;
 }
+
+function onMilkyWayReady() { scheduleSpace(); renderCredits(); }   // referencia estable: ensure no duplica callbacks
 
 function scheduleSpace() {
     if (!space.raf) space.raf = requestAnimationFrame(drawSpace);
@@ -2422,6 +2431,17 @@ function drawSpace() {
     const frame = starsOnly ? { gast: preFrame(jd).era, bodies: [] } : spaceFrame(jd);
     const cat = starsOnly ? pre.view : sky.catalog;
     const label = (text, x, y, alpha) => { ctx.fillStyle = 'rgba(214,224,248,' + alpha + ')'; ctx.font = '11px system-ui, sans-serif'; ctx.fillText(text, x, y); };
+
+    // Via Lactea (textura derivada de catalogos, NASA SVS 4851) debajo de las estrellas: cada pixel -> direccion del marco del globo -> J2000 (con la precesion de la fecha) -> textura
+    if (window.ChronosMilkyWay) {
+        ChronosMilkyWay.ensure('./data/textures/milkyway_icrs_4k.jpg', onMilkyWayReady);
+        const m = [0, 0, 0]; const v = [0, 0, 0]; let conv; let tag;
+        if (starsOnly) { const fr = pre.inst.frame.frame(pre.res.epj); const era = frame.gast; conv = () => ChronosSpace.j2000FromModelCio(m[0], m[1], m[2], era, fr, v); tag = Math.round(era * 5000) + '|' + Math.round(pre.res.epj / 20); }
+        else { const rot = frame.rot; const gast = frame.gast; conv = () => ChronosSpace.j2000FromModel(m[0], m[1], m[2], gast, rot, v); tag = Math.round(gast * 5000) + '|' + Math.round(jd / 30); }
+        const dir = (px, py, d) => { pr.unproject(px, py, m); conv(); d[0] = v[0]; d[1] = v[1]; d[2] = v[2]; return true; };
+        const key = ['globe', c.lng, c.lat, map.getBearing(), map.getPitch(), map.getRoll ? map.getRoll() : 0, tr && tr.worldSize, tr && tr.fov, tag].map((q) => (typeof q === 'number' ? Math.round(q * 2000) : q)).join(',');
+        ChronosMilkyWay.paint(ctx, { width: w, height: h, direction: dir, key, step: 4 });
+    }
 
     if (cat) {
         if (starsOnly) { if (space.eqCat !== cat || space.eqJD !== pre.fullJD) { space.eq = { ra: pre.res.ra, dec: pre.res.dec }; space.eqJD = pre.fullJD; space.eqCat = cat; space.dirsJD = NaN; } }

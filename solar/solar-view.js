@@ -8,7 +8,7 @@
  * (data/textures, con su manifiesto de procedencia): muestran la superficie o las nubes tal como las vieron las sondas, no como eran en la fecha
  * elegida. Los cuerpos sin textura verificada (Venus, Saturno, Urano, Neptuno) van en color ilustrativo y la pantalla lo dice.
  */
-(function (root, factory) { root.ChronosSolarView = factory(root.ChronosSolar, root.ChronosPlanets, root.ChronosSphereRender); })(typeof self !== 'undefined' ? self : this, function (Solar, Planets, SphereRender) {
+(function (root, factory) { root.ChronosSolarView = factory(root.ChronosSolar, root.ChronosPlanets, root.ChronosSphereRender, root.ChronosMilkyWay); })(typeof self !== 'undefined' ? self : this, function (Solar, Planets, SphereRender, MilkyWay) {
     'use strict';
 
     const AU = Solar.AU_KM;
@@ -141,6 +141,7 @@
         function goTo(id) { startFlight(id, Math.log10(Solar.byId[id].radiusKm * DEFAULT_FACTOR)); }
         function goSystem() { startFlight('Sun', SYSTEM_LOG_D); }
 
+        function mwReady() { invalidate(); if (o.onSkyReady) o.onSkyReady(); }   // referencia estable (ensure no duplica callbacks)
         function invalidate() { st.dirty = true; if (st.open && !st.raf) st.raf = requestAnimationFrame(frame); }
         function zoomBy(dLog) { st.logD = clamp(st.logD + dLog, minLogD(), MAX_LOG_D); invalidate(); }
 
@@ -380,6 +381,13 @@
             } else o.earthMap.place({ active: false, scale: 0, dx: 0, dy: 0, orientation: null });
             st.mapOn = mapOn;
 
+            // Via Lactea (textura derivada de catalogos, NASA SVS 4851): fondo difuso, debajo de las estrellas
+            if (MilkyWay) {
+                MilkyWay.ensure('./data/textures/milkyway_icrs_4k.jpg', mwReady);
+                const q = (v) => Math.round(v * 5000);
+                const mwDir = (px, py, d) => { cam.ray(px, py, d); const e = Solar.eqFromEcl(d[0], d[1], d[2]); d[0] = e[0]; d[1] = e[1]; d[2] = e[2]; return true; };
+                MilkyWay.paint(ctxB, { width: w, height: h, direction: mwDir, key: 'solar|' + [...cam.f, ...cam.r, ...cam.u].map(q).join(',') + '|' + Math.round(cam.fpx), step: 4 });
+            }
             // estrellas (en el infinito), con el mismo estilo que el cielo detras del globo
             const S = starsEcl(jd);
             if (S) {

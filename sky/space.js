@@ -68,6 +68,33 @@
     }
 
     /**
+     * Direccion del marco del globo -> direccion ecuatorial J2000 (la de las coordenadas ICRS de los catalogos y de la textura de la Via Lactea).
+     * Inversa exacta de modelDirection + la rotacion J2000 -> fecha de starsOfDate (sin movimiento propio: es para fondos difusos).
+     * rot = Astronomy.Rotation_EQJ_EQD(time).rot; gastRad como en modelDirection.
+     */
+    function j2000FromModel(mx, my, mz, gastRad, rot, out) {
+        const dec = Math.asin(Math.max(-1, Math.min(1, my))); const ra = Math.atan2(mx, mz) + gastRad;    // ra = lam + gast; lam = atan2(sin, cos)
+        const cd = Math.cos(dec); const ex = cd * Math.cos(ra); const ey = cd * Math.sin(ra); const ez = Math.sin(dec);
+        out[0] = rot[0][0] * ex + rot[0][1] * ey + rot[0][2] * ez;
+        out[1] = rot[1][0] * ex + rot[1][1] * ey + rot[1][2] * ez;
+        out[2] = rot[2][0] * ex + rot[2][1] * ey + rot[2][2] * ez;
+        return out;
+    }
+
+    /**
+     * Lo mismo para el marco de la prehistoria (sky/ltp.js): ra desde el CIO y ERA en lugar del tiempo sidereo.
+     * fr = { n, sigma, e2 } (ejes del CIP y el CIO en el GCRS, de Ltp.makeFrame(...).frame(epj)). Devuelve el vector GCRS (= J2000 con la precision de un fondo difuso).
+     */
+    function j2000FromModelCio(mx, my, mz, eraRad, fr, out) {
+        const dec = Math.asin(Math.max(-1, Math.min(1, my))); const ra = Math.atan2(mx, mz) + eraRad;
+        const cd = Math.cos(dec); const a = cd * Math.cos(ra); const b = cd * Math.sin(ra); const c = Math.sin(dec);
+        out[0] = a * fr.sigma[0] + b * fr.e2[0] + c * fr.n[0];
+        out[1] = a * fr.sigma[1] + b * fr.e2[1] + c * fr.n[1];
+        out[2] = a * fr.sigma[2] + b * fr.e2[2] + c * fr.n[2];
+        return out;
+    }
+
+    /**
      * Camara del globo de MapLibre.
      * @param cam {lng, lat, bearing, pitch, roll, worldSize, fovDeg, width, height}  grados; worldSize = 512 * 2^zoom
      */
@@ -111,6 +138,18 @@
                 const s = toScreen(v[0], v[1], v[2]);
                 return [s[0], s[1], -v[2]];
             },
+            /** Inversa de infinity: pixel de pantalla -> direccion unitaria en el marco del globo (siempre existe: es el rayo que pasa por ese pixel). */
+            unproject(sx, sy, out) {
+                let x = (sx - W / 2) / (f * (H / 2)); let y = (H / 2 - sy) / (f * (H / 2)); let z = -1;
+                const n = Math.sqrt(x * x + y * y + 1); x /= n; y /= n; z /= n;
+                let t = x * c5 + y * s5; y = -x * s5 + y * c5; x = t;             // rotZ(roll)^-1
+                t = y * c4 + z * s4; z = -y * s4 + z * c4; y = t;                 // rotX(-pitch)^-1
+                t = x * c3 + y * s3; y = -x * s3 + y * c3; x = t;                 // rotZ(bearing)^-1
+                t = y * c2 + z * s2; z = -y * s2 + z * c2; y = t;                 // rotX(lat)^-1
+                t = x * c1 - z * s1; z = x * s1 + z * c1; x = t;                  // rotY(-lng)^-1
+                out[0] = x; out[1] = y; out[2] = z;
+                return out;
+            },
             /** Punto a distancia finita (radios terrestres, marco del globo), p. ej. la Luna. Devuelve {x, y, pxPerER}. */
             near(x, y, z) {
                 const v = rotate(x * Rpx, y * Rpx, z * Rpx, { R: Rpx, D: Dpx });
@@ -137,5 +176,5 @@
         return { type: 'Polygon', coordinates: [ring] };
     }
 
-    return { starsOfDate, bodiesGeocentric, modelDirection, makeProjector, nightPolygon, EARTH_RADIUS_AU };
+    return { starsOfDate, bodiesGeocentric, modelDirection, j2000FromModel, j2000FromModelCio, makeProjector, nightPolygon, EARTH_RADIUS_AU };
 });

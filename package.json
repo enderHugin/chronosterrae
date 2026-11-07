@@ -12,7 +12,7 @@
     "check": "node scripts/check.js",
     "check:sky": "node scripts/check-sky.js",
     "validate": "node scripts/validate-records.js",
-    "test": "npm run check && npm run check:sky && npm run check:events && npm run check:data && npm run check:gap && npm run check:inner && npm run check:resolution && npm run check:changes && npm run check:labels && npm run check:sphere && npm run check:rotation && npm run check:ltp && npm run check:stars3d && npm run check:prehistory && npm run check:solar && npm run check:textures && npm run check:sphere-render && npm run check:timestep && npm run validate",
+    "test": "npm run check && npm run check:sky && npm run check:events && npm run check:data && npm run check:gap && npm run check:inner && npm run check:resolution && npm run check:changes && npm run check:labels && npm run check:sphere && npm run check:rotation && npm run check:ltp && npm run check:stars3d && npm run check:prehistory && npm run check:solar && npm run check:textures && npm run check:sphere-render && npm run check:milkyway && npm run check:timestep && npm run validate",
     "check:events": "node scripts/check-events.js",
     "check:data": "node scripts/check-data.js",
     "check:gap": "node scripts/check-gap.js",
@@ -28,7 +28,8 @@
     "check:solar": "node scripts/check-solar.js",
     "check:timestep": "node scripts/check-timestep.js",
     "check:textures": "node scripts/check-textures.js",
-    "check:sphere-render": "node scripts/check-sphere-render.js"
+    "check:sphere-render": "node scripts/check-sphere-render.js",
+    "check:milkyway": "node scripts/check-milkyway.js"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

@@ -144,6 +144,12 @@
                 const dist = Math.hypot(p[0] - eye[0], p[1] - eye[1], p[2] - eye[2]);
                 return dist <= radiusKm ? Infinity : fpx * Math.tan(Math.asin(radiusKm / dist));
             },
+            /** Inversa de project para direcciones: pixel -> vector unitario (ecliptico J2000) del rayo que lo atraviesa; se escribe en out. */
+            ray(px, py, out) {
+                const a = (px - width / 2) / fpx; const b = (height / 2 - py) / fpx;
+                const x = f[0] + a * r[0] + b * u[0]; const y = f[1] + a * r[1] + b * u[1]; const z = f[2] + a * r[2] + b * u[2];
+                const n = Math.sqrt(x * x + y * y + z * z); out[0] = x / n; out[1] = y / n; out[2] = z / n; return out;
+            },
             /** Componentes de un vector direccion en la base de la camara: [derecha, arriba, hacia el observador]. */
             basis(v) { return [dot(v, r), dot(v, u), -dot(v, f)]; }
         };
@@ -251,8 +257,14 @@
     const periodDays = (id) => (id === 'Moon' ? MOON_PERIOD_DAYS : Astronomy.PlanetOrbitalPeriod(id));
     /** Direccion ecuatorial J2000 (x, y, z) -> ecliptica J2000, para dibujar las estrellas en el mismo marco que los cuerpos. */
     const eclFromEq = (x, y, z) => toEcl(x, y, z);
+    // Inversa (ecliptico J2000 -> ecuatorial J2000): ECL es ortonormal, asi que es la matriz sin transponer.
+    const eqFromEcl = (x, y, z) => [
+        ECL[0][0] * x + ECL[0][1] * y + ECL[0][2] * z,
+        ECL[1][0] * x + ECL[1][1] * y + ECL[1][2] * z,
+        ECL[2][0] * x + ECL[2][1] * y + ECL[2][2] * z
+    ];
 
-    return { BODIES, PLANETS, byId, WINDOW, AU_KM, positions, trail, timeFromJD, makeCamera, lighting, accuracy, bandOf, lightMinutes, periodDays, eclFromEq,
+    return { BODIES, PLANETS, byId, WINDOW, AU_KM, positions, trail, timeFromJD, makeCamera, lighting, accuracy, bandOf, lightMinutes, periodDays, eclFromEq, eqFromEcl,
         earthFrame, eclToGlobe, globeToEcl, mapBasis, mapFromBasis, globe, zoomForDistance,
         /** Vector ecuatorial J2000 -> ecliptico J2000 (el marco de las posiciones de BODIES). */
         eqjToEcl: (v) => toEcl(v[0], v[1], v[2]) };

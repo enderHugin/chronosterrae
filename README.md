@@ -45,8 +45,21 @@ sale y cuánto se puede fiar de él.
   red). El error de la posición del centro de cada cuerpo se **midió contra JPL Horizons** (`scripts/validate-helio.js`,
   `data/sky/validation-helio.json`) y la pantalla lo muestra para la época: p. ej. ~2.500 km para la Tierra en 1700–2200
   y ~29.000 km para Júpiter (el de Marte y los gigantes incluye la diferencia centro-baricentro); crece hacia el pasado
-  (~150.000 km para Venus hacia el 2000 a. C.). Radios: NASA NSSDCA e IAU 2015. Sin texturas (colores ilustrativos),
-  ejes de rotación, anillos de Saturno ni lunas de otros planetas.
+  (~150.000 km para Venus hacia el 2000 a. C.). Radios: NASA NSSDCA e IAU 2015. Cada cuerpo se dibuja como esfera
+  (elipsoide si está achatado) **orientada con su eje de rotación IAU**, con la **fase** real y, donde hay mapa verificado,
+  con su **textura de misión espacial** (NASA/USGS, dominio público: Mercurio, Luna, Marte, Júpiter, Ío, Europa, Ganimedes,
+  Calisto; `data/textures/`, con procedencia y huella en `manifest.json`). Saturno lleva sus **anillos con la opacidad medida
+  por Cassini UVIS**, con sombra del planeta sobre los anillos y de los anillos sobre el planeta. Venus, Saturno, Urano y
+  Neptuno no tienen mapa verificado y se dibujan en color medio ilustrativo; la web lo dice. Las lunas galileanas usan
+  rotación síncrona aproximada (sin libraciones). Es una imagen del cuerpo **tal como lo vio una misión**, no de cómo se ve
+  en la fecha elegida (las manchas de Júpiter cambian). `solar/sphere-render.js` es un módulo puro con pruebas
+  (`npm run check:sphere-render`).
+- **Vía Láctea de fondo** (en el sistema solar y tras el globo): la textura de la NASA (SVS 4851: Hipparcos-2, Tycho-2 y
+  Gaia DR2; **sintetizada de catálogos, no una fotografía**) se proyecta en cada fotograma según la cámara, con la
+  precesión de la fecha (también en la prehistoria, con el marco LTP). Se ven las Nubes de Magallanes porque están en los
+  datos. El marco de la imagen se verifica contra los datos reales (`scripts/check-milkyway-data.py`, en CI: las nubes
+  caen a 0,6° y 0,4° de su posición y el plano a b ≈ −0,7°), y las inversas de cámara, con pruebas de ida y vuelta
+  (`npm run check:milkyway`). M31 y M33 **no** están en esa textura y todavía no se dibujan.
 - **Estrellas y planetas tras el globo**: al alejarte (pellizco) ves el espacio con las estrellas
   del catálogo HYG (CC BY-SA 4.0, con movimiento propio) y los planetas, el Sol y la Luna en su
   posición real del instante elegido, más el terminador día/noche sobre el mapa. La Luna se oculta
