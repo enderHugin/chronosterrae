@@ -31,7 +31,10 @@ const SUITE = [
     { id: 'alpes-2026-sin-fronteras', names: true, year: 2026, lng: 7.2, lat: 45.9, zoom: 8, hide: true },
     { id: 'mediterraneo-2026', names: true, year: 2026, lng: 15, lat: 38, zoom: 5.2 },
     { id: 'mediterraneo-2026-sin-fronteras', names: true, year: 2026, lng: 15, lat: 38, zoom: 5.2, hide: true },
-    { id: 'islandia-2026-sin-fronteras', names: true, year: 2026, lng: -19, lat: 64.9, zoom: 6.2, hide: true }
+    { id: 'islandia-2026-sin-fronteras', names: true, year: 2026, lng: -19, lat: 64.9, zoom: 6.2, hide: true },
+    // Carreteras (boton aparte, apagado por defecto): con ellas encendidas, y sin fronteras para ver que no se cuelan nombres politicos
+    { id: 'carreteras-roma-2026', names: true, roads: true, year: 2026, lng: 12.49, lat: 41.9, zoom: 11 },
+    { id: 'carreteras-alpes-2026-sin-fronteras', names: true, roads: true, year: 2026, lng: 7.2, lat: 45.9, zoom: 9, hide: true }
 ];
 
 async function settle(page) {
@@ -118,6 +121,7 @@ async function runSuite(page, out, only) {
             await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
             await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
             if (v.hide) await page.evaluate(() => { if (!BR.off) document.getElementById('btn-borders').click(); });
+            if (v.roads) await page.evaluate(() => { if (!ROADS.on) document.getElementById('btn-roads').click(); });
             await settle(page);
             const name = v.id + (dark ? '-oscuro' : '-claro');
             await page.screenshot({ path: path.join(out, name + '.png') });
@@ -128,7 +132,13 @@ async function runSuite(page, out, only) {
                 for (const f of map.queryRenderedFeatures({ layers: ids })) { const k = (f.sourceLayer || '?') + ':' + (f.properties.class || '-'); (by[k] = by[k] || new Set()).add(f.properties['name:latin'] || f.properties.name || '(sin nombre)'); }
                 return Object.fromEntries(Object.entries(by).map(([k, v]) => [k, { n: v.size, ejemplos: [...v].slice(0, 6) }]));
             });
-            rows.push({ name, labels, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            const road = await page.evaluate(() => {
+                const ids = map.getStyle().layers.filter((l) => l.id.startsWith('ofm-') && ['transportation', 'transportation_name'].includes(l['source-layer'])).map((l) => l.id);
+                const vis = ids.filter((i) => map.getLayoutProperty(i, 'visibility') !== 'none');
+                return { btnHidden: document.getElementById('btn-roads').hidden, on: ROADS.on, capas: ids.length, visibles: vis.length, dibujados: vis.length ? map.queryRenderedFeatures({ layers: vis }).length : 0 };
+            });
+            rows.push({ name, labels, road, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
             if (v.hide) await page.evaluate(() => { if (BR.off) document.getElementById('btn-borders').click(); });
         }
     }
