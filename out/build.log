@@ -1,0 +1,42 @@
+uvis_euv_2005_159_solar_time_series_ingress.tab 2160 0 {16: 2159, 48: 1}
+uvis_euv_2005_196_solar_time_series_ingress.tab 1145 915 {0: 915, 8: 230}
+uvis_euv_2006_257_solar_time_series_egress.tab 39 0 {4: 39}
+uvis_euv_2006_257_solar_time_series_ingress.tab 986 0 {2: 980, 34: 6}
+uvis_euv_2007_114_solar_time_series_egress.tab 992 554 {0: 992}
+uvis_euv_2007_114_solar_time_series_ingress.tab 423 0 {2: 423}
+uvis_euv_2008_003_solar_time_series_egress.tab 487 431 {0: 486, 32: 1}
+uvis_euv_2008_003_solar_time_series_ingress.tab 603 437 {0: 603}
+uvis_euv_2008_051_solar_time_series_egress.tab 19 0 {4: 19}
+uvis_euv_2008_051_solar_time_series_ingress.tab 516 351 {0: 516}
+uvis_euv_2008_083_solar_time_series_egress.tab 409 0 {1: 409}
+uvis_euv_2008_083_solar_time_series_ingress.tab 626 306 {0: 626}
+uvis_euv_2008_111_solar_time_series_egress.tab 2396 0 {1: 2396}
+uvis_euv_2008_111_solar_time_series_ingress.tab 1811 1101 {0: 1811}
+uvis_euv_2008_121_solar_time_series_egress.tab 2415 0 {1: 2415}
+uvis_euv_2008_121_solar_time_series_ingress.tab 2334 1069 {0: 2334}
+uvis_euv_2008_298_solar_time_series_egress.tab 449 0 {4: 449}
+uvis_euv_2008_298_solar_time_series_ingress.tab 1088 0 {4: 1088}
+uvis_euv_2012_267_solar_time_series_ingress.tab 4207 0 {16: 4207}
+uvis_euv_2013_044_solar_time_series_egress.tab 3192 0 {20: 2118, 32: 1074}
+uvis_euv_2016_221_solar_time_series_egress.tab 3954 3245 {8: 314, 0: 3635, 32: 5}
+uvis_euv_2016_221_solar_time_series_ingress.tab 1774 0 {1: 1500, 33: 274}
+uvis_euv_2016_245_solar_time_series_egress.tab 4755 0 {2: 4755}
+uvis_euv_2016_245_solar_time_series_ingress.tab 5614 0 {1: 5528, 33: 86}
+uvis_euv_2016_269_solar_time_series_egress.tab 4377 4376 {0: 4376, 32: 1}
+uvis_euv_2016_269_solar_time_series_ingress.tab 666 0 {32: 666}
+uvis_euv_2016_288_solar_time_series_egress.tab 1316 0 {4: 1316}
+uvis_euv_2016_288_solar_time_series_ingress.tab 5452 5068 {0: 5452}
+uvis_euv_2016_325_solar_time_series_egress.tab 11527 10634 {0: 11523, 32: 4}
+uvis_euv_2016_325_solar_time_series_ingress.tab 11702 10757 {0: 11691, 32: 11}
+uvis_euv_2016_361_solar_time_series_egress.tab 13121 0 {4: 13119, 33: 2}
+uvis_euv_2016_361_solar_time_series_ingress.tab 13196 12648 {0: 13196}
+uvis_euv_2017_017_solar_time_series_ingress.tab 4297 0 {1: 4297}
+uvis_euv_2017_046_solar_time_series_egress.tab 9577 8087 {8: 885, 0: 8692}
+uvis_euv_2017_060_solar_time_series_egress.tab 4417 0 {10: 575, 2: 3379, 32: 463}
+uvis_euv_2017_074_solar_time_series_egress.tab 5707 5113 {0: 5707}
+uvis_euv_2017_089_solar_time_series_egress.tab 6166 4895 {0: 6166}
+uvis_euv_2017_103_solar_time_series_ingress.tab 4327 0 {1: 4327}
+uvis_euv_2017_116_solar_time_series_egress.tab 5227 0 {1: 5227}
+uvis_euv_2017_168_solar_time_series_egress.tab 10428 0 {4: 8023, 38: 2405}
+uvis_euv_2017_168_solar_time_series_ingress.tab 10809 0 {2: 10809}
+intervalos con dato: 2715 de 3040 cobertura km [69675, 142000] bytes 33277
