@@ -169,8 +169,32 @@
         .toast-dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
         .toast-text { flex: 1; font-variant-numeric: tabular-nums; }
         .toast-x { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #sky { position: absolute; top: 60px; left: 14px; width: 344px; max-width: calc(100% - 28px); max-height: calc(100% - 300px); overflow: auto; padding: 12px 14px 10px; z-index: 11; display: none; box-sizing: border-box; }
+        #sky.open { display: block; }
+        #sky h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
+        #sky .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #sky-chart { width: 100%; aspect-ratio: 1; display: block; color: var(--text); cursor: crosshair; }
+        #sky-when { font-size: 12px; color: var(--muted); margin: 4px 0 8px; line-height: 1.35; }
+        #sky-range, #sky-error { font-size: 12px; line-height: 1.4; margin: 6px 0; }
+        #sky-error { color: var(--err); }
+        .sky-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; font-size: 11.5px; margin-top: 6px; }
+        .sky-grid label { display: flex; flex-direction: column; gap: 2px; color: var(--muted); }
+        .sky-grid select, .sky-grid input[type="number"], .sky-grid input[type="time"] { padding: 4px 6px; border: 1px solid var(--accent); border-radius: 5px; background: transparent; color: var(--text); font: 600 13px var(--font-ui); width: 100%; box-sizing: border-box; }
+        .sky-grid select option { color: #222; }
+        .sky-grid .wide { grid-column: 1 / -1; }
+        .sky-grid .check { flex-direction: row; align-items: center; gap: 6px; }
+        .sky-actions { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+        .sky-actions .btn { padding: 4px 10px; font-size: 12px; }
+        .sky-toggles { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; }
+        #sky-twilight { font-size: 12px; margin-top: 8px; }
+        #sky-list { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+        #sky-list th { text-align: left; color: var(--muted); font-weight: 600; padding: 2px 4px; }
+        #sky-list td { padding: 2px 4px; border-top: 1px solid rgba(128, 128, 128, 0.25); }
+        #sky-list tr.down { opacity: 0.55; }
+        #sky-note, #sky-accuracy, #sky-stars-note { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: 6px; }
 
         @media (max-width: 640px) {
+            #sky { top: 108px; right: 14px; width: auto; max-height: calc(100% - 330px); }
             #top-left { max-width: 100%; top: 56px; }
             #time-label { font-size: 19px; min-width: 0; }
             #info { top: 108px; max-height: calc(100% - 330px); }
@@ -196,6 +220,7 @@
         <button class="btn" id="btn-changes" type="button" aria-pressed="false" data-i18n="changes.button"></button>
         <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
         <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
+        <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
         <button class="btn" id="btn-lang" type="button">EN / ES</button>
         <button class="btn" id="btn-theme" type="button">Dark</button>
     </div>
@@ -215,6 +240,46 @@
     </div>
 
     <div id="toasts" aria-live="polite"></div>
+
+    <div id="sky" class="panel" role="region" aria-label="Sky">
+        <button class="close" id="sky-close" type="button" aria-label="Close">&times;</button>
+        <h2 data-i18n="sky.title"></h2>
+        <div id="sky-range"></div>
+        <div id="sky-body">
+            <canvas id="sky-chart" width="320" height="320"></canvas>
+            <div id="sky-when"></div>
+            <div id="sky-error"></div>
+            <div class="sky-grid">
+                <label><span data-i18n="sky.month"></span><select id="sky-month"></select></label>
+                <label><span data-i18n="sky.day"></span><input id="sky-day" type="number" min="1" max="31" step="1"></label>
+                <label><span data-i18n="sky.time"></span><input id="sky-time" type="time"></label>
+                <label><span data-i18n="sky.calendar"></span>
+                    <select id="sky-cal">
+                        <option value="auto" data-i18n="sky.cal.auto"></option>
+                        <option value="julian" data-i18n="sky.cal.julian"></option>
+                        <option value="gregorian" data-i18n="sky.cal.gregorian"></option>
+                    </select></label>
+                <label class="check wide"><input id="sky-follow" type="checkbox" checked><span data-i18n="sky.follow"></span></label>
+                <label><span data-i18n="sky.lat"></span><input id="sky-lat" type="number" min="-90" max="90" step="0.1"></label>
+                <label><span data-i18n="sky.lon"></span><input id="sky-lon" type="number" min="-180" max="180" step="0.1"></label>
+            </div>
+            <div class="sky-actions">
+                <button class="btn" id="sky-now" type="button" data-i18n="sky.now"></button>
+                <span class="sky-toggles">
+                    <label><input id="sky-t-stars" type="checkbox" checked> <span data-i18n="sky.stars"></span></label>
+                    <label><input id="sky-t-names" type="checkbox" checked> <span data-i18n="sky.names"></span></label>
+                    <label><input id="sky-t-lines" type="checkbox" checked> <span data-i18n="sky.lines"></span></label>
+                    <label><input id="sky-t-day" type="checkbox"> <span data-i18n="sky.dayStars"></span></label>
+                </span>
+            </div>
+            <div id="sky-twilight"></div>
+            <table id="sky-list"><thead><tr><th></th><th data-i18n="sky.colAlt"></th><th data-i18n="sky.colAz"></th><th data-i18n="sky.colMag"></th><th></th></tr></thead><tbody id="sky-rows"></tbody></table>
+            <div id="sky-stars-note"></div>
+            <div id="sky-note"><span class="badge model" data-i18n="sky.model"></span> <span data-i18n="sky.note"></span></div>
+            <div id="sky-accuracy"></div>
+            <div id="sky-caption" data-i18n="sky.caption" style="font-size:11px;color:var(--muted);margin-top:6px"></div>
+        </div>
+    </div>
 
     <div id="info" class="panel" role="region" aria-live="polite">
         <button class="close" id="info-close" type="button" aria-label="Close">×</button>
@@ -252,7 +317,6 @@
 
 <script src="./vendor/astronomy-engine/astronomy.browser.min.js"></script>
 <script src="./sky/sky.js"></script>
-<script src="./sky/sky-view.js"></script>
 <script src="./sky/ltp.js"></script>
 <script src="./sky/stars3d.js"></script>
 <script src="./sky/prehistory.js"></script>
@@ -264,6 +328,7 @@
 <script src="./map/changes.js"></script>
 <script src="./map/labels.js"></script>
 <script src="./map/sphere.js"></script>
+<script src="./sky/sky-view.js"></script>
 <script src="./sky/timestep.js"></script>
 <script src="./sky/solar.js"></script>
 <script src="./sky/planets.js"></script>
@@ -489,11 +554,34 @@ const i18n = {
             outOfRange: 'Sin estrellas ni noche en esta época: el cielo se calcula entre {a} y {b}.'
         },
         sky: {
+            button: 'Cielo', title: 'Cielo en este lugar e instante',
+            month: 'Mes', day: 'Día', time: 'Hora solar local', calendar: 'Calendario', follow: 'Seguir el centro del mapa',
+            lat: 'Latitud', lon: 'Longitud', now: 'Ahora',
+            cal: { auto: 'Automático (juliano hasta el 4-10-1582)', julian: 'Juliano', gregorian: 'Gregoriano' },
+            stars: 'Estrellas', names: 'Nombres', lines: 'Constelaciones', dayStars: 'Estrellas de día',
+            caption: 'Se mira hacia arriba: N arriba y E a la izquierda. Los símbolos del Sol, la Luna y los planetas no están a escala.',
+            when: '{date} ({cal}) · {ut} UT · ΔT {dt} s',
+            down: 'bajo el horizonte', outOfRange: 'El cielo se calcula entre {a} y {b}. Esta época queda fuera de ese intervalo.',
+            badDate: 'Fecha no válida: {err}.',
+            err: { SKIPPED_DATE: 'ese día no existió: tras el 4-10-1582 (juliano) vino el 15-10-1582 (gregoriano)', BAD_DATE: 'el día, el mes o la hora no existen en ese calendario' },
+            tw: { day: 'Es de día: las estrellas no se ven.', civil: 'Crepúsculo civil.', nautical: 'Crepúsculo náutico.', astronomical: 'Crepúsculo astronómico.', night: 'Noche cerrada.' },
             body: { Sun: 'Sol', Moon: 'Luna', Mercury: 'Mercurio', Venus: 'Venus', Mars: 'Marte', Jupiter: 'Júpiter', Saturn: 'Saturno', Uranus: 'Urano', Neptune: 'Neptuno' },
+            phase: { new: 'nueva', waxingCrescent: 'creciente', firstQuarter: 'cuarto creciente', waxingGibbous: 'gibosa creciente', full: 'llena', waningGibbous: 'gibosa menguante', lastQuarter: 'cuarto menguante', waningCrescent: 'menguante' },
+            cardinals: ['N', 'E', 'S', 'O'], colAlt: 'Alt.', colAz: 'Az.', colMag: 'Mag.',
+            model: 'Modelo', note: 'Cálculo, no observación. Posiciones aparentes con refracción normal; sin aberración ni paralaje de las estrellas ni estrellas variables. La rotación de la Tierra (ΔT) antes de ~1600 es una estimación y desplaza el cielo local.',
+            noStars: 'El catálogo de estrellas aún no está disponible: solo se muestran el Sol, la Luna y los planetas.',
+            accuracy: 'Frente a JPL Horizons en el año medido más cercano ({y}): Sol {sun}, Luna {moon}, peor planeta {planet}. Solo la efeméride, sin la incertidumbre de ΔT.',
+            noValidation: 'La comparación con JPL Horizons aún no está publicada: no se declara precisión.',
+            unavailable: 'No se pudo cargar el módulo de cielo.',
             pre: {
                 loading: 'Cargando las estrellas de la prehistoria…',
                 missing: 'No se pudieron cargar los datos de las estrellas de la prehistoria.',
                 banner: 'Prehistoria (modelo): solo estrellas. No hay Sol, Luna ni planetas en esta época (no hay efemérides fiables), así que la carta se dibuja sobre cielo oscuro aunque a esa hora local fuese de día.',
+                stars: '{v} estrellas con V ≤ 6,5 en el catálogo en esta época (las {n} de hoy más {x} que hoy son más débiles pero llegan a verse; faltan las que hoy son débiles y no tienen velocidad radial medida: es una cota inferior).',
+                lines: 'Las figuras de las constelaciones son las de hoy: a esta edad se ven deformadas.',
+                model: 'Posición: movimiento propio y velocidad radial medidos hoy, extrapolados en línea recta con el tiempo de luz exacto (en ±100.000 años la aceleración galáctica es despreciable), y precesión de largo plazo (Vondrák, Capitaine y Wallace 2011). Según ERFA esa precesión es exacta «a unos pocos segundos de arco» en el periodo histórico y empeora hasta «unas décimas de grado» al final de ±200.000 años (a ±100.000 queda entre ambos). Sin nutación, aberración ni paralaje. El error de las mediciones crece con el tiempo: cada 1 mas/año de error en el movimiento propio son 1,7′ a 100.000 años.',
+                rv: '{u} de las {n} estrellas no tienen velocidad radial medida: se mueven solo en tangencial y su posición es incierta; con la dispersión de las radiales medidas del propio catálogo (±{s} km/s) la peor se desplazaría hasta {w} en esta época.',
+                time: 'La hora es UT proléptico: el cielo es el de la rotación terrestre (ERA) de ese instante exacto. ΔT = {dt} s ({days} días) es aquí una extrapolación teórica: un día de error en ΔT equivale a ~1° de ángulo horario, así que la estación del año real de esta fecha no se afirma.'
             }
         }
     },
@@ -643,11 +731,34 @@ const i18n = {
             outOfRange: 'No stars or night in this era: the sky is computed between {a} and {b}.'
         },
         sky: {
+            button: 'Sky', title: 'Sky at this place and time',
+            month: 'Month', day: 'Day', time: 'Local solar time', calendar: 'Calendar', follow: 'Follow the map centre',
+            lat: 'Latitude', lon: 'Longitude', now: 'Now',
+            cal: { auto: 'Automatic (Julian up to 4 Oct 1582)', julian: 'Julian', gregorian: 'Gregorian' },
+            stars: 'Stars', names: 'Names', lines: 'Constellations', dayStars: 'Stars by day',
+            caption: 'Looking up: N at the top and E on the left. The symbols for the Sun, Moon and planets are not to scale.',
+            when: '{date} ({cal}) · {ut} UT · ΔT {dt} s',
+            down: 'below the horizon', outOfRange: 'The sky is computed between {a} and {b}. This era is outside that range.',
+            badDate: 'Invalid date: {err}.',
+            err: { SKIPPED_DATE: 'that day never existed: 15 Oct 1582 (Gregorian) followed 4 Oct 1582 (Julian)', BAD_DATE: 'the day, month or time does not exist in that calendar' },
+            tw: { day: 'Daytime: stars are not visible.', civil: 'Civil twilight.', nautical: 'Nautical twilight.', astronomical: 'Astronomical twilight.', night: 'Full night.' },
             body: { Sun: 'Sun', Moon: 'Moon', Mercury: 'Mercury', Venus: 'Venus', Mars: 'Mars', Jupiter: 'Jupiter', Saturn: 'Saturn', Uranus: 'Uranus', Neptune: 'Neptune' },
+            phase: { new: 'new', waxingCrescent: 'waxing crescent', firstQuarter: 'first quarter', waxingGibbous: 'waxing gibbous', full: 'full', waningGibbous: 'waning gibbous', lastQuarter: 'last quarter', waningCrescent: 'waning crescent' },
+            cardinals: ['N', 'E', 'S', 'W'], colAlt: 'Alt.', colAz: 'Az.', colMag: 'Mag.',
+            model: 'Model', note: 'A calculation, not an observation. Apparent positions with standard refraction; no aberration or parallax for stars, no variable stars. Earth\'s rotation (ΔT) before ~1600 is an estimate and shifts the local sky.',
+            noStars: 'The star catalogue is not available yet: only the Sun, Moon and planets are shown.',
+            accuracy: 'Against JPL Horizons in the nearest measured year ({y}): Sun {sun}, Moon {moon}, worst planet {planet}. Ephemeris only, without the ΔT uncertainty.',
+            noValidation: 'The comparison with JPL Horizons is not published yet: no accuracy is claimed.',
+            unavailable: 'The sky module could not be loaded.',
             pre: {
                 loading: 'Loading the prehistoric stars…',
                 missing: 'The prehistoric star data could not be loaded.',
                 banner: 'Prehistory (model): stars only. There is no Sun, Moon or planets in this era (no reliable ephemerides), so the chart is drawn on a dark sky even if it was daytime at that local hour.',
+                stars: '{v} stars with V ≤ 6.5 in the catalogue at this epoch (today\'s {n} plus {x} that are fainter today but come into view; stars that are faint today and have no measured radial velocity are missing: this is a lower bound).',
+                lines: 'The constellation figures are today\'s: at this age they look distorted.',
+                model: 'Position: proper motion and radial velocity measured today, extrapolated in a straight line with exact light-time (over ±100,000 years galactic acceleration is negligible), and long-term precession (Vondrák, Capitaine & Wallace 2011). According to ERFA that precession is accurate "to a few arcseconds" in the historical period and worsens to "a few tenths of a degree" at the end of ±200,000 years (at ±100,000 it lies in between). No nutation, aberration or parallax. Measurement errors grow with time: every 1 mas/yr of error in proper motion is 1.7′ at 100,000 years.',
+                rv: '{u} of the {n} stars have no measured radial velocity: they move tangentially only and their position is uncertain; with the spread of the catalogue\'s own measured radial velocities (±{s} km/s) the worst would shift by up to {w} at this epoch.',
+                time: 'The time is proleptic UT: the sky is the one for the Earth\'s rotation (ERA) at that exact instant. ΔT = {dt} s ({days} days) is a theoretical extrapolation here: one day of error in ΔT equals ~1° of hour angle, so the real season of this date is not claimed.'
             }
         }
     }
@@ -1011,6 +1122,7 @@ map.on('moveend', () => {
     const c = map.getCenter().wrap();
     const r = (n, d) => Math.round(n * 10 ** d) / 10 ** d;
     savePrefs({ c: [r(c.lng, 3), r(Math.max(-85, Math.min(85, c.lat)), 3)], z: r(map.getZoom(), 2) });
+    if (sky.open && sky.follow) { syncPlace(); skyFieldsFromClock(); scheduleSky(); }
     renderClock();
     eventsRefresh();
 });
@@ -1984,6 +2096,7 @@ function applyStrings() {
     document.querySelectorAll('[data-i18n-placeholder]').forEach((n) => { n.placeholder = t(n.dataset.i18nPlaceholder); });
     renderPresets();
     renderCredits();
+    skyTexts();
     $('btn-space').title = t('space.tip');
     $('btn-borders').title = t('borders.tip');
     $('btn-roads').title = t('roads.tip');
@@ -2051,11 +2164,48 @@ $('info-close').addEventListener('click', hideInfo);
 // El calculo vive en sky/sky.js (probado en Node contra referencias independientes y contra JPL Horizons);
 // aqui solo se conectan la linea de tiempo, el centro del mapa y los controles.
 const sky = {
-    ready: Boolean(window.ChronosSky && window.ChronosSkyView && window.Astronomy),
-    catalog: null, catalogState: 'idle'
+    open: false, ready: Boolean(window.ChronosSky && window.ChronosSkyView && window.Astronomy),
+    month: 1, day: 1, minutes: 720, calendar: 'auto', follow: true, lat: 0, lon: 0,
+    stars: true, names: true, lines: true, dayStars: false,
+    catalog: null, catalogState: 'idle', validation: undefined, drawn: [], raf: 0, started: false
 };
 
+const compass = (az) => (lang === 'es' ? ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'] : ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])[Math.round(az / 45) % 8];
 const pad2 = (n) => String(n).padStart(2, '0');
+const hhmm = (minutes) => pad2(Math.floor(minutes / 60)) + ':' + pad2(minutes % 60);
+const monthName = (m) => new Date(2001, m - 1, 1).toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { month: 'long' });
+
+function syncPlace() {
+    const c = map.getCenter().wrap();
+    sky.lat = Math.round(Math.max(-90, Math.min(90, c.lat)) * 1000) / 1000;
+    sky.lon = Math.round(c.lng * 1000) / 1000;
+    if (document.activeElement !== $('sky-lat')) $('sky-lat').value = sky.lat;
+    if (document.activeElement !== $('sky-lon')) $('sky-lon').value = sky.lon;
+}
+
+function skyTexts() {
+    const sel = $('sky-month');
+    const keep = sky.month;
+    sel.textContent = '';
+    for (let m = 1; m <= 12; m++) sel.appendChild(el('option', { value: String(m), text: monthName(m) }));
+    sel.value = String(keep);
+    if (sky.open) updateSky();
+}
+
+function syncControls() {
+    $('sky-month').value = String(sky.month);
+    $('sky-day').value = sky.day;
+    $('sky-time').value = hhmm(sky.minutes);
+    $('sky-cal').value = sky.calendar;
+}
+
+// Temporizador corto en vez de requestAnimationFrame: el panel no necesita ir al ritmo del mapa y un
+// fotograma lento (el mapa renderizando) no debe retrasar el cielo.
+function scheduleSky() {
+    if (sky.raf) return;
+    sky.raf = setTimeout(() => { sky.raf = 0; updateSky(); }, 30);
+}
+
 async function skyLoadCatalog() {
     if (sky.catalogState !== 'idle') return;
     sky.catalogState = 'loading';
@@ -2066,8 +2216,22 @@ async function skyLoadCatalog() {
     } catch (err) {
         sky.catalogState = 'missing';
     }
+    scheduleSky();
     scheduleSpace();
 }
+
+async function skyLoadValidation() {
+    if (sky.validation !== undefined) return;
+    sky.validation = null;
+    try {
+        const res = await fetch('./data/sky/validation.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const v = JSON.parse(await res.text());
+        if (v && Array.isArray(v.cases) && v.cases.length) sky.validation = v;
+    } catch (err) { sky.validation = null; }
+    scheduleSky();
+}
+
 /* ---- Prehistoria: solo estrellas (-100.000 .. -2001). Datos y calculo en sky/prehistory.js (verificado en Node). ---- */
 const pre = { state: 'idle', inst: null, view: null, res: null, fullJD: NaN, unknown: [], rvRms: 0, extraN: 0, catN: 0 };
 const skyRange = () => (window.ChronosPrehistory && window.ChronosLtp && window.ChronosStars3D
@@ -2089,7 +2253,7 @@ async function preLoad() {
         pre.unknown = []; for (let i = 0; i < cat.n; i++) if (inst.prep.hasPlx[i] && !inst.prep.rvKnown[i]) pre.unknown.push(i);
         pre.state = 'ready';
     } catch (err) { pre.state = 'missing'; console.warn('[PRE]', err.message); }
-    scheduleSpace();
+    scheduleSky(); scheduleSpace();
 }
 
 // Las estrellas se mueven < 1" al dia: ra/dec/magnitud se recalculan como mucho una vez al dia de reloj; el angulo de rotacion (ERA), siempre.
@@ -2102,6 +2266,134 @@ function preFrame(jd) {
     }
     pre.res.era = pre.inst.frame.era(jd - ChronosSky.J2000_JD);
     return pre.res;
+}
+
+const fmtAngle = (rad) => { const a = rad * 180 / Math.PI; return a < 1 ? nf().format(Math.round(a * 600) / 10) + '\u2032' : nf().format(Math.round(a * 10) / 10) + '\u00b0'; };
+
+function updateSkyStarsOnly(jd) {
+    if (pre.state === 'idle') preLoad();
+    if (pre.state !== 'ready') { $('sky-range').textContent = t(pre.state === 'missing' ? 'sky.pre.missing' : 'sky.pre.loading'); $('sky-body').style.display = 'none'; return; }
+    $('sky-body').style.display = '';
+    const res = preFrame(jd); const view = pre.view;
+    const hor = pre.inst.horizontal(res, sky.lat, sky.lon);
+    const alt = Float64Array.from(hor.alt, (a) => a + Astronomy.Refraction('normal', a));
+    const none = { alt: -90, az: 0, mag: 0, phaseFraction: 0 };
+    const u = ChronosSky.jdToCalendar(jd, sky.calendar);
+    $('sky-when').textContent = fmt('sky.when', { date: u.day + ' ' + monthName(u.month) + ' ' + formatYear(u.year), cal: t('sky.cal.' + u.calendar), ut: pad2(u.hour) + ':' + pad2(u.minute) + ':' + pad2(Math.floor(u.second)), dt: nf().format(Math.round(res.dtSeconds)) });
+    sky.drawn = ChronosSkyView.draw($('sky-chart'), { twilight: 'night', sun: none, moon: none, planets: [], stars: { alt, az: hor.az } }, {
+        catalog: sky.stars ? view : null, names: {}, cardinals: t('sky.cardinals'), showStars: sky.stars, showNames: sky.names, showLines: sky.lines, dayStars: true, lang
+    });
+    $('sky-twilight').textContent = t('sky.pre.banner');
+    // las estrellas mas brillantes que estan sobre el horizonte
+    const up = []; for (let i = 0; i < view.n; i++) if (alt[i] > 0 && view.mag[i] <= 6.5) up.push(i);
+    up.sort((a, b) => view.mag[a] - view.mag[b]);
+    const rows = $('sky-rows'); rows.textContent = '';
+    up.slice(0, 8).forEach((i) => {
+        const nm = view.names[view.hip[i]];
+        rows.appendChild(el('tr', {}, [
+            el('td', { text: nm ? ((lang === 'es' && nm[1]) || nm[0]) : 'HIP ' + view.hip[i] }),
+            el('td', { text: nf().format(Math.round(alt[i] * 10) / 10) + '\u00b0' }),
+            el('td', { text: compass(hor.az[i]) + ' ' + Math.round(hor.az[i]) + '\u00b0' }),
+            el('td', { text: nf().format(Math.round(view.mag[i] * 10) / 10) }),
+            el('td', { text: '' })
+        ]));
+    });
+    let visible = 0; for (let i = 0; i < view.n; i++) if (view.mag[i] <= 6.5) visible++;
+    $('sky-stars-note').textContent = fmt('sky.pre.stars', { v: nf().format(visible), n: nf().format(pre.catN), x: nf().format(pre.extraN) }) + (sky.lines ? ' ' + t('sky.pre.lines') : '');
+    let worst = 0; for (const i of pre.unknown) if (view.mag[i] <= 6.5) worst = Math.max(worst, pre.inst.uncertainty(i, res.tYears, pre.rvRms));
+    $('sky-accuracy').textContent = t('sky.pre.model') + ' ' + fmt('sky.pre.rv', { u: nf().format(pre.unknown.length), n: nf().format(view.n), s: nf().format(Math.round(pre.rvRms * 10) / 10), w: fmtAngle(worst) })
+        + ' ' + fmt('sky.pre.time', { dt: nf().format(Math.round(res.dtSeconds)), days: nf().format(Math.round(res.dtSeconds / 864) / 100) });
+}
+
+// Error medido frente a Horizons en el anio muestreado mas cercano al que se esta viendo.
+function skyAccuracyText(year) {
+    const v = sky.validation;
+    if (!v) return t('sky.noValidation');
+    const years = [...new Set(v.cases.map((c) => c.year))];
+    const y = years.reduce((a, b) => (Math.abs(b - year) < Math.abs(a - year) ? b : a));
+    const at = v.cases.filter((c) => c.year === y);
+    const max = (ids) => Math.max(...at.filter((c) => ids.includes(c.body)).map((c) => c.error_arcsec));
+    const planets = ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'];
+    // segundos de arco, minutos de arco o grados segun el tamano del error
+    const f = (n) => {
+        if (!Number.isFinite(n)) return '?';
+        if (n < 120) return nf().format(Math.round(n * 10) / 10) + '\u2033';
+        if (n < 7200) return nf().format(Math.round(n / 6) / 10) + '\u2032';
+        return nf().format(Math.round(n / 360) / 10) + '\u00b0';
+    };
+    return fmt('sky.accuracy', { y: formatYear(y), sun: f(max(['Sun'])), moon: f(max(['Moon'])), planet: f(max(planets)) });
+}
+
+function moonPhaseName(angle) {
+    const k = ['new', 'waxingCrescent', 'firstQuarter', 'waxingGibbous', 'full', 'waningGibbous', 'lastQuarter', 'waningCrescent'];
+    return t('sky.phase.' + k[Math.floor(((angle + 22.5) % 360) / 45)]);
+}
+
+function skyErrorText(e) {
+    return (e && e.code && t('sky.err.' + e.code)) || (e && e.message) || '?';
+}
+
+function updateSky() {
+    if (!sky.open) return;
+    if (!sky.ready) { $('sky-range').textContent = t('sky.unavailable'); $('sky-body').style.display = 'none'; return; }
+    const W = skyRange();
+    const year = ybpToYear(state.ybp);
+    const inRange = year >= W.minYear && year <= W.maxYear;
+    $('sky-body').style.display = inRange ? '' : 'none';
+    $('sky-range').textContent = inRange ? '' : fmt('sky.outOfRange', { a: formatYear(W.minYear), b: formatYear(W.maxYear) });
+    if (!inRange) return;
+    $('sky-error').textContent = '';
+    if (!clockUsable()) clockFromYear(year);
+    if (!clockUsable()) return;
+    const jd = clock.jd;
+    if (yearStarsOnly(ChronosSky.jdToCalendar(jd, 'auto').year)) { updateSkyStarsOnly(jd); return; }
+    const res = ChronosSky.skyAt({ jd, lat: sky.lat, lon: sky.lon, catalog: sky.stars ? sky.catalog : null });
+
+    const u = ChronosSky.jdToCalendar(jd, sky.calendar);
+    $('sky-when').textContent = fmt('sky.when', {
+        date: u.day + ' ' + monthName(u.month) + ' ' + formatYear(u.year), cal: t('sky.cal.' + u.calendar),
+        ut: pad2(u.hour) + ':' + pad2(u.minute) + ':' + pad2(Math.floor(u.second)), dt: nf().format(Math.round(res.deltaTSeconds))
+    });
+
+    const names = {};
+    ChronosSky.BODIES.forEach((id) => { names[id] = t('sky.body.' + id); });
+    sky.drawn = ChronosSkyView.draw($('sky-chart'), res, {
+        catalog: sky.stars ? sky.catalog : null, names, cardinals: t('sky.cardinals'),
+        showStars: sky.stars, showNames: sky.names, showLines: sky.lines, dayStars: sky.dayStars, lang
+    });
+
+    $('sky-twilight').textContent = t('sky.tw.' + res.twilight);
+    const rows = $('sky-rows');
+    rows.textContent = '';
+    [res.sun, res.moon, ...res.planets].forEach((b) => {
+        const up = b.alt > 0;
+        const label = t('sky.body.' + b.id) + (b.id === 'Moon' ? ' · ' + moonPhaseName(b.phaseAngle) + ' ' + Math.round(b.phaseFraction * 100) + ' %' : '');
+        rows.appendChild(el('tr', { class: up ? '' : 'down' }, [
+            el('td', { text: label }),
+            el('td', { text: nf().format(Math.round(b.alt * 10) / 10) + '°' }),
+            el('td', { text: compass(b.az) + ' ' + Math.round(b.az) + '°' }),
+            el('td', { text: b.id === 'Sun' ? '' : nf().format(Math.round(b.mag * 10) / 10) }),
+            el('td', { text: up ? '' : t('sky.down') })
+        ]));
+    });
+    $('sky-stars-note').textContent = sky.stars && sky.catalogState === 'missing' ? t('sky.noStars') : '';
+    $('sky-accuracy').textContent = skyAccuracyText(year);
+}
+
+function setSkyOpen(open) {
+    sky.open = open;
+    $('sky').classList.toggle('open', open);
+    if (!open) return;
+    if (events.open) setEventsOpen(false);
+    if (CHG.open) setChangesOpen(false);
+    if (!sky.ready) { updateSky(); return; }
+    syncPlace();
+    sky.started = true;
+    skyFieldsFromClock();
+    syncControls();
+    skyLoadCatalog();
+    skyLoadValidation();
+    updateSky();
 }
 
 /* ------------------------------------------------------------------ */
@@ -2143,7 +2435,7 @@ const solarView = ChronosSolarView.create({
     getCatalog: () => (space.on ? sky.catalog || null : null),
     starColor: (bv) => ChronosSkyView.starColor(bv),
     starStyle: (mag) => ChronosSkyView.starStyle(mag),
-    skyOptions: () => ({ lines: true }),
+    skyOptions: () => ({ lines: !!sky.lines }),
     onSkyReady: () => renderCredits(),
     t, fmt, lang: () => lang, nf,
     loadAccuracy: () => {
@@ -2169,6 +2461,7 @@ function solarHint() {
 function solarZoomOut(deltaLog) {
     if (solarView.isOpen) { solarView.zoomBy(deltaLog); return true; }
     if (!solarAvailable()) { solarHint(); return false; }
+    if (sky.open) setSkyOpen(false);
     if (events.open) setEventsOpen(false);
     if (sky.catalogState === 'idle') skyLoadCatalog();
     map.stop();
@@ -2273,6 +2566,62 @@ map.addControl(new maplibregl.NavigationControl({ showZoom: false, visualizePitc
 document.addEventListener('click', (e) => {          // brujula con la escena abierta: norte arriba en la camara de la escena
     if (solarView.isOpen && e.target.closest && e.target.closest('.maplibregl-ctrl-compass')) { solarView.northUp(); e.stopPropagation(); e.preventDefault(); }
 }, true);
+$('btn-sky').addEventListener('click', () => setSkyOpen(!sky.open));
+$('sky-close').addEventListener('click', () => setSkyOpen(false));
+// Los campos del panel son la hora solar media local en el lugar elegido; el reloj guarda el instante en UT.
+function skyFieldsFromClock() {
+    if (!clockUsable()) return;
+    const c = ChronosSky.jdToCalendar(clock.jd + sky.lon / 360, sky.calendar);
+    sky.month = c.month; sky.day = c.day; sky.minutes = c.hour * 60 + c.minute;
+    const active = document.activeElement && document.activeElement.id;
+    if (!['sky-month', 'sky-day', 'sky-time', 'sky-cal'].includes(active)) syncControls();
+}
+function skyApplyFields() {
+    if (!clockUsable()) return;
+    const year = ChronosSky.jdToCalendar(clock.jd + sky.lon / 360, sky.calendar).year;
+    try {
+        const local = ChronosSky.calendarToJD({ year, month: sky.month, day: sky.day, hour: Math.floor(sky.minutes / 60), minute: sky.minutes % 60 }, sky.calendar);
+        $('sky-error').textContent = '';
+        clockSet(local.jd - sky.lon / 360, { user: true });
+    } catch (e) {
+        $('sky-error').textContent = fmt('sky.badDate', { err: skyErrorText(e) });
+    }
+}
+$('sky-month').addEventListener('change', (e) => { sky.month = parseInt(e.target.value, 10); skyApplyFields(); });
+$('sky-day').addEventListener('input', (e) => { const d = parseInt(e.target.value, 10); if (Number.isFinite(d)) { sky.day = d; skyApplyFields(); } });
+$('sky-time').addEventListener('input', (e) => {
+    const m = /^(\d{1,2}):(\d{2})/.exec(e.target.value);
+    if (m) { sky.minutes = Math.min(1439, parseInt(m[1], 10) * 60 + parseInt(m[2], 10)); skyApplyFields(); }
+});
+$('sky-cal').addEventListener('change', (e) => { sky.calendar = e.target.value; skyFieldsFromClock(); updateSky(); });
+$('sky-follow').addEventListener('change', (e) => {
+    sky.follow = e.target.checked;
+    $('sky-lat').disabled = $('sky-lon').disabled = sky.follow;
+    if (sky.follow) { syncPlace(); skyFieldsFromClock(); }
+    updateSky();
+});
+$('sky-lat').disabled = $('sky-lon').disabled = true;
+const readPlace = () => {
+    const la = parseFloat($('sky-lat').value); const lo = parseFloat($('sky-lon').value);
+    if (Number.isFinite(la) && Math.abs(la) <= 90) sky.lat = la;
+    if (Number.isFinite(lo) && Math.abs(lo) <= 180) sky.lon = lo;
+    skyFieldsFromClock();
+    updateSky();
+};
+$('sky-lat').addEventListener('input', readPlace);
+$('sky-lon').addEventListener('input', readPlace);
+$('sky-now').addEventListener('click', () => { if (sky.ready) clockNow(); });
+[['sky-t-stars', 'stars'], ['sky-t-names', 'names'], ['sky-t-lines', 'lines'], ['sky-t-day', 'dayStars']].forEach(([id, key]) => {
+    $(id).addEventListener('change', (e) => { sky[key] = e.target.checked; updateSky(); });
+});
+$('sky-chart').addEventListener('mousemove', (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - r.left; const y = e.clientY - r.top;
+    let best = null;
+    sky.drawn.forEach((d) => { const dist = Math.hypot(d.x - x, d.y - y); if (dist < 11 && (!best || dist < best.dist)) best = { dist, label: d.label }; });
+    e.currentTarget.title = best ? best.label : '';
+});
+
 /* ------------------------------------------------------------------ */
 /* Reloj: el instante exacto (UT) que gobierna el cielo y el fondo      */
 /* ------------------------------------------------------------------ */
@@ -2358,6 +2707,7 @@ function clockChanged({ tick = false } = {}) {
     const sec = Math.floor(clock.jd * 86400);
     const secChanged = sec !== clock.lastSec;
     clock.lastSec = sec;
+    if (sky.open && (!tick || secChanged || clock.rate >= 3600)) { skyFieldsFromClock(); scheduleSky(); }
     if (solarView.isOpen) solarView.invalidate();      // con la escena abierta la pinta ella (el mapa de la Tierra se actualiza al colocarlo)
     else { scheduleSpace(); updateNight(false); }
     eventsEnsureData();
@@ -2487,7 +2837,7 @@ function drawSpace() {
             if (s) { px[i] = s[0]; py[i] = s[1]; } else px[i] = NaN;
         }
         space.stars = { cat, px, py };
-        if (cat.constellations.length) {
+        if (sky.lines && cat.constellations.length) {
             ctx.strokeStyle = 'rgba(160,185,240,0.34)'; ctx.lineWidth = 1; ctx.beginPath();
             cat.constellations.forEach((cn) => cn.lines.forEach(([a, b]) => {
                 if (Number.isNaN(px[a]) || Number.isNaN(px[b])) return;
@@ -2762,7 +3112,7 @@ function setEventsOpen(open) {
     events.open = open;
     $('events').classList.toggle('open', open);
     $('btn-events').setAttribute('aria-pressed', String(open));
-    if (open) { if (CHG.open) setChangesOpen(false); eventsEnsureData(); renderEventsPanel(); }
+    if (open) { if (sky.open) setSkyOpen(false); if (CHG.open) setChangesOpen(false); eventsEnsureData(); renderEventsPanel(); }
 }
 $('btn-events').addEventListener('click', () => setEventsOpen(!events.open));
 $('events-close').addEventListener('click', () => setEventsOpen(false));
@@ -2959,7 +3309,7 @@ function setChangesOpen(open) {
     CHG.open = open;
     $('changes').classList.toggle('open', open);
     $('btn-changes').setAttribute('aria-pressed', String(open));
-    if (open) { if (events.open) setEventsOpen(false); CHG.key = chgKey(); chgRender(); }
+    if (open) { if (events.open) setEventsOpen(false); if (sky.open) setSkyOpen(false); CHG.key = chgKey(); chgRender(); }
 }
 $('btn-changes').addEventListener('click', () => setChangesOpen(!CHG.open));
 $('changes-close').addEventListener('click', () => setChangesOpen(false));
