@@ -108,5 +108,44 @@
         return /country/i.test(String(layer.id || '')) || /country/i.test(JSON.stringify(layer.filter || null));
     }
 
-    return { labelPoint, polityLabels, pickFont, isCountryLabel };
+    /* ---- Con las fronteras apagadas: solo nombres de accidentes geograficos ---- */
+    // Capas de origen (esquema de OpenMapTiles, comprobado con la sonda scripts/probe-ofm-labels.js sobre las teselas reales de OpenFreeMap) cuyo nombre es de un accidente
+    // geografico: mares, oceanos, bahias, estrechos y lagos (water_name), rios y canales (waterway) y picos y volcanes (mountain_peak).
+    const GEO_SOURCE_LAYERS = new Set(['water_name', 'waterway', 'mountain_peak']);
+    // De `place` solo es un accidente geografico la isla; el resto de clases es politico o de poblamiento (pais, estado, provincia, ciudad, pueblo, aldea, barrio, tierras indigenas).
+    const GEO_PLACE_CLASSES = ['island'];
+
+    /**
+     * Para una capa de rotulos del estilo: ¿se muestra cuando solo deben verse accidentes geograficos y con que filtro?
+     * Devuelve { show, filter }. Lo desconocido se OCULTA (carreteras, POI, aeropuertos, escudos, parques...): ante la duda no se nombra un lugar politico.
+     * En `place` no se clasifica la capa: se le AÑADE la condicion class = isla a su filtro, asi las de pais, estado y ciudad quedan vacias por construccion
+     * y la generica (`label_other`: islas, aldeas, provincias, barrios...) deja solo las islas.
+     */
+    function geoNames(layer) {
+        const none = { show: false, filter: layer && layer.filter ? layer.filter : null };
+        if (!layer || layer.type === 'background' || (layer.type && layer.type !== 'symbol')) return none;
+        const sl = layer['source-layer'];
+        if (GEO_SOURCE_LAYERS.has(sl)) return { show: true, filter: layer.filter || null };
+        if (sl === 'place') {
+            const isla = ['match', ['get', 'class'], GEO_PLACE_CLASSES, true, false];
+            return { show: true, filter: layer.filter ? ['all', layer.filter, isla] : isla };
+        }
+        return none;
+    }
+
+    /**
+     * Capa de nombres de picos y volcanes (el estilo de OpenFreeMap trae las teselas `mountain_peak` pero no las rotula): nombre y altitud en metros TAL COMO LA TRAE EL DATO
+     * (campo `ele`; si falta, solo el nombre). Los de menor `rank` (los mas altos de su tesela) se colocan primero; los que chocan se descartan.
+     */
+    function peakLayer(source, font) {
+        const name = ['coalesce', ['get', 'name:latin'], ['get', 'name']];
+        return {
+            id: 'chronos_peak_name', type: 'symbol', source, 'source-layer': 'mountain_peak', minzoom: 8,
+            filter: ['all', ['has', 'name'], ['match', ['get', 'class'], ['peak', 'volcano'], true, false]],
+            layout: { 'text-field': ['case', ['has', 'ele'], ['concat', name, '\n', ['to-string', ['get', 'ele']], ' m'], name], 'text-font': font, 'text-size': 11, 'text-max-width': 8, 'text-padding': 6, 'symbol-sort-key': ['get', 'rank'] },
+            paint: { 'text-color': '#6b4f3a', 'text-halo-color': '#ffffff', 'text-halo-width': 1.2 }
+        };
+    }
+
+    return { labelPoint, polityLabels, pickFont, isCountryLabel, geoNames, peakLayer, GEO_SOURCE_LAYERS, GEO_PLACE_CLASSES };
 });

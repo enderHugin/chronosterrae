@@ -1,0 +1,660 @@
+{
+ "procedencia": "Sonda scripts/probe-ofm-labels.js (workflow probe-ofm-labels.yml, rama probe-ofm-labels) sobre https://tiles.openfreemap.org/styles/liberty",
+ "probed_at": "2026-11-07T10:48:53.100Z",
+ "nota": "Solo id, capa de origen, zooms y filtro de las capas de tipo symbol del estilo real; sin el campo de texto.",
+ "clasesDePlaceEnLasTeselas": [
+  "aboriginal_lands",
+  "city",
+  "continent",
+  "country",
+  "hamlet",
+  "island",
+  "province",
+  "state",
+  "suburb",
+  "town",
+  "village"
+ ],
+ "clasesDeWaterName": [
+  "bay",
+  "lake",
+  "sea",
+  "strait"
+ ],
+ "clasesDeMountainPeak": [
+  "peak",
+  "saddle",
+  "volcano"
+ ],
+ "capas": [
+  {
+   "id": "road_one_way_arrow",
+   "source-layer": "transportation",
+   "minzoom": 16,
+   "maxzoom": null,
+   "filter": [
+    "==",
+    [
+     "get",
+     "oneway"
+    ],
+    1
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "road_one_way_arrow_opposite",
+   "source-layer": "transportation",
+   "minzoom": 16,
+   "maxzoom": null,
+   "filter": [
+    "==",
+    [
+     "get",
+     "oneway"
+    ],
+    -1
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "waterway_line_label",
+   "source-layer": "waterway",
+   "minzoom": 10,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "geometry-type"
+    ],
+    [
+     "LineString",
+     "MultiLineString"
+    ],
+    true,
+    false
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "water_name_point_label",
+   "source-layer": "water_name",
+   "minzoom": null,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "geometry-type"
+    ],
+    [
+     "MultiPoint",
+     "Point"
+    ],
+    true,
+    false
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "water_name_line_label",
+   "source-layer": "water_name",
+   "minzoom": null,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "geometry-type"
+    ],
+    [
+     "LineString",
+     "MultiLineString"
+    ],
+    true,
+    false
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "poi_r20",
+   "source-layer": "poi",
+   "minzoom": 17,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "MultiPoint",
+      "Point"
+     ],
+     true,
+     false
+    ],
+    [
+     ">=",
+     [
+      "get",
+      "rank"
+     ],
+     20
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "poi_r7",
+   "source-layer": "poi",
+   "minzoom": 16,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "MultiPoint",
+      "Point"
+     ],
+     true,
+     false
+    ],
+    [
+     ">=",
+     [
+      "get",
+      "rank"
+     ],
+     7
+    ],
+    [
+     "<",
+     [
+      "get",
+      "rank"
+     ],
+     20
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "poi_r1",
+   "source-layer": "poi",
+   "minzoom": 15,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "MultiPoint",
+      "Point"
+     ],
+     true,
+     false
+    ],
+    [
+     ">=",
+     [
+      "get",
+      "rank"
+     ],
+     1
+    ],
+    [
+     "<",
+     [
+      "get",
+      "rank"
+     ],
+     7
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "poi_transit",
+   "source-layer": "poi",
+   "minzoom": null,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "get",
+     "class"
+    ],
+    [
+     "airport",
+     "bus",
+     "rail"
+    ],
+    true,
+    false
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "highway-name-path",
+   "source-layer": "transportation_name",
+   "minzoom": 15.5,
+   "maxzoom": null,
+   "filter": [
+    "==",
+    [
+     "get",
+     "class"
+    ],
+    "path"
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "highway-name-minor",
+   "source-layer": "transportation_name",
+   "minzoom": 15,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "LineString",
+      "MultiLineString"
+     ],
+     true,
+     false
+    ],
+    [
+     "match",
+     [
+      "get",
+      "class"
+     ],
+     [
+      "minor",
+      "service",
+      "track"
+     ],
+     true,
+     false
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "highway-name-major",
+   "source-layer": "transportation_name",
+   "minzoom": 12.2,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "get",
+     "class"
+    ],
+    [
+     "primary",
+     "secondary",
+     "tertiary",
+     "trunk"
+    ],
+    true,
+    false
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "highway-shield-non-us",
+   "source-layer": "transportation_name",
+   "minzoom": 8,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "<=",
+     [
+      "get",
+      "ref_length"
+     ],
+     6
+    ],
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "LineString",
+      "MultiLineString"
+     ],
+     true,
+     false
+    ],
+    [
+     "match",
+     [
+      "get",
+      "network"
+     ],
+     [
+      "us-highway",
+      "us-interstate",
+      "us-state"
+     ],
+     false,
+     true
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "highway-shield-us-interstate",
+   "source-layer": "transportation_name",
+   "minzoom": 7,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "<=",
+     [
+      "get",
+      "ref_length"
+     ],
+     6
+    ],
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "LineString",
+      "MultiLineString"
+     ],
+     true,
+     false
+    ],
+    [
+     "match",
+     [
+      "get",
+      "network"
+     ],
+     [
+      "us-interstate"
+     ],
+     true,
+     false
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "road_shield_us",
+   "source-layer": "transportation_name",
+   "minzoom": 9,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "<=",
+     [
+      "get",
+      "ref_length"
+     ],
+     6
+    ],
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "LineString",
+      "MultiLineString"
+     ],
+     true,
+     false
+    ],
+    [
+     "match",
+     [
+      "get",
+      "network"
+     ],
+     [
+      "us-highway",
+      "us-state"
+     ],
+     true,
+     false
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "airport",
+   "source-layer": "aerodrome_label",
+   "minzoom": 10,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "has",
+     "iata"
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "label_other",
+   "source-layer": "place",
+   "minzoom": 8,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "get",
+     "class"
+    ],
+    [
+     "city",
+     "continent",
+     "country",
+     "state",
+     "town",
+     "village"
+    ],
+    false,
+    true
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "label_village",
+   "source-layer": "place",
+   "minzoom": 9,
+   "maxzoom": null,
+   "filter": [
+    "==",
+    [
+     "get",
+     "class"
+    ],
+    "village"
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "label_town",
+   "source-layer": "place",
+   "minzoom": 6,
+   "maxzoom": null,
+   "filter": [
+    "==",
+    [
+     "get",
+     "class"
+    ],
+    "town"
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "label_state",
+   "source-layer": "place",
+   "minzoom": 5,
+   "maxzoom": 8,
+   "filter": [
+    "==",
+    [
+     "get",
+     "class"
+    ],
+    "state"
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "label_city",
+   "source-layer": "place",
+   "minzoom": 3,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "get",
+      "class"
+     ],
+     "city"
+    ],
+    [
+     "!=",
+     [
+      "get",
+      "capital"
+     ],
+     2
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "label_city_capital",
+   "source-layer": "place",
+   "minzoom": 3,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "get",
+      "class"
+     ],
+     "city"
+    ],
+    [
+     "==",
+     [
+      "get",
+      "capital"
+     ],
+     2
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "label_country_3",
+   "source-layer": "place",
+   "minzoom": 2,
+   "maxzoom": 9,
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "get",
+      "class"
+     ],
+     "country"
+    ],
+    [
+     ">=",
+     [
+      "get",
+      "rank"
+     ],
+     3
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "label_country_2",
+   "source-layer": "place",
+   "minzoom": null,
+   "maxzoom": 9,
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "get",
+      "class"
+     ],
+     "country"
+    ],
+    [
+     "==",
+     [
+      "get",
+      "rank"
+     ],
+     2
+    ]
+   ],
+   "type": "symbol"
+  },
+  {
+   "id": "label_country_1",
+   "source-layer": "place",
+   "minzoom": null,
+   "maxzoom": 9,
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "get",
+      "class"
+     ],
+     "country"
+    ],
+    [
+     "==",
+     [
+      "get",
+      "rank"
+     ],
+     1
+    ]
+   ],
+   "type": "symbol"
+  }
+ ]
+}

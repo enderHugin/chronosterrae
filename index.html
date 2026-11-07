@@ -379,6 +379,7 @@ const i18n = {
         unnamed: 'Sin nombre en el conjunto de datos', liveTitle: 'Dato reciente', event: 'Fecha del suceso', harvested: 'Recogido', tier: 'Nivel', unknown: 'Desconocida',
         creditsLand: 'Costas', creditsBorders: 'Fronteras', creditsDetail: 'Detalle', creditsNatural: 'Imagen', creditsSky: 'Cielo', creditsSkyText: 'Vía Láctea sintetizada de catálogos (Hipparcos-2, Tycho-2, Gaia DR2), no una fotografía · ',
         detailFull: 'Detalle: mapa actual de OpenStreetMap, no una reconstrucción.',
+        detailGeo: 'Detalle: mapa actual de OpenStreetMap, no una reconstrucción. Sin fronteras solo se nombran accidentes geográficos (mares, lagos, ríos, islas y picos con su altitud); los nombres son los de hoy.',
         detailPhysical: 'Detalle: agua y vegetación de hoy como aproximación; no incluye lo que cambió desde entonces (ríos, lagos, bosques).',
         detailFail: 'No se pudo cargar el detalle del mapa ({err}). Se reintentará.',
         changes: {
@@ -529,6 +530,7 @@ const i18n = {
         unnamed: 'Unnamed in the dataset', liveTitle: 'Recent data', event: 'Event date', harvested: 'Harvested', tier: 'Tier', unknown: 'Unknown',
         creditsLand: 'Coastlines', creditsBorders: 'Borders', creditsDetail: 'Detail', creditsNatural: 'Imagery', creditsSky: 'Sky', creditsSkyText: 'Milky Way synthesised from star catalogues (Hipparcos-2, Tycho-2, Gaia DR2), not a photograph · ',
         detailFull: 'Detail: current OpenStreetMap map, not a reconstruction.',
+        detailGeo: 'Detail: current OpenStreetMap map, not a reconstruction. Without borders only geographic features are named (seas, lakes, rivers, islands and peaks with their elevation); the names are today\'s.',
         detailPhysical: 'Detail: present-day water and vegetation as an approximation; it does not include what has changed since (rivers, lakes, forests).',
         detailFail: 'Could not load the map detail ({err}). Will retry.',
         changes: {
@@ -1061,6 +1063,8 @@ function detailBuild(style) {
             paint: { 'text-color': '#3b6d3b', 'text-halo-color': (proto.paint && proto.paint['text-halo-color']) || '#ffffff', 'text-halo-width': 1.2 }
         });
     }
+    // Nombre y altitud de picos y volcanes: el estilo de OpenFreeMap no rotula las teselas `mountain_peak`. Solo se ve con las fronteras apagadas (nombres de accidentes geograficos).
+    if (proto && window.ChronosLabels && !style.layers.some((l) => l.id === 'chronos_peak_name')) style.layers.push(ChronosLabels.peakLayer(proto.source, proto.layout['text-font']));
     style.layers.forEach((l) => {
         if (l.type === 'fill-extrusion') return;               // edificios en 3D: pesados y de hoy
         const clone = { ...l, id: 'ofm-' + l.id, layout: { ...(l.layout || {}), visibility: 'none' } };
@@ -1078,7 +1082,8 @@ function detailBuild(style) {
         const orig = {};
         if (role === 'fill') orig['fill-opacity'] = map.getPaintProperty(clone.id, 'fill-opacity');
         if (role === 'symbol') { orig['text-color'] = map.getPaintProperty(clone.id, 'text-color'); orig['text-halo-color'] = map.getPaintProperty(clone.id, 'text-halo-color'); }
-        DETAIL.layers.push({ id: clone.id, role, physical, orig, filter: l.filter || null, country: window.ChronosLabels ? ChronosLabels.isCountryLabel(l) : false });
+        DETAIL.layers.push({ id: clone.id, role, physical, orig, filter: l.filter || null, country: window.ChronosLabels ? ChronosLabels.isCountryLabel(l) : false,
+            geo: role === 'symbol' && window.ChronosLabels ? ChronosLabels.geoNames(l) : null, onlyGeo: l.id === 'chronos_peak_name', geoApplied: false });
     });
     detailTheme();
 }
@@ -1133,7 +1138,11 @@ function detailVisibility() {
     DETAIL.layers.forEach((l) => {
         // Los nombres de pais del detalle son los de HOY: con los nombres propios a la vista (fronteras puestas) duplicarian, y en un mapa historico serian de otra epoca.
         const ownNames = l.country && LBL.ready && state.borders && !BR.cut;
-        map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !(l.role === 'boundary' && state.borders) && !ownNames ? 'visible' : 'none');
+        // Sin fronteras a la vista (apagadas, o la vista queda lejos): solo se nombran accidentes geograficos (map/labels.js geoNames); ningun pais, estado, ciudad, carretera ni POI.
+        const geoOnly = BR.cut === true && l.role === 'symbol' && Boolean(l.geo);
+        const geoHidden = l.role === 'symbol' && ((geoOnly && !l.geo.show) || (l.onlyGeo && !BR.cut));
+        map.setLayoutProperty(l.id, 'visibility', mode && (mode === 'full' || l.physical) && !(l.role === 'boundary' && state.borders) && !ownNames && !geoHidden ? 'visible' : 'none');
+        if (l.geo && l.geo.show && l.geoApplied !== geoOnly) { map.setFilter(l.id, geoOnly ? l.geo.filter : l.filter); l.geoApplied = geoOnly; }
         // Antes de hoy no se dibujan dársenas ni piscinas: obras modernas (clases `dock` y `swimming_pool` del esquema de OpenFreeMap, comprobadas con la sonda).
         if (l.role === 'water') map.setFilter(l.id, mode === 'physical' ? (l.filter ? ['all', l.filter, DETAIL_NOT_MODERN_WATER] : DETAIL_NOT_MODERN_WATER) : (l.filter || null));
     });
@@ -1581,7 +1590,7 @@ function renderStatus() {
         messages.push(t('noBorders'));
     }
     if (GAP.shown) messages.push(t(state.borders && state.borders.source === 'ne' ? 'gapNoteNE' : 'gapNote'));
-    if (DETAIL.shown) messages.push(t(DETAIL.shown === 'full' ? 'detailFull' : 'detailPhysical'));
+    if (DETAIL.shown) messages.push(t(DETAIL.shown === 'full' ? (BR.cut ? 'detailGeo' : 'detailFull') : 'detailPhysical'));
     if (NAT.on) messages.push(t('naturalNote'));
     else if (NAT.failed) messages.push(t('naturalFail'));
     else if (DETAIL.error && detailMode()) { level = 'warn'; messages.push(fmt('detailFail', { err: DETAIL.error.message })); }

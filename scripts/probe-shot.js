@@ -25,7 +25,13 @@ const SUITE = [
     { id: 'africa-2026-cerca', year: 2026, lng: 20, lat: 5, zoom: 3.2 },
     { id: 'antartida-2026', year: 2026, lng: 0, lat: -75, zoom: 2 },
     { id: 'artico-2026', year: 2026, lng: 0, lat: 75, zoom: 2 },
-    { id: 'pangea-250Ma', year: -250e6 + 2000, lng: 0, lat: 0, zoom: 1.4 }
+    { id: 'pangea-250Ma', year: -250e6 + 2000, lng: 0, lat: 0, zoom: 1.4 },
+    // Nombres con las fronteras puestas y apagadas: apagadas, solo accidentes geograficos (mares, lagos, rios, islas y picos con su altitud); ningun pais, estado, ciudad ni carretera
+    { id: 'alpes-2026', names: true, year: 2026, lng: 7.2, lat: 45.9, zoom: 8 },
+    { id: 'alpes-2026-sin-fronteras', names: true, year: 2026, lng: 7.2, lat: 45.9, zoom: 8, hide: true },
+    { id: 'mediterraneo-2026', names: true, year: 2026, lng: 15, lat: 38, zoom: 5.2 },
+    { id: 'mediterraneo-2026-sin-fronteras', names: true, year: 2026, lng: 15, lat: 38, zoom: 5.2, hide: true },
+    { id: 'islandia-2026-sin-fronteras', names: true, year: 2026, lng: -19, lat: 64.9, zoom: 6.2, hide: true }
 ];
 
 async function settle(page) {
@@ -104,21 +110,29 @@ async function runContinuity(page, out) {
     fs.writeFileSync(path.join(out, 'continuity.json'), JSON.stringify(res, null, 2));
 }
 
-async function runSuite(page, out) {
+async function runSuite(page, out, only) {
     const rows = [];
     for (const dark of [true, false]) {
         await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark);
-        for (const v of SUITE) {
+        for (const v of SUITE.filter((x) => !only || x.names)) {
             await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
             await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
             if (v.hide) await page.evaluate(() => { if (!BR.off) document.getElementById('btn-borders').click(); });
             await settle(page);
             const name = v.id + (dark ? '-oscuro' : '-claro');
             await page.screenshot({ path: path.join(out, name + '.png') });
-            rows.push({ name, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            // Que rotulos se dibujan de verdad: por capa de origen y clase (el hecho que importa con las fronteras apagadas; no se deduce de la imagen)
+            const labels = await page.evaluate(() => {
+                const ids = map.getStyle().layers.filter((l) => l.type === 'symbol' && l.id.startsWith('ofm-') && map.getLayoutProperty(l.id, 'visibility') !== 'none').map((l) => l.id);
+                const by = {}; if (!ids.length) return by;
+                for (const f of map.queryRenderedFeatures({ layers: ids })) { const k = (f.sourceLayer || '?') + ':' + (f.properties.class || '-'); (by[k] = by[k] || new Set()).add(f.properties['name:latin'] || f.properties.name || '(sin nombre)'); }
+                return Object.fromEntries(Object.entries(by).map(([k, v]) => [k, { n: v.size, ejemplos: [...v].slice(0, 6) }]));
+            });
+            rows.push({ name, labels, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
             if (v.hide) await page.evaluate(() => { if (BR.off) document.getElementById('btn-borders').click(); });
         }
     }
+    if (only) { fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2)); return; }   // modo `nombres`: solo las vistas de nombres geograficos
     try { await runTiming(page, out); } catch (e) { fs.writeFileSync(path.join(out, 'timing-error.txt'), String(e)); }
     try { await runContinuity(page, out); } catch (e) { fs.writeFileSync(path.join(out, 'continuity-error.txt'), String(e)); }
     // Alejar el zoom del globo (sin boton ni modo): del zoom minimo del mapa hacia el sistema solar, y a otros cuerpos. Claro y oscuro no cambian el espacio.
@@ -147,6 +161,7 @@ async function runSuite(page, out) {
     page.on('console', (m) => { if (m.type() === 'error') log.push('CONSOLE ' + m.text().slice(0, 200)); });
     await page.goto(url, { waitUntil: 'load' });
     await page.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
+    if (process.argv[4] === 'nombres') { await runSuite(page, out, true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify(log, null, 2)); await browser.close(); return; }
     if (!diag) { await runSuite(page, out); await browser.close(); return; }
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
     await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [lng, lat, zoom]);
