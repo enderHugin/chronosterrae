@@ -1,0 +1,163 @@
+{
+ "when": "2026-11-07T02:19:03.754Z",
+ "pages": [
+  {
+   "url": "https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_basemap_loi_global_mosaic_166m",
+   "status": 200,
+   "ms": 323,
+   "bytes": 25130,
+   "title": " Astropedia - Mercury MESSENGER MDIS Basemap LOI Global Mosaic 166m",
+   "links": [
+    "https://astrogeology.usgs.gov/search/images/astropedia-logo-icon.ico",
+    "https://astrogeology.usgs.gov/ckan/dataset/9d047a09-a10d-4e2a-865a-9b5e1b465315/resource/a2c4cef5-1e14-4f1c-92b0-cb7da9808c35/download/mercury_messenger_mdis_basemap_loi_mosaic_global_1024.jpg",
+    "https://planetarymaps.usgs.gov/mosaic//Mercury_MESSENGER_MDIS_Basemap_LOI_Mosaic_Global_166m.tif",
+    "https://astrogeology.usgs.gov/ckan/dataset/9d047a09-a10d-4e2a-865a-9b5e1b465315/resource/00d4a2f3-82b6-44c0-b934-00a4317fcdc1/download/mercury_messenger_mdis_basemap_loi_mosaic_global_166m.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/9d047a09-a10d-4e2a-865a-9b5e1b465315/resource/0091208c-1526-4931-8440-f9ae1af9ea72/download/mercury_messenger_mdis_basemap_loi_mosaic_global_166m_pds3.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/9d047a09-a10d-4e2a-865a-9b5e1b465315/resource/f43809dd-2a98-4f9b-8486-2c9835f1af8c/download/mercury_messenger_mdis_basemap_loi_mosaic_global_100.jpg",
+    "https://astrogeology.usgs.gov/ckan/dataset/9d047a09-a10d-4e2a-865a-9b5e1b465315/resource/608473e8-7690-4b7e-bf1a-7cfb5eec0327/download/mercury_messenger_mdis_basemap_loi_mosaic_global_512.jpg"
+   ]
+  },
+  {
+   "url": "https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_global_color_mosaic_665m",
+   "status": 200,
+   "ms": 199,
+   "bytes": 25287,
+   "title": " Astropedia - Mercury MESSENGER MDIS Global Color Mosaic 665m",
+   "links": [
+    "https://astrogeology.usgs.gov/search/images/astropedia-logo-icon.ico",
+    "https://astrogeology.usgs.gov/ckan/dataset/b8ad92a0-5cb2-4db9-ae66-d0ef3a747bb7/resource/4f5968f1-cae7-4b6a-9967-d576c10f9475/download/mercury_messenger_clrmosaic_global_1024.jpg",
+    "https://planetarymaps.usgs.gov/mosaic/Mercury_MESSENGER_ClrMosaic_global_665m_v3.tif",
+    "https://astrogeology.usgs.gov/ckan/dataset/b8ad92a0-5cb2-4db9-ae66-d0ef3a747bb7/resource/a4ac7c9d-d511-4494-b2ee-cb99f1c01b74/download/mercury_messenger_clrmosaic_global_665m_v3_pds3.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/b8ad92a0-5cb2-4db9-ae66-d0ef3a747bb7/resource/c527696a-6b35-4532-b174-ab59d622a6d1/download/mercury_messenger_clrmosaic_global_665m_v3.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/b8ad92a0-5cb2-4db9-ae66-d0ef3a747bb7/resource/22f86f44-3efe-4f87-a32f-961bfc8071c1/download/thumb.png",
+    "https://astrogeology.usgs.gov/ckan/dataset/b8ad92a0-5cb2-4db9-ae66-d0ef3a747bb7/resource/ff46bcf9-6343-4ae7-9c6e-87ff5b3f84f2/download/mercury_messenger_clrmosaic_global_512.jpg"
+   ]
+  },
+  {
+   "url": "https://astrogeology.usgs.gov/search/map/io_galileo_ssi_voyager_color_merged_global_mosaic_1km",
+   "status": 200,
+   "ms": 213,
+   "bytes": 29804,
+   "title": " Astropedia - Io Galileo SSI / Voyager Color Merged Global Mosaic 1km",
+   "links": [
+    "https://astrogeology.usgs.gov/search/images/astropedia-logo-icon.ico",
+    "https://astrogeology.usgs.gov/ckan/dataset/f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/a9fab679-8081-4144-9f58-45848836c8f5/download/full.jpg",
+    "https://planetarymaps.usgs.gov/mosaic/Io_GalileoSSI-Voyager_Global_Mosaic_ClrMerge_1km.tif",
+    "https://astrogeology.usgs.gov/ckan/dataset/f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/98434b02-7759-41f5-be40-79da7147da2b/download/io_ssi_vgr1_bw_imgnum.pdf",
+    "https://astrogeology.usgs.gov/ckan/dataset/f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/46aa86e5-c887-427f-887c-13e4024a3506/download/io_ssi_vgr1_bw_subsolarlon.pdf",
+    "https://astrogeology.usgs.gov/ckan/dataset/f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/1ed3fff1-f096-4653-84df-a58334fd0a12/download/io_ssi_vgr1_bw_imgoutline.pdf",
+    "https://astrogeology.usgs.gov/ckan/dataset/f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/c0e99fdd-c493-41d2-94be-4eee2b20fc35/download/io_galileossi-voyager_global_mosaic_clrmerge_1km.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/fc8301d7-e6fa-4420-9e7e-e47afb84012f/download/io_galileossi-voyager_global_mosaic_clrmerge_1km_pds3.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/b2432b15-096c-46c0-a421-17cac4e330b8/download/thumb.png",
+    "https://astrogeology.usgs.gov/ckan/dataset/f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/1fa5f9e1-ee23-4cf6-944d-3aba9440f147/download/browse.jpg"
+   ]
+  },
+  {
+   "url": "https://astrogeology.usgs.gov/search/map/europa_voyager_galileo_ssi_global_mosaic_500m",
+   "status": 200,
+   "ms": 170,
+   "bytes": 30988,
+   "title": " Astropedia - Europa Voyager - Galileo SSI Global Mosaic 500m",
+   "links": [
+    "https://astrogeology.usgs.gov/search/images/astropedia-logo-icon.ico",
+    "https://astrogeology.usgs.gov/ckan/dataset/4080036f-afc5-422e-abe9-1c0c8e4f98ea/resource/3647e7b3-425e-4dcf-951b-cc4a22fb0129/download/europa_voyager_galileossi_global_mosaic_500m_1024.jpg",
+    "https://planetarymaps.usgs.gov/mosaic/Europa_Voyager_GalileoSSI_global_mosaic_500m.tif",
+    "https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19840027171.pdf",
+    "https://astrogeology.usgs.gov/ckan/dataset/4080036f-afc5-422e-abe9-1c0c8e4f98ea/resource/740685f6-148c-4b9b-97e3-151998f82add/download/europa_simp.pdf",
+    "https://astrogeology.usgs.gov/ckan/dataset/4080036f-afc5-422e-abe9-1c0c8e4f98ea/resource/db62f55a-9d03-474e-a349-1fd7d8f0d5fc/download/europa_voyager_galileossi_global_mosaic_500m.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/4080036f-afc5-422e-abe9-1c0c8e4f98ea/resource/8638d940-e761-4c28-ad71-a73819fa811f/download/europa_voyager_galileossi_global_mosaic_500m_pds3.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/4080036f-afc5-422e-abe9-1c0c8e4f98ea/resource/f703e7d9-76c8-49a6-b195-ce8ff7a78328/download/europa_voyager_galileossi_global_mosaic_500m_100.jpg",
+    "https://astrogeology.usgs.gov/ckan/dataset/4080036f-afc5-422e-abe9-1c0c8e4f98ea/resource/4db7ab3d-872d-4d26-9eb0-4b87dbc6a56b/download/europa_voyager_galileossi_global_mosaic_500m_512.jpg"
+   ]
+  },
+  {
+   "url": "https://astrogeology.usgs.gov/search/map/callisto_galileo_voyager_global_mosaic_1km",
+   "status": 200,
+   "ms": 298,
+   "bytes": 27007,
+   "title": " Astropedia - Callisto Galileo/Voyager Global Mosaic 1km",
+   "links": [
+    "https://astrogeology.usgs.gov/search/images/astropedia-logo-icon.ico",
+    "https://astrogeology.usgs.gov/ckan/dataset/a80abd68-7ed9-440e-829a-76376779164f/resource/ac628525-cb1c-4742-928b-5a0a60f372cd/download/callisto_voyager_galileossi_global_mosaic_1024.jpg",
+    "https://planetarymaps.usgs.gov/mosaic/Callisto_Voyager_GalileoSSI_global_mosaic_1km.tif",
+    "https://astrogeology.usgs.gov/ckan/dataset/a80abd68-7ed9-440e-829a-76376779164f/resource/66433621-ca46-4563-994f-c615931adb42/download/callisto_voyager_galileossi_global_mosaic_1km.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/a80abd68-7ed9-440e-829a-76376779164f/resource/0b2f0b5f-36d9-4b02-8901-026cffa44393/download/callisto_voyager_galileossi_global_mosaic_1km_pds3.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/a80abd68-7ed9-440e-829a-76376779164f/resource/07fadad5-8e6b-41bc-a916-5798e1912578/download/callisto_voyager_galileossi_global_mosaic_100.jpg",
+    "https://astrogeology.usgs.gov/ckan/dataset/a80abd68-7ed9-440e-829a-76376779164f/resource/b102d2c0-f734-412b-9019-1dfc3327d187/download/callisto_voyager_galileossi_global_mosaic_512.jpg"
+   ]
+  },
+  {
+   "url": "https://astrogeology.usgs.gov/search/map/ganymede_voyager_galileo_ssi_global_mosaic_1km",
+   "status": 200,
+   "ms": 185,
+   "bytes": 33116,
+   "title": " Astropedia - Ganymede Voyager - Galileo SSI Global Mosaic 1km",
+   "links": [
+    "https://astrogeology.usgs.gov/search/images/astropedia-logo-icon.ico",
+    "https://astrogeology.usgs.gov/ckan/dataset/57cad6e2-ed52-4b99-9d44-afbb9def6450/resource/1d52d4a5-bc78-4ac1-a7d0-8d5254ebf1a8/download/ganymede_voyager_galileossi_global_mosaic_1024.jpg",
+    "https://planetarymaps.usgs.gov/mosaic/Ganymede_Voyager_GalileoSSI_global_mosaic_1km.tif",
+    "https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19840027171.pdf",
+    "https://www.lpi.usra.edu/meetings/lpsc2001/pdf/2009.pdf",
+    "https://www.lpi.usra.edu/meetings/lpsc97/pdf/1226.pdf",
+    "https://www.lpi.usra.edu/meetings/lpsc2000/pdf/2025.pdf",
+    "https://astrogeology.usgs.gov/ckan/dataset/57cad6e2-ed52-4b99-9d44-afbb9def6450/resource/32769bd3-7a00-4aa6-9ce8-52126cbd4384/download/ganymede_voyager_galileossi_global_mosaic_1km.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/57cad6e2-ed52-4b99-9d44-afbb9def6450/resource/5dd1a702-cc43-436e-b4ce-00776f29c7f2/download/ganymede_voyager_galileossi_global_mosaic_1km_pds3.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/57cad6e2-ed52-4b99-9d44-afbb9def6450/resource/dda9363a-8f7f-4dc4-aae1-fa66b04683eb/download/thumb.png",
+    "https://astrogeology.usgs.gov/ckan/dataset/57cad6e2-ed52-4b99-9d44-afbb9def6450/resource/29c3ba7f-f2d1-4678-80b7-734cfc7744ee/download/ganymede_voyager_galileossi_global_mosaic_512.jpg"
+   ]
+  },
+  {
+   "url": "https://astrogeology.usgs.gov/search/map/triton_voyager_2_global_color_mosaic_600m",
+   "status": 200,
+   "ms": 195,
+   "bytes": 26528,
+   "title": " Astropedia - Triton Voyager 2 Global Color Mosaic 600m",
+   "links": [
+    "https://astrogeology.usgs.gov/search/images/astropedia-logo-icon.ico",
+    "https://astrogeology.usgs.gov/ckan/dataset/445b4c39-e87a-4e4d-88a8-e48d8e755c5c/resource/de0ba9f1-303e-4e5f-a99a-3201fba9a764/download/triton_voyager2_clrmosaic_1024.jpg",
+    "https://planetarymaps.usgs.gov/mosaic/Triton_Voyager2_ClrMosaic_GlobalFill_600m.tif",
+    "https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19840027171.pdf",
+    "https://astrogeology.usgs.gov/ckan/dataset/445b4c39-e87a-4e4d-88a8-e48d8e755c5c/resource/a79dfc3b-0267-435f-8ea0-5784a27c96bf/download/triton_voyager2_clrmosaic_globalfill_600m.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/445b4c39-e87a-4e4d-88a8-e48d8e755c5c/resource/07a8e6bb-dfad-4d07-8cd5-bd010870564b/download/triton_voyager2_clrmosaic_globalfill_600m_pds3.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/445b4c39-e87a-4e4d-88a8-e48d8e755c5c/resource/7d7f2b2d-5818-498f-82a4-eca6f4151d50/download/thumb.png",
+    "https://astrogeology.usgs.gov/ckan/dataset/445b4c39-e87a-4e4d-88a8-e48d8e755c5c/resource/05bf1c30-5f51-4dd3-b738-42554965a9e2/download/triton_voyager2_clrmosaic_512.jpg"
+   ]
+  },
+  {
+   "url": "https://astrogeology.usgs.gov/search/map/iapetus_cassini_voyager_global_mosaic_803m",
+   "status": 200,
+   "ms": 149,
+   "bytes": 25361,
+   "title": " Astropedia - Iapetus Cassini - Voyager Global Mosaic 803m",
+   "links": [
+    "https://astrogeology.usgs.gov/search/images/astropedia-logo-icon.ico",
+    "https://astrogeology.usgs.gov/ckan/dataset/6ac8ecfb-36e7-4113-8d16-c92ba857c3d7/resource/141c2d1e-aa01-4e2f-969a-e46a581db4b9/download/full.jpg",
+    "https://planetarymaps.usgs.gov/mosaic/Iapetus_Cassini_Voyager_mosaic_global_783m.tif",
+    "https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19840027171.pdf",
+    "https://www.hou.usra.edu/meetings/enceladus2016/pdf/3032.pdf",
+    "https://astrogeology.usgs.gov/ckan/dataset/6ac8ecfb-36e7-4113-8d16-c92ba857c3d7/resource/6d691cac-f7dd-4fe9-a70e-4b67cbddfdcf/download/iapetus_cassini_voyager_mosaic_global_783m.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/6ac8ecfb-36e7-4113-8d16-c92ba857c3d7/resource/6c19bfbf-6c69-4e7b-ae62-c92b4a3f3dcd/download/iapetus_cassini_voyager_mosaic_global_783m_pds3.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/6ac8ecfb-36e7-4113-8d16-c92ba857c3d7/resource/e1178cdb-41bb-49ed-a064-fd65e8378d7b/download/thumb.png",
+    "https://astrogeology.usgs.gov/ckan/dataset/6ac8ecfb-36e7-4113-8d16-c92ba857c3d7/resource/19592edb-e35c-4e81-a00e-e4e2d598bacb/download/browse.jpg"
+   ]
+  },
+  {
+   "url": "https://astrogeology.usgs.gov/search/map/dione_voyager_airbrush_mosaic_610m",
+   "status": 200,
+   "ms": 161,
+   "bytes": 20141,
+   "title": " Astropedia - Dione Voyager Airbrush Mosaic 610m",
+   "links": [
+    "https://astrogeology.usgs.gov/search/images/astropedia-logo-icon.ico",
+    "https://astrogeology.usgs.gov/ckan/dataset/98d2aad1-bb01-45da-b622-75d176f777e1/resource/7908d05f-cd18-4245-97a2-3cafd17b51e6/download/full.jpg",
+    "https://planetarymaps.usgs.gov/mosaic/Dione_Voyager_airbrush_sinu_610m.tif",
+    "https://astrogeology.usgs.gov/ckan/dataset/98d2aad1-bb01-45da-b622-75d176f777e1/resource/83bdf507-884e-4942-9101-ac8b69773acb/download/dione_voyager_airbrush_sinu_610m.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/98d2aad1-bb01-45da-b622-75d176f777e1/resource/0f8feb90-b7b6-4cc2-9892-b68ad6531a7d/download/dione_voyager_airbrush_sinu_610m_pds3.lbl",
+    "https://astrogeology.usgs.gov/ckan/dataset/98d2aad1-bb01-45da-b622-75d176f777e1/resource/7f67d299-66d9-48a9-891c-25c6e4b52988/download/thumb.png",
+    "https://astrogeology.usgs.gov/ckan/dataset/98d2aad1-bb01-45da-b622-75d176f777e1/resource/fc11d420-6e5f-40b7-b159-0476fd1f560f/download/browse.jpg"
+   ]
+  }
+ ],
+ "indexes": [],
+ "candidates": []
+}
