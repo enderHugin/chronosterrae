@@ -1,0 +1,260 @@
+{
+ "built": "2026-11-07T03:09Z",
+ "items": [
+  {
+   "id": "europa",
+   "body": "Europa",
+   "kind": "mosaico de Voyager y Galileo SSI",
+   "sourceUrl": "https://planetarymaps.usgs.gov/mosaic/Europa_Voyager_GalileoSSI_global_mosaic_500m.tif",
+   "sourcePage": "https://astrogeology.usgs.gov/search/map/europa_voyager_galileo_ssi_global_mosaic_500m",
+   "credit": "NASA/JPL/DLR; USGS Astrogeology Science Center",
+   "sourceHead": {
+    "Content-Length": "192777263",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Tue, 08 Nov 2022 18:52:57 GMT",
+    "ETag": "\"c32d992284f852469dd86890786a63d6-23\"",
+    "Access-Control-Allow-Origin": null
+   },
+   "labelUrl": "https://astrogeology.usgs.gov/ckan/dataset/4080036f-afc5-422e-abe9-1c0c8e4f98ea/resource/8638d940-e761-4c28-ad71-a73819fa811f/download/europa_voyager_galileossi_global_mosaic_500m_pds3.lbl",
+   "label": [
+    "TARGET_NAME                    = EUROPA",
+    "MAP_PROJECTION_TYPE          = SIMPLE_CYLINDRICAL",
+    "A_AXIS_RADIUS                = 1562.0899657999998 <KILOMETERS>",
+    "B_AXIS_RADIUS                = 1562.0899657999998 <KILOMETERS>",
+    "C_AXIS_RADIUS                = 1562.0899657999998 <KILOMETERS>",
+    "POSITIVE_LONGITUDE_DIRECTION = WEST",
+    "CENTER_LATITUDE              = N/A <DEGREES>",
+    "CENTER_LONGITUDE             = 180 <DEGREES>",
+    "MAP_RESOLUTION               = 54.53 <PIXELS/DEGREE>",
+    "MAP_SCALE                    = 499.97456657942 <METERS/PIXEL>",
+    "MAXIMUM_LATITUDE             = 90 <DEGREES>",
+    "MINIMUM_LATITUDE             = -90 <DEGREES>",
+    "EASTERNMOST_LONGITUDE        = 0 <DEGREES>",
+    "WESTERNMOST_LONGITUDE        = 360 <DEGREES>",
+    "LINE_PROJECTION_OFFSET       = 4907.500000000013 <PIXELS>",
+    "SAMPLE_PROJECTION_OFFSET     = -9816.500000000025 <PIXELS>",
+    "COORDINATE_SYSTEM_TYPE       = \"BODY-FIXED ROTATING\"",
+    "COORDINATE_SYSTEM_NAME       = PLANETOCENTRIC"
+   ],
+   "source": {
+    "size": [
+     19631,
+     9816
+    ],
+    "bands": [
+     [
+      "Gray",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      -4907750.346,
+      2453875.173
+     ],
+     "lowerLeft": [
+      -4907750.346,
+      -2453875.173
+     ],
+     "lowerRight": [
+      4907250.371,
+      -2453875.173
+     ],
+     "upperRight": [
+      4907250.371,
+      2453875.173
+     ],
+     "center": [
+      -249.987,
+      0.0
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "PROJCRS[\"SimpleCylindrical Europa\",\n    BASEGEOGCRS[\"GCS_Europa\",\n        DATUM[\"D_Europa\",\n            ELLIPSOID[\"Europa\",1562089.9658,0,\n                LENGTHUNIT[\"metre\",1,\n                    ID[\"EPSG\",9001]]]],\n        PRIMEM[\"Reference_Meridian\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]],\n    CONVERSION[\"Equidistant Cylindrical\",\n        METHOD[\"Equidistant Cylindrical\",\n            ID[\"EPSG\",1028]],\n        PARAMETER[\"Latitude of 1st standard parallel\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Longitude of natural origin\",180,\n            ANGLEUNIT[\"degree\",0.0174532925199433],",
+    "overviews": [
+     null
+    ]
+   },
+   "reduceSeconds": 59.5,
+   "lonLayout": "girada media anchura (numpy.roll, 1024 columnas): origen 0 E a la izquierda -> destino -180 E a la izquierda",
+   "output": {
+    "file": "europa.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "2a7344c3a4b871ededc844e557694615bf12de9fdb2c0035683316cd16a586b8",
+    "bytes": 508569,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   }
+  },
+  {
+   "id": "ganymede",
+   "body": "Ganymede",
+   "kind": "mosaico de Voyager y Galileo SSI",
+   "sourceUrl": "https://planetarymaps.usgs.gov/mosaic/Ganymede_Voyager_GalileoSSI_global_mosaic_1km.tif",
+   "sourcePage": "https://astrogeology.usgs.gov/search/map/ganymede_voyager_galileo_ssi_global_mosaic_1km",
+   "credit": "NASA/JPL/USGS",
+   "sourceHead": {
+    "Content-Length": "136844537",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Tue, 08 Nov 2022 18:54:09 GMT",
+    "ETag": "\"20dd0292e28696dc9dad2fe8a601de7b-17\"",
+    "Access-Control-Allow-Origin": null
+   },
+   "labelUrl": "https://astrogeology.usgs.gov/ckan/dataset/57cad6e2-ed52-4b99-9d44-afbb9def6450/resource/5dd1a702-cc43-436e-b4ce-00776f29c7f2/download/ganymede_voyager_galileossi_global_mosaic_1km_pds3.lbl",
+   "label": [
+    "TARGET_NAME                    = GANYMEDE",
+    "MAP_PROJECTION_TYPE          = SIMPLE_CYLINDRICAL",
+    "A_AXIS_RADIUS                = 2632.3449707 <KILOMETERS>",
+    "B_AXIS_RADIUS                = 2632.3449707 <KILOMETERS>",
+    "C_AXIS_RADIUS                = 2632.3449707 <KILOMETERS>",
+    "POSITIVE_LONGITUDE_DIRECTION = WEST",
+    "CENTER_LATITUDE              = N/A <DEGREES>",
+    "CENTER_LONGITUDE             = 180.0 <DEGREES>",
+    "MAP_RESOLUTION               = 45.94 <PIXELS/DEGREE>",
+    "MAP_SCALE                    = 1000.067192 <METERS/PIXEL>",
+    "MAXIMUM_LATITUDE             = 90.0 <DEGREES>",
+    "MINIMUM_LATITUDE             = -90.0 <DEGREES>",
+    "EASTERNMOST_LONGITUDE        = 0.0 <DEGREES>",
+    "WESTERNMOST_LONGITUDE        = 360.0 <DEGREES>",
+    "LINE_PROJECTION_OFFSET       = 4134.4999987890815 <PIXELS>",
+    "SAMPLE_PROJECTION_OFFSET     = -8270.499997578163 <PIXELS>",
+    "COORDINATE_SYSTEM_TYPE       = \"BODY-FIXED ROTATING\"",
+    "COORDINATE_SYSTEM_NAME       = PLANETOCENTRIC"
+   ],
+   "source": {
+    "size": [
+     16539,
+     8270
+    ],
+    "bands": [
+     [
+      "Gray",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      -8270555.675,
+      4135277.838
+     ],
+     "lowerLeft": [
+      -8270555.675,
+      -4135277.838
+     ],
+     "lowerRight": [
+      8269555.608,
+      -4135277.838
+     ],
+     "upperRight": [
+      8269555.608,
+      4135277.838
+     ],
+     "center": [
+      -500.034,
+      0.0
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "PROJCRS[\"SimpleCylindrical Ganymede\",\n    BASEGEOGCRS[\"GCS_Ganymede\",\n        DATUM[\"D_Ganymede\",\n            ELLIPSOID[\"Ganymede\",2632344.9707,0,\n                LENGTHUNIT[\"metre\",1,\n                    ID[\"EPSG\",9001]]]],\n        PRIMEM[\"Reference_Meridian\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]],\n    CONVERSION[\"Equidistant Cylindrical\",\n        METHOD[\"Equidistant Cylindrical\",\n            ID[\"EPSG\",1028]],\n        PARAMETER[\"Latitude of 1st standard parallel\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Longitude of natural origin\",180,\n            ANGLEUNIT[\"degree\",0.0174532925",
+    "overviews": [
+     null
+    ]
+   },
+   "reduceSeconds": 40.7,
+   "lonLayout": "girada media anchura (numpy.roll, 1024 columnas): origen 0 E a la izquierda -> destino -180 E a la izquierda",
+   "output": {
+    "file": "ganymede.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "d8839c448e34307f2f47b935352327a456c70bb1adba50c4c30c4035ec3b4034",
+    "bytes": 396324,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   }
+  },
+  {
+   "id": "callisto",
+   "body": "Callisto",
+   "kind": "mosaico de Voyager y Galileo SSI",
+   "sourceUrl": "https://planetarymaps.usgs.gov/mosaic/Callisto_Voyager_GalileoSSI_global_mosaic_1km.tif",
+   "sourcePage": "https://astrogeology.usgs.gov/search/map/callisto_galileo_voyager_global_mosaic_1km",
+   "credit": "NASA/JPL/USGS",
+   "sourceHead": {
+    "Content-Length": "114640717",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Tue, 08 Nov 2022 18:41:42 GMT",
+    "ETag": "\"3310e80c3b462b2190bc7998d87ba7bc-14\"",
+    "Access-Control-Allow-Origin": null
+   },
+   "labelUrl": "https://astrogeology.usgs.gov/ckan/dataset/a80abd68-7ed9-440e-829a-76376779164f/resource/0b2f0b5f-36d9-4b02-8901-026cffa44393/download/callisto_voyager_galileossi_global_mosaic_1km_pds3.lbl",
+   "label": [
+    "TARGET_NAME                    = CALLISTO",
+    "MAP_PROJECTION_TYPE          = SIMPLE_CYLINDRICAL",
+    "A_AXIS_RADIUS                = 2409.3000488 <KILOMETERS>",
+    "B_AXIS_RADIUS                = 2409.3000488 <KILOMETERS>",
+    "C_AXIS_RADIUS                = 2409.3000488 <KILOMETERS>",
+    "POSITIVE_LONGITUDE_DIRECTION = WEST",
+    "CENTER_LATITUDE              = N/A <DEGREES>",
+    "CENTER_LONGITUDE             = 180.0 <DEGREES>",
+    "MAP_RESOLUTION               = 42.05 <PIXELS/DEGREE>",
+    "MAP_SCALE                    = 1000.0051966711 <METERS/PIXEL>",
+    "MAXIMUM_LATITUDE             = 90.0 <DEGREES>",
+    "MINIMUM_LATITUDE             = -90.0 <DEGREES>",
+    "EASTERNMOST_LONGITUDE        = 0.0 <DEGREES>",
+    "WESTERNMOST_LONGITUDE        = 360.0 <DEGREES>",
+    "LINE_PROJECTION_OFFSET       = 3784.0000000000223 <PIXELS>",
+    "SAMPLE_PROJECTION_OFFSET     = -7569.500000000045 <PIXELS>",
+    "COORDINATE_SYSTEM_TYPE       = \"BODY-FIXED ROTATING\"",
+    "COORDINATE_SYSTEM_NAME       = PLANETOCENTRIC"
+   ],
+   "source": {
+    "size": [
+     15138,
+     7569
+    ],
+    "bands": [
+     [
+      "Gray",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      -7569039.334,
+      3784519.667
+     ],
+     "lowerLeft": [
+      -7569039.334,
+      -3784519.667
+     ],
+     "lowerRight": [
+      7569039.334,
+      -3784519.667
+     ],
+     "upperRight": [
+      7569039.334,
+      3784519.667
+     ],
+     "center": [
+      -0.0,
+      0.0
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "PROJCRS[\"SimpleCylindrical Callisto\",\n    BASEGEOGCRS[\"GCS_Callisto\",\n        DATUM[\"D_Callisto\",\n            ELLIPSOID[\"Callisto\",2409300.0488,0,\n                LENGTHUNIT[\"metre\",1,\n                    ID[\"EPSG\",9001]]]],\n        PRIMEM[\"Reference_Meridian\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]],\n    CONVERSION[\"Equidistant Cylindrical\",\n        METHOD[\"Equidistant Cylindrical\",\n            ID[\"EPSG\",1028]],\n        PARAMETER[\"Latitude of 1st standard parallel\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Longitude of natural origin\",180,\n            ANGLEUNIT[\"degree\",0.0174532925",
+    "overviews": [
+     null
+    ]
+   },
+   "reduceSeconds": 35.5,
+   "lonLayout": "girada media anchura (numpy.roll, 1024 columnas): origen 0 E a la izquierda -> destino -180 E a la izquierda",
+   "output": {
+    "file": "callisto.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "79d96e3584e778b22ab1a52732e94e55555e0c49298fe6913ad46fdd5aac1d1d",
+    "bytes": 418012,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   }
+  }
+ ]
+}
