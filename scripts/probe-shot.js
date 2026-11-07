@@ -139,6 +139,7 @@ async function runSuite(page, out, only) {
             });
             rows.push({ name, labels, road, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
             if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
+            fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));   // parcial: si el proceso muere, queda lo medido hasta aqui
             if (v.hide) await page.evaluate(() => { if (BR.off) document.getElementById('btn-borders').click(); });
         }
     }
@@ -166,12 +167,15 @@ async function runSuite(page, out, only) {
     fs.mkdirSync(out, { recursive: true });
     const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'] });
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-    const log = [];
-    page.on('pageerror', (e) => log.push('PAGEERROR ' + e.message));
-    page.on('console', (m) => { if (m.type() === 'error') log.push('CONSOLE ' + m.text().slice(0, 200)); });
+    // Un mensaje repetido se guarda UNA vez con su recuento: un bucle de errores en la pagina agoto la memoria de este proceso (4 GB) y se perdio toda la captura
+    const log = []; const counts = new Map();
+    const note = (msg) => { const c = counts.get(msg) || 0; counts.set(msg, c + 1); if (c === 0 && log.length < 300) log.push(msg); };
+    page.on('pageerror', (e) => note('PAGEERROR ' + String(e.message).slice(0, 300)));
+    page.on('console', (m) => { if (m.type() === 'error') note('CONSOLE ' + m.text().slice(0, 200)); });
+    globalThis.__logCounts = () => [...counts].filter(([, c]) => c > 1).map(([m, c]) => ({ n: c, m }));
     await page.goto(url, { waitUntil: 'load' });
     await page.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
-    if (process.argv[4] === 'nombres') { await runSuite(page, out, true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify(log, null, 2)); await browser.close(); return; }
+    if (process.argv[4] === 'nombres') { await runSuite(page, out, true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
     if (!diag) { await runSuite(page, out); await browser.close(); return; }
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
     await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [lng, lat, zoom]);
@@ -196,7 +200,7 @@ async function runSuite(page, out, only) {
         const inner = map.querySourceFeatures('borders-inner').map((f) => ({ key: f.properties.key, n: f.geometry.coordinates.length, type: f.geometry.type }));
         return { res, lines, inner: inner.slice(0, 30), nInner: inner.length };
     });
-    fs.writeFileSync(path.join(out, 'info.json'), JSON.stringify({ info, probes, log }, null, 2));
+    fs.writeFileSync(path.join(out, 'info.json'), JSON.stringify({ info, probes, log, repetidos: globalThis.__logCounts() }, null, 2));
     await shot('1-completa-oscuro');
     const variants = [
         ['2-sin-relleno-gap', () => { map.setLayoutProperty('gap-raster', 'visibility', 'none'); map.setPaintProperty('borders-fill', 'fill-opacity', ['get', '_o']); }],
