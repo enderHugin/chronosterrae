@@ -1,0 +1,33 @@
+name: Perfil radial de los anillos de Saturno (Cassini UVIS)
+
+# Agrupa las ocultaciones solares de Cassini UVIS en un perfil radial de profundidad optica normal; resultado en la rama `rings-build`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rings-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Perfil radial
+        run: python3 scripts/build-rings.py /tmp/mw 2>&1 | tee /tmp/mw.log
+      - name: Publicar en la rama rings-build
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan rings-build
+          mkdir out && cp /tmp/mw/* out/ 2>/dev/null || true
+          cp /tmp/mw.log out/build.log || true
+          git add out
+          git commit -m "Anillos $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin rings-build
