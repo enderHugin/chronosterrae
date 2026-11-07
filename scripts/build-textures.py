@@ -14,18 +14,18 @@ U = 'https://astrogeology.usgs.gov/ckan/dataset/'
 ITEMS = [
     dict(id='mercury', body='Mercury', kind='mosaico monocromo de MESSENGER/MDIS (luz visible, no color realzado)',
          url='https://planetarymaps.usgs.gov/mosaic//Mercury_MESSENGER_MDIS_Basemap_LOI_Mosaic_Global_166m.tif',
-         lbl=U + '9d047a09-a10d-4e2a-865a-9b5e1b465315/resource/00d4a2f3-82b6-44c0-b934-00a4317fcdc1/download/mercury_messenger_mdis_basemap_loi_mosaic_global_166m.lbl',
+         lbl=U + '9d047a09-a10d-4e2a-865a-9b5e1b465315/resource/0091208c-1526-4931-8440-f9ae1af9ea72/download/mercury_messenger_mdis_basemap_loi_mosaic_global_166m_pds3.lbl',
          page='https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_basemap_loi_global_mosaic_166m', credit='NASA/JPL-Caltech/JHUAPL/Carnegie Institution of Washington; USGS Astrogeology Science Center'),
     dict(id='venus', body='Venus', kind='radar de Magellan (retrodispersion), NO es luz visible: desde fuera Venus se ve cubierta de nubes',
          url='https://planetarymaps.usgs.gov/mosaic/Venus_Magellan_C3-MDIR_Global_Mosaic_2025m.tif',
-         lbl='https://astrogeology.usgs.gov/ckan/dataset/bf10c4f9-7587-4357-b0d9-81d5b6e6637c/resource/26c2e4b0-bdd5-449b-b075-972ce565b77e/download/venus_magellan_c3-mdir_global_mosaic_2025m.lbl',
+         lbl='https://astrogeology.usgs.gov/ckan/dataset/bf10c4f9-7587-4357-b0d9-81d5b6e6637c/resource/8bfa6f51-41e4-4e1c-813b-7428dfc2f60f/download/venus_magellan_c3-mdir_global_mosaic_2025m_pds3.lbl',
          page='https://astrogeology.usgs.gov/search/map/venus_magellan_global_c3_mdir_mosaic_2025m', credit='NASA/JPL-Caltech; PDS Geosciences Node; USGS Astrogeology Science Center'),
     dict(id='moon', body='Moon', kind='mosaico en color de LROC WAC (Hapke normalizado) con huecos polares rellenados con albedo de LOLA',
          url='https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_poles_4k.tif', lbl=None,
          page='https://svs.gsfc.nasa.gov/4720/', credit="NASA's Scientific Visualization Studio; LROC WAC: NASA/GSFC/Arizona State University"),
     dict(id='mars', body='Mars', kind='mosaico en color de Viking (MDIM 2.1, color sintetizado)',
          url='https://planetarymaps.usgs.gov/mosaic/Mars_Viking_MDIM21_ClrMosaic_global_232m.tif',
-         lbl=U + '7131d503-cdc9-45a5-8f83-5126c0fd397e/resource/be4e44f4-5ec7-46e1-9498-643b91eecf21/download/mars_viking_mdim21_clrmosaic_global_232m.lbl',
+         lbl=U + '7131d503-cdc9-45a5-8f83-5126c0fd397e/resource/f760f110-93bd-4d0e-8256-6d3af337426f/download/mars_viking_mdim21_clrmosaic_global_232m_pds3.lbl',
          page='https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m', credit='NASA/JPL; USGS Astrogeology Science Center (MDIM 2.1)',
          fallback=U + '7131d503-cdc9-45a5-8f83-5126c0fd397e/resource/6afad901-1caa-48a7-8b62-3911da0004c2/download/mars_viking_mdim21_clrmosaic_global_1024.jpg'),
     dict(id='jupiter', body='Jupiter', kind='mapa cilindrico de Cassini (11-12 dic 2000), techo de nubes de UNA fecha: las bandas y manchas cambian con los anos',
@@ -33,19 +33,19 @@ ITEMS = [
          page='https://science.nasa.gov/photojournal/cassinis-best-maps-of-jupiter-cylindrical-map/', credit='NASA/JPL/Space Science Institute (PIA07782)'),
     dict(id='io', body='Io', kind='mosaico en color de Galileo SSI y Voyager',
          url='https://planetarymaps.usgs.gov/mosaic/Io_GalileoSSI-Voyager_Global_Mosaic_ClrMerge_1km.tif',
-         lbl=U + 'f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/c0e99fdd-c493-41d2-94be-4eee2b20fc35/download/io_galileossi-voyager_global_mosaic_clrmerge_1km.lbl',
+         lbl=U + 'f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/fc8301d7-e6fa-4420-9e7e-e47afb84012f/download/io_galileossi-voyager_global_mosaic_clrmerge_1km_pds3.lbl',
          page='https://astrogeology.usgs.gov/search/map/io_galileo_ssi_voyager_color_merged_global_mosaic_1km', credit='NASA/JPL/University of Arizona; USGS Astrogeology Science Center'),
-    dict(id='europa', body='Europa', kind='mosaico de Voyager y Galileo SSI',
+    dict(id='europa', roll=True, body='Europa', kind='mosaico de Voyager y Galileo SSI',
          url='https://planetarymaps.usgs.gov/mosaic/Europa_Voyager_GalileoSSI_global_mosaic_500m.tif',
-         lbl=U + '4080036f-afc5-422e-abe9-1c0c8e4f98ea/resource/db62f55a-9d03-474e-a349-1fd7d8f0d5fc/download/europa_voyager_galileossi_global_mosaic_500m.lbl',
+         lbl=U + '4080036f-afc5-422e-abe9-1c0c8e4f98ea/resource/8638d940-e761-4c28-ad71-a73819fa811f/download/europa_voyager_galileossi_global_mosaic_500m_pds3.lbl',
          page='https://astrogeology.usgs.gov/search/map/europa_voyager_galileo_ssi_global_mosaic_500m', credit='NASA/JPL/DLR; USGS Astrogeology Science Center'),
-    dict(id='ganymede', body='Ganymede', kind='mosaico de Voyager y Galileo SSI',
+    dict(id='ganymede', roll=True, body='Ganymede', kind='mosaico de Voyager y Galileo SSI',
          url='https://planetarymaps.usgs.gov/mosaic/Ganymede_Voyager_GalileoSSI_global_mosaic_1km.tif',
-         lbl=U + '57cad6e2-ed52-4b99-9d44-afbb9def6450/resource/32769bd3-7a00-4aa6-9ce8-52126cbd4384/download/ganymede_voyager_galileossi_global_mosaic_1km.lbl',
+         lbl=U + '57cad6e2-ed52-4b99-9d44-afbb9def6450/resource/5dd1a702-cc43-436e-b4ce-00776f29c7f2/download/ganymede_voyager_galileossi_global_mosaic_1km_pds3.lbl',
          page='https://astrogeology.usgs.gov/search/map/ganymede_voyager_galileo_ssi_global_mosaic_1km', credit='NASA/JPL/USGS'),
-    dict(id='callisto', body='Callisto', kind='mosaico de Voyager y Galileo SSI',
+    dict(id='callisto', roll=True, body='Callisto', kind='mosaico de Voyager y Galileo SSI',
          url='https://planetarymaps.usgs.gov/mosaic/Callisto_Voyager_GalileoSSI_global_mosaic_1km.tif',
-         lbl=U + 'a80abd68-7ed9-440e-829a-76376779164f/resource/66433621-ca46-4563-994f-c615931adb42/download/callisto_voyager_galileossi_global_mosaic_1km.lbl',
+         lbl=U + 'a80abd68-7ed9-440e-829a-76376779164f/resource/0b2f0b5f-36d9-4b02-8901-026cffa44393/download/callisto_voyager_galileossi_global_mosaic_1km_pds3.lbl',
          page='https://astrogeology.usgs.gov/search/map/callisto_galileo_voyager_global_mosaic_1km', credit='NASA/JPL/USGS'),
 ]
 WIDTH, HEIGHT = 2048, 1024
@@ -112,7 +112,14 @@ def build(it, out):
             r['fallback'] = dict(url=it['fallback'], note='vista previa oficial de USGS (1024x512); la reduccion propia desde el GeoTIFF fallo')
             os.replace(fb, dst); r['output'] = dict(file=it['id'] + '.jpg', sha256=sha(dst), bytes=os.path.getsize(dst))
         return r
-    rc, o, e, s2 = sh(['gdal_translate', '-q', '-of', 'JPEG', '-co', 'QUALITY=88', tmp, dst])
+    if it.get('roll'):
+        # La etiqueta PDS dice: longitud positiva al OESTE, centro 180, extremo oeste (columna izquierda) = 360, extremo este = 0. En longitud
+        # ESTE la columna izquierda es 0 grados y el centro 180: se gira media anchura para dejarla como las demas (-180 a la izquierda, 0 al centro).
+        rc, o, e, s2 = sh(['convert', tmp, '-roll', '+%d+0' % (WIDTH // 2), '-quality', '88', dst])
+        r['lonLayout'] = 'girada media anchura (convert -roll +%d+0): origen 0 E a la izquierda -> destino -180 E a la izquierda' % (WIDTH // 2)
+    else:
+        rc, o, e, s2 = sh(['gdal_translate', '-q', '-of', 'JPEG', '-co', 'QUALITY=88', tmp, dst])
+        r['lonLayout'] = 'sin girar (etiqueta/figura de origen: -180 E a la izquierda, 0 al centro; Io y Jupiter vienen en oeste positivo con el extremo oeste a la izquierda, equivalente)'
     os.remove(tmp)
     if rc != 0: r['jpegError'] = e; return r
     for ext in ('.jpg.aux.xml',):
