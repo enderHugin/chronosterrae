@@ -38,4 +38,14 @@ check('anillos: la estructura conocida sale de los datos (Division de Cassini ca
     return at(118500) < 0.3 && at(110000) > 1.0 && at(85000) < 0.4 && at(80000) !== null;
 });
 check('anillos: cita el DOI de los datos', () => /10\.17189\/1523014/.test(rg.source));
+// Despliegue: lo que el cliente pide con ./data/<carpeta>/ tiene que copiarlo pages.yml (si no, funciona en local y da 404 en la web publicada: paso con las texturas)
+check('despliegue: cada carpeta ./data/<x>/ que carga el cliente se copia en pages.yml y esta en sus disparadores', () => {
+    const pages = fs.readFileSync(path.join(root, '.github', 'workflows', 'pages.yml'), 'utf8');
+    const files = ['index.html'].concat(['solar', 'sky', 'map'].flatMap((d) => fs.readdirSync(path.join(root, d)).filter((f) => f.endsWith('.js')).map((f) => d + '/' + f)));
+    const used = new Set();
+    for (const f of files) for (const m of fs.readFileSync(path.join(root, f), 'utf8').matchAll(/['"`]\.\/data\/([a-z0-9_-]+)\//gi)) used.add(m[1]);
+    const missing = [...used].filter((d) => !pages.includes('cp -r data/' + d + ' ') || !pages.includes("'data/" + d + "/**'"));
+    if (missing.length) throw new Error('pages.yml no publica: ' + missing.join(', '));
+    return used.has('textures') && used.has('sky');           // y la propia guarda ve las carpetas que debe ver
+});
 if (fails) { console.log('\nFAIL ' + fails); process.exit(1); } else console.log('\nOK');

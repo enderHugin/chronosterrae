@@ -11,6 +11,8 @@ on:
       - 'latest_harvest.json'
       - 'data/paleocoastlines/**'
       - 'data/sky/**'
+      - 'data/textures/**'
+      - 'data/events/**'
       - 'data/borders/**'
       - 'sky/**'
       - 'map/**'
@@ -18,7 +20,7 @@ on:
       - 'vendor/**'
       - '.github/workflows/pages.yml'
   workflow_run:
-    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (validación contra Horizons)']
+    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (validación contra Horizons)', 'Sucesos (Wikidata)']
     types: [completed]
     branches: [main]
   workflow_dispatch:
@@ -52,6 +54,10 @@ jobs:
           cp -r sky map vendor solar _site/
           if [ -d data/borders ]; then cp -r data/borders _site/data/borders; fi
           if [ -d data/sky ]; then cp -r data/sky _site/data/sky; fi
+          # texturas de planetas y lunas, perfil de los anillos y Via Lactea (las pide solar-view.js y el fondo del globo)
+          if [ -d data/textures ]; then cp -r data/textures _site/data/textures; fi
+          # capa de sucesos (seed.json, index.json y los fragmentos c<siglo>.json que pide index.html)
+          if [ -d data/events ]; then cp -r data/events _site/data/events; fi
           touch _site/.nojekyll
           du -sh _site
 
