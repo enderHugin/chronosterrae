@@ -1,0 +1,41 @@
+name: Texturas planetarias (reduccion de mosaicos NASA/USGS)
+
+# Descarga mosaicos oficiales (dominio publico), los reduce a 2048x1024 y publica el resultado y el manifiesto
+# de procedencia en la rama `textures-build` para revisarlos antes de incorporarlos a main (regla 6).
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'ids separados por espacios (vacio = todos)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: textures-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar GDAL
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq gdal-bin
+      - name: Reducir mosaicos
+        run: python3 scripts/build-textures.py /tmp/tex ${{ github.event.inputs.only }} 2>&1 | tee /tmp/tex.log
+      - name: Publicar en la rama textures-build
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan textures-build
+          mkdir out && cp /tmp/tex/* out/ 2>/dev/null || true
+          cp /tmp/tex.log out/build.log || true
+          git add out
+          git commit -m "Texturas $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin textures-build
