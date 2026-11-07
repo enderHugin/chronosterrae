@@ -1,0 +1,2050 @@
+[
+  {
+    "name": "pirineos-2026-oscuro",
+    "labels": {
+      "park:protected_area": {
+        "n": 3,
+        "ejemplos": [
+          "Belate",
+          "Aldudeko mendia",
+          "Orreaga-Iratiko oihana BBE-KBE"
+        ]
+      },
+      "park:nature_reserve": {
+        "n": 1,
+        "ejemplos": [
+          "LIC Sistema fluvial Irati-Urrobi & Erro ugaldeen sistema BGL"
+        ]
+      },
+      "place:town": {
+        "n": 1,
+        "ejemplos": [
+          "Elizondo"
+        ]
+      },
+      "place:village": {
+        "n": 17,
+        "ejemplos": [
+          "Urepel",
+          "Aldudes",
+          "Luzaide / Valcarlos",
+          "Arnéguy",
+          "Banca",
+          "Estérençuby"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 11,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Gaps between the Natural Earth borders and the map coast"
+  },
+  {
+    "name": "europa-1606-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.3,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.982,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 15.489971096637515,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 1600 AD (6 years apart). Historical borders are an approximation: a vertex every ~15.5 km (median), so they look f"
+  },
+  {
+    "name": "estrecho-2026-oscuro",
+    "labels": {
+      "place:city": {
+        "n": 13,
+        "ejemplos": [
+          "Gibraltar",
+          "Jerez de la Frontera",
+          "Málaga",
+          "Asilah",
+          "Tangier",
+          "San Fernando"
+        ]
+      },
+      "place:town": {
+        "n": 12,
+        "ejemplos": [
+          "Rota",
+          "Sanlúcar de Barrameda",
+          "Torremolinos",
+          "Ubrique",
+          "Ronda",
+          "Nerja"
+        ]
+      },
+      "water_name:bay": {
+        "n": 1,
+        "ejemplos": [
+          "Golfo de Cádiz"
+        ]
+      },
+      "water_name:sea": {
+        "n": 1,
+        "ejemplos": [
+          "Alboran Sea"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Gaps between the Natural Earth borders and the map coast"
+  },
+  {
+    "name": "europa-1945-lejos-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.894,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 1945 AD (same date). Historical borders are an approximation: a vertex every ~16.7 km (median), so they look facet"
+  },
+  {
+    "name": "europa-1945-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 1945 AD (same date). Historical borders are an approximation: a vertex every ~16.7 km (median), so they look facet"
+  },
+  {
+    "name": "europa-1945-oculto-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 1945 AD (same date). Borders hidden: physical map only. The Borders button shows them again. Natural-colour Earth:"
+  },
+  {
+    "name": "asia-2010-globo-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2.2,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.364,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": false,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 2010 AD (same date). 2010 AD borders: their polygons are coarse (a vertex every ~12.7 km, median), so from afar on"
+  },
+  {
+    "name": "asia-2010-cerca-oscuro",
+    "labels": {
+      "place:city": {
+        "n": 62,
+        "ejemplos": [
+          "Beijing",
+          "Fuzhou",
+          "Changsha",
+          "Nanchang",
+          "Yueyang",
+          "Wuhan"
+        ]
+      },
+      "place:state": {
+        "n": 5,
+        "ejemplos": [
+          "Qinghai Province",
+          "Shanxi Province",
+          "Ningxia Hui Autonomous Region",
+          "Arunachal Pradesh",
+          "Sichuan Province"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5,
+    "detail": "full",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 2010 AD (same date). Historical borders are an approximation: a vertex every ~12.7 km (median), so they look facet"
+  },
+  {
+    "name": "mediterraneo-9010aC-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5,
+    "detail": "physical",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Loading the borders for this date… until they arrive the 2010 AD snapshot stays on screen, and it does not match the chosen date. Histo"
+  },
+  {
+    "name": "costa-9010aC-zoom-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 9,
+    "detail": "physical",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 17.146826136766148,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 10001 BC (990 years apart). Historical borders are an approximation: a vertex every ~17.1 km (median), so they loo"
+  },
+  {
+    "name": "globo-2026-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.4,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.116,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. With the Earth filling less than 80 % of the view border"
+  },
+  {
+    "name": "africa-2026-lejos-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2.2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.266,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. With the Earth filling less than 80 % of the view border"
+  },
+  {
+    "name": "africa-2026-cerca-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.689,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. With the Earth filling less than 80 % of the view border"
+  },
+  {
+    "name": "antartida-2026-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.993,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Natural-colour Earth: current NASA imagery (colour and r"
+  },
+  {
+    "name": "artico-2026-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.993,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Natural-colour Earth: current NASA imagery (colour and r"
+  },
+  {
+    "name": "pangea-250Ma-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.4,
+    "detail": null,
+    "gap": false,
+    "borders": null,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 0.993,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "Palaeogeographic coastlines (PaleoMAP): 250 Ma · nearest slice to 250 Ma (off by 0 Ma)."
+  },
+  {
+    "name": "alpes-2026-oscuro",
+    "labels": {
+      "place:city": {
+        "n": 9,
+        "ejemplos": [
+          "Novara",
+          "Lugano",
+          "Genève",
+          "Lausanne",
+          "Grenoble",
+          "Annecy"
+        ]
+      },
+      "place:town": {
+        "n": 25,
+        "ejemplos": [
+          "Bellinzona",
+          "Oyonnax",
+          "Thonon-les-Bains",
+          "Montreux",
+          "Martigny",
+          "Domodossola"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Gaps between the Natural Earth borders and the map coast"
+  },
+  {
+    "name": "alpes-2026-sin-fronteras-oscuro",
+    "labels": {
+      "mountain_peak:peak": {
+        "n": 45,
+        "ejemplos": [
+          "Mont Chavet",
+          "Le Noirmont",
+          "Grand Cunay",
+          "Crêt de la Goutte",
+          "Le Reculet",
+          "Vanil Blanc"
+        ]
+      },
+      "water_name:lake": {
+        "n": 1,
+        "ejemplos": [
+          "Le Léman"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Le Rhône"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Borders hidden: physical map only. The Borders button sh"
+  },
+  {
+    "name": "mediterraneo-2026-oscuro",
+    "labels": {
+      "place:city": {
+        "n": 39,
+        "ejemplos": [
+          "Tiranë",
+          "Sofia",
+          "Algiers",
+          "Tunis",
+          "Tripoli",
+          "Athens"
+        ]
+      },
+      "place:state": {
+        "n": 15,
+        "ejemplos": [
+          "Catalunya",
+          "Umbria",
+          "Puglia",
+          "Molise",
+          "Abruzzo",
+          "Sardigna/Sardegna"
+        ]
+      },
+      "water_name:sea": {
+        "n": 4,
+        "ejemplos": [
+          "Mar Ligure / Mer Ligure",
+          "Jadransko more / Mare Adriatico / Deti Adriatik",
+          "Mediterranean Sea",
+          "Mar Tirreno / Mer Tyrrhénienne"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5.2,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Gaps between the Natural Earth borders and the map coast"
+  },
+  {
+    "name": "mediterraneo-2026-sin-fronteras-oscuro",
+    "labels": {
+      "water_name:sea": {
+        "n": 5,
+        "ejemplos": [
+          "Mar Ligure / Mer Ligure",
+          "Jadransko more / Mare Adriatico / Deti Adriatik",
+          "Mediterranean Sea",
+          "Mar Tirreno / Mer Tyrrhénienne",
+          "Sea of Crete"
+        ]
+      },
+      "water_name:bay": {
+        "n": 1,
+        "ejemplos": [
+          "Gulf of Gabès"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5.2,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Borders hidden: physical map only. The Borders button sh"
+  },
+  {
+    "name": "islandia-2026-sin-fronteras-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 6.2,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Borders hidden: physical map only. The Borders button sh"
+  },
+  {
+    "name": "carreteras-roma-2026-oscuro",
+    "labels": {
+      "park:historic": {
+        "n": 12,
+        "ejemplos": [
+          "Tusculum",
+          "Parco archeologico di Gabii",
+          "Parco Volusia",
+          "Terme di Diocleziano",
+          "Area archeologica di Grottarossa",
+          "Monte Testaccio"
+        ]
+      },
+      "park:nature_reserve": {
+        "n": 5,
+        "ejemplos": [
+          "Monumento Naturale Parco della Cellulosa",
+          "Monumento naturale di Mazzalupetto – Quarto degli Ebrei",
+          "Riserva Naturale dell'Acquafredda",
+          "Riserva Naturale dell'Insugherata",
+          "Riserva Naturale della Tenuta dei Massimi"
+        ]
+      },
+      "park:wildlife_refuge": {
+        "n": 2,
+        "ejemplos": [
+          "Riserva Naturale di Monte Mario",
+          "Riserva Naturale Statale del Litorale Romano"
+        ]
+      },
+      "park:protected_area": {
+        "n": 5,
+        "ejemplos": [
+          "Parco Valle dell'Aniene",
+          "Parco regionale di Veio",
+          "Riserva Naturale Valle dei Casali",
+          "Riserva Naturale del Laurentino - Acqua Acetosa",
+          "Parco Naturale Regionale Appia Antica"
+        ]
+      },
+      "park:conservation": {
+        "n": 1,
+        "ejemplos": [
+          "Parco regionale urbano di Aguzzano"
+        ]
+      },
+      "place:town": {
+        "n": 4,
+        "ejemplos": [
+          "Frascati",
+          "Tivoli Terme",
+          "Fonte Nuova",
+          "Ciampino"
+        ]
+      },
+      "place:village": {
+        "n": 27,
+        "ejemplos": [
+          "Castel di Guido",
+          "Monte Porzio Catone",
+          "Finocchio",
+          "Prato Fiorito",
+          "Castelverde",
+          "Marco Simone"
+        ]
+      },
+      "transportation_name:motorway": {
+        "n": 4,
+        "ejemplos": [
+          "Strada dei Parchi",
+          "Grande Raccordo Anulare",
+          "Autostrada Roma - aeroporto di Fiumicino",
+          "Diramazione Roma Sud"
+        ]
+      },
+      "transportation_name:trunk": {
+        "n": 2,
+        "ejemplos": [
+          "Via Cassia Veientana",
+          "Via Aurelia"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Tevere"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": true,
+      "capas": 67,
+      "visibles": 67,
+      "dibujados": 523
+    },
+    "z": 11,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Gaps between the Natural Earth borders and the map coast"
+  },
+  {
+    "name": "carreteras-alpes-2026-sin-fronteras-oscuro",
+    "labels": {
+      "mountain_peak:peak": {
+        "n": 59,
+        "ejemplos": [
+          "Pointe des Brasses",
+          "Mont Forchat",
+          "Pointe de Miribel",
+          "Le Môle",
+          "Pointe de Nyon",
+          "Aiguille de Criou"
+        ]
+      },
+      "transportation_name:motorway": {
+        "n": 3,
+        "ejemplos": [
+          "(sin nombre)",
+          "Autostrada della Valle d'Aosta - Autoroute de la Vallée d'Aoste",
+          "Autostrada della Valle d'Aosta"
+        ]
+      },
+      "transportation_name:trunk": {
+        "n": 3,
+        "ejemplos": [
+          "(sin nombre)",
+          "La Route Blanche",
+          "Tunnel du Mont Blanc"
+        ]
+      },
+      "transportation_name:motorway_construction": {
+        "n": 1,
+        "ejemplos": [
+          "(sin nombre)"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Le Rhône"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": true,
+      "capas": 67,
+      "visibles": 67,
+      "dibujados": 398
+    },
+    "z": 9,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Borders hidden: physical map only. The Borders button sh"
+  },
+  {
+    "name": "pirineos-2026-claro",
+    "labels": {
+      "park:protected_area": {
+        "n": 3,
+        "ejemplos": [
+          "Belate",
+          "Aldudeko mendia",
+          "Orreaga-Iratiko oihana BBE-KBE"
+        ]
+      },
+      "park:nature_reserve": {
+        "n": 1,
+        "ejemplos": [
+          "LIC Sistema fluvial Irati-Urrobi & Erro ugaldeen sistema BGL"
+        ]
+      },
+      "place:town": {
+        "n": 1,
+        "ejemplos": [
+          "Elizondo"
+        ]
+      },
+      "place:village": {
+        "n": 17,
+        "ejemplos": [
+          "Urepel",
+          "Aldudes",
+          "Luzaide / Valcarlos",
+          "Arnéguy",
+          "Banca",
+          "Estérençuby"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 11,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Gaps between the Natural Earth borders and the map coast"
+  },
+  {
+    "name": "europa-1606-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.3,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.982,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 15.489971096637515,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 1600 AD (6 years apart). Historical borders are an approximation: a vertex every ~15.5 km (median), so they look f"
+  },
+  {
+    "name": "estrecho-2026-claro",
+    "labels": {
+      "place:city": {
+        "n": 13,
+        "ejemplos": [
+          "Gibraltar",
+          "Jerez de la Frontera",
+          "Málaga",
+          "Asilah",
+          "Tangier",
+          "San Fernando"
+        ]
+      },
+      "place:town": {
+        "n": 12,
+        "ejemplos": [
+          "Rota",
+          "Sanlúcar de Barrameda",
+          "Torremolinos",
+          "Ubrique",
+          "Ronda",
+          "Nerja"
+        ]
+      },
+      "water_name:bay": {
+        "n": 1,
+        "ejemplos": [
+          "Golfo de Cádiz"
+        ]
+      },
+      "water_name:sea": {
+        "n": 1,
+        "ejemplos": [
+          "Alboran Sea"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Gaps between the Natural Earth borders and the map coast"
+  },
+  {
+    "name": "europa-1945-lejos-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.894,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 1945 AD (same date). Historical borders are an approximation: a vertex every ~16.7 km (median), so they look facet"
+  },
+  {
+    "name": "europa-1945-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 1945 AD (same date). Historical borders are an approximation: a vertex every ~16.7 km (median), so they look facet"
+  },
+  {
+    "name": "europa-1945-oculto-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 1945 AD (same date). Borders hidden: physical map only. The Borders button shows them again. Natural-colour Earth:"
+  },
+  {
+    "name": "asia-2010-globo-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2.2,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.364,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": false,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 2010 AD (same date). 2010 AD borders: their polygons are coarse (a vertex every ~12.7 km, median), so from afar on"
+  },
+  {
+    "name": "asia-2010-cerca-claro",
+    "labels": {
+      "place:city": {
+        "n": 62,
+        "ejemplos": [
+          "Beijing",
+          "Fuzhou",
+          "Changsha",
+          "Nanchang",
+          "Yueyang",
+          "Wuhan"
+        ]
+      },
+      "place:state": {
+        "n": 5,
+        "ejemplos": [
+          "Qinghai Province",
+          "Shanxi Province",
+          "Ningxia Hui Autonomous Region",
+          "Arunachal Pradesh",
+          "Sichuan Province"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5,
+    "detail": "full",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 2010 AD (same date). Historical borders are an approximation: a vertex every ~12.7 km (median), so they look facet"
+  },
+  {
+    "name": "mediterraneo-9010aC-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5,
+    "detail": "physical",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 17.146826136766148,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 10001 BC (990 years apart). Historical borders are an approximation: a vertex every ~17.1 km (median), so they loo"
+  },
+  {
+    "name": "costa-9010aC-zoom-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 9,
+    "detail": "physical",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 17.146826136766148,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Borders: snapshot of 10001 BC (990 years apart). Historical borders are an approximation: a vertex every ~17.1 km (median), so they loo"
+  },
+  {
+    "name": "globo-2026-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.4,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.116,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. With the Earth filling less than 80 % of the view border"
+  },
+  {
+    "name": "africa-2026-lejos-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2.2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.266,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. With the Earth filling less than 80 % of the view border"
+  },
+  {
+    "name": "africa-2026-cerca-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.689,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. With the Earth filling less than 80 % of the view border"
+  },
+  {
+    "name": "antartida-2026-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.993,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Natural-colour Earth: current NASA imagery (colour and r"
+  },
+  {
+    "name": "artico-2026-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.993,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Natural-colour Earth: current NASA imagery (colour and r"
+  },
+  {
+    "name": "pangea-250Ma-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.4,
+    "detail": null,
+    "gap": false,
+    "borders": null,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 0.993,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "Palaeogeographic coastlines (PaleoMAP): 250 Ma · nearest slice to 250 Ma (off by 0 Ma)."
+  },
+  {
+    "name": "alpes-2026-claro",
+    "labels": {
+      "place:city": {
+        "n": 9,
+        "ejemplos": [
+          "Novara",
+          "Lugano",
+          "Genève",
+          "Lausanne",
+          "Grenoble",
+          "Annecy"
+        ]
+      },
+      "place:town": {
+        "n": 25,
+        "ejemplos": [
+          "Bellinzona",
+          "Oyonnax",
+          "Thonon-les-Bains",
+          "Montreux",
+          "Martigny",
+          "Domodossola"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Gaps between the Natural Earth borders and the map coast"
+  },
+  {
+    "name": "alpes-2026-sin-fronteras-claro",
+    "labels": {
+      "mountain_peak:peak": {
+        "n": 45,
+        "ejemplos": [
+          "Mont Chavet",
+          "Le Noirmont",
+          "Grand Cunay",
+          "Crêt de la Goutte",
+          "Le Reculet",
+          "Vanil Blanc"
+        ]
+      },
+      "water_name:lake": {
+        "n": 1,
+        "ejemplos": [
+          "Le Léman"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Le Rhône"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Borders hidden: physical map only. The Borders button sh"
+  },
+  {
+    "name": "mediterraneo-2026-claro",
+    "labels": {
+      "place:city": {
+        "n": 39,
+        "ejemplos": [
+          "Tiranë",
+          "Sofia",
+          "Algiers",
+          "Tunis",
+          "Tripoli",
+          "Athens"
+        ]
+      },
+      "place:state": {
+        "n": 15,
+        "ejemplos": [
+          "Catalunya",
+          "Umbria",
+          "Puglia",
+          "Molise",
+          "Abruzzo",
+          "Sardigna/Sardegna"
+        ]
+      },
+      "water_name:sea": {
+        "n": 4,
+        "ejemplos": [
+          "Mar Ligure / Mer Ligure",
+          "Jadransko more / Mare Adriatico / Deti Adriatik",
+          "Mediterranean Sea",
+          "Mar Tirreno / Mer Tyrrhénienne"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5.2,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Gaps between the Natural Earth borders and the map coast"
+  },
+  {
+    "name": "mediterraneo-2026-sin-fronteras-claro",
+    "labels": {
+      "water_name:sea": {
+        "n": 5,
+        "ejemplos": [
+          "Mar Ligure / Mer Ligure",
+          "Jadransko more / Mare Adriatico / Deti Adriatik",
+          "Mediterranean Sea",
+          "Mar Tirreno / Mer Tyrrhénienne",
+          "Sea of Crete"
+        ]
+      },
+      "water_name:bay": {
+        "n": 1,
+        "ejemplos": [
+          "Gulf of Gabès"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5.2,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Borders hidden: physical map only. The Borders button sh"
+  },
+  {
+    "name": "islandia-2026-sin-fronteras-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 6.2,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Borders hidden: physical map only. The Borders button sh"
+  },
+  {
+    "name": "carreteras-roma-2026-claro",
+    "labels": {
+      "park:historic": {
+        "n": 12,
+        "ejemplos": [
+          "Tusculum",
+          "Parco archeologico di Gabii",
+          "Parco Volusia",
+          "Terme di Diocleziano",
+          "Area archeologica di Grottarossa",
+          "Monte Testaccio"
+        ]
+      },
+      "park:nature_reserve": {
+        "n": 5,
+        "ejemplos": [
+          "Monumento Naturale Parco della Cellulosa",
+          "Monumento naturale di Mazzalupetto – Quarto degli Ebrei",
+          "Riserva Naturale dell'Acquafredda",
+          "Riserva Naturale dell'Insugherata",
+          "Riserva Naturale della Tenuta dei Massimi"
+        ]
+      },
+      "park:wildlife_refuge": {
+        "n": 2,
+        "ejemplos": [
+          "Riserva Naturale di Monte Mario",
+          "Riserva Naturale Statale del Litorale Romano"
+        ]
+      },
+      "park:protected_area": {
+        "n": 5,
+        "ejemplos": [
+          "Parco Valle dell'Aniene",
+          "Parco regionale di Veio",
+          "Riserva Naturale Valle dei Casali",
+          "Riserva Naturale del Laurentino - Acqua Acetosa",
+          "Parco Naturale Regionale Appia Antica"
+        ]
+      },
+      "park:conservation": {
+        "n": 1,
+        "ejemplos": [
+          "Parco regionale urbano di Aguzzano"
+        ]
+      },
+      "place:town": {
+        "n": 4,
+        "ejemplos": [
+          "Frascati",
+          "Tivoli Terme",
+          "Fonte Nuova",
+          "Ciampino"
+        ]
+      },
+      "place:village": {
+        "n": 27,
+        "ejemplos": [
+          "Castel di Guido",
+          "Monte Porzio Catone",
+          "Finocchio",
+          "Prato Fiorito",
+          "Castelverde",
+          "Marco Simone"
+        ]
+      },
+      "transportation_name:motorway": {
+        "n": 4,
+        "ejemplos": [
+          "Strada dei Parchi",
+          "Grande Raccordo Anulare",
+          "Autostrada Roma - aeroporto di Fiumicino",
+          "Diramazione Roma Sud"
+        ]
+      },
+      "transportation_name:trunk": {
+        "n": 2,
+        "ejemplos": [
+          "Via Cassia Veientana",
+          "Via Aurelia"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Tevere"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": true,
+      "capas": 67,
+      "visibles": 67,
+      "dibujados": 523
+    },
+    "z": 11,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Gaps between the Natural Earth borders and the map coast"
+  },
+  {
+    "name": "carreteras-alpes-2026-sin-fronteras-claro",
+    "labels": {
+      "mountain_peak:peak": {
+        "n": 59,
+        "ejemplos": [
+          "Pointe des Brasses",
+          "Mont Forchat",
+          "Pointe de Miribel",
+          "Le Môle",
+          "Pointe de Nyon",
+          "Aiguille de Criou"
+        ]
+      },
+      "transportation_name:motorway": {
+        "n": 3,
+        "ejemplos": [
+          "(sin nombre)",
+          "Autostrada della Valle d'Aosta - Autoroute de la Vallée d'Aoste",
+          "Autostrada della Valle d'Aosta"
+        ]
+      },
+      "transportation_name:trunk": {
+        "n": 3,
+        "ejemplos": [
+          "(sin nombre)",
+          "La Route Blanche",
+          "Tunnel du Mont Blanc"
+        ]
+      },
+      "transportation_name:motorway_construction": {
+        "n": 1,
+        "ejemplos": [
+          "(sin nombre)"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Le Rhône"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": true,
+      "capas": 67,
+      "visibles": 67,
+      "dibujados": 398
+    },
+    "z": 9,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "Present-day coastlines. Sea level and ice ages are not modelled. Current borders: Natural Earth 10m (public domain), median resolution ~1.7 km. Borders hidden: physical map only. The Borders button sh"
+  },
+  {
+    "name": "solar-0-mapa",
+    "open": false,
+    "status": "← Back to Earth"
+  },
+  {
+    "name": "solar-1-umbral",
+    "open": true,
+    "status": "Earth\nDistance to Earth: 292,619 km\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nThe Earth is the map of this date, oriented with the camera (real sidereal time) and at its true size.\nMeasured error of the position of its centre (JPL Horizons/DE441) in this era (170"
+  },
+  {
+    "name": "solar-2-luna",
+    "open": true,
+    "status": "Earth\nDistance to Earth: 824,712 km\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nThe Earth is the map of this date, oriented with the camera (real sidereal time) and at its true size.\nA dot with a ring is not to scale: the body is smaller than a dot at this distance"
+  },
+  {
+    "name": "solar-3-sol",
+    "open": true,
+    "status": "Earth\nDistance to Earth: 6,550,924 km\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nThe Earth is the map of this date, oriented with the camera (real sidereal time) and at its true size.\nA dot with a ring is not to scale: the body is smaller than a dot at this distan"
+  },
+  {
+    "name": "solar-4-interior",
+    "open": true,
+    "status": "Earth\nDistance to Earth: 0.2 AU\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nA dot with a ring is not to scale: the body is smaller than a dot at this distance. Discs are.\nMeasured error of the position of its centre (JPL Horizons/DE441) in this era (1700-2200): up "
+  },
+  {
+    "name": "solar-5-sistema",
+    "open": true,
+    "status": "Earth\nDistance to Earth: 1.7 AU\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nA dot with a ring is not to scale: the body is smaller than a dot at this distance. Discs are.\nMeasured error of the position of its centre (JPL Horizons/DE441) in this era (1700-2200): up "
+  },
+  {
+    "name": "solar-sistema",
+    "open": true,
+    "status": "Sun\nDistance to Sun: 75 AU\nRadius: 695,700 km (IAU 2015 B3 (nominal))\nA dot with a ring is not to scale: the body is smaller than a dot at this distance. Discs are.\nThe Sun is the origin of this frame: it has no position error of its own.\n← Back to Earth"
+  },
+  {
+    "name": "solar-jupiter",
+    "open": true,
+    "status": "Jupiter\nDistance to Jupiter: 428,952 km\nDistance to the Sun: 5.3 AU · light takes 44.2 min\nRadius: 71,492 km (NASA NSSDCA)\nTexture: cloud tops as seen by Cassini in December 2000 (NASA/JPL/SSI). The bands are stable; the spots change and do not show how it looks today.\nMeasured error of the position"
+  },
+  {
+    "name": "solar-luna",
+    "open": true,
+    "status": "Moon\nDistance to Moon: 10,425 km\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 1,737.5 km (NASA NSSDCA)\nTexture: LROC WAC colour mosaic (NASA/GSFC/ASU); the poles are filled with LOLA albedo. NASA SVS.\nMeasured error of the position of its centre (JPL Horizons/DE441) in this era (1700-2200"
+  },
+  {
+    "name": "solar-sol",
+    "open": true,
+    "status": "Sun\nDistance to Sun: 4,174,200 km\nRadius: 695,700 km (IAU 2015 B3 (nominal))\nA dot with a ring is not to scale: the body is smaller than a dot at this distance. Discs are.\nThe Sun is the origin of this frame: it has no position error of its own.\n← Back to Earth"
+  },
+  {
+    "name": "solar-tierra",
+    "open": false,
+    "status": "EarthDistance to Earth: 56,104 kmDistance to the Sun: 1 AU · light takes 8.2 minRadius: 6,378 km (NASA NSSDCA)Measured error of the position of its centre (JPL Horizons/DE441) in this era (1700-2200): up to 2,492 km.← Back to Earth"
+  },
+  {
+    "name": "solar-1492",
+    "open": true,
+    "status": "Earth\nDistance to Earth: 3,017,659 km\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nThe Earth is the map of this date, oriented with the camera (real sidereal time) and at its true size.\nA dot with a ring is not to scale: the body is smaller than a dot at this distan"
+  }
+]
