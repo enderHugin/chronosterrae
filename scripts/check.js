@@ -154,7 +154,7 @@ check('slider: pasar una fecha al slider y volver no la cambia', () => {
 
 check('index.html no reenvia al mapa una capa que no ha cambiado', () => {
     const html = readIndex();
-    return /state\.landData === L\.data\)\s*return/.test(html) && /state\.bordersData === data\)\s*return/.test(html);
+    return /state\.landData === L\.data\)\s*return/.test(html) && /state\.bordersData === data\)\s*\{[\s\S]{0,260}?return;/.test(html);
 });
 
 check('index.html pinta las costas que llegan mientras se arrastra (no solo la ultima peticion)', () => {

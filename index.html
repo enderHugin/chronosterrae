@@ -1450,7 +1450,10 @@ function applyBorders(b) {
     state.borders = b;
     const data = b ? b.data : null;
     if (BR.swap && BR.swap.data === data) return;                 // ya esta de camino
-    if (state.bordersData === data && !BR.swap) return;
+    if (state.bordersData === data) {                              // lo que se ve ya es esto: no se reenvia al mapa; si habia otro cambio de camino, se anula
+        if (BR.swap) { BR.swap = null; clearTimeout(BR.swapTimer); renderStatus(); }
+        return;
+    }
     const hold = Boolean(GAP.shown && data && data.features.length && !BR.cut && window.ChronosGap);
     BR.swap = { data };
     clearTimeout(BR.swapTimer);
