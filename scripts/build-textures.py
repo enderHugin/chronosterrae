@@ -115,8 +115,11 @@ def build(it, out):
     if it.get('roll'):
         # La etiqueta PDS dice: longitud positiva al OESTE, centro 180, extremo oeste (columna izquierda) = 360, extremo este = 0. En longitud
         # ESTE la columna izquierda es 0 grados y el centro 180: se gira media anchura para dejarla como las demas (-180 a la izquierda, 0 al centro).
-        rc, o, e, s2 = sh(['convert', tmp, '-roll', '+%d+0' % (WIDTH // 2), '-quality', '88', dst])
-        r['lonLayout'] = 'girada media anchura (convert -roll +%d+0): origen 0 E a la izquierda -> destino -180 E a la izquierda' % (WIDTH // 2)
+        from PIL import Image
+        import numpy as np
+        a = np.asarray(Image.open(tmp)); Image.fromarray(np.roll(a, WIDTH // 2, axis=1)).save(dst, quality=88)
+        rc, e = 0, ''
+        r['lonLayout'] = 'girada media anchura (numpy.roll, %d columnas): origen 0 E a la izquierda -> destino -180 E a la izquierda' % (WIDTH // 2)
     else:
         rc, o, e, s2 = sh(['gdal_translate', '-q', '-of', 'JPEG', '-co', 'QUALITY=88', tmp, dst])
         r['lonLayout'] = 'sin girar (etiqueta/figura de origen: -180 E a la izquierda, 0 al centro; Io y Jupiter vienen en oeste positivo con el extremo oeste a la izquierda, equivalente)'
