@@ -7,25 +7,18 @@
  * Salida: JSON en stdout, progreso en stderr. Solo Node 18+, sin dependencias. */
 'use strict';
 const PAGES = [
-    'https://svs.gsfc.nasa.gov/4720/',
-    'https://svs.gsfc.nasa.gov/4851/',
-    'https://astrogeology.usgs.gov/search/map/mercury_messenger_global_mosaic_166m',
-    'https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_basemap_enhanced_color_global_mosaic_665m',
-    'https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m',
-    'https://astrogeology.usgs.gov/search/map/venus_magellan_global_c3_mdir_mosaic_2025m',
-    'https://science.nasa.gov/photojournal/cassinis-best-maps-of-jupiter-cylindrical-map/'
+    'https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_basemap_loi_global_mosaic_166m',
+    'https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_global_color_mosaic_665m',
+    'https://astrogeology.usgs.gov/search/map/io_galileo_ssi_voyager_color_merged_global_mosaic_1km',
+    'https://astrogeology.usgs.gov/search/map/europa_voyager_galileo_ssi_global_mosaic_500m',
+    'https://astrogeology.usgs.gov/search/map/callisto_galileo_voyager_global_mosaic_1km',
+    'https://astrogeology.usgs.gov/search/map/ganymede_voyager_galileo_ssi_global_mosaic_1km',
+    'https://astrogeology.usgs.gov/search/map/triton_voyager_2_global_color_mosaic_600m',
+    'https://astrogeology.usgs.gov/search/map/iapetus_cassini_voyager_global_mosaic_803m',
+    'https://astrogeology.usgs.gov/search/map/dione_voyager_airbrush_mosaic_610m'
 ];
-const INDEXES = ['https://planetarymaps.usgs.gov/mosaic/', 'https://planetarymaps.usgs.gov/'];
-const CANDIDATES = [
-    'https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia07/pia07782/PIA07782.jpg',
-    'https://planetarymaps.usgs.gov/mosaic/Venus_Magellan_C3-MDIR_Global_Mosaic_2025m.tif',
-    'https://planetarymaps.usgs.gov/mosaic/Mars_Viking_MDIM21_ClrMosaic_global_232m.tif',
-    'https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_poles_4k.tif',
-    'https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_2k.jpg',
-    'https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/milkyway_2020_4k_print.jpg',
-    'https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/milkyway_2020_4k.exr',
-    'https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/starmap_2020_4k_print.jpg'
-];
+const INDEXES = [];
+const CANDIDATES = [];
 const UA = 'ChronosTerrae-probe/1.0 (+https://github.com/enderHugin/chronosterrae)';
 const log = (...a) => process.stderr.write(a.join(' ') + '\n');
 async function get(url, init) {
