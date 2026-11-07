@@ -1,0 +1,712 @@
+{
+ "about": "Texturas y datos de cuerpos del sistema solar y del fondo de cielo. Todo sale de productos oficiales de NASA/USGS (dominio publico, con el credito indicado) reducidos con scripts/build-textures.py, build-milkyway.py y build-rings.py en GitHub Actions. Nada esta dibujado a mano.",
+ "convention": "Cuerpos: columna j de 2048 -> longitud ESTE = 360*(j+0.5)/2048 - 180; fila i de 1024 -> latitud planetocentrica = 90 - 180*(i+0.5)/1024. Todas estan reducidas a esta convencion (las etiquetas PDS que venian en oeste positivo se han convertido).",
+ "noTexture": {
+  "Venus": "La unica fuente verificada (Magellan, radar, USGS) NO es luz visible: desde fuera Venus se ve cubierta de nubes sin detalle. Se genero y se descarto para no mostrar una superficie que nadie ve.",
+  "Saturn": "No hay un mapa global cilindrico verificado: se dibuja con su color medio y los anillos medidos.",
+  "Uranus": "Sin mapa verificado: color medio.",
+  "Neptune": "Sin mapa verificado: color medio."
+ },
+ "items": [
+  {
+   "id": "mercury",
+   "body": "Mercury",
+   "kind": "mosaico monocromo de MESSENGER/MDIS (luz visible, no color realzado)",
+   "sourceUrl": "https://planetarymaps.usgs.gov/mosaic//Mercury_MESSENGER_MDIS_Basemap_LOI_Mosaic_Global_166m.tif",
+   "sourcePage": "https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_basemap_loi_global_mosaic_166m",
+   "credit": "NASA/JPL-Caltech/JHUAPL/Carnegie Institution of Washington; USGS Astrogeology Science Center",
+   "sourceHead": {
+    "Content-Length": "4247471083",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Thu, 10 Nov 2022 05:38:32 GMT",
+    "ETag": "\"7156f92a0e45a617ea2929573405cf55-507\"",
+    "Access-Control-Allow-Origin": null
+   },
+   "label": [],
+   "source": {
+    "size": [
+     92160,
+     46080
+    ],
+    "bands": [
+     [
+      "Gray",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      -7663601.119,
+      3831800.56
+     ],
+     "lowerLeft": [
+      -7663601.119,
+      -3831800.56
+     ],
+     "lowerRight": [
+      7663601.119,
+      -3831800.56
+     ],
+     "upperRight": [
+      7663601.119,
+      3831800.56
+     ],
+     "center": [
+      -1.69e-05,
+      8.4e-06
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "PROJCRS[\"SimpleCylindrical Mercury\",\n    BASEGEOGCRS[\"GCS_Mercury\",\n        DATUM[\"D_Mercury\",\n            ELLIPSOID[\"Mercury\",2439400,0,\n                LENGTHUNIT[\"metre\",1,\n                    ID[\"EPSG\",9001]]]],\n        PRIMEM[\"Reference_Meridian\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]],\n    CONVERSION[\"Equidistant Cylindrical\",\n        METHOD[\"Equidistant Cylindrical\",\n            ID[\"EPSG\",1028]],\n        PARAMETER[\"Latitude of 1st standard parallel\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Longitude of natural origin\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n  ",
+    "overviews": [
+     null
+    ]
+   },
+   "output": {
+    "file": "mercury.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "81439bd79c20449458f8f447c1bb3a5fc69b10493ea2b29f8f472d61e56730c4",
+    "bytes": 701484,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   },
+   "file": "data/textures/mercury.jpg",
+   "sha256": "81439bd79c20449458f8f447c1bb3a5fc69b10493ea2b29f8f472d61e56730c4",
+   "bytes": 701484,
+   "width": 2048,
+   "height": 1024,
+   "note": "Monocromo (MESSENGER/MDIS). Etiqueta PDS3: ESTE positivo, centro 0, planetocentrica.",
+   "kindOfEvidence": "imagen o mosaico de mision (mapa de la superficie o techo de nubes actual); no es reconstruccion",
+   "lonLayout": "sin girar: etiqueta PDS3 (ESTE positivo, centro 0, -180 a 180)"
+  },
+  {
+   "id": "moon",
+   "body": "Moon",
+   "kind": "mosaico en color de LROC WAC (Hapke normalizado) con huecos polares rellenados con albedo de LOLA",
+   "sourceUrl": "https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/lroc_color_poles_4k.tif",
+   "sourcePage": "https://svs.gsfc.nasa.gov/4720/",
+   "credit": "NASA's Scientific Visualization Studio; LROC WAC: NASA/GSFC/Arizona State University",
+   "sourceHead": {
+    "Content-Length": "13095388",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Wed, 05 Jun 2019 20:21:15 GMT",
+    "ETag": "\"c7d1dc-58a9956d78b08\"",
+    "Access-Control-Allow-Origin": "https://tempo.multiverse.music"
+   },
+   "source": {
+    "size": [
+     4096,
+     2048
+    ],
+    "bands": [
+     [
+      "Red",
+      "Byte"
+     ],
+     [
+      "Green",
+      "Byte"
+     ],
+     [
+      "Blue",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      0.0,
+      0.0
+     ],
+     "lowerLeft": [
+      0.0,
+      2048.0
+     ],
+     "lowerRight": [
+      4096.0,
+      2048.0
+     ],
+     "upperRight": [
+      4096.0,
+      0.0
+     ],
+     "center": [
+      2048.0,
+      1024.0
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "",
+    "overviews": [
+     null
+    ]
+   },
+   "output": {
+    "file": "moon.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "399905d6a0c54eee674398a670b63c1a73b6eac1ace30857f41a7f3ddc1b4386",
+    "bytes": 437187,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   },
+   "file": "data/textures/moon.jpg",
+   "sha256": "399905d6a0c54eee674398a670b63c1a73b6eac1ace30857f41a7f3ddc1b4386",
+   "bytes": 437187,
+   "width": 2048,
+   "height": 1024,
+   "note": "Color de LROC WAC. La pagina de origen dice solo \"centrado en 0 grados de longitud\"; el sentido ESTE se comprobo con el crater Tycho (11 grados O, 43 grados S) en la imagen. Las bandas polares son un relleno con albedo de LOLA (segun la fuente), no imagen directa.",
+   "kindOfEvidence": "imagen o mosaico de mision (mapa de la superficie o techo de nubes actual); no es reconstruccion",
+   "lonLayout": "sin girar: la pagina de origen dice centrado en 0 grados; sentido ESTE comprobado con Tycho"
+  },
+  {
+   "id": "mars",
+   "body": "Mars",
+   "kind": "mosaico en color de Viking (MDIM 2.1, color sintetizado)",
+   "sourceUrl": "https://planetarymaps.usgs.gov/mosaic/Mars_Viking_MDIM21_ClrMosaic_global_232m.tif",
+   "sourcePage": "https://astrogeology.usgs.gov/search/map/mars_viking_colorized_global_mosaic_232m",
+   "credit": "NASA/JPL; USGS Astrogeology Science Center (MDIM 2.1)",
+   "sourceHead": {
+    "Content-Length": "12742411029",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Thu, 10 Nov 2022 04:38:21 GMT",
+    "ETag": "\"efb446a3deef9aea7e8aba2e13bfbbaa-1520\"",
+    "Access-Control-Allow-Origin": null
+   },
+   "label": [],
+   "source": {
+    "size": [
+     92160,
+     46080
+    ],
+    "bands": [
+     [
+      "Red",
+      "Byte"
+     ],
+     [
+      "Green",
+      "Byte"
+     ],
+     [
+      "Blue",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      -10669445.554,
+      5334722.777
+     ],
+     "lowerLeft": [
+      -10669445.554,
+      -5334722.777
+     ],
+     "lowerRight": [
+      10669445.554,
+      -5334722.777
+     ],
+     "upperRight": [
+      10669445.554,
+      5334722.777
+     ],
+     "center": [
+      -1.91e-05,
+      9.6e-06
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "PROJCRS[\"SimpleCylindrical Mars\",\n    BASEGEOGCRS[\"GCS_Mars\",\n        DATUM[\"D_Mars\",\n            ELLIPSOID[\"Mars\",3396190,0,\n                LENGTHUNIT[\"metre\",1,\n                    ID[\"EPSG\",9001]]]],\n        PRIMEM[\"Reference_Meridian\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]],\n    CONVERSION[\"Equidistant Cylindrical\",\n        METHOD[\"Equidistant Cylindrical\",\n            ID[\"EPSG\",1028]],\n        PARAMETER[\"Latitude of 1st standard parallel\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Longitude of natural origin\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID",
+    "overviews": [
+     null
+    ]
+   },
+   "output": {
+    "file": "mars.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "cefb00c9f96b8411285c95d9a2b6fb4b53d163129e712922c469a5a6bf8a6ab2",
+    "bytes": 586485,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   },
+   "file": "data/textures/mars.jpg",
+   "sha256": "cefb00c9f96b8411285c95d9a2b6fb4b53d163129e712922c469a5a6bf8a6ab2",
+   "bytes": 586485,
+   "width": 2048,
+   "height": 1024,
+   "note": "Color sintetizado de Viking (MDIM 2.1): es un producto cartografico, no una foto. Etiqueta PDS3: ESTE positivo, centro 0, planetocentrica. Reducida de 92160x46080 a 2048x1024.",
+   "kindOfEvidence": "imagen o mosaico de mision (mapa de la superficie o techo de nubes actual); no es reconstruccion",
+   "lonLayout": "sin girar: etiqueta PDS3 (ESTE positivo, centro 0, -180 a 180)"
+  },
+  {
+   "id": "jupiter",
+   "body": "Jupiter",
+   "kind": "mapa cilindrico de Cassini (11-12 dic 2000), techo de nubes de UNA fecha: las bandas y manchas cambian con los anos",
+   "sourceUrl": "https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia07/pia07782/PIA07782.tif",
+   "sourcePage": "https://science.nasa.gov/photojournal/cassinis-best-maps-of-jupiter-cylindrical-map/",
+   "credit": "NASA/JPL/Space Science Institute (PIA07782)",
+   "sourceHead": {
+    "Content-Length": "19456427",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Sun, 24 Nov 2024 07:44:07 GMT",
+    "ETag": "\"128e1ab-627a3c7e39fc0\"",
+    "Access-Control-Allow-Origin": "*"
+   },
+   "source": {
+    "size": [
+     3601,
+     1801
+    ],
+    "bands": [
+     [
+      "Red",
+      "Byte"
+     ],
+     [
+      "Green",
+      "Byte"
+     ],
+     [
+      "Blue",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      0.0,
+      0.0
+     ],
+     "lowerLeft": [
+      0.0,
+      1801.0
+     ],
+     "lowerRight": [
+      3601.0,
+      1801.0
+     ],
+     "upperRight": [
+      3601.0,
+      0.0
+     ],
+     "center": [
+      1800.5,
+      900.5
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "",
+    "overviews": [
+     null
+    ]
+   },
+   "output": {
+    "file": "jupiter.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "f552e4761b1291ae66493f4af6a9583c97e3638ddef234afb2fb69dd277b8a2e",
+    "bytes": 284444,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   },
+   "file": "data/textures/jupiter.jpg",
+   "sha256": "f552e4761b1291ae66493f4af6a9583c97e3638ddef234afb2fb69dd277b8a2e",
+   "bytes": 284444,
+   "width": 2048,
+   "height": 1024,
+   "note": "Techo de nubes en dic 2000 (Cassini): las bandas son estables, las manchas NO (la Gran Mancha Roja y los ovalos cambian). La fuente no declara el sistema de longitudes; la rejilla de la figura oficial muestra la longitud creciendo hacia la izquierda con 0 en el centro. No se afirma la posicion de ningun detalle.",
+   "kindOfEvidence": "imagen o mosaico de mision (mapa de la superficie o techo de nubes actual); no es reconstruccion",
+   "lonLayout": "sin girar: la figura oficial con rejilla (PIA07782) muestra longitud OESTE creciendo hacia la izquierda con 0 al centro y 180 en los bordes, que equivale a ESTE creciendo hacia la derecha"
+  },
+  {
+   "id": "io",
+   "body": "Io",
+   "kind": "mosaico en color de Galileo SSI y Voyager",
+   "sourceUrl": "https://planetarymaps.usgs.gov/mosaic/Io_GalileoSSI-Voyager_Global_Mosaic_ClrMerge_1km.tif",
+   "sourcePage": "https://astrogeology.usgs.gov/search/map/io_galileo_ssi_voyager_color_merged_global_mosaic_1km",
+   "credit": "NASA/JPL/University of Arizona; USGS Astrogeology Science Center",
+   "sourceHead": {
+    "Content-Length": "196637696",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Tue, 08 Nov 2022 18:55:45 GMT",
+    "ETag": "\"40d595de3cf14e0aca90ea214b2c8207-24\"",
+    "Access-Control-Allow-Origin": null
+   },
+   "label": [],
+   "source": {
+    "size": [
+     11445,
+     5723
+    ],
+    "bands": [
+     [
+      "Red",
+      "Byte"
+     ],
+     [
+      "Green",
+      "Byte"
+     ],
+     [
+      "Blue",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      -5723000.0,
+      2862000.0
+     ],
+     "lowerLeft": [
+      -5723000.0,
+      -2861000.0
+     ],
+     "lowerRight": [
+      5722000.0,
+      -2861000.0
+     ],
+     "upperRight": [
+      5722000.0,
+      2862000.0
+     ],
+     "center": [
+      -500.0,
+      500.0
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "PROJCRS[\"SimpleCylindrical Io\",\n    BASEGEOGCRS[\"GCS_Io\",\n        DATUM[\"D_Io\",\n            ELLIPSOID[\"Io\",1821460,0,\n                LENGTHUNIT[\"metre\",1,\n                    ID[\"EPSG\",9001]]]],\n        PRIMEM[\"Reference_Meridian\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]],\n    CONVERSION[\"Equidistant Cylindrical\",\n        METHOD[\"Equidistant Cylindrical\",\n            ID[\"EPSG\",1028]],\n        PARAMETER[\"Latitude of 1st standard parallel\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Longitude of natural origin\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",",
+    "overviews": [
+     null
+    ]
+   },
+   "output": {
+    "file": "io.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "788546c07c348d77eea6114b117eb4d9fa712dfe0661ee2a012cfa6ead868744",
+    "bytes": 333709,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   },
+   "file": "data/textures/io.jpg",
+   "sha256": "788546c07c348d77eea6114b117eb4d9fa712dfe0661ee2a012cfa6ead868744",
+   "bytes": 333709,
+   "width": 2048,
+   "height": 1024,
+   "note": "Etiqueta PDS3: longitud positiva al OESTE, centro 0, extremo oeste a la izquierda: equivale a ESTE positivo con -180 a la izquierda. Comprobado con Pele (255 O).",
+   "kindOfEvidence": "imagen o mosaico de mision (mapa de la superficie o techo de nubes actual); no es reconstruccion",
+   "lonLayout": "sin girar: etiqueta PDS3 (OESTE positivo, centro 0, extremo oeste 180 a la izquierda), equivalente a ESTE positivo con -180 a la izquierda"
+  },
+  {
+   "id": "europa",
+   "body": "Europa",
+   "kind": "mosaico de Voyager y Galileo SSI",
+   "sourceUrl": "https://planetarymaps.usgs.gov/mosaic/Europa_Voyager_GalileoSSI_global_mosaic_500m.tif",
+   "sourcePage": "https://astrogeology.usgs.gov/search/map/europa_voyager_galileo_ssi_global_mosaic_500m",
+   "credit": "NASA/JPL/DLR; USGS Astrogeology Science Center",
+   "sourceHead": {
+    "Content-Length": "192777263",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Tue, 08 Nov 2022 18:52:57 GMT",
+    "ETag": "\"c32d992284f852469dd86890786a63d6-23\"",
+    "Access-Control-Allow-Origin": null
+   },
+   "label": [
+    "TARGET_NAME                    = EUROPA",
+    "MAP_PROJECTION_TYPE          = SIMPLE_CYLINDRICAL",
+    "A_AXIS_RADIUS                = 1562.0899657999998 <KILOMETERS>",
+    "B_AXIS_RADIUS                = 1562.0899657999998 <KILOMETERS>",
+    "C_AXIS_RADIUS                = 1562.0899657999998 <KILOMETERS>",
+    "POSITIVE_LONGITUDE_DIRECTION = WEST",
+    "CENTER_LATITUDE              = N/A <DEGREES>",
+    "CENTER_LONGITUDE             = 180 <DEGREES>",
+    "MAP_RESOLUTION               = 54.53 <PIXELS/DEGREE>",
+    "MAP_SCALE                    = 499.97456657942 <METERS/PIXEL>",
+    "MAXIMUM_LATITUDE             = 90 <DEGREES>",
+    "MINIMUM_LATITUDE             = -90 <DEGREES>",
+    "EASTERNMOST_LONGITUDE        = 0 <DEGREES>",
+    "WESTERNMOST_LONGITUDE        = 360 <DEGREES>",
+    "LINE_PROJECTION_OFFSET       = 4907.500000000013 <PIXELS>",
+    "SAMPLE_PROJECTION_OFFSET     = -9816.500000000025 <PIXELS>",
+    "COORDINATE_SYSTEM_TYPE       = \"BODY-FIXED ROTATING\"",
+    "COORDINATE_SYSTEM_NAME       = PLANETOCENTRIC"
+   ],
+   "source": {
+    "size": [
+     19631,
+     9816
+    ],
+    "bands": [
+     [
+      "Gray",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      -4907750.346,
+      2453875.173
+     ],
+     "lowerLeft": [
+      -4907750.346,
+      -2453875.173
+     ],
+     "lowerRight": [
+      4907250.371,
+      -2453875.173
+     ],
+     "upperRight": [
+      4907250.371,
+      2453875.173
+     ],
+     "center": [
+      -249.987,
+      0.0
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "PROJCRS[\"SimpleCylindrical Europa\",\n    BASEGEOGCRS[\"GCS_Europa\",\n        DATUM[\"D_Europa\",\n            ELLIPSOID[\"Europa\",1562089.9658,0,\n                LENGTHUNIT[\"metre\",1,\n                    ID[\"EPSG\",9001]]]],\n        PRIMEM[\"Reference_Meridian\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]],\n    CONVERSION[\"Equidistant Cylindrical\",\n        METHOD[\"Equidistant Cylindrical\",\n            ID[\"EPSG\",1028]],\n        PARAMETER[\"Latitude of 1st standard parallel\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Longitude of natural origin\",180,\n            ANGLEUNIT[\"degree\",0.0174532925199433],",
+    "overviews": [
+     null
+    ]
+   },
+   "lonLayout": "girada media anchura (numpy.roll, 1024 columnas): origen 0 E a la izquierda -> destino -180 E a la izquierda",
+   "output": {
+    "file": "europa.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "2a7344c3a4b871ededc844e557694615bf12de9fdb2c0035683316cd16a586b8",
+    "bytes": 508569,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   },
+   "file": "data/textures/europa.jpg",
+   "sha256": "2a7344c3a4b871ededc844e557694615bf12de9fdb2c0035683316cd16a586b8",
+   "bytes": 508569,
+   "width": 2048,
+   "height": 1024,
+   "note": "Etiqueta PDS3: OESTE positivo, centro 180, extremo oeste (izquierda)=360: se giro media anchura. Monocromo.",
+   "kindOfEvidence": "imagen o mosaico de mision (mapa de la superficie o techo de nubes actual); no es reconstruccion"
+  },
+  {
+   "id": "ganymede",
+   "body": "Ganymede",
+   "kind": "mosaico de Voyager y Galileo SSI",
+   "sourceUrl": "https://planetarymaps.usgs.gov/mosaic/Ganymede_Voyager_GalileoSSI_global_mosaic_1km.tif",
+   "sourcePage": "https://astrogeology.usgs.gov/search/map/ganymede_voyager_galileo_ssi_global_mosaic_1km",
+   "credit": "NASA/JPL/USGS",
+   "sourceHead": {
+    "Content-Length": "136844537",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Tue, 08 Nov 2022 18:54:09 GMT",
+    "ETag": "\"20dd0292e28696dc9dad2fe8a601de7b-17\"",
+    "Access-Control-Allow-Origin": null
+   },
+   "label": [
+    "TARGET_NAME                    = GANYMEDE",
+    "MAP_PROJECTION_TYPE          = SIMPLE_CYLINDRICAL",
+    "A_AXIS_RADIUS                = 2632.3449707 <KILOMETERS>",
+    "B_AXIS_RADIUS                = 2632.3449707 <KILOMETERS>",
+    "C_AXIS_RADIUS                = 2632.3449707 <KILOMETERS>",
+    "POSITIVE_LONGITUDE_DIRECTION = WEST",
+    "CENTER_LATITUDE              = N/A <DEGREES>",
+    "CENTER_LONGITUDE             = 180.0 <DEGREES>",
+    "MAP_RESOLUTION               = 45.94 <PIXELS/DEGREE>",
+    "MAP_SCALE                    = 1000.067192 <METERS/PIXEL>",
+    "MAXIMUM_LATITUDE             = 90.0 <DEGREES>",
+    "MINIMUM_LATITUDE             = -90.0 <DEGREES>",
+    "EASTERNMOST_LONGITUDE        = 0.0 <DEGREES>",
+    "WESTERNMOST_LONGITUDE        = 360.0 <DEGREES>",
+    "LINE_PROJECTION_OFFSET       = 4134.4999987890815 <PIXELS>",
+    "SAMPLE_PROJECTION_OFFSET     = -8270.499997578163 <PIXELS>",
+    "COORDINATE_SYSTEM_TYPE       = \"BODY-FIXED ROTATING\"",
+    "COORDINATE_SYSTEM_NAME       = PLANETOCENTRIC"
+   ],
+   "source": {
+    "size": [
+     16539,
+     8270
+    ],
+    "bands": [
+     [
+      "Gray",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      -8270555.675,
+      4135277.838
+     ],
+     "lowerLeft": [
+      -8270555.675,
+      -4135277.838
+     ],
+     "lowerRight": [
+      8269555.608,
+      -4135277.838
+     ],
+     "upperRight": [
+      8269555.608,
+      4135277.838
+     ],
+     "center": [
+      -500.034,
+      0.0
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "PROJCRS[\"SimpleCylindrical Ganymede\",\n    BASEGEOGCRS[\"GCS_Ganymede\",\n        DATUM[\"D_Ganymede\",\n            ELLIPSOID[\"Ganymede\",2632344.9707,0,\n                LENGTHUNIT[\"metre\",1,\n                    ID[\"EPSG\",9001]]]],\n        PRIMEM[\"Reference_Meridian\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]],\n    CONVERSION[\"Equidistant Cylindrical\",\n        METHOD[\"Equidistant Cylindrical\",\n            ID[\"EPSG\",1028]],\n        PARAMETER[\"Latitude of 1st standard parallel\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Longitude of natural origin\",180,\n            ANGLEUNIT[\"degree\",0.0174532925",
+    "overviews": [
+     null
+    ]
+   },
+   "lonLayout": "girada media anchura (numpy.roll, 1024 columnas): origen 0 E a la izquierda -> destino -180 E a la izquierda",
+   "output": {
+    "file": "ganymede.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "d8839c448e34307f2f47b935352327a456c70bb1adba50c4c30c4035ec3b4034",
+    "bytes": 396324,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   },
+   "file": "data/textures/ganymede.jpg",
+   "sha256": "d8839c448e34307f2f47b935352327a456c70bb1adba50c4c30c4035ec3b4034",
+   "bytes": 396324,
+   "width": 2048,
+   "height": 1024,
+   "note": "Idem Europa. Monocromo.",
+   "kindOfEvidence": "imagen o mosaico de mision (mapa de la superficie o techo de nubes actual); no es reconstruccion"
+  },
+  {
+   "id": "callisto",
+   "body": "Callisto",
+   "kind": "mosaico de Voyager y Galileo SSI",
+   "sourceUrl": "https://planetarymaps.usgs.gov/mosaic/Callisto_Voyager_GalileoSSI_global_mosaic_1km.tif",
+   "sourcePage": "https://astrogeology.usgs.gov/search/map/callisto_galileo_voyager_global_mosaic_1km",
+   "credit": "NASA/JPL/USGS",
+   "sourceHead": {
+    "Content-Length": "114640717",
+    "Content-Type": "image/tiff",
+    "Last-Modified": "Tue, 08 Nov 2022 18:41:42 GMT",
+    "ETag": "\"3310e80c3b462b2190bc7998d87ba7bc-14\"",
+    "Access-Control-Allow-Origin": null
+   },
+   "label": [
+    "TARGET_NAME                    = CALLISTO",
+    "MAP_PROJECTION_TYPE          = SIMPLE_CYLINDRICAL",
+    "A_AXIS_RADIUS                = 2409.3000488 <KILOMETERS>",
+    "B_AXIS_RADIUS                = 2409.3000488 <KILOMETERS>",
+    "C_AXIS_RADIUS                = 2409.3000488 <KILOMETERS>",
+    "POSITIVE_LONGITUDE_DIRECTION = WEST",
+    "CENTER_LATITUDE              = N/A <DEGREES>",
+    "CENTER_LONGITUDE             = 180.0 <DEGREES>",
+    "MAP_RESOLUTION               = 42.05 <PIXELS/DEGREE>",
+    "MAP_SCALE                    = 1000.0051966711 <METERS/PIXEL>",
+    "MAXIMUM_LATITUDE             = 90.0 <DEGREES>",
+    "MINIMUM_LATITUDE             = -90.0 <DEGREES>",
+    "EASTERNMOST_LONGITUDE        = 0.0 <DEGREES>",
+    "WESTERNMOST_LONGITUDE        = 360.0 <DEGREES>",
+    "LINE_PROJECTION_OFFSET       = 3784.0000000000223 <PIXELS>",
+    "SAMPLE_PROJECTION_OFFSET     = -7569.500000000045 <PIXELS>",
+    "COORDINATE_SYSTEM_TYPE       = \"BODY-FIXED ROTATING\"",
+    "COORDINATE_SYSTEM_NAME       = PLANETOCENTRIC"
+   ],
+   "source": {
+    "size": [
+     15138,
+     7569
+    ],
+    "bands": [
+     [
+      "Gray",
+      "Byte"
+     ]
+    ],
+    "cornerCoordinates": {
+     "upperLeft": [
+      -7569039.334,
+      3784519.667
+     ],
+     "lowerLeft": [
+      -7569039.334,
+      -3784519.667
+     ],
+     "lowerRight": [
+      7569039.334,
+      -3784519.667
+     ],
+     "upperRight": [
+      7569039.334,
+      3784519.667
+     ],
+     "center": [
+      -0.0,
+      0.0
+     ]
+    },
+    "driver": "GTiff",
+    "wkt": "PROJCRS[\"SimpleCylindrical Callisto\",\n    BASEGEOGCRS[\"GCS_Callisto\",\n        DATUM[\"D_Callisto\",\n            ELLIPSOID[\"Callisto\",2409300.0488,0,\n                LENGTHUNIT[\"metre\",1,\n                    ID[\"EPSG\",9001]]]],\n        PRIMEM[\"Reference_Meridian\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]],\n    CONVERSION[\"Equidistant Cylindrical\",\n        METHOD[\"Equidistant Cylindrical\",\n            ID[\"EPSG\",1028]],\n        PARAMETER[\"Latitude of 1st standard parallel\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8823]],\n        PARAMETER[\"Longitude of natural origin\",180,\n            ANGLEUNIT[\"degree\",0.0174532925",
+    "overviews": [
+     null
+    ]
+   },
+   "lonLayout": "girada media anchura (numpy.roll, 1024 columnas): origen 0 E a la izquierda -> destino -180 E a la izquierda",
+   "output": {
+    "file": "callisto.jpg",
+    "width": 2048,
+    "height": 1024,
+    "sha256": "79d96e3584e778b22ab1a52732e94e55555e0c49298fe6913ad46fdd5aac1d1d",
+    "bytes": 418012,
+    "method": "gdal_translate -outsize 2048x1024 -r average (promedio de areas), JPEG calidad 88"
+   },
+   "file": "data/textures/callisto.jpg",
+   "sha256": "79d96e3584e778b22ab1a52732e94e55555e0c49298fe6913ad46fdd5aac1d1d",
+   "bytes": 418012,
+   "width": 2048,
+   "height": 1024,
+   "note": "Idem Europa; comprobada la cuenca Valhalla (8 N, 56 O) tras el giro. Monocromo.",
+   "kindOfEvidence": "imagen o mosaico de mision (mapa de la superficie o techo de nubes actual); no es reconstruccion"
+  }
+ ],
+ "milkyway": {
+  "id": "milkyway",
+  "sourcePage": "https://svs.gsfc.nasa.gov/4851/",
+  "sourceUrl": "https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/milkyway_2020_4k.exr",
+  "sourceSha256": "2eb802d6e68d170b410f766c7fec07f7518619f6b6708fdc81e9302d93e74fdb",
+  "credit": "NASA/Goddard Space Flight Center Scientific Visualization Studio. Gaia DR2: ESA/Gaia/DPAC",
+  "projection": "plate carree, AR/Dec ICRF/J2000 geocentricas; centrado en AR 0 h; la AR crece hacia la izquierda (segun la pagina de origen)",
+  "toneMap": {
+   "blackPoint": "percentil 10 de la luminancia lineal",
+   "black": 0.002700280863791704,
+   "exposureRef": "percentil 99,5 de la luminancia lineal",
+   "ref": 0.24524813890457153,
+   "transfer": "sRGB"
+  },
+  "stats": {
+   "shape": [
+    2048,
+    4096,
+    3
+   ],
+   "min": 0.0,
+   "max": 1.0,
+   "mean": 0.02645707316696644,
+   "p50": 0.013828558847308159,
+   "p99": 0.19725154340267181,
+   "p995": 0.24524813890457153,
+   "p999": 0.40124714374542236
+  },
+  "output": {
+   "file": "milkyway_icrs_4k.jpg",
+   "width": 4096,
+   "height": 2048,
+   "bytes": 3496270,
+   "sha256": "37a6ca56573ce999cefefc3faf30ca69ac885d7fd858a1783cc52ec5a622421e"
+  },
+  "file": "data/textures/milkyway_icrs_4k.jpg",
+  "sha256": "37a6ca56573ce999cefefc3faf30ca69ac885d7fd858a1783cc52ec5a622421e",
+  "bytes": 3496270
+ },
+ "rings": {
+  "file": "data/textures/saturn-rings-tau.json",
+  "sha256": "459311cd28e80c4f2a7e6b9c87517afbc87c19140c93489e512db4b763767989",
+  "bytes": 33277,
+  "note": "Perfil radial de profundidad optica normal (Cassini UVIS); detalle del metodo y de los limites dentro del propio JSON."
+ }
+}
