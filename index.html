@@ -2488,7 +2488,7 @@ function drawSpace() {
         }
         space.stars = { cat, px, py };
         if (cat.constellations.length) {
-            ctx.strokeStyle = 'rgba(150,175,235,0.16)'; ctx.lineWidth = 1; ctx.beginPath();
+            ctx.strokeStyle = 'rgba(160,185,240,0.34)'; ctx.lineWidth = 1; ctx.beginPath();
             cat.constellations.forEach((cn) => cn.lines.forEach(([a, b]) => {
                 if (Number.isNaN(px[a]) || Number.isNaN(px[b])) return;
                 ctx.moveTo(px[a], py[a]); ctx.lineTo(px[b], py[b]);

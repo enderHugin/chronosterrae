@@ -399,7 +399,7 @@
                     px[i] = w / 2 + cam.fpx * (dx * cam.r[0] + dy * cam.r[1] + dz * cam.r[2]) / z; py[i] = h / 2 - cam.fpx * (dx * cam.u[0] + dy * cam.u[1] + dz * cam.u[2]) / z;
                 }
                 if (o.skyOptions().lines && S.cat.constellations && S.cat.constellations.length) {
-                    ctxB.strokeStyle = 'rgba(150,175,235,0.16)'; ctxB.lineWidth = 1; ctxB.beginPath();
+                    ctxB.strokeStyle = 'rgba(160,185,240,0.34)'; ctxB.lineWidth = 1; ctxB.beginPath();
                     S.cat.constellations.forEach((cn) => cn.lines.forEach(([a, b]) => { if (Number.isNaN(px[a]) || Number.isNaN(px[b])) return; ctxB.moveTo(px[a], py[a]); ctxB.lineTo(px[b], py[b]); }));
                     ctxB.stroke();
                 }

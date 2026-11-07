@@ -60,12 +60,29 @@ check('render: la curva gamma oscurece los tonos medios y respeta el negro y el 
     return at(0, { gamma: 2.2 }) === 0 && at(255, { gamma: 2.2 }) === 255 && near(at(128, { gamma: 2.2 }), 255 * Math.pow(128 / 255, 2.2), 1.5) && at(128, {}) === 128 && near(at(255, { gamma: 2.2, gain: 0.5 }), 127.5, 1);
 });
 
+// Simulacion UNICA de Image/canvas para las pruebas de carga: las pruebas asincronas se solapan, y si cada una reasigna los globales rompe a la otra.
+// Cada getImageData apunta { url, w } (la url sale del Image que lo disparo: el onload y el canvas ocurren en el mismo turno).
+const decoded = [];
+global.Image = function () { const self = this; Object.defineProperty(self, 'src', { set(u) { setTimeout(() => { global.__url = u; self.onload && self.onload(); }, 0); } }); };
+global.document = { createElement: () => ({ width: 0, height: 0, getContext: () => ({ drawImage() {}, getImageData: (x, y, w, h) => { decoded.push({ url: global.__url, w }); return { width: w, height: h, data: new Uint8ClampedArray(w * h * 4) }; } }) }) };
+
 check('ensure: avisa una sola vez al quedar lista y no vuelve a llamar al callback despues (si no, "vuelve a dibujar" como callback en cada fotograma seria un bucle infinito)', () => {
-    global.Image = function () { const self = this; Object.defineProperty(self, 'src', { set() { setTimeout(() => self.onload && self.onload(), 0); } }); };
-    global.document = { createElement: () => ({ width: 0, height: 0, getContext: () => ({ drawImage() {}, getImageData: (x, y, w, h) => ({ width: w, height: h, data: new Uint8ClampedArray(w * h * 4) }) }) }) };
     let calls = 0; const cb = () => { calls++; };
     const a = MW.ensure('x.jpg', cb); const b = MW.ensure('x.jpg', cb);            // dos peticiones antes de que termine: una descarga, un callback
     return new Promise((res) => setTimeout(() => { const c = MW.ensure('x.jpg', cb); const d = MW.ensure('x.jpg', cb); res(a === 'loading' && b === 'loading' && c === 'ready' && d === 'ready' && calls === 1); }, 30));
+});
+
+check('fondo oscuro: con el aspecto por defecto un gris de textura de 100/255 sale <= 16/255 (antes 26) y la banda (200) sigue >= 4 veces mas brillante que el cielo (100): oscuro SIN aplastar el contraste', () => {
+    const tex = (v) => ({ w: 4, h: 2, data: new Uint8ClampedArray(4 * 2 * 4).fill(v) });
+    const out = (v) => MW.render({ width: 4, height: 4, step: 4, tex: tex(v), direction: (x, y, d) => { d[0] = 1; d[1] = 0; d[2] = 0; return true; }, gain: MW.LOOK.gain, gamma: MW.LOOK.gamma }).data[0];
+    const sky = out(100); const band = out(200);
+    return sky > 0 && sky <= 16 && band / sky >= 4 && MW.LOOK.gain < 0.8;     // la rama "antes": gain 0,8 / gamma 2,2 daba 26
+});
+check('la textura se carga por defecto a 1024 de ancho (promedia 4x4 del original: ~3 veces menos grano) y un ancho explicito se respeta', () => {
+    return Promise.all([MW.load('def.jpg'), MW.load('exp.jpg', 512)]).then(() => {
+        const w = (u) => (decoded.find((d) => d.url === u) || {}).w;
+        return w('def.jpg') === 1024 && w('exp.jpg') === 512;
+    });
 });
 
 // --- globo: inversa de la proyeccion ---

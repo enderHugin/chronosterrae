@@ -21,9 +21,9 @@ El fondo de la Vía Láctea es plate carrée en AR/Dec ICRF/J2000, centrado en 0
 ## Cómo se usa la Vía Láctea en pantalla
 
 `sky/milkyway.js` (módulo puro, con pruebas en `scripts/check-milkyway.js`) calcula, para cada celda de 4 px de la pantalla, la dirección J2000 que ve
-esa celda y muestrea la textura (bilineal, reducida a 2048 × 1024 al cargar: 10,5′ por píxel, 8 MB en memoria). Se suma luz (`lighter`) bajo las estrellas
-del catálogo. La textura se hizo para verse (mediana 59/255); en pantalla se aplica gamma 2,2 y ganancia 0,8 (mediana ~8) para un cielo oscuro que conserve el
-contraste de la banda. Las inversas de cámara son `makeProjector().unproject`, `j2000FromModel` y `j2000FromModelCio` (`sky/space.js`) y `camera.ray` /
+esa celda y muestrea la textura (bilineal, reducida a 1024 × 512 al cargar: 21′ por píxel, 2 MB en memoria; promediar 4 × 4 baja el grano de alta frecuencia ~3 veces). Se suma luz (`lighter`) bajo las estrellas
+del catálogo. La textura se hizo para verse (mediana 59/255); en pantalla se aplica gamma 2,3 y ganancia 0,45 (brillo medio ~55 % del de antes) para un cielo oscuro en el que se lean las estrellas y las constelaciones, sin
+aplastar el contraste de la banda. Las inversas de cámara son `makeProjector().unproject`, `j2000FromModel` y `j2000FromModelCio` (`sky/space.js`) y `camera.ray` /
 `eqFromEcl` (`sky/solar.js`).
 
 **Verificación del marco con los datos reales** (`scripts/check-milkyway-data.py`, medido el 2026-11-07, en CI): el centroide de la LMC cae a 0,57° y el de la SMC

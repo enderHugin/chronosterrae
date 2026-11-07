@@ -70,9 +70,10 @@
         return { w, h, data };
     }
 
-    /** Solo navegador: descarga la imagen y la deja en una textura de ancho targetW (por defecto 2048: 10,5' por pixel y 8 MB; la de 4096 ocuparia 33 MB). */
+    /** Solo navegador: descarga la imagen y la deja en una textura de ancho targetW (por defecto 1024: 21' por pixel y 2 MB). Reducir la de 4096 a 1024 promedia 4x4 pixeles y
+     *  baja el grano de alta frecuencia ~3 veces (medido: 5,3 -> 1,8 niveles de diferencia entre pixeles contiguos a igual brillo relativo) sin perder la banda ni sus nubes oscuras. */
     function load(url, targetW) {
-        const tw = targetW || 2048;
+        const tw = targetW || 1024;
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => {
@@ -89,8 +90,9 @@
     }
 
     /* ---- Solo navegador: una unica textura compartida por la vista solar y el cielo tras el globo, y el dibujo sobre un lienzo ---- */
-    /** Apariencia por defecto del fondo: la textura se hizo para verse, aqui se lleva a un cielo oscuro (mediana ~10/255) sin perder el contraste de la banda. */
-    const LOOK = { gain: 0.8, gamma: 2.2 };
+    /** Apariencia por defecto del fondo: la textura se hizo para verse, aqui se lleva a un cielo OSCURO para que las estrellas y las lineas de las constelaciones se lean
+     *  (el brillo medio de la banda baja a ~55 % del anterior: gain 0,8 -> 0,45; gamma 2,2 -> 2,3 mantiene el contraste de la banda). */
+    const LOOK = { gain: 0.45, gamma: 2.3 };
     const shared = { state: 'idle', tex: null, waiting: [], cache: { key: null, cv: null, w: 0, h: 0 } };
     /**
      * Pide la textura (una sola descarga). cb se llama UNA vez, al pasar a 'ready' (nunca si ya lo estaba: asi se puede llamar en cada fotograma

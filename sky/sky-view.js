@@ -176,7 +176,7 @@
     }
 
     /** Tamano y opacidad con que se dibuja una estrella de esa magnitud (los comparten el cielo detras del globo y el sistema solar). */
-    function starStyle(mag) { return { r: Math.max(0.5, Math.min(2.7, 2.5 - 0.36 * mag)), alpha: Math.max(0.4, Math.min(1, 1.15 - 0.13 * mag)) }; }
+    function starStyle(mag) { return { r: Math.max(0.7, Math.min(2.7, 2.5 - 0.36 * mag)), alpha: Math.max(0.6, Math.min(1, 1.15 - 0.13 * mag)) }; }
 
     root.ChronosSkyView = { draw, drawMoon, starColor, starStyle, LIMIT_MAG, PLANET_COLOR };
 })(typeof self !== 'undefined' ? self : this);
