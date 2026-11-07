@@ -99,19 +99,26 @@
             for (let i = 0; i < S; i++) {
                 const X = (i + 0.5 - half) / o.pr;
                 const Ox = X * ex[0] + Y * ex[1]; const Oy = X * ey[0] + Y * ey[1]; const Oz = X * ez[0] + Y * ez[1];
-                const tp = hitEllipsoid(Ox, Oy, Oz, Dp[0], Dp[1], Dp[2], f);
-                let pr_ = 0; let pg = 0; let pb = 0; let planet = false;
-                if (tp !== null) {
-                    planet = true;
-                    const px = Ox + tp * Dp[0]; const py = Oy + tp * Dp[1]; const pz = Oz + tp * Dp[2];
-                    let nx = px; let ny = py; let nz = pz / (f * f); const nl = Math.hypot(nx, ny, nz); nx /= nl; ny /= nl; nz /= nl;
+                // Rayo contra el elipsoide en coordenadas escaladas (z/f): esfera unidad. dperp = distancia del rayo al centro (1 = silueta).
+                const oz2 = Oz / f; const dz2 = Dp[2] / f;
+                const A = Dp[0] * Dp[0] + Dp[1] * Dp[1] + dz2 * dz2; const B = Ox * Dp[0] + Oy * Dp[1] + oz2 * dz2; const C = Ox * Ox + Oy * Oy + oz2 * oz2 - 1;
+                const disc = B * B - A * C; const dperp = Math.sqrt(Math.max(0, C + 1 - B * B / A));
+                const hit = disc >= 0; const near = !hit && dperp <= 1 + 1.5 / o.pr;       // la franja de 1,5 px fuera de la silueta recibe cobertura parcial (antialias)
+                let pr_ = 0; let pg = 0; let pb = 0; let aP = 0; let tp = null;
+                if (hit || near) {
+                    tp = hit ? (-B - Math.sqrt(disc)) / A : -B / A;
+                    let sx = Ox + tp * Dp[0]; let sy = Oy + tp * Dp[1]; let sz = (Oz + tp * Dp[2]) / f;
+                    if (!hit) { sx /= dperp; sy /= dperp; sz /= dperp; }                // sobre la silueta: se toma el punto del limbo mas cercano
+                    aP = clamp01(0.5 + (1 - dperp) * o.pr);
+                    const px = sx; const py = sy; const pz = sz * f;
+                    let nx = sx; let ny = sy; let nz = sz / f; const nl = Math.hypot(nx, ny, nz); nx /= nl; ny /= nl; nz /= nl;
                     const ncx = nx * ex[0] + ny * ey[0] + nz * ez[0]; const ncy = nx * ex[1] + ny * ey[1] + nz * ez[1]; const ncz = nx * ex[2] + ny * ey[2] + nz * ez[2];
                     const mu0 = ncx * L[0] + ncy * L[1] + ncz * L[2]; const mu = Math.max(ncz, 1e-4);
                     let lit = 0;
                     if (mu0 > 0) lit = lommel ? 2 * mu0 / (mu0 + mu) : mu0;
                     if (lit > 0 && ring && Math.abs(Lb[2]) > 1e-9) {                    // sombra del anillo sobre el planeta
-                        const s = -pz / Lb[2];
-                        if (s > 0) { const rr = Math.hypot(px + s * Lb[0], py + s * Lb[1]) * ring.aKm; if (rr >= ring.inKm && rr <= ring.outKm) lit *= Math.exp(-ringTau(ring, rr) / Math.abs(Lb[2])); }
+                        const s2 = -pz / Lb[2];
+                        if (s2 > 0) { const rr = Math.hypot(px + s2 * Lb[0], py + s2 * Lb[1]) * ring.aKm; if (rr >= ring.inKm && rr <= ring.outKm) lit *= Math.exp(-ringTau(ring, rr) / Math.abs(Lb[2])); }
                     }
                     if (level) {
                         const lon = Math.atan2(py, px); const lat = Math.atan2(pz, Math.hypot(px, py));
@@ -120,15 +127,22 @@
                     const k = night + (1 - night) * lit;
                     pr_ = rgb[0] * k; pg = rgb[1] * k; pb = rgb[2] * k;
                 }
-                let ar = 0; let ag = 0; let ab = 0; let alpha = planet ? 1 : 0;
+                // composicion (colores premultiplicados): sin anillo, planeta solo; con anillo delante, anillo sobre planeta; detras, planeta sobre anillo
+                let premR = pr_ * aP; let premG = pg * aP; let premB = pb * aP; let alpha = aP;
                 if (ring && Math.abs(Dp[2]) > 1e-6) {
                     const tr = -Oz / Dp[2];
                     const qx = Ox + tr * Dp[0]; const qy = Oy + tr * Dp[1];
                     const rr = Math.hypot(qx, qy) * ring.aKm;
-                    if (rr >= ring.inKm && rr <= ring.outKm && (tp === null || tr < tp)) {
-                        const tau = ringTau(ring, rr);
+                    // Anchura de un pixel de pantalla medida en el plano del anillo, en km radiales (gradiente real de rr, con escorzo): da el antialias de los bordes
+                    const qn = Math.max(Math.hypot(qx, qy), 1e-9); const iz = 1 / Dp[2];
+                    const gX = (qx * (ex[0] - ez[0] * Dp[0] * iz) + qy * (ey[0] - ez[0] * Dp[1] * iz)) / (qn * o.pr);
+                    const gY = (qx * (ex[1] - ez[1] * Dp[0] * iz) + qy * (ey[1] - ez[1] * Dp[1] * iz)) / (qn * o.pr);
+                    const pxKm = Math.max(Math.hypot(gX, gY) * ring.aKm, 1e-3);
+                    if (rr >= ring.inKm - pxKm && rr <= ring.outKm + pxKm) {
+                        const cov = clamp01(0.5 + Math.min(rr - ring.inKm, ring.outKm - rr) / pxKm);          // cobertura parcial del pixel en el borde del intervalo con datos
+                        const tau = ringTau(ring, Math.min(ring.outKm, Math.max(ring.inKm, rr)));
                         const mu = Math.abs(Dp[2]); const mu0 = Math.max(Math.abs(Lb[2]), 1e-6);
-                        const T = Math.exp(-tau / mu);
+                        const T = 1 - cov * (1 - Math.exp(-tau / mu));
                         const ts = hitEllipsoid(qx, qy, 0, Lb[0], Lb[1], Lb[2], f);          // el punto del anillo esta fuera del planeta: corta hacia el Sol si la raiz menor es positiva
                         const shadow = ts !== null && ts > 0;
                         let I = 0;
@@ -138,13 +152,16 @@
                             else I = 0.5 * (mu0 / (mu0 - mu)) * (Math.exp(-tau / mu0) - Math.exp(-tau / mu));
                             I *= ring.albedo === undefined ? 1 : ring.albedo;
                         }
-                        const c = ring.color; const lightK = night * 0.5 + (1 - night * 0.5) * 1;
-                        ar = c[0] * I * lightK; ag = c[1] * I * lightK; ab = c[2] * I * lightK;
-                        const a = planet ? 1 : 1 - T;
-                        if (planet) { pr_ = ar + T * pr_; pg = ag + T * pg; pb = ab + T * pb; alpha = 1; }
-                        else { alpha = a; if (a > 1e-4) { pr_ = ar / a; pg = ag / a; pb = ab / a; } }
+                        const c = ring.color; const lightK = night * 0.5 + (1 - night * 0.5);
+                        const ck = lightK * cov;
+                        const ar = c[0] * I * ck; const ag = c[1] * I * ck; const ab = c[2] * I * ck;
+                        if (aP === 0) { premR = ar; premG = ag; premB = ab; alpha = 1 - T; }
+                        else if (tp === null || tr < tp) { premR = ar + T * premR; premG = ag + T * premG; premB = ab + T * premB; alpha = (1 - T) + T * aP; }
+                        else { premR += (1 - aP) * ar; premG += (1 - aP) * ag; premB += (1 - aP) * ab; alpha = aP + (1 - aP) * (1 - T); }
                     }
                 }
+                if (alpha > 1e-4) { premR /= alpha; premG /= alpha; premB /= alpha; }
+                pr_ = premR; pg = premG; pb = premB;
                 const o4 = (j * S + i) * 4;
                 out[o4] = pr_; out[o4 + 1] = pg; out[o4 + 2] = pb; out[o4 + 3] = clamp01(alpha) * 255;
             }

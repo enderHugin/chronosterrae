@@ -58,10 +58,12 @@
     const mod360 = (x) => ((x % 360) + 360) % 360;
 
     function check(id) { if (!SHAPE[id]) throw fail('BAD_BODY', 'sin orientacion para ' + id); }
+    // La Luna tiene ejes IAU en el motor pero no esta en SHAPE (SHAPE es lo que se valida contra Horizons y lo que recorren las pruebas): solo se admite en frame().
+    function checkFrame(id) { if (id !== 'Moon') check(id); }
 
     /** Ejes del planeta en el sistema ecuatorial J2000 (EQJ): z = polo norte, x = meridiano origen (en el ecuador), y = z x x. */
     function frame(id, time) {
-        check(id);
+        checkFrame(id);
         const ax = Astronomy.RotationAxis(Astronomy.Body[id], time);
         const a = ax.ra * 15 * DEG; const d = ax.dec * DEG; const W = ax.spin * DEG;
         const z = [Math.cos(d) * Math.cos(a), Math.cos(d) * Math.sin(a), Math.sin(d)];

@@ -4,9 +4,11 @@
  * (la del zoom 0 del globo) lo que se ve ES el mapa. Solo dibuja; el calculo esta en sky/solar.js (que se prueba en Node) y el reloj es el de la web.
  *
  * Lo que se ve es un CALCULO (efemerides), no una observacion: posiciones y fases reales para la fecha del reloj, discos a su tamano
- * real, trayectorias reales de una revolucion. Los colores de los demas cuerpos son ilustrativos (sin texturas) y la pantalla lo dice.
+ * real, trayectorias reales de una revolucion. Orientacion (ejes de rotacion IAU) y achatamiento reales; las TEXTURAS son imagenes de misiones
+ * (data/textures, con su manifiesto de procedencia): muestran la superficie o las nubes tal como las vieron las sondas, no como eran en la fecha
+ * elegida. Los cuerpos sin textura verificada (Venus, Saturno, Urano, Neptuno) van en color ilustrativo y la pantalla lo dice.
  */
-(function (root, factory) { root.ChronosSolarView = factory(root.ChronosSolar); })(typeof self !== 'undefined' ? self : this, function (Solar) {
+(function (root, factory) { root.ChronosSolarView = factory(root.ChronosSolar, root.ChronosPlanets, root.ChronosSphereRender); })(typeof self !== 'undefined' ? self : this, function (Solar, Planets, SphereRender) {
     'use strict';
 
     const AU = Solar.AU_KM;
@@ -17,9 +19,18 @@
     const DEFAULT_FACTOR = 6;                     // al ir a un cuerpo: 6 radios (el disco ocupa ~ 1/6 de la altura)
     const MAP_MIN_SCALE = 0.02;                   // por debajo (contorno de la Tierra de unos 2-4 px) el mapa ya no aporta: queda el punto
     const DRAG_RAD_PER_PX = 0.006;
+    // Ley de iluminacion por cuerpo (modelo): Lommel-Seeliger para superficies sin atmosfera, Lambert para atmosferas y nubes.
+    const LAW = { Mercury: 'lommel', Moon: 'lommel', Io: 'lommel', Europa: 'lommel', Ganymede: 'lommel', Callisto: 'lommel' };
+    const TEX_IDS = ['Mercury', 'Moon', 'Mars', 'Jupiter', 'Io', 'Europa', 'Ganymede', 'Callisto'];
+    const TEX_FILE = { Mercury: 'mercury', Moon: 'moon', Mars: 'mars', Jupiter: 'jupiter', Io: 'io', Europa: 'europa', Ganymede: 'ganymede', Callisto: 'callisto' };
+    const JOVIAN = ['Io', 'Europa', 'Ganymede', 'Callisto'];
+    const RING_COLOR = [222, 205, 175];                // ILUSTRATIVO: la opacidad es medida, el color no
+    const TEX_MIN_PX = 6;                              // por debajo de este radio el cuerpo es un disco plano
+    const RENDER_CAP = 140; const RENDER_CAP_RING = 105;   // radio maximo (px) al que se calcula la esfera en movimiento; mas grande se estira (el calculo es por pixel)
+    const RENDER_CAP_HI = 300; const RENDER_CAP_RING_HI = 220;   // idem con la vista quieta (refinado)
     const NAMES = {
-        es: { Sun: 'Sol', Mercury: 'Mercurio', Venus: 'Venus', Earth: 'Tierra', Moon: 'Luna', Mars: 'Marte', Jupiter: 'Júpiter', Saturn: 'Saturno', Uranus: 'Urano', Neptune: 'Neptuno' },
-        en: { Sun: 'Sun', Mercury: 'Mercury', Venus: 'Venus', Earth: 'Earth', Moon: 'Moon', Mars: 'Mars', Jupiter: 'Jupiter', Saturn: 'Saturn', Uranus: 'Uranus', Neptune: 'Neptune' }
+        es: { Sun: 'Sol', Mercury: 'Mercurio', Venus: 'Venus', Earth: 'Tierra', Moon: 'Luna', Mars: 'Marte', Jupiter: 'Júpiter', Saturn: 'Saturno', Uranus: 'Urano', Neptune: 'Neptuno', Io: 'Ío', Europa: 'Europa', Ganymede: 'Ganímedes', Callisto: 'Calisto' },
+        en: { Sun: 'Sun', Mercury: 'Mercury', Venus: 'Venus', Earth: 'Earth', Moon: 'Moon', Mars: 'Mars', Jupiter: 'Jupiter', Saturn: 'Saturn', Uranus: 'Uranus', Neptune: 'Neptune', Io: 'Io', Europa: 'Europa', Ganymede: 'Ganymede', Callisto: 'Callisto' }
     };
 
     const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -59,7 +70,8 @@
         const st = {
             open: false, focus: 'Earth', mode: 'earth',                       // mode 'earth': la camara es la del mapa (lng, lat, bearing); 'free': yaw/pitch en la ecliptica
             eo: { lng: 0, lat: 0, bearing: 0 }, yaw: 0.6, pitch: 0.5, logD: Math.log10(R_EARTH * DEFAULT_FACTOR),
-            flight: null, raf: 0, dirty: true, report: undefined, trails: {}, stars: null, starsJD: NaN, shapes: [], drag: null, pointers: new Map(), mapOn: false
+            flight: null, raf: 0, dirty: true, report: undefined, trails: {}, stars: null, starsJD: NaN, shapes: [], drag: null, pointers: new Map(), mapOn: false,
+            tex: {}, texState: {}, texCache: {}, rings: null, ringsState: 'idle', texManifest: null
         };
         const root = o.root;
         root.innerHTML = '';
@@ -200,6 +212,90 @@
             return st.trails[id];
         }
 
+        /* ---------------- texturas (data/textures, con manifiesto de procedencia) ---------------- */
+        const TEX_BASE = './data/textures/';
+        function texLoad(id) {
+            if (!SphereRender || !TEX_FILE[id] || st.texState[id]) return;
+            st.texState[id] = 'loading';
+            const img = new Image();
+            img.onload = () => {
+                try {
+                    const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+                    const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(img, 0, 0);
+                    const d = x.getImageData(0, 0, c.width, c.height);
+                    st.tex[id] = SphereRender.makeMips({ w: c.width, h: c.height, data: d.data }); st.texState[id] = 'ready';
+                } catch (e) { st.texState[id] = 'failed'; }
+                invalidate();
+            };
+            img.onerror = () => { st.texState[id] = 'failed'; invalidate(); };
+            img.src = TEX_BASE + TEX_FILE[id] + '.jpg';
+        }
+        function ringsLoad() {
+            if (st.ringsState !== 'idle') return;
+            st.ringsState = 'loading';
+            fetch(TEX_BASE + 'saturn-rings-tau.json').then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status))))).then((j) => {
+                const first = j.tau.findIndex((v) => v !== null); let last = -1; for (let i = j.tau.length - 1; i >= 0; i--) if (j.tau[i] !== null) { last = i; break; }
+                if (first < 0) throw new Error('perfil vacio');
+                st.rings = { inKm: j.r0Km + first * j.stepKm, outKm: j.r0Km + (last + 1) * j.stepKm, aKm: Solar.byId.Saturn.radiusKm, profile: { r0Km: j.r0Km, stepKm: j.stepKm, n: j.n, tau: j.tau }, color: RING_COLOR, albedo: 1 };
+                st.ringsState = 'ready'; invalidate();
+            }).catch(() => { st.ringsState = 'failed'; invalidate(); });
+        }
+        function manifestLoad() {
+            if (st.texManifest !== null) return;
+            st.texManifest = false;
+            fetch(TEX_BASE + 'manifest.json').then((r) => (r.ok ? r.json() : null)).then((m) => { st.texManifest = m || false; invalidate(); }).catch(() => { st.texManifest = false; });
+        }
+
+        /** Ejes del cuerpo (x = meridiano origen, y = este, z = polo norte) en la base de la camara; null si no se conocen. */
+        function axesInCam(id, jd, P, cam) {
+            let x; let y; let z;
+            if (JOVIAN.includes(id)) {            // rotacion sincrona: el polo es el de Jupiter y el meridiano 0 mira a Jupiter (sin libraciones)
+                const f = Planets.frame('Jupiter', Planets.engineTime(jd)); z = Solar.eqjToEcl(f.z);
+                let t = [P.Jupiter[0] - P[id][0], P.Jupiter[1] - P[id][1], P.Jupiter[2] - P[id][2]];
+                const k = dot3(t, z); t = norm3([t[0] - k * z[0], t[1] - k * z[1], t[2] - k * z[2]]);
+                x = t; y = cross3(z, x);
+            } else {
+                const f = Planets.frame(id, Planets.engineTime(jd));
+                x = Solar.eqjToEcl(f.x); y = Solar.eqjToEcl(f.y); z = Solar.eqjToEcl(f.z);
+            }
+            return { x: cam.basis(x), y: cam.basis(y), z: cam.basis(z) };
+        }
+
+        /** Cuerpo con orientacion, achatamiento, textura (si hay) y luz; devuelve false si no se pudo (queda el disco plano). */
+        function scheduleRefine() { clearTimeout(st.refineT); st.refineT = setTimeout(() => { st.refineNow = true; invalidate(); }, 250); }
+        function texturedSphere(ctx, x, y, r, b, P, cam, jd) {
+            if (!SphereRender || !Planets) return false;
+            const id = b.id; let axes;
+            try { axes = axesInCam(id, jd, P, cam); } catch (e) { return false; }
+            const sun = norm3([-P[id][0], -P[id][1], -P[id][2]]); const light = cam.basis(sun);
+            const shape = Planets.SHAPE[id]; const flat = shape ? shape.c / shape.a : 1;
+            const wantTex = TEX_IDS.includes(id);
+            if (wantTex) texLoad(id);
+            const ring = id === 'Saturn' ? (ringsLoad(), st.rings) : null;
+            const tex = wantTex && st.texState[id] === 'ready' ? st.tex[id] : null;
+            // Refinado progresivo: mientras la vista cambia se calcula con un tope bajo (fluido); al quedarse quieta ~0,25 s se recalcula a resolucion casi completa (sin escalones al ampliar).
+            const lowCap = ring ? RENDER_CAP_RING : RENDER_CAP; const hiCap = ring ? RENDER_CAP_RING_HI : RENDER_CAP_HI;
+            const prLow = Math.min(r, lowCap); const prFull = Math.min(r, hiCap);
+            const mk = (p) => [id, Math.round(p), !!tex, !!ring, ...[axes.x, axes.y, axes.z, light].flatMap((v) => v.map((q) => Math.round(q * 2000)))].join(',');
+            const kFull = mk(prFull); const kLow = mk(prLow);
+            let c = st.texCache[id]; let pr = prLow; let key = kLow;
+            if (c && c.key === kFull) { pr = prFull; key = kFull; }
+            else if (prFull === prLow) { pr = prFull; key = kFull; }
+            else if (c && c.key === kLow && !st.refineNow) { /* el calculo bajo ya esta en cache */ }
+            else if (st.refineNow) { pr = prFull; key = kFull; }
+            else scheduleRefine();
+            if (!c || c.key !== key) {
+                const img = SphereRender.render({ pr, axes, light, flat, tex, color: hexRgb(b.color), law: LAW[id] || 'lambert', night: 0.035, ring });
+                const cvs = c ? c.cv : document.createElement('canvas'); cvs.width = img.size; cvs.height = img.size;
+                cvs.getContext('2d').putImageData(new ImageData(img.data, img.size, img.size), 0, 0);
+                c = st.texCache[id] = { key, cv: cvs, half: img.half, pr };
+            }
+            pr = c.pr; const k = r / pr; const sz = c.cv.width * k;
+            ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(c.cv, x - c.half * k, y - c.half * k, sz, sz);
+            return true;
+        }
+
         /* ---------------- dibujo ---------------- */
         function sphere(ctx, x, y, r, body, lit) {
             const c = hexRgb(body.color);
@@ -336,13 +432,15 @@
             // cuerpos: de lejos a cerca. Con el mapa puesto, la Tierra es el mapa y lo que esta mas cerca de la camara que ella se dibuja delante.
             const items = Solar.BODIES.map((b) => ({ b, q: cam.project(P[b.id]) })).filter((it) => it.q).sort((a, c) => c.q[2] - a.q[2]);
             const labels = [];
+            const jq = (items.find((it) => it.b.id === 'Jupiter') || {}).q;
             for (const { b, q } of items) {
+                if (JOVIAN.includes(b.id) && st.focus !== 'Jupiter' && !JOVIAN.includes(st.focus) && (!jq || Math.hypot(q[0] - jq[0], q[1] - jq[1]) < 70)) continue;
                 const r = cam.discPx(P[b.id], b.radiusKm); if (!Number.isFinite(r)) continue;
                 const px = Math.max(r, 2.2); const scaled = r >= 2.2;
                 if (q[0] < -r - 50 || q[1] < -r - 50 || q[0] > w + r + 50 || q[1] > h + r + 50) continue;
                 if (!(mapOn && b.id === 'Earth')) {
                     const ctx = mapOn && q[2] < earthZ ? ctxF : ctxB;
-                    sphere(ctx, q[0], q[1], px, b, Solar.lighting(cam, P[b.id], [0, 0, 0]));   // el Sol es el origen del marco
+                    if (!(scaled && r >= TEX_MIN_PX && !b.emissive && b.id !== 'Earth' && texturedSphere(ctx, q[0], q[1], r, b, P, cam, jd))) sphere(ctx, q[0], q[1], px, b, Solar.lighting(cam, P[b.id], [0, 0, 0]));   // el Sol es el origen del marco
                     if (!scaled && !b.emissive) { ctx.strokeStyle = rgba(hexRgb(b.color), 0.55); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(q[0], q[1], px + 4, 0, 2 * Math.PI); ctx.stroke(); }
                 }
                 st.shapes.push({ id: b.id, x: q[0], y: q[1], r: px });
@@ -366,6 +464,13 @@
             ctxF.fillStyle = 'rgba(214,224,248,0.9)'; ctxF.font = '12px system-ui, sans-serif'; ctxF.textAlign = 'right'; ctxF.fillText(fmtDist(bar), w - 16, 98); ctxF.textAlign = 'start';
             if (st.focus !== 'Sun') { const dsun = Math.hypot(...P[st.focus]); out.push(o.fmt('solar.sunDist', { au: nf.format(Math.round(dsun / AU * 1000) / 1000), light: fmtMinutes(Solar.lightMinutes(dsun)) })); }
             out.push(o.fmt('solar.radius', { r: nf.format(fb.radiusKm), src: fb.source }));
+            if (st.focus !== 'Sun' && st.focus !== 'Earth') {
+                manifestLoad();
+                if (TEX_IDS.includes(st.focus)) out.push(o.t(st.texState[st.focus] === 'failed' ? 'solar.texFail' : 'solar.tex.' + st.focus));
+                else out.push(o.t(st.focus === 'Venus' ? 'solar.tex.Venus' : 'solar.tex.none'));
+                if (st.focus === 'Saturn') out.push(o.t(st.ringsState === 'failed' ? 'solar.ringsFail' : 'solar.rings'));
+                if (JOVIAN.includes(st.focus)) out.push(o.t('solar.axesSync'));
+            }
             if (mapOn) out.push(o.t('solar.earthIsMap'));
             const unscaled = labels.filter((l) => !l.scaled).length;
             if (unscaled) out.push(o.t('solar.dots'));
@@ -378,7 +483,7 @@
             lines.innerHTML = ''; out.forEach((t) => { const d = document.createElement('div'); d.textContent = t; lines.appendChild(d); });
             const v = logToSlider(st.logD); if (document.activeElement !== slider && String(v) !== slider.value) slider.value = String(v);
             chipsMark();
-            st.dirty = false;
+            st.dirty = false; st.refineNow = false;
             if (st.flight) st.raf = requestAnimationFrame(frame);
         }
         // año astronomico aproximado del instante (solo para elegir la franja de exactitud medida)

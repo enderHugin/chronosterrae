@@ -265,6 +265,8 @@
 <script src="./map/sphere.js"></script>
 <script src="./sky/timestep.js"></script>
 <script src="./sky/solar.js"></script>
+<script src="./sky/planets.js"></script>
+<script src="./solar/sphere-render.js"></script>
 <script src="./solar/solar-view.js"></script>
 <script>
 'use strict';
@@ -447,7 +449,23 @@ const i18n = {
             acc: 'Error medido de la posición de su centro (JPL Horizons/DE441) en esta época ({band}): hasta {km} km.',
             accBary: 'Horizons da el baricentro de su sistema; el error incluye esa diferencia.',
             accSun: 'El Sol es el origen de este marco: no tiene error de posición propio.', accNone: 'Sin error medido para esta época.', accFail: 'No se pudo cargar el error medido de las posiciones.',
-            note: 'Cálculo (efemérides), no observación: posiciones y fases reales para la fecha del reloj; trayectorias reales de una revolución. Colores ilustrativos de los demás cuerpos: sin texturas, ejes de rotación, anillos ni lunas de otros planetas.'
+            tex: {
+                Mercury: 'Textura: mosaico monocromo (luz visible) de MESSENGER/MDIS. NASA/JPL/JHUAPL/CIW · USGS.',
+                Moon: 'Textura: mosaico en color de LROC WAC (NASA/GSFC/ASU); los polos se rellenan con albedo de LOLA. NASA SVS.',
+                Mars: 'Textura: mosaico en color de Viking (MDIM 2.1; color sintetizado, no una foto). NASA/JPL · USGS.',
+                Jupiter: 'Textura: techo de nubes visto por Cassini en diciembre de 2000 (NASA/JPL/SSI). Las bandas son estables; las manchas cambian y no indican cómo se ve hoy.',
+                Io: 'Textura: mosaico en color de Galileo y Voyager. NASA/JPL/Univ. de Arizona · USGS.',
+                Europa: 'Textura: mosaico monocromo de Voyager y Galileo. NASA/JPL/DLR · USGS.',
+                Ganymede: 'Textura: mosaico monocromo de Voyager y Galileo. NASA/JPL · USGS.',
+                Callisto: 'Textura: mosaico monocromo de Voyager y Galileo. NASA/JPL · USGS.',
+                Venus: 'Sin textura: la única fuente verificada es radar (Magellan), no luz visible; Venus se ve cubierta de nubes. Color ilustrativo.',
+                none: 'Sin textura: no hay un mapa global verificado. Color medio ilustrativo.'
+            },
+            texFail: 'No se pudo cargar la textura de este cuerpo: se muestra en color ilustrativo.',
+            rings: 'Anillos: opacidad medida por Cassini UVIS (mediana de 41 ocultaciones; Becker y Jarmak 2023). Color y brillo ilustrativos.',
+            ringsFail: 'No se pudo cargar el perfil de los anillos: se muestra sin ellos.',
+            axesSync: 'Orientación aproximada: rotación síncrona (el meridiano 0 mira a Júpiter; el polo es el de Júpiter). Libraciones y desviación del polo no modeladas.',
+            note: 'Cálculo (efemérides), no observación: posiciones y fases reales para la fecha del reloj; trayectorias reales de una revolución. Orientación y achatamiento reales; texturas de misiones espaciales (no de la fecha elegida) y color ilustrativo donde no hay mapa verificado.'
         },
         nav: { zoomIn: 'Acercar', zoomOut: 'Alejar (más allá de la Tierra: el sistema solar)' },
         borders: {
@@ -581,7 +599,23 @@ const i18n = {
             acc: 'Measured error of the position of its centre (JPL Horizons/DE441) in this era ({band}): up to {km} km.',
             accBary: 'Horizons gives the barycentre of its system; the error includes that difference.',
             accSun: 'The Sun is the origin of this frame: it has no position error of its own.', accNone: 'No measured error for this era.', accFail: 'Could not load the measured position error.',
-            note: 'A calculation (ephemerides), not an observation: real positions and phases for the clock date; real trajectories of one revolution. Illustrative colours for the other bodies: no textures, rotation axes, rings or other planets\' moons.'
+            tex: {
+                Mercury: 'Texture: monochrome mosaic (visible light) from MESSENGER/MDIS. NASA/JPL/JHUAPL/CIW · USGS.',
+                Moon: 'Texture: LROC WAC colour mosaic (NASA/GSFC/ASU); the poles are filled with LOLA albedo. NASA SVS.',
+                Mars: 'Texture: Viking colour mosaic (MDIM 2.1; synthesised colour, not a photograph). NASA/JPL · USGS.',
+                Jupiter: 'Texture: cloud tops as seen by Cassini in December 2000 (NASA/JPL/SSI). The bands are stable; the spots change and do not show how it looks today.',
+                Io: 'Texture: Galileo and Voyager colour mosaic. NASA/JPL/University of Arizona · USGS.',
+                Europa: 'Texture: Voyager and Galileo monochrome mosaic. NASA/JPL/DLR · USGS.',
+                Ganymede: 'Texture: Voyager and Galileo monochrome mosaic. NASA/JPL · USGS.',
+                Callisto: 'Texture: Voyager and Galileo monochrome mosaic. NASA/JPL · USGS.',
+                Venus: 'No texture: the only verified source is radar (Magellan), not visible light; Venus looks cloud-covered. Illustrative colour.',
+                none: 'No texture: there is no verified global map. Illustrative mean colour.'
+            },
+            texFail: 'Could not load this body\'s texture: shown in an illustrative colour.',
+            rings: 'Rings: opacity measured by Cassini UVIS (median of 41 occultations; Becker and Jarmak 2023). Colour and brightness illustrative.',
+            ringsFail: 'Could not load the ring profile: shown without rings.',
+            axesSync: 'Approximate orientation: synchronous rotation (the 0° meridian faces Jupiter; the pole is Jupiter\'s). Librations and pole offset are not modelled.',
+            note: 'A calculation (ephemerides), not an observation: real positions and phases for the clock date; real trajectories of one revolution. True orientation and flattening; textures from space missions (not of the chosen date) and illustrative colour where there is no verified map.'
         },
         nav: { zoomIn: 'Zoom in', zoomOut: 'Zoom out (beyond Earth: the solar system)' },
         borders: {

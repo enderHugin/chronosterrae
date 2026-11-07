@@ -10,7 +10,7 @@ const len = (p) => Math.hypot(p[0], p[1], p[2]);
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 
 check('la ventana es la misma que la del cielo validado', () => Solar.WINDOW.minYear === Sky.WINDOW.minYear && Solar.WINDOW.maxYear === Sky.WINDOW.maxYear);
-check('10 cuerpos, radios positivos y el Sol es el unico emisor', () => Solar.BODIES.length === 10 && Solar.BODIES.every((b) => b.radiusKm > 0) && Solar.BODIES.filter((b) => b.emissive).map((b) => b.id).join() === 'Sun');
+check('14 cuerpos (Sol, 8 planetas, Luna y 4 lunas galileanas), radios positivos y el Sol es el unico emisor', () => Solar.BODIES.length === 14 && Solar.BODIES.every((b) => b.radiusKm > 0) && Solar.BODIES.filter((b) => b.emissive).map((b) => b.id).join() === 'Sun');
 
 // ---- Marco y orden de magnitud en J2000
 const p0 = Solar.positions(J2000);
@@ -29,6 +29,14 @@ for (const [id, [lo, hi]] of Object.entries(RANGE)) {
         let mn = 1e9; let mx = 0;
         for (let k = 0; k < 40; k++) { const d = len(Solar.positions(jdOfYear(-2000 + k * 5000 / 39.0001))[id]) / AU; mn = Math.min(mn, d); mx = Math.max(mx, d); }
         return mn >= lo * 0.98 && mx <= hi * 1.02 ? true : mn.toFixed(3) + '..' + mx.toFixed(3);
+    });
+}
+// ---- Lunas galileanas: distancia al centro de Jupiter dentro de la orbita conocida (semieje mayor +-2 %, que cubre la excentricidad) en 200 fechas
+const JOV = { Io: 421800, Europa: 671100, Ganymede: 1070400, Callisto: 1882700 };
+for (const [id, a] of Object.entries(JOV)) {
+    check(id + ' orbita Jupiter a ' + a + ' km +-2 % en 200 fechas de -2000 a 3000 (y es hija de Jupiter)', () => {
+        let mn = 1e12; let mx = 0; for (let k = 0; k < 200; k++) { const p = Solar.positions(jdOfYear(-2000 + k * 25.1)); const d = len(sub(p[id], p.Jupiter)); mn = Math.min(mn, d); mx = Math.max(mx, d); }
+        return Solar.byId[id].parent === 'Jupiter' && mn > a * 0.98 && mx < a * 1.02 ? true : mn.toFixed(0) + '..' + mx.toFixed(0);
     });
 }
 check('la Luna nunca se aleja de la Tierra mas de lo posible (356.000-407.000 km +-1 %) en 200 fechas', () => {
@@ -186,7 +194,7 @@ check('con el zoom del mapa en 0 la Tierra queda a ~15,7 radios en el ecuador y 
 
 // ---- Rechazos: «rechazado» frente a «roto» (rule 7)
 const rejects = (fn, code) => { try { fn(); return 'no rechazo'; } catch (e) { return e.code === code ? true : 'roto: ' + (e.code || e.name) + ' ' + e.message; } };
-check('fuera de la ventana (ano 3500) se RECHAZA con OUT_OF_WINDOW, y el limite 2999 se acepta', () => rejects(() => Solar.positions(jdOfYear(3500)), 'OUT_OF_WINDOW') === true && Object.keys(Solar.positions(jdOfYear(2999))).length === 10);
+check('fuera de la ventana (ano 3500) se RECHAZA con OUT_OF_WINDOW, y el limite 2999 se acepta', () => rejects(() => Solar.positions(jdOfYear(3500)), 'OUT_OF_WINDOW') === true && Object.keys(Solar.positions(jdOfYear(2999))).length === 14);
 check('antes de la ventana (-2500) se RECHAZA con OUT_OF_WINDOW', () => rejects(() => Solar.positions(jdOfYear(-2500)), 'OUT_OF_WINDOW'));
 check('instante no numerico se RECHAZA con BAD_TIME', () => rejects(() => Solar.positions(NaN), 'BAD_TIME'));
 check('trayectoria de un cuerpo sin ella (Sol) se RECHAZA con BAD_BODY', () => rejects(() => Solar.trail('Sun', J2000), 'BAD_BODY'));

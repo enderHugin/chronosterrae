@@ -35,8 +35,15 @@
         { id: 'Jupiter', radiusKm: 71492, color: '#cfa57d', source: 'NASA NSSDCA' },
         { id: 'Saturn', radiusKm: 60268, color: '#d9c38f', source: 'NASA NSSDCA' },
         { id: 'Uranus', radiusKm: 25559, color: '#9fd4dc', source: 'NASA NSSDCA' },
-        { id: 'Neptune', radiusKm: 24764, color: '#4b6fd6', source: 'NASA NSSDCA' }
+        { id: 'Neptune', radiusKm: 24764, color: '#4b6fd6', source: 'NASA NSSDCA' },
+        // Lunas galileanas: radios de las etiquetas PDS de los mosaicos de USGS que se usan como textura (A_AXIS_RADIUS). Posicion: astronomy-engine
+        // (JupiterMoons, vectores respecto al centro de Jupiter), sin tiempo de luz (menos de 3 s: cuarenta veces menos que un diametro de Io por hora).
+        { id: 'Io', radiusKm: 1821.46, color: '#d8c36a', source: 'USGS Astropedia PDS label', parent: 'Jupiter' },
+        { id: 'Europa', radiusKm: 1562.09, color: '#cfc6b4', source: 'USGS Astropedia PDS label', parent: 'Jupiter' },
+        { id: 'Ganymede', radiusKm: 2632.34, color: '#8f8a82', source: 'USGS Astropedia PDS label', parent: 'Jupiter' },
+        { id: 'Callisto', radiusKm: 2409.30, color: '#6c665f', source: 'USGS Astropedia PDS label', parent: 'Jupiter' }
     ];
+    const JOVIAN_MOONS = ['Io', 'Europa', 'Ganymede', 'Callisto'];
     const byId = Object.fromEntries(BODIES.map((b) => [b.id, b]));
     const PLANETS = ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'];
     const MOON_PERIOD_DAYS = 27.321661;       // mes sidereo medio: solo decide cuanto trayecto se dibuja, no la posicion
@@ -64,6 +71,10 @@
         if (id === 'Moon') {
             const e = Astronomy.HelioVector(Astronomy.Body.Earth, time); const m = Astronomy.GeoVector('Moon', time, false);
             const p = toEcl(e.x + m.x, e.y + m.y, e.z + m.z); return [p[0] * AU_KM, p[1] * AU_KM, p[2] * AU_KM];
+        }
+        if (JOVIAN_MOONS.includes(id)) {
+            const j = Astronomy.HelioVector(Astronomy.Body.Jupiter, time); const m = Astronomy.JupiterMoons(time)[id.toLowerCase()];
+            const p = toEcl(j.x + m.x, j.y + m.y, j.z + m.z); return [p[0] * AU_KM, p[1] * AU_KM, p[2] * AU_KM];
         }
         if (!PLANETS.includes(id)) throw fail('BAD_BODY', 'cuerpo desconocido: ' + id);
         const v = Astronomy.HelioVector(Astronomy.Body[id], time);
@@ -242,5 +253,7 @@
     const eclFromEq = (x, y, z) => toEcl(x, y, z);
 
     return { BODIES, PLANETS, byId, WINDOW, AU_KM, positions, trail, timeFromJD, makeCamera, lighting, accuracy, bandOf, lightMinutes, periodDays, eclFromEq,
-        earthFrame, eclToGlobe, globeToEcl, mapBasis, mapFromBasis, globe, zoomForDistance };
+        earthFrame, eclToGlobe, globeToEcl, mapBasis, mapFromBasis, globe, zoomForDistance,
+        /** Vector ecuatorial J2000 -> ecliptico J2000 (el marco de las posiciones de BODIES). */
+        eqjToEcl: (v) => toEcl(v[0], v[1], v[2]) };
 });

@@ -30,6 +30,15 @@ check('achatamiento: el semieje polar mide c/a del ecuatorial', () => {
     return near(top, 20, 1.5) && near(right, 40, 1.5);
 });
 
+check('antialias del limbo: la suma de coberturas es el area del disco (pi r^2, error < 0,5 %) y hay pixeles parcialmente cubiertos', () => {
+    let sum = 0, part = 0; for (let k = 0; k < a.data.length; k += 4) { sum += a.data[k + 3] / 255; if (a.data[k + 3] > 0 && a.data[k + 3] < 255) part++; }
+    return Math.abs(sum / (Math.PI * 40 * 40) - 1) < 0.005 && part > 60;
+});
+check('antialias con achatamiento: area de la elipse = pi a c (error < 0,5 %)', () => {
+    let sum = 0; for (let k = 0; k < fl.data.length; k += 4) sum += fl.data[k + 3] / 255;
+    return Math.abs(sum / (Math.PI * 40 * 20) - 1) < 0.005;
+});
+
 // iluminacion
 const side = R.render({ pr: 40, axes: faceOn, light: [1, 0, 0], flat: 1, color: [200, 200, 200], law: 'lambert', night: 0 });
 check('Sol a la derecha: el lado derecho esta iluminado y el izquierdo a oscuras', () => px(side, side.half + 30, side.half)[0] > 150 && px(side, side.half - 30, side.half)[0] === 0);
@@ -60,6 +69,18 @@ const ringShort = Object.assign({}, ring, { outKm: 100000 });
 const rs2 = R.render({ pr: 30, axes: ax(60), light: full, flat: 1, color: [200, 200, 200], law: 'lambert', night: 0.03, ring: ringShort });
 check('fuera del intervalo radial [interior, exterior] no hay anillo aunque el perfil tenga datos (y dentro si)', () =>
     px(rs2, rs2.half + Math.round(1.1 * 30), rs2.half)[3] === 0 && px(rs2, rs2.half + Math.round(1.4 * 30), rs2.half)[3] > 0 && px(rs2, rs2.half + Math.round(1.6 * 30), rs2.half)[3] > 0 && rs2.half === Math.ceil(100000 / 60268 * 30) + 2);
+check('borde exterior del anillo con antialias: el alfa baja de forma gradual (al menos un pixel intermedio) y nunca sube hacia fuera', () => {
+    const al = []; for (let i = rs2.half + 44; i <= rs2.half + 52; i++) al.push(px(rs2, i, rs2.half)[3]);
+    let mono = true; for (let k = 1; k < al.length; k++) if (al[k] > al[k - 1]) mono = false;
+    const top = Math.max.apply(null, al);
+    return mono && top > 100 && al[al.length - 1] === 0 && al.some((a) => a > 0 && a < top - 2);
+});
+check('borde exterior del anillo escorzado (elevacion 15 grados): sigue habiendo transicion gradual en vertical', () => {
+    const rg = R.render({ pr: 30, axes: ax(15), light: full, flat: 1, color: [200, 200, 200], law: 'lambert', night: 1, ring: ringShort });
+    const a = []; for (let j = 0; j < rg.size; j++) a.push(px(rg, rg.half + 40, j)[3]);
+    const top = Math.max.apply(null, a);
+    return top > 100 && a.filter((v) => v > 0 && v < top - 2).length >= 2;          // la columna cruza el borde de arriba y el de abajo: cada uno aporta pixeles intermedios
+});
 // elevacion baja (20 grados): el borde cercano del anillo cruza por DELANTE de la mitad inferior del disco; el lejano, por detras
 const lo = ax(20); const rLo = R.render({ pr: 30, axes: lo, light: full, flat: 1, color: [200, 200, 200], law: 'lambert', night: 1, ring });
 const nLo = R.render({ pr: 30, axes: lo, light: full, flat: 1, color: [200, 200, 200], law: 'lambert', night: 1 });
