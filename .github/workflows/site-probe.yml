@@ -1,0 +1,52 @@
+name: Sonda del sitio publicado (ficheros de datos)
+
+# Descarga de la URL PUBLICA los ficheros que el cliente pide y comprueba estado HTTP y huella sha256 contra data/textures/manifest.json.
+# Existe porque el e2e local sirve el repositorio entero y no ve lo que pages.yml olvida publicar (regla 8: verlo en la web real).
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: 'URL base del sitio (con barra final)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Descargar y comparar
+        env:
+          BASE_IN: ${{ inputs.base }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -u
+          OWNER="${REPO%%/*}"; NAME="${REPO##*/}"
+          BASE="${BASE_IN:-https://${OWNER,,}.github.io/${NAME}/}"
+          echo "base: $BASE"
+          fail=0
+          check() { # ruta [sha256 esperado]
+            local f="$1" want="${2:-}"; local code; code=$(curl -s -o /tmp/dl -w '%{http_code}' "${BASE}${f}")
+            if [ "$code" != "200" ]; then echo "XX  $f -> HTTP $code"; fail=1; return; fi
+            if [ -n "$want" ]; then local got; got=$(sha256sum /tmp/dl | cut -d' ' -f1); if [ "$got" = "$want" ]; then echo "ok  $f (sha256 coincide)"; else echo "XX  $f sha256 $got != $want"; fail=1; fi
+            else echo "ok  $f (HTTP 200, $(stat -c%s /tmp/dl) bytes)"; fi
+          }
+          python3 - <<'PY' > /tmp/list.txt
+          import json
+          m = json.load(open('data/textures/manifest.json'))
+          for it in m['items']:
+              print(it['file'], it['sha256'])
+          print(m['milkyway']['file'], m['milkyway']['sha256'])
+          PY
+          while read -r f h; do check "$f" "$h"; done < /tmp/list.txt
+          check data/textures/saturn-rings-tau.json
+          check data/textures/manifest.json
+          check data/events/index.json
+          check data/events/seed.json
+          check sky/milkyway.js
+          check solar/sphere-render.js
+          curl -s "${BASE}index.html" | grep -c 'sky/milkyway.js' | sed 's/^/index.html referencia milkyway.js: /'
+          exit $fail
