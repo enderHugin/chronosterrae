@@ -1,0 +1,5977 @@
+{
+ "probed_at": "2026-11-07T10:48:53.100Z",
+ "style": {
+  "status": 200,
+  "sources": [
+   "ne2_shaded",
+   "openmaptiles"
+  ]
+ },
+ "styleLayers": [
+  {
+   "id": "road_one_way_arrow",
+   "sourceLayer": "transportation",
+   "minzoom": 16,
+   "maxzoom": null,
+   "filter": [
+    "==",
+    [
+     "get",
+     "oneway"
+    ],
+    1
+   ],
+   "textField": null,
+   "hasIcon": true
+  },
+  {
+   "id": "road_one_way_arrow_opposite",
+   "sourceLayer": "transportation",
+   "minzoom": 16,
+   "maxzoom": null,
+   "filter": [
+    "==",
+    [
+     "get",
+     "oneway"
+    ],
+    -1
+   ],
+   "textField": null,
+   "hasIcon": true
+  },
+  {
+   "id": "waterway_line_label",
+   "sourceLayer": "waterway",
+   "minzoom": 10,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "geometry-type"
+    ],
+    [
+     "LineString",
+     "MultiLineString"
+    ],
+    true,
+    false
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     " ",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  },
+  {
+   "id": "water_name_point_label",
+   "sourceLayer": "water_name",
+   "minzoom": null,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "geometry-type"
+    ],
+    [
+     "MultiPoint",
+     "Point"
+    ],
+    true,
+    false
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  },
+  {
+   "id": "water_name_line_label",
+   "sourceLayer": "water_name",
+   "minzoom": null,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "geometry-type"
+    ],
+    [
+     "LineString",
+     "MultiLineString"
+    ],
+    true,
+    false
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     " ",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  },
+  {
+   "id": "poi_r20",
+   "sourceLayer": "poi",
+   "minzoom": 17,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "MultiPoint",
+      "Point"
+     ],
+     true,
+     false
+    ],
+    [
+     ">=",
+     [
+      "get",
+      "rank"
+     ],
+     20
+    ]
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "poi_r7",
+   "sourceLayer": "poi",
+   "minzoom": 16,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "MultiPoint",
+      "Point"
+     ],
+     true,
+     false
+    ],
+    [
+     ">=",
+     [
+      "get",
+      "rank"
+     ],
+     7
+    ],
+    [
+     "<",
+     [
+      "get",
+      "rank"
+     ],
+     20
+    ]
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "poi_r1",
+   "sourceLayer": "poi",
+   "minzoom": 15,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "MultiPoint",
+      "Point"
+     ],
+     true,
+     false
+    ],
+    [
+     ">=",
+     [
+      "get",
+      "rank"
+     ],
+     1
+    ],
+    [
+     "<",
+     [
+      "get",
+      "rank"
+     ],
+     7
+    ]
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "poi_transit",
+   "sourceLayer": "poi",
+   "minzoom": null,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "get",
+     "class"
+    ],
+    [
+     "airport",
+     "bus",
+     "rail"
+    ],
+    true,
+    false
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "highway-name-path",
+   "sourceLayer": "transportation_name",
+   "minzoom": 15.5,
+   "maxzoom": null,
+   "filter": [
+    "==",
+    [
+     "get",
+     "class"
+    ],
+    "path"
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     " ",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  },
+  {
+   "id": "highway-name-minor",
+   "sourceLayer": "transportation_name",
+   "minzoom": 15,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "LineString",
+      "MultiLineString"
+     ],
+     true,
+     false
+    ],
+    [
+     "match",
+     [
+      "get",
+      "class"
+     ],
+     [
+      "minor",
+      "service",
+      "track"
+     ],
+     true,
+     false
+    ]
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     " ",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  },
+  {
+   "id": "highway-name-major",
+   "sourceLayer": "transportation_name",
+   "minzoom": 12.2,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "get",
+     "class"
+    ],
+    [
+     "primary",
+     "secondary",
+     "tertiary",
+     "trunk"
+    ],
+    true,
+    false
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     " ",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  },
+  {
+   "id": "highway-shield-non-us",
+   "sourceLayer": "transportation_name",
+   "minzoom": 8,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "<=",
+     [
+      "get",
+      "ref_length"
+     ],
+     6
+    ],
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "LineString",
+      "MultiLineString"
+     ],
+     true,
+     false
+    ],
+    [
+     "match",
+     [
+      "get",
+      "network"
+     ],
+     [
+      "us-highway",
+      "us-interstate",
+      "us-state"
+     ],
+     false,
+     true
+    ]
+   ],
+   "textField": [
+    "to-string",
+    [
+     "get",
+     "ref"
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "highway-shield-us-interstate",
+   "sourceLayer": "transportation_name",
+   "minzoom": 7,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "<=",
+     [
+      "get",
+      "ref_length"
+     ],
+     6
+    ],
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "LineString",
+      "MultiLineString"
+     ],
+     true,
+     false
+    ],
+    [
+     "match",
+     [
+      "get",
+      "network"
+     ],
+     [
+      "us-interstate"
+     ],
+     true,
+     false
+    ]
+   ],
+   "textField": [
+    "to-string",
+    [
+     "get",
+     "ref"
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "road_shield_us",
+   "sourceLayer": "transportation_name",
+   "minzoom": 9,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "<=",
+     [
+      "get",
+      "ref_length"
+     ],
+     6
+    ],
+    [
+     "match",
+     [
+      "geometry-type"
+     ],
+     [
+      "LineString",
+      "MultiLineString"
+     ],
+     true,
+     false
+    ],
+    [
+     "match",
+     [
+      "get",
+      "network"
+     ],
+     [
+      "us-highway",
+      "us-state"
+     ],
+     true,
+     false
+    ]
+   ],
+   "textField": [
+    "to-string",
+    [
+     "get",
+     "ref"
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "airport",
+   "sourceLayer": "aerodrome_label",
+   "minzoom": 10,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "has",
+     "iata"
+    ]
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "label_other",
+   "sourceLayer": "place",
+   "minzoom": 8,
+   "maxzoom": null,
+   "filter": [
+    "match",
+    [
+     "get",
+     "class"
+    ],
+    [
+     "city",
+     "continent",
+     "country",
+     "state",
+     "town",
+     "village"
+    ],
+    false,
+    true
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  },
+  {
+   "id": "label_village",
+   "sourceLayer": "place",
+   "minzoom": 9,
+   "maxzoom": null,
+   "filter": [
+    "==",
+    [
+     "get",
+     "class"
+    ],
+    "village"
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "label_town",
+   "sourceLayer": "place",
+   "minzoom": 6,
+   "maxzoom": null,
+   "filter": [
+    "==",
+    [
+     "get",
+     "class"
+    ],
+    "town"
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "label_state",
+   "sourceLayer": "place",
+   "minzoom": 5,
+   "maxzoom": 8,
+   "filter": [
+    "==",
+    [
+     "get",
+     "class"
+    ],
+    "state"
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  },
+  {
+   "id": "label_city",
+   "sourceLayer": "place",
+   "minzoom": 3,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "get",
+      "class"
+     ],
+     "city"
+    ],
+    [
+     "!=",
+     [
+      "get",
+      "capital"
+     ],
+     2
+    ]
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "label_city_capital",
+   "sourceLayer": "place",
+   "minzoom": 3,
+   "maxzoom": null,
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "get",
+      "class"
+     ],
+     "city"
+    ],
+    [
+     "==",
+     [
+      "get",
+      "capital"
+     ],
+     2
+    ]
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": true
+  },
+  {
+   "id": "label_country_3",
+   "sourceLayer": "place",
+   "minzoom": 2,
+   "maxzoom": 9,
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "get",
+      "class"
+     ],
+     "country"
+    ],
+    [
+     ">=",
+     [
+      "get",
+      "rank"
+     ],
+     3
+    ]
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  },
+  {
+   "id": "label_country_2",
+   "sourceLayer": "place",
+   "minzoom": null,
+   "maxzoom": 9,
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "get",
+      "class"
+     ],
+     "country"
+    ],
+    [
+     "==",
+     [
+      "get",
+      "rank"
+     ],
+     2
+    ]
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  },
+  {
+   "id": "label_country_1",
+   "sourceLayer": "place",
+   "minzoom": null,
+   "maxzoom": 9,
+   "filter": [
+    "all",
+    [
+     "==",
+     [
+      "get",
+      "class"
+     ],
+     "country"
+    ],
+    [
+     "==",
+     [
+      "get",
+      "rank"
+     ],
+     1
+    ]
+   ],
+   "textField": [
+    "case",
+    [
+     "has",
+     "name:nonlatin"
+    ],
+    [
+     "concat",
+     [
+      "get",
+      "name:latin"
+     ],
+     "\n",
+     [
+      "get",
+      "name:nonlatin"
+     ]
+    ],
+    [
+     "coalesce",
+     [
+      "get",
+      "name_en"
+     ],
+     [
+      "get",
+      "name"
+     ]
+    ]
+   ],
+   "hasIcon": false
+  }
+ ],
+ "tilejson": {
+  "layers": [
+   "aerodrome_label",
+   "aeroway",
+   "boundary",
+   "building",
+   "housenumber",
+   "landcover",
+   "landuse",
+   "mountain_peak",
+   "park",
+   "place",
+   "poi",
+   "transportation",
+   "transportation_name",
+   "water",
+   "water_name",
+   "waterway"
+  ]
+ },
+ "tileLayers": {
+  "boundary": {
+   "features": 492,
+   "attributes": {
+    "admin_level": {
+     "2": 259,
+     "3": 3,
+     "4": 81,
+     "6": 7,
+     "7": 1,
+     "8": 2
+    },
+    "disputed": {
+     "0": 275,
+     "1": 78
+    },
+    "maritime": {
+     "0": 242,
+     "1": 111
+    },
+    "disputed_name": {
+     "France-España": 2,
+     "Nederland-Deutschland": 2,
+     "Hrvatska—Slovenija(disputed)": 2,
+     "France-MerMéditerranée(eauxterritoriales)": 2,
+     "BorderSI-HR": 1,
+     "France-Italia": 2,
+     "China-India": 2,
+     "China-IndiaLAC": 1,
+     "China'sclaimedborder": 2,
+     "Nepal-India": 1,
+     "Bhutan-China": 4,
+     "UnitedStatesofAmerica(MinorOutlyingIslands),NavassaIsland(DisputedareaUSA-HAITI)": 2,
+     "ConvenioLiévano-Lucio": 1,
+     "DisputaFronteraColombia-Nicaragua": 1,
+     "Territorialwaters": 2,
+     "السودان-مثلثحلايب": 1,
+     "السودان-بئرطويل": 2,
+     "مصر-بئرطويل": 2
+    },
+    "claimed_by": {
+     "FR": 5,
+     "NL": 2,
+     "DE": 2,
+     "Slovenia": 1,
+     "Croatia": 2,
+     "ES": 2,
+     "IT": 1,
+     "IN": 2,
+     "CN": 5,
+     "EC": 2,
+     "VE": 1,
+     "EG": 4,
+     "CA": 1
+    },
+    "adm0_r": {
+     "ESP": 2,
+     "CHE": 5,
+     "AND": 1,
+     "FRA": 18,
+     "MCO": 6,
+     "ITA": 3,
+     "LIE": 2,
+     "DEU": 1,
+     "BGD": 3,
+     "IND": 7,
+     "CHN": 6,
+     "NPL": 7,
+     "BTN": 4,
+     "BRA": 2,
+     "BOL": 1,
+     "DOM": 1,
+     "USA": 3,
+     "HTI": 3,
+     "TCA": 3,
+     "JAM": 2,
+     "COL": 1,
+     "VEN": 4,
+     "BHS": 2,
+     "CUB": 1,
+     "NLD": 1,
+     "JPN": 2,
+     "LBY": 2,
+     "EGY": 4,
+     "CAN": 2,
+     "ARG": 3,
+     "CHL": 2,
+     "PRT": 2
+    },
+    "adm0_l": {
+     "FRA": 9,
+     "AND": 1,
+     "ESP": 2,
+     "ITA": 10,
+     "MCO": 6,
+     "DEU": 2,
+     "CHE": 3,
+     "LIE": 1,
+     "IND": 7,
+     "NPL": 5,
+     "BGD": 1,
+     "CHN": 9,
+     "BTN": 4,
+     "BOL": 2,
+     "BRA": 1,
+     "COL": 4,
+     "HTI": 1,
+     "USA": 3,
+     "DOM": 4,
+     "NLD": 2,
+     "VEN": 2,
+     "CUB": 1,
+     "BHS": 2,
+     "ISL": 2,
+     "JPN": 2,
+     "SDN": 3,
+     "EGY": 1,
+     "LBY": 2,
+     "CAN": 2,
+     "CHL": 4,
+     "ARG": 2,
+     "KIR": 1
+    },
+    "class": {
+     "aboriginal_lands": 139
+    }
+   },
+   "namedExamples": [
+    {
+     "name": "Terra Indígena Kayabi",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Badjonkore",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Kayapó",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Kuruáya",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Menkragnoti",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Panará",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Parque Indígena do Xingu",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Xipaya",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Aripuanã",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Escondido",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Munduruku",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Roosevelt",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Serra Morena",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Sete de Setembro",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Médio Rio Negro II",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Andirá-Marau",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indigena Kawahiva do Rio Pardo",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Multiétnico II",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Multiétnico I",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio del Consejo T'simane",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Chacobo - Pacahuara",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Takana y Cavineños",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio indígena Cavineño",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Itonama",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Baure",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Joaquiniano",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Cayubaba",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena T'simane - Mosetén de Pilón Lajas",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Takana III",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Lecos de Apolo",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Lecos de Larecaja",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Yuracaré",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Chiquitano Monte Verde",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Chiquitano Lomerío",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Guarasug'we-Chiquitano Bajo Paraguá",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Chiquitano Pantanal",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena Esecatato Auna Kixch",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Chiquitano Otuquis",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Indígena del Pueblo Guarayo",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Guaraní de Takovo Mora / Guarani yvyvore Takovo Mora",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Guaraní de Kaaguasu / Guarani yvyvore Kaaguasu",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Guaraní de Kaami / Guarani yvyvore Kaami",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Guaraní Alto Parapetí / Guarani yvyvore Alto Parapeti",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Guaraní de Charagua Norte / Guarani yvyvore yvate Charagua",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Territorio Guaraní de Charagua Sur / Guarani yvyvore ñemby Charagua",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Arara do Rio Branco",
+     "z": 5,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Estrela da Paz",
+     "z": 6,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Terra Indígena Apurinã do Igarapé São João",
+     "z": 6,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indigena Ríos Mirití-Paraná",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indígena Nunuya de Villazul",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indígena Andoke de Aduche",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indígena Monochoa",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indígena Puerto Sábalo - Los Monos",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indígena Llanos del Yarí (Yaguará II)",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Gran Resguardo Indígena del Vaupés",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indígena Yaigojé Apaporis",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indígena Bacatí-Remanso de Arara Lagos de. Jamaicuru",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indigena Bajo Río Guainía y Río Negro",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indígena Tonina, Sejal, San José y otras",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    },
+    {
+     "name": "Resguardo Indígena Ríos Cuiari e Isana",
+     "z": 4,
+     "props": {
+      "class": "aboriginal_lands"
+     }
+    }
+   ]
+  },
+  "place": {
+   "features": 34420,
+   "attributes": {
+    "rank": {
+     "1": 2546,
+     "2": 4853,
+     "3": 4375,
+     "4": 4065,
+     "5": 7685,
+     "6": 9377,
+     "7": 346,
+     "8": 14,
+     "10": 4,
+     "11": 263,
+     "12": 239,
+     "13": 214,
+     "14": 191,
+     "15": 54,
+     "16": 41,
+     "17": 36,
+     "18": 29,
+     "19": 25,
+     "20": 22,
+     "21": 21,
+     "22": 16,
+     "23": 2,
+     "24": 2
+    },
+    "class": {
+     "continent": 271,
+     "country": 4496,
+     "city": 5171,
+     "state": 20551,
+     "province": 2406,
+     "village": 678,
+     "town": 553,
+     "island": 53,
+     "hamlet": 151,
+     "suburb": 3,
+     "aboriginal_lands": 87
+    },
+    "iso_a2": {
+     "PH": 22,
+     "IT": 33,
+     "ES": 33,
+     "NZ": 19,
+     "AR": 30,
+     "KR": 23,
+     "PE": 30,
+     "SA": 32,
+     "PG": 20,
+     "VN": 23,
+     "ZA": 27,
+     "IR": 29,
+     "TR": 32,
+     "CL": 29,
+     "JP": 24,
+     "CN": 22,
+     "BR": 30,
+     "CA": 23,
+     "KE": 30,
+     "PK": 29,
+     "IN": 29,
+     "CO": 33,
+     "RU": 20,
+     "AU": 21,
+     "EG": 33,
+     "NG": 30,
+     "US": 27,
+     "CD": 27,
+     "GB": 33,
+     "FR": 33,
+     "DE": 32,
+     "BE": 32,
+     "ET": 30,
+     "PT": 33,
+     "ID": 21,
+     "MX": 26,
+     "AF": 29,
+     "AT": 33,
+     "BF": 31,
+     "BY": 30
+    },
+    "capital": {
+     "2": 1338,
+     "3": 36,
+     "4": 1936,
+     "5": 289,
+     "6": 575
+    }
+   },
+   "namedExamples": [
+    {
+     "name": "Europe",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "Afrika;أفريقيا",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "Antarctica",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "North America",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "亚洲",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "América do Sul;América del Sur",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "Oceania",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "Australia",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "América",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "Eurasia",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "Afro-Eurasia",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "continent"
+     }
+    },
+    {
+     "name": "Philippines",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "PH"
+     }
+    },
+    {
+     "name": "Italia",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "IT"
+     }
+    },
+    {
+     "name": "España",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "ES"
+     }
+    },
+    {
+     "name": "New Zealand / Aotearoa",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "NZ"
+     }
+    },
+    {
+     "name": "Argentina",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "AR"
+     }
+    },
+    {
+     "name": "대한민국",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "KR"
+     }
+    },
+    {
+     "name": "Perú",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "PE"
+     }
+    },
+    {
+     "name": "السعودية",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "SA"
+     }
+    },
+    {
+     "name": "Papua New Guinea",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "PG"
+     }
+    },
+    {
+     "name": "Việt Nam",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "VN"
+     }
+    },
+    {
+     "name": "South Africa",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "ZA"
+     }
+    },
+    {
+     "name": "ایران",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "IR"
+     }
+    },
+    {
+     "name": "Türkiye",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "TR"
+     }
+    },
+    {
+     "name": "Chile",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "CL"
+     }
+    },
+    {
+     "name": "日本",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "JP"
+     }
+    },
+    {
+     "name": "中国",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "CN"
+     }
+    },
+    {
+     "name": "Brasil",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "BR"
+     }
+    },
+    {
+     "name": "Canada",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "CA"
+     }
+    },
+    {
+     "name": "Kenya",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "KE"
+     }
+    },
+    {
+     "name": "پاکستان",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "PK"
+     }
+    },
+    {
+     "name": "भारत",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "IN"
+     }
+    },
+    {
+     "name": "Colombia",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "CO"
+     }
+    },
+    {
+     "name": "Россия",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "RU"
+     }
+    },
+    {
+     "name": "مصر",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "EG"
+     }
+    },
+    {
+     "name": "Nigeria",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "NG"
+     }
+    },
+    {
+     "name": "United States",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "US"
+     }
+    },
+    {
+     "name": "République démocratique du Congo",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "CD"
+     }
+    },
+    {
+     "name": "United Kingdom",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "GB"
+     }
+    },
+    {
+     "name": "France",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "FR"
+     }
+    },
+    {
+     "name": "Deutschland",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "DE"
+     }
+    },
+    {
+     "name": "België / Belgique / Belgien",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "BE"
+     }
+    },
+    {
+     "name": "ኢትዮጵያ / Ethiopia",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "ET"
+     }
+    },
+    {
+     "name": "Portugal",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "PT"
+     }
+    },
+    {
+     "name": "Indonesia",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "ID"
+     }
+    },
+    {
+     "name": "México",
+     "z": 1,
+     "props": {
+      "rank": 1,
+      "class": "country",
+      "iso_a2": "MX"
+     }
+    },
+    {
+     "name": "افغانستان",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "AF"
+     }
+    },
+    {
+     "name": "Österreich",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "AT"
+     }
+    },
+    {
+     "name": "Burkina Faso",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "BF"
+     }
+    },
+    {
+     "name": "Беларусь",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "BY"
+     }
+    },
+    {
+     "name": "Cuba",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "CU"
+     }
+    },
+    {
+     "name": "조선민주주의인민공화국",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "KP"
+     }
+    },
+    {
+     "name": "Malaysia",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "MY"
+     }
+    },
+    {
+     "name": "नेपाल",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "NP"
+     }
+    },
+    {
+     "name": "Türkmenistan",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "TM"
+     }
+    },
+    {
+     "name": "اليَمَن",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "YE"
+     }
+    },
+    {
+     "name": "Norge",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "NO"
+     }
+    },
+    {
+     "name": "Guinée",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "GN"
+     }
+    },
+    {
+     "name": "ישראל",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "IL"
+     }
+    },
+    {
+     "name": "Mali",
+     "z": 1,
+     "props": {
+      "rank": 2,
+      "class": "country",
+      "iso_a2": "ML"
+     }
+    }
+   ]
+  },
+  "water_name": {
+   "features": 854,
+   "attributes": {
+    "intermittent": {
+     "0": 854
+    },
+    "class": {
+     "sea": 631,
+     "bay": 98,
+     "strait": 66,
+     "lake": 59
+    }
+   },
+   "namedExamples": [
+    {
+     "name": "南海/Biển Đông/South China Sea",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Philippine Sea",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Sea of Okhotsk",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Golfo de México",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "North Atlantic Ocean",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "North Pacific Ocean",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Arabian Sea",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Te Tai-o-Rehua / Tasman Sea",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Gulf of Alaska",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Caribbean Sea",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Coral Sea",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Mediterranean Sea",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "South Atlantic Ocean",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "South Pacific Ocean",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "ᑲᖏᖅᓱᐊᓗᒃ ᐃᓗᐊ - Hudson Bay - Baie d'Hudson",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "bay"
+     }
+    },
+    {
+     "name": "日本海 / Японское море / 동해 / 조선동해",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Labrador Sea",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Baffin Bay",
+     "z": 1,
+     "props": {
+      "intermittent": 0,
+      "class": "bay"
+     }
+    },
+    {
+     "name": "Sargasso Sea",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Andaman Sea",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "黄海 / 황해 / 조선서해",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Sulu Sea",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Greenland Sea",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "东海 / 東海 / 東シナ海 / 동중국해",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Arafura Sea",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Celebes Sea",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Laut Banda",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Morze Bałtyckie / Baltijos jūra / Baltijas jūra / Läänemeri / Itämeri / Östersjön / Østersøen / Ostsee / Балтийское море",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Gulf of Guinea",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "bay"
+     }
+    },
+    {
+     "name": "Море Лаптевых",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "North Sea / Nordsee / Noordzee / Nordsøen / Nordsjøen / Mer du Nord",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Laut Timor",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Laut Jawa",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Davis Strait",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "strait"
+     }
+    },
+    {
+     "name": "Laccadive Sea",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Mar Tirreno / Mer Tyrrhénienne",
+     "z": 3,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Jadransko more / Mare Adriatico / Deti Adriatik",
+     "z": 3,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Mar Ligure / Mer Ligure",
+     "z": 5,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "خليج قابس",
+     "z": 5,
+     "props": {
+      "intermittent": 0,
+      "class": "bay"
+     }
+    },
+    {
+     "name": "Golfo di Genova",
+     "z": 8,
+     "props": {
+      "intermittent": 0,
+      "class": "bay"
+     }
+    },
+    {
+     "name": "Passe des Grottes",
+     "z": 8,
+     "props": {
+      "intermittent": 0,
+      "class": "strait"
+     }
+    },
+    {
+     "name": "Canale di Corsica",
+     "z": 8,
+     "props": {
+      "intermittent": 0,
+      "class": "strait"
+     }
+    },
+    {
+     "name": "озеро Байкал",
+     "z": 4,
+     "props": {
+      "intermittent": 0,
+      "class": "lake"
+     }
+    },
+    {
+     "name": "Selat Melaka",
+     "z": 4,
+     "props": {
+      "intermittent": 0,
+      "class": "strait"
+     }
+    },
+    {
+     "name": "Gulf of Kutch",
+     "z": 4,
+     "props": {
+      "intermittent": 0,
+      "class": "bay"
+     }
+    },
+    {
+     "name": "小湾水库",
+     "z": 5,
+     "props": {
+      "intermittent": 0,
+      "class": "lake"
+     }
+    },
+    {
+     "name": "Gulf of Martaban",
+     "z": 5,
+     "props": {
+      "intermittent": 0,
+      "class": "bay"
+     }
+    },
+    {
+     "name": "Bering Sea",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Gulf of California",
+     "z": 3,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Golfo de Honduras",
+     "z": 3,
+     "props": {
+      "intermittent": 0,
+      "class": "bay"
+     }
+    },
+    {
+     "name": "Lago Sacambú",
+     "z": 8,
+     "props": {
+      "intermittent": 0,
+      "class": "lake"
+     }
+    },
+    {
+     "name": "Lago Jari",
+     "z": 8,
+     "props": {
+      "intermittent": 0,
+      "class": "lake"
+     }
+    },
+    {
+     "name": "Чукотское море",
+     "z": 2,
+     "props": {
+      "intermittent": 0,
+      "class": "sea"
+     }
+    },
+    {
+     "name": "Chesapeake Bay",
+     "z": 4,
+     "props": {
+      "intermittent": 0,
+      "class": "bay"
+     }
+    },
+    {
+     "name": "Denmark Strait",
+     "z": 6,
+     "props": {
+      "intermittent": 0,
+      "class": "strait"
+     }
+    },
+    {
+     "name": "Hóp",
+     "z": 8,
+     "props": {
+      "intermittent": 0,
+      "class": "lake"
+     }
+    },
+    {
+     "name": "Þórisvatn",
+     "z": 8,
+     "props": {
+      "intermittent": 0,
+      "class": "lake"
+     }
+    },
+    {
+     "name": "Mývatn",
+     "z": 8,
+     "props": {
+      "intermittent": 0,
+      "class": "lake"
+     }
+    },
+    {
+     "name": "Húnaflói",
+     "z": 8,
+     "props": {
+      "intermittent": 0,
+      "class": "bay"
+     }
+    },
+    {
+     "name": "Blöndulón",
+     "z": 10,
+     "props": {
+      "intermittent": 0,
+      "class": "lake"
+     }
+    }
+   ]
+  },
+  "waterway": {
+   "features": 280,
+   "attributes": {
+    "class": {
+     "river": 272,
+     "canal": 8
+    },
+    "intermittent": {
+     "0": 37
+    },
+    "brunnel": {
+     "tunnel": 7
+    }
+   },
+   "namedExamples": [
+    {
+     "name": "Fiume Po",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Torrente Argentina",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Armea",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Torrente Impero",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Torrente Tanarello",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Trisuli River system",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "尼洋楚河流域",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "雅鲁藏布江 ཡར་ཀླུངས་གཙང་པོ། Brahmaputra যমুনা নদী",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Arun River",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Bagmati River",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Sun Kosi",
+     "z": 8,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Kamala River",
+     "z": 8,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "波曲",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Balephi Khola",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Negro",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Río Caquetá",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Juruá",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Unini",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Uaupés",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Purus",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Tapauá",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Jutaí",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Solimões",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Amazonas",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Rio Branco",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Þjórsá",
+     "z": 6,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Blanda",
+     "z": 8,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Vestari-Jökulsá",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Efri-Þverkvísl",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Tjarnarkvísl",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Strangakvísl",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "Neðri-Þverkvísl",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "信濃川",
+     "z": 8,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "利根川",
+     "z": 8,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "小黒川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "藤沢川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "奈良井川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "宮川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "新山川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "新川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "太田切川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "弓振川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "黒川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "武井田川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "濃ヶ池川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "棚沢川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "上川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "小横川川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "横川川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "大沢川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "塩田川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "三峰川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "飯沼川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "大曽倉川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "戸台川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "沢川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "沢底川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "小野川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "小沢川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    },
+    {
+     "name": "舟渡川",
+     "z": 10,
+     "props": {
+      "class": "river"
+     }
+    }
+   ]
+  },
+  "park": {
+   "features": 4147,
+   "attributes": {
+    "rank": {
+     "1": 731,
+     "2": 451,
+     "3": 300,
+     "4": 226,
+     "5": 182,
+     "6": 146,
+     "7": 118,
+     "8": 93,
+     "9": 72,
+     "10": 58,
+     "11": 46,
+     "12": 37,
+     "13": 34,
+     "14": 27,
+     "15": 22,
+     "16": 20,
+     "17": 15,
+     "18": 13,
+     "19": 9,
+     "20": 6,
+     "21": 6,
+     "22": 4,
+     "23": 3,
+     "24": 2,
+     "25": 1,
+     "26": 1,
+     "27": 1,
+     "28": 1,
+     "29": 1
+    },
+    "class": {
+     "national_park": 879,
+     "Natura2000": 29,
+     "conservation": 597,
+     "UGGp (UNESCO Global Geopark)": 1,
+     "wildlife_refuge": 307,
+     "Reserva da Biosfera": 4,
+     "Reserva de la Biosfera": 3,
+     "Special Area of Conservation": 1,
+     "heritage": 1,
+     "Sítio de Importância Comunitária da Rede Natura 2000": 1,
+     "protected_area": 269,
+     "world_heritage_convention": 2,
+     "sustainable": 370,
+     "nature_reserve": 876,
+     "Natura 2000-gebied": 9,
+     "Natura 2000": 9,
+     "marine": 61,
+     "Vogelschutzgebiet": 1,
+     "UNESCO Global Geopark": 14,
+     "Welterbekonvention": 1,
+     "Parc naturel régional": 7,
+     "parc naturel régional": 5,
+     "Biosphärenreservat": 15,
+     "Regionaler Naturpark": 13,
+     "parco regionale": 3,
+     "Dyrektywa siedliskowa": 1,
+     "Natura 2000 site": 1,
+     "Réserve de la biosphère, zone tampon": 10,
+     "Réserve de la biosphère, zone de transition": 1,
+     "North East of Farnes Deep Highly Protected Marine Area": 1,
+     "Marine Protected Area": 13,
+     "Réserve de la biosphère, aire de coopération": 16,
+     "Réserve de la biosphère, zone centrale": 4,
+     "Dyrektywa ptasia, Dyrektywa siedliskowa": 1,
+     "Dyrektywa ptasia": 2,
+     "Europa-Vogelschutzgebiet": 3,
+     "Natura 2000 Site": 2,
+     "Parco Regionale": 1,
+     "biosphere_reserve": 2,
+     "Parco naturale": 5
+    }
+   },
+   "namedExamples": [
+    {
+     "name": "Parque Nacional da Peneda-Gerês",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parque Nacional de Picos de Europa",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Região Demarcada do Douro",
+     "z": 5,
+     "props": {
+      "rank": 3,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parc National du Haut Atlas Oriental متنزه قومي الأطلس الكبير الشرقي",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parque Nacional de Sierra Nevada",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parc national des Cévennes (cœur)",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Nationalpark Vadehavet",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Nationalpark Niedersächsisches Wattenmeer",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Nationalpark Schleswig-Holsteinisches Wattenmeer",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Van Gogh",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parc national de forêts (cœur)",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale Gran Paradiso",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parc national des Écrins (cœur)",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parc national du Mercantour (cœur)",
+     "z": 5,
+     "props": {
+      "rank": 3,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parc National d'El Kala",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Nationalpark Vorpommersche Boddenlandschaft",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale dello Stelvio - Nationalpark Stilfser Joch",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Nationalpark Hohe Tauern",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco delle Orobie Bergamasche",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale dell'Arcipelago Toscano",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale dei Monti Sibillini",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco nazionale del Golfo di Orosei e del Gennargentu",
+     "z": 5,
+     "props": {
+      "rank": 3,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Krkonošský národní park",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Národní park Šumava",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Triglavski narodni park",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale della Majella",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale del Gran Sasso e Monti della Laga",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale del Gargano",
+     "z": 5,
+     "props": {
+      "rank": 3,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale Cilento, Vallo di Diano e Alburni",
+     "z": 5,
+     "props": {
+      "rank": 4,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale dell'Appennino Lucano-Val d'Agri-Lagonegrese",
+     "z": 5,
+     "props": {
+      "rank": 5,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale dell'Alta Murgia",
+     "z": 5,
+     "props": {
+      "rank": 6,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco dei Nebrodi",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale del Pollino",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parco Nazionale della Sila",
+     "z": 5,
+     "props": {
+      "rank": 3,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Národný park Nízke Tatry",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Duna-Ipoly Nemzeti Park",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Hortobágyi Nemzeti Park",
+     "z": 5,
+     "props": {
+      "rank": 3,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Tatranský národný park",
+     "z": 5,
+     "props": {
+      "rank": 4,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Национални парк Ђердап",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Национален Парк Маврово",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parku Kombëtar \"Bjeshkët e Nemuna\"",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Национален парк Шар Планина",
+     "z": 5,
+     "props": {
+      "rank": 3,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Εθνικό Πάρκο Πίνδου",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parc national de Khénifra متنزه قومي خنيفرة",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Ruhezone I/51",
+     "z": 5,
+     "props": {
+      "rank": 3,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Parku Kombëtar Alpet e Shqipërisë",
+     "z": 5,
+     "props": {
+      "rank": 4,
+      "class": "national_park"
+     }
+    },
+    {
+     "name": "Maceda-Praia da Vieira",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "Natura2000"
+     }
+    },
+    {
+     "name": "Zona de Proteção Especial de Aveiro/Nazaré",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "Natura2000"
+     }
+    },
+    {
+     "name": "Parque Natural do Sudoeste Alentejano e Costa Vicentina",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "conservation"
+     }
+    },
+    {
+     "name": "Costa Sudoeste",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "Natura2000"
+     }
+    },
+    {
+     "name": "Zona de Proteção Especial do Cabo Raso",
+     "z": 5,
+     "props": {
+      "rank": 3,
+      "class": "Natura2000"
+     }
+    },
+    {
+     "name": "Zona de Proteção Especial das Ilhas Berlengas",
+     "z": 5,
+     "props": {
+      "rank": 4,
+      "class": "Natura2000"
+     }
+    },
+    {
+     "name": "Zona de Proteção Especial da Costa Sudoeste",
+     "z": 5,
+     "props": {
+      "rank": 5,
+      "class": "Natura2000"
+     }
+    },
+    {
+     "name": "Antrim Coast & Glens AONB",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "conservation"
+     }
+    },
+    {
+     "name": "Mourne Gullion Strangford UNESCO Global Geopark",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "UGGp (UNESCO Global Geopark)"
+     }
+    },
+    {
+     "name": "Pembrokeshire Coast National Park",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "conservation"
+     }
+    },
+    {
+     "name": "Cornwall National Landscape",
+     "z": 5,
+     "props": {
+      "rank": 2,
+      "class": "conservation"
+     }
+    },
+    {
+     "name": "Parc naturel marin d'Iroise",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "conservation"
+     }
+    },
+    {
+     "name": "Área Marina Protegida de El Cachucho",
+     "z": 5,
+     "props": {
+      "rank": 1,
+      "class": "wildlife_refuge"
+     }
+    },
+    {
+     "name": "Parque Regional de la Montaña de Riaño y Mampodre",
+     "z": 5,
+     "props": {
+      "rank": 4,
+      "class": "conservation"
+     }
+    }
+   ]
+  },
+  "transportation_name": {
+   "features": 369,
+   "attributes": {
+    "route_1_ref": {
+     "A1": 3,
+     "A32": 1,
+     "A 8": 4,
+     "A 51": 3,
+     "A26": 1,
+     "RA 3": 1,
+     "A11": 1,
+     "A6": 1,
+     "A15": 2,
+     "A11/A12": 1,
+     "A 43": 1,
+     "A12": 1,
+     "A33": 2,
+     "A55": 2,
+     "A 57": 1,
+     "A7": 1,
+     "A 52": 1,
+     "A 50": 1,
+     "A26/A7": 1,
+     "A21": 4,
+     "A4": 1,
+     "A14": 1,
+     "A21 dir": 1,
+     "A22": 1,
+     "SS718": 1,
+     "SS1bis": 1,
+     "A10": 1,
+     "H20": 1,
+     "G4218": 3,
+     "NH33": 1,
+     "G318": 3,
+     "NH13": 1,
+     "C2": 1,
+     "C4": 9,
+     "E16": 2,
+     "C3": 4,
+     "K1": 1,
+     "E51": 3,
+     "B": 1,
+     "E1": 4
+    },
+    "route_2_network": {
+     "e-road": 27,
+     "np:national": 3,
+     "JP:national": 17,
+     "CA:ON:commemorative": 3,
+     "CA:ON:primary": 3,
+     "US:US": 4,
+     "GLCT": 5,
+     "US:NHS High Priority Corridors": 4,
+     "US:NY:Thruway": 1,
+     "US:MI": 3,
+     "US:OH": 3,
+     "US:OH:Turnpike": 2,
+     "US:I": 1,
+     "US:NY": 1,
+     "US:NY:Scenic": 1
+    },
+    "route_1_name": {
+     "Autostrada del Sole": 3,
+     "Autostrada del Frejus": 1,
+     "La Provençale": 4,
+     "Autoroute du Val de Durance": 3,
+     "Autostrada dei Trafori": 1,
+     "Raccordo Autostradale 3 Siena-Firenze": 1,
+     "Autostrada Firenze-Mare": 1,
+     "Autostrada La Verdemare": 1,
+     "Autostrada della Cisa": 2,
+     "Diramazione Lucca ovest - Viareggio": 1,
+     "Autostrada Azzurra": 1,
+     "A33 Asti-Cuneo (tratto Cuneo-A6)": 1,
+     "Autostrada A55 Tangenziale di Torino": 2,
+     "Autostrada dei Giovi - Serravalle": 1,
+     "Autoroute Est de Marseille": 1,
+     "Diramazione Predosa - Bettole": 1,
+     "Autostrada dei Vini": 4,
+     "Autostrada A4": 1,
+     "Autostrada Adriatica": 1,
+     "Diramazione Fiorenzuola d'Arda": 1,
+     "A33 Asti-Cuneo (tratto A6-A21)": 1,
+     "Autostrada del Brennero": 1,
+     "Strada statale 718 di Sanremo": 1,
+     "Strada statale 1 bis": 1,
+     "Autostrada dei Fiori": 1,
+     "काठमाण्डु - तराई एक्सप्रेसवे": 1,
+     "雅叶高速（雅安方向）": 2,
+     "雅叶高速（叶城方向）": 1,
+     "318国道 沪聂线（西藏段）": 3,
+     "B.P. Rajmarg": 1,
+     "Asian Highway 42": 1,
+     "首都高速中央環状線": 1,
+     "圏央道 外回り": 4,
+     "圏央道 内回り": 5,
+     "横浜横須賀道路": 2,
+     "東京外環自動車道": 2,
+     "首都高速神奈川1号横羽線": 1,
+     "東海環状自動車道": 2,
+     "東関東自動車道": 3,
+     "首都高速湾岸線": 1
+    },
+    "route_1_network": {
+     "IT:A-road": 26,
+     "FR:A-road": 11,
+     "IT:B-road": 3,
+     "np:national": 1,
+     "CN:expressway": 3,
+     "NP:national": 2,
+     "CN:national": 3,
+     "AsianHighway": 1,
+     "首都高速道路": 6,
+     "JP:E": 34,
+     "JP:national:expressway": 3,
+     "JP:national": 54,
+     "JP:prefectural:aichi": 1,
+     "JP:prefectural": 6,
+     "EG": 4,
+     "US:MI": 13,
+     "US:I": 47,
+     "CA:ON:primary": 20,
+     "CA:ON:Toronto:Expressway": 1,
+     "CA:ON:private_toll": 1,
+     "US:US": 12,
+     "US:OH": 4,
+     "US:NY": 1,
+     "US:PA": 1,
+     "CA:transcanada:namedRoute": 1
+    },
+    "route_2_ref": {
+     "2": 1,
+     "14": 1,
+     "17": 1,
+     "21": 1,
+     "23": 2,
+     "24": 1,
+     "33": 1,
+     "55": 2,
+     "90": 1,
+     "141": 1,
+     "223": 1,
+     "224": 1,
+     "299": 1,
+     "361": 1,
+     "400": 1,
+     "406": 1,
+     "462": 1,
+     "468": 9,
+     "475": 2,
+     "E 35": 2,
+     "E 74": 3,
+     "E 712": 2,
+     "E 25": 1,
+     "E 80": 3,
+     "E 76": 1,
+     "E 717": 1,
+     "E 33": 2,
+     "E 70": 2,
+     "E 62": 1,
+     "E 64": 1,
+     "E 45": 2,
+     "H20": 1,
+     "NH34": 1,
+     "QEW": 2,
+     "LECT": 2,
+     "LHCT": 3
+    },
+    "network": {
+     "road": 220,
+     "us-state": 19,
+     "us-interstate": 47,
+     "ca-provincial-arterial": 18,
+     "ca-provincial": 4,
+     "us-highway": 12,
+     "ca-transcanada": 1
+    },
+    "ref": {
+     "A1": 3,
+     "A32": 1,
+     "A 8": 4,
+     "A 51": 3,
+     "A26": 1,
+     "RA 3": 1,
+     "A11": 1,
+     "A6": 1,
+     "A15": 2,
+     "A11/A12": 1,
+     "A 43": 1,
+     "A12": 1,
+     "A33": 2,
+     "A55": 2,
+     "A 57": 1,
+     "A7": 1,
+     "A 52": 1,
+     "A 50": 1,
+     "A26/A7": 1,
+     "A21": 2,
+     "A4": 1,
+     "A14": 1,
+     "A21dir": 1,
+     "A22": 1,
+     "M 6202bis": 1,
+     "SS718": 1,
+     "SS1bis": 1,
+     "A10": 1,
+     "SP29": 1,
+     "SP18": 1,
+     "SP35": 1,
+     "SP13": 1,
+     "SP6": 1,
+     "H20": 1,
+     "G4218": 3,
+     "NH33": 1,
+     "G318": 3,
+     "NH13": 1,
+     "NH34": 1,
+     "C2": 2
+    },
+    "ref_length": {
+     "1": 14,
+     "2": 114,
+     "3": 135,
+     "4": 20,
+     "5": 7,
+     "6": 27,
+     "7": 12,
+     "9": 1
+    },
+    "class": {
+     "motorway": 256,
+     "trunk": 83,
+     "minor": 4,
+     "tertiary": 5,
+     "secondary": 5,
+     "motorway_construction": 9,
+     "trunk_construction": 2,
+     "primary": 5
+    },
+    "route_2_name": {
+     "European route E 70 (Italy west)": 5,
+     "European route E74": 3,
+     "European route E712": 2,
+     "European Route 80": 4,
+     "European route E76": 1,
+     "European route E717": 1,
+     "European route E33": 2,
+     "European route E 70 (France east)": 1,
+     "Strada europea E64": 1,
+     "European route E 70 (Italy middle)": 1,
+     "काठमाण्डु - तराई एक्सप्रेसवे": 1,
+     "BP Highway": 1,
+     "Araniko Rajmarg": 1,
+     "国道468号": 9,
+     "国道475号": 2,
+     "京奈道路": 1,
+     "国道406号": 1,
+     "国道141号": 1,
+     "国道462号": 1,
+     "国道361号": 1,
+     "国道299号": 1,
+     "Highway of Heroes": 3,
+     "QEW (Fort Erie-bound)": 1,
+     "QEW (Toronto-bound)": 1,
+     "Lake Erie Circle Tour": 2,
+     "NHS High Priority Corridor 4": 1,
+     "New York State Thruway": 1,
+     "Ohio Turnpike": 2,
+     "Western New York Southtowns Scenic Byway": 1,
+     "Highway 400": 1,
+     "NHS High Priority Corridor 77": 1,
+     "Lake Huron Circle Tour": 3
+    },
+    "route_3_network": {
+     "e-road": 4,
+     "US:NHS High Priority Corridors": 6,
+     "US:OH:Turnpike": 1,
+     "US:ADHS": 1
+    },
+    "route_3_name": {
+     "European Route 80": 2,
+     "European route E74": 1,
+     "NHS High Priority Corridor 77": 1,
+     "Ohio Turnpike": 1,
+     "NHS High Priority Corridor 4": 1
+    },
+    "route_3_ref": {
+     "E 80": 2,
+     "E 45": 1,
+     "E 74": 1
+    },
+    "subclass": {
+     "junction": 35
+    },
+    "route_1_colour": {
+     "blue": 2,
+     "red": 48,
+     "orange": 1
+    },
+    "route_2_colour": {
+     "red": 14
+    },
+    "route_4_name": {
+     "Southern Tier Expressway": 1
+    },
+    "route_4_network": {
+     "US:NY:STE": 1
+    }
+   },
+   "namedExamples": [
+    {
+     "name": "Autostrada del Sole",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A1",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada del Sole",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 35",
+      "network": "road",
+      "ref": "A1",
+      "ref_length": 2,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada del Frejus",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A32",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada del Frejus",
+      "route_1_network": "IT:A-road",
+      "network": "road",
+      "route_2_name": "European route E 70 (Italy west)",
+      "ref": "A32",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "La Provençale",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A 8",
+      "route_2_network": "e-road",
+      "route_3_network": "e-road",
+      "route_1_name": "La Provençale",
+      "route_1_network": "FR:A-road",
+      "route_2_ref": "E 74",
+      "network": "road",
+      "route_2_name": "European route E74",
+      "ref": "A 8",
+      "ref_length": 3,
+      "route_3_name": "European Route 80",
+      "class": "motorway",
+      "route_3_ref": "E 80"
+     }
+    },
+    {
+     "name": "Autoroute du Trièves",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A 51",
+      "route_2_network": "e-road",
+      "route_1_name": "Autoroute du Val de Durance",
+      "route_1_network": "FR:A-road",
+      "route_2_ref": "E 712",
+      "network": "road",
+      "route_2_name": "European route E712",
+      "ref": "A 51",
+      "ref_length": 4,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada dei Trafori",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A26",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada dei Trafori",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 25",
+      "network": "road",
+      "ref": "A26",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Raccordo Autostradale 3 Siena-Firenze",
+     "z": 6,
+     "props": {
+      "route_1_ref": "RA 3",
+      "ref": "RA 3",
+      "route_1_name": "Raccordo Autostradale 3 Siena-Firenze",
+      "ref_length": 4,
+      "route_1_network": "IT:B-road",
+      "class": "motorway",
+      "network": "road"
+     }
+    },
+    {
+     "name": "Autoroute du Val de Durance",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A 51",
+      "route_2_network": "e-road",
+      "route_1_name": "Autoroute du Val de Durance",
+      "route_1_network": "FR:A-road",
+      "route_2_ref": "E 712",
+      "network": "road",
+      "route_2_name": "European route E712",
+      "ref": "A 51",
+      "ref_length": 4,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada Firenze-Mare",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A11",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada Firenze-Mare",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 76",
+      "network": "road",
+      "route_2_name": "European route E76",
+      "ref": "A11",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada La Verdemare",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A6",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada La Verdemare",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 717",
+      "network": "road",
+      "route_2_name": "European route E717",
+      "ref": "A6",
+      "ref_length": 2,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada della Cisa",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A15",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada della Cisa",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 33",
+      "network": "road",
+      "route_2_name": "European route E33",
+      "ref": "A15",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Diramazione Lucca ovest - Viareggio",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A11/A12",
+      "ref": "A11/A12",
+      "route_1_name": "Diramazione Lucca ovest - Viareggio",
+      "ref_length": 7,
+      "route_1_network": "IT:A-road",
+      "class": "motorway",
+      "network": "road"
+     }
+    },
+    {
+     "name": "Autoroute de la Maurienne",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A 43",
+      "route_2_network": "e-road",
+      "route_1_network": "FR:A-road",
+      "route_2_ref": "E 70",
+      "network": "road",
+      "route_2_name": "European route E 70 (France east)",
+      "ref": "A 43",
+      "ref_length": 4,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada Azzurra",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A12",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada Azzurra",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 80",
+      "network": "road",
+      "route_2_name": "European Route 80",
+      "ref": "A12",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada A33 Asti-Cuneo",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A33",
+      "ref": "A33",
+      "route_1_name": "A33 Asti-Cuneo (tratto Cuneo-A6)",
+      "ref_length": 3,
+      "route_1_network": "IT:A-road",
+      "class": "motorway",
+      "network": "road"
+     }
+    },
+    {
+     "name": "Tangenziale Sud",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A55",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada A55 Tangenziale di Torino",
+      "route_1_network": "IT:A-road",
+      "network": "road",
+      "route_2_name": "European route E 70 (Italy west)",
+      "ref": "A55",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "La Toulonnaise",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A 57",
+      "ref": "A 57",
+      "ref_length": 4,
+      "route_1_network": "FR:A-road",
+      "class": "motorway",
+      "network": "road"
+     }
+    },
+    {
+     "name": "Autostrada dei Giovi - Serravalle",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A7",
+      "route_2_ref": "E 62",
+      "network": "road",
+      "ref": "A7",
+      "class": "motorway",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada dei Giovi - Serravalle",
+      "route_1_network": "IT:A-road",
+      "ref_length": 2
+     }
+    },
+    {
+     "name": "Diramazione Predosa-Bettole",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A26/A7",
+      "ref": "A26/A7",
+      "route_1_name": "Diramazione Predosa - Bettole",
+      "ref_length": 6,
+      "route_1_network": "IT:A-road",
+      "class": "motorway",
+      "network": "road"
+     }
+    },
+    {
+     "name": "Autostrada dei Vini",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A21",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada dei Vini",
+      "route_1_network": "IT:A-road",
+      "network": "road",
+      "route_2_name": "European route E 70 (Italy west)",
+      "ref": "A21",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada Serenissima",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A4",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada A4",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 64",
+      "network": "road",
+      "route_2_name": "Strada europea E64",
+      "ref": "A4",
+      "ref_length": 2,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada Adriatica",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A14",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada Adriatica",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 45",
+      "network": "road",
+      "ref": "A14",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada del Pinerolese",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A55",
+      "ref": "A55",
+      "route_1_name": "Autostrada A55 Tangenziale di Torino",
+      "ref_length": 3,
+      "route_1_network": "IT:A-road",
+      "class": "motorway",
+      "network": "road"
+     }
+    },
+    {
+     "name": "Diramazione Fiorenzuola d'Arda",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A21 dir",
+      "ref": "A21dir",
+      "route_1_name": "Diramazione Fiorenzuola d'Arda",
+      "ref_length": 6,
+      "route_1_network": "IT:A-road",
+      "class": "motorway",
+      "network": "road"
+     }
+    },
+    {
+     "name": "Autostrada Asti-Cuneo",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A33",
+      "route_2_network": "e-road",
+      "route_1_name": "A33 Asti-Cuneo (tratto A6-A21)",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 74",
+      "network": "road",
+      "route_2_name": "European route E74",
+      "ref": "A33",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Autostrada del Brennero",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A22",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada del Brennero",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 45",
+      "network": "road",
+      "ref": "A22",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "A15 - dir. Parma - Aulla/Pontremoli",
+     "z": 6,
+     "props": {
+      "route_1_ref": "A15",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada della Cisa",
+      "route_1_network": "IT:A-road",
+      "route_2_ref": "E 33",
+      "network": "road",
+      "route_2_name": "European route E33",
+      "ref": "A15",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Imperia Ovest",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Imperia Est",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Valle Armea",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "trunk"
+     }
+    },
+    {
+     "name": "Area di Gorleri",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "San Bartolomeo al Mare",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Arma di Taggia",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Sanremo San Martino",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "trunk"
+     }
+    },
+    {
+     "name": "A10 - Arma di Taggia",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "trunk"
+     }
+    },
+    {
+     "name": "Area di Conioli",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Area di Castellaro Nord",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Sanremo Ospedale",
+     "z": 10,
+     "props": {
+      "subclass": "junction",
+      "class": "trunk"
+     }
+    },
+    {
+     "name": "Aurelia Bis",
+     "z": 10,
+     "props": {
+      "route_1_ref": "SS718",
+      "route_1_name": "Strada statale 718 di Sanremo",
+      "route_1_network": "IT:B-road",
+      "network": "road",
+      "ref": "SS718",
+      "ref_length": 5,
+      "route_1_colour": "blue",
+      "class": "trunk"
+     }
+    },
+    {
+     "name": "Autostrada dei Fiori",
+     "z": 10,
+     "props": {
+      "route_1_ref": "A10",
+      "route_2_network": "e-road",
+      "route_1_name": "Autostrada dei Fiori",
+      "route_1_network": "IT:A-road",
+      "network": "road",
+      "route_2_name": "European Route 80",
+      "ref": "A10",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "Via Villarelli",
+     "z": 12,
+     "props": {
+      "class": "minor"
+     }
+    },
+    {
+     "name": "काठमाण्डु - तराई एक्सप्रेसवे",
+     "z": 6,
+     "props": {
+      "route_1_ref": "H20",
+      "route_1_name": "काठमाण्डु - तराई एक्सप्रेसवे",
+      "route_1_network": "np:national",
+      "network": "road",
+      "ref": "H20",
+      "ref_length": 3,
+      "class": "motorway_construction"
+     }
+    },
+    {
+     "name": "雅叶高速",
+     "z": 6,
+     "props": {
+      "route_1_ref": "G4218",
+      "route_1_name": "雅叶高速（雅安方向）",
+      "route_1_network": "CN:expressway",
+      "network": "road",
+      "ref": "G4218",
+      "ref_length": 5,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "BP Highway",
+     "z": 8,
+     "props": {
+      "route_1_ref": "NH13",
+      "route_2_network": "np:national",
+      "route_1_name": "B.P. Rajmarg",
+      "route_1_network": "NP:national",
+      "network": "road",
+      "route_2_name": "BP Highway",
+      "ref": "NH13",
+      "ref_length": 4,
+      "class": "trunk"
+     }
+    },
+    {
+     "name": "首都高速中央環状線",
+     "z": 6,
+     "props": {
+      "route_1_ref": "C2",
+      "route_1_name": "首都高速中央環状線",
+      "route_1_network": "首都高速道路",
+      "network": "road",
+      "ref": "C2",
+      "ref_length": 2,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "首都圏中央連絡自動車道",
+     "z": 6,
+     "props": {
+      "route_1_ref": "C4",
+      "route_2_network": "JP:national",
+      "route_2_colour": "red",
+      "route_1_name": "圏央道 外回り",
+      "route_1_network": "JP:E",
+      "route_2_ref": "468",
+      "network": "road",
+      "route_2_name": "国道468号",
+      "ref": "C4;468",
+      "ref_length": 6,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "中央自動車道",
+     "z": 6,
+     "props": {
+      "network": "road",
+      "ref": "E20",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "横浜横須賀道路",
+     "z": 6,
+     "props": {
+      "route_1_ref": "E16",
+      "route_1_name": "横浜横須賀道路",
+      "route_1_network": "JP:national:expressway",
+      "network": "road",
+      "ref": "E16;16",
+      "ref_length": 6,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "北陸自動車道",
+     "z": 6,
+     "props": {
+      "network": "road",
+      "ref": "E8",
+      "ref_length": 2,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "名古屋第二環状自動車道",
+     "z": 6,
+     "props": {
+      "network": "road",
+      "ref": "C2",
+      "ref_length": 2,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "東京外環自動車道",
+     "z": 6,
+     "props": {
+      "route_1_ref": "C3",
+      "route_1_name": "東京外環自動車道",
+      "route_1_network": "JP:E",
+      "network": "road",
+      "ref": "C3",
+      "ref_length": 2,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "首都高速神奈川1号横羽線",
+     "z": 6,
+     "props": {
+      "route_1_ref": "K1",
+      "route_1_name": "首都高速神奈川1号横羽線",
+      "route_1_network": "首都高速道路",
+      "network": "road",
+      "ref": "K1",
+      "ref_length": 2,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "東海環状自動車道",
+     "z": 6,
+     "props": {
+      "route_1_ref": "C3",
+      "route_2_name": "国道475号",
+      "route_2_network": "JP:national",
+      "route_1_name": "東海環状自動車道",
+      "route_1_network": "JP:E",
+      "class": "motorway_construction",
+      "route_2_ref": "475"
+     }
+    },
+    {
+     "name": "すさみ串本道路",
+     "z": 6,
+     "props": {
+      "class": "motorway_construction"
+     }
+    },
+    {
+     "name": "新名神高速道路",
+     "z": 6,
+     "props": {
+      "ref": "E1A",
+      "ref_length": 3,
+      "class": "motorway_construction",
+      "network": "road"
+     }
+    },
+    {
+     "name": "新東名高速道路",
+     "z": 6,
+     "props": {
+      "ref": "E1A",
+      "ref_length": 3,
+      "class": "motorway_construction",
+      "network": "road"
+     }
+    },
+    {
+     "name": "東関東自動車道",
+     "z": 6,
+     "props": {
+      "route_1_ref": "E51",
+      "route_1_name": "東関東自動車道",
+      "route_1_network": "JP:E",
+      "network": "road",
+      "ref": "E51",
+      "ref_length": 3,
+      "class": "motorway_construction"
+     }
+    },
+    {
+     "name": "首都高速湾岸線",
+     "z": 6,
+     "props": {
+      "route_1_ref": "B",
+      "route_1_name": "首都高速湾岸線",
+      "route_1_network": "首都高速道路",
+      "network": "road",
+      "ref": "B",
+      "ref_length": 1,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "東名高速道路",
+     "z": 6,
+     "props": {
+      "route_1_ref": "E1",
+      "route_1_name": "東名高速道路（上り）",
+      "route_1_network": "JP:E",
+      "network": "road",
+      "ref": "E1",
+      "ref_length": 2,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "上信越自動車道",
+     "z": 6,
+     "props": {
+      "network": "road",
+      "ref": "E18",
+      "ref_length": 3,
+      "class": "motorway"
+     }
+    },
+    {
+     "name": "第二京阪道路",
+     "z": 6,
+     "props": {
+      "network": "road",
+      "ref": "E89;1",
+      "ref_length": 5,
+      "class": "motorway"
+     }
+    }
+   ]
+  },
+  "aerodrome_label": {
+   "features": 7,
+   "attributes": {
+    "class": {
+     "international": 1,
+     "other": 6
+    },
+    "ele": {
+     "4": 1,
+     "45": 1,
+     "235": 2,
+     "240": 1
+    },
+    "iata": {
+     "NCE": 1,
+     "ATZ": 2
+    },
+    "icao": {
+     "LFMN": 1,
+     "LIMG": 1,
+     "HEAT": 2
+    }
+   },
+   "namedExamples": [
+    {
+     "name": "Aéroport de Nice-Côte d'Azur",
+     "z": 8,
+     "props": {
+      "class": "international",
+      "ele": 4,
+      "iata": "NCE",
+      "ele_ft": 12,
+      "icao": "LFMN"
+     }
+    },
+    {
+     "name": "Aeroporto Clemente Panero",
+     "z": 10,
+     "props": {
+      "ele_ft": 149,
+      "icao": "LIMG",
+      "class": "other",
+      "ele": 45
+     }
+    },
+    {
+     "name": "أسيوط الدولى",
+     "z": 10,
+     "props": {
+      "class": "other",
+      "ele": 235,
+      "iata": "ATZ",
+      "ele_ft": 771,
+      "icao": "HEAT"
+     }
+    },
+    {
+     "name": "Hillman Airport",
+     "z": 10,
+     "props": {
+      "class": "other"
+     }
+    },
+    {
+     "name": "Turtle Lake Club Airport",
+     "z": 10,
+     "props": {
+      "ele_ft": 787,
+      "class": "other",
+      "ele": 240
+     }
+    },
+    {
+     "name": "Vlachos Acres Airport",
+     "z": 10,
+     "props": {
+      "class": "other"
+     }
+    }
+   ]
+  },
+  "mountain_peak": {
+   "features": 615,
+   "attributes": {
+    "rank": {
+     "1": 163,
+     "2": 135,
+     "3": 116,
+     "4": 106,
+     "5": 95
+    },
+    "class": {
+     "peak": 566,
+     "saddle": 44,
+     "volcano": 5
+    },
+    "ele": {
+     "131": 1,
+     "192": 1,
+     "193": 1,
+     "287": 1,
+     "577": 1,
+     "618": 1,
+     "677": 3,
+     "781": 2,
+     "934": 2,
+     "1138": 1,
+     "1376": 2,
+     "1412": 1,
+     "1500": 1,
+     "1501": 2,
+     "1678": 1,
+     "1680": 1,
+     "1879": 1,
+     "2004": 1,
+     "2007": 1,
+     "2144": 1,
+     "2172": 1,
+     "2482": 2,
+     "2516": 1,
+     "2560": 1,
+     "2674": 1,
+     "2685": 3,
+     "2693": 3,
+     "2786": 1,
+     "2922": 1,
+     "2927": 1,
+     "2947": 1,
+     "3020": 2,
+     "3045": 1,
+     "3051": 1,
+     "3061": 1,
+     "3108": 1,
+     "3143": 1,
+     "3261": 1,
+     "3262": 1,
+     "3297": 1
+    },
+    "customary_ft": {
+     "1": 24
+    }
+   },
+   "namedExamples": [
+    {
+     "name": "Cima Sud Argentera",
+     "z": 8,
+     "props": {
+      "rank": 1,
+      "class": "peak",
+      "ele": 3297,
+      "ele_ft": 10817
+     }
+    },
+    {
+     "name": "Monte Stella",
+     "z": 8,
+     "props": {
+      "ele_ft": 10702,
+      "rank": 2,
+      "class": "peak",
+      "ele": 3262
+     }
+    },
+    {
+     "name": "Punta Gelas di Lourousa",
+     "z": 8,
+     "props": {
+      "ele_ft": 10699,
+      "rank": 3,
+      "class": "peak",
+      "ele": 3261
+     }
+    },
+    {
+     "name": "Cime du Gélas / Monte Gelàs",
+     "z": 8,
+     "props": {
+      "ele_ft": 10312,
+      "rank": 1,
+      "class": "peak",
+      "ele": 3143
+     }
+    },
+    {
+     "name": "Cima di Nasta",
+     "z": 8,
+     "props": {
+      "ele_ft": 10197,
+      "rank": 4,
+      "class": "peak",
+      "ele": 3108
+     }
+    },
+    {
+     "name": "Cima Maledia / Cime de la Malédie",
+     "z": 8,
+     "props": {
+      "ele_ft": 10043,
+      "rank": 2,
+      "class": "peak",
+      "ele": 3061
+     }
+    },
+    {
+     "name": "Mont Pelat",
+     "z": 8,
+     "props": {
+      "ele_ft": 10010,
+      "rank": 1,
+      "class": "peak",
+      "ele": 3051
+     }
+    },
+    {
+     "name": "Mont Clapier / Monte Clapier",
+     "z": 8,
+     "props": {
+      "ele_ft": 9990,
+      "rank": 1,
+      "class": "peak",
+      "ele": 3045
+     }
+    },
+    {
+     "name": "Le Cimet",
+     "z": 8,
+     "props": {
+      "ele_ft": 9908,
+      "rank": 2,
+      "class": "peak",
+      "ele": 3020
+     }
+    },
+    {
+     "name": "Cime de Peïrabroc",
+     "z": 8,
+     "props": {
+      "ele_ft": 9669,
+      "rank": 3,
+      "class": "peak",
+      "ele": 2947
+     }
+    },
+    {
+     "name": "Cima dell'Agnello / Cime de l'Agnel",
+     "z": 8,
+     "props": {
+      "ele_ft": 9603,
+      "rank": 4,
+      "class": "peak",
+      "ele": 2927
+     }
+    },
+    {
+     "name": "Cima di Cougourda / Cime de Cougourde",
+     "z": 8,
+     "props": {
+      "ele_ft": 9587,
+      "rank": 5,
+      "class": "peak",
+      "ele": 2922
+     }
+    },
+    {
+     "name": "Mont Neiglier",
+     "z": 8,
+     "props": {
+      "ele_ft": 9140,
+      "rank": 2,
+      "class": "peak",
+      "ele": 2786
+     }
+    },
+    {
+     "name": "Le Grand Coyer",
+     "z": 8,
+     "props": {
+      "ele_ft": 8835,
+      "rank": 1,
+      "class": "peak",
+      "ele": 2693
+     }
+    },
+    {
+     "name": "Baisse du Basto",
+     "z": 8,
+     "props": {
+      "ele_ft": 8835,
+      "rank": 3,
+      "class": "saddle",
+      "ele": 2693
+     }
+    },
+    {
+     "name": "Cime du Diable",
+     "z": 8,
+     "props": {
+      "ele_ft": 8809,
+      "rank": 4,
+      "class": "peak",
+      "ele": 2685
+     }
+    },
+    {
+     "name": "Mont Pépoiri",
+     "z": 8,
+     "props": {
+      "ele_ft": 8773,
+      "rank": 1,
+      "class": "peak",
+      "ele": 2674
+     }
+    },
+    {
+     "name": "Brec Premier",
+     "z": 8,
+     "props": {
+      "ele_ft": 8399,
+      "rank": 5,
+      "class": "peak",
+      "ele": 2560
+     }
+    },
+    {
+     "name": "Puy du Pas Roubinous",
+     "z": 8,
+     "props": {
+      "ele_ft": 8255,
+      "rank": 2,
+      "class": "peak",
+      "ele": 2516
+     }
+    },
+    {
+     "name": "Mont Bertrand / Monte Bertrand",
+     "z": 8,
+     "props": {
+      "ele_ft": 8143,
+      "rank": 5,
+      "class": "peak",
+      "ele": 2482
+     }
+    },
+    {
+     "name": "Cima Ciuaiera",
+     "z": 8,
+     "props": {
+      "ele_ft": 7126,
+      "rank": 1,
+      "class": "peak",
+      "ele": 2172
+     }
+    },
+    {
+     "name": "Monte Antoroto",
+     "z": 8,
+     "props": {
+      "ele_ft": 7034,
+      "rank": 2,
+      "class": "peak",
+      "ele": 2144
+     }
+    },
+    {
+     "name": "Monte Grosso",
+     "z": 8,
+     "props": {
+      "ele_ft": 6585,
+      "rank": 3,
+      "class": "peak",
+      "ele": 2007
+     }
+    },
+    {
+     "name": "Monte Baussetti",
+     "z": 8,
+     "props": {
+      "ele_ft": 6575,
+      "rank": 4,
+      "class": "peak",
+      "ele": 2004
+     }
+    },
+    {
+     "name": "Bric Mindino",
+     "z": 8,
+     "props": {
+      "ele_ft": 6165,
+      "rank": 5,
+      "class": "peak",
+      "ele": 1879
+     }
+    },
+    {
+     "name": "Col d'Andrion",
+     "z": 8,
+     "props": {
+      "ele_ft": 5512,
+      "rank": 2,
+      "class": "saddle",
+      "ele": 1680
+     }
+    },
+    {
+     "name": "Col de la Couillole",
+     "z": 8,
+     "props": {
+      "ele_ft": 5505,
+      "rank": 3,
+      "class": "saddle",
+      "ele": 1678
+     }
+    },
+    {
+     "name": "Rocca delle Penne",
+     "z": 8,
+     "props": {
+      "ele_ft": 4925,
+      "rank": 1,
+      "class": "peak",
+      "ele": 1501
+     }
+    },
+    {
+     "name": "Col Saint-Martin",
+     "z": 8,
+     "props": {
+      "ele_ft": 4921,
+      "rank": 4,
+      "class": "saddle",
+      "ele": 1500
+     }
+    },
+    {
+     "name": "Mont Férion",
+     "z": 8,
+     "props": {
+      "ele_ft": 4633,
+      "rank": 5,
+      "class": "peak",
+      "ele": 1412
+     }
+    },
+    {
+     "name": "Colle di Caprauna",
+     "z": 8,
+     "props": {
+      "ele_ft": 4514,
+      "rank": 2,
+      "class": "saddle",
+      "ele": 1376
+     }
+    },
+    {
+     "name": "Colle di Nava",
+     "z": 8,
+     "props": {
+      "ele_ft": 3064,
+      "rank": 3,
+      "class": "saddle",
+      "ele": 934
+     }
+    },
+    {
+     "name": "Monte Sette Fontane",
+     "z": 8,
+     "props": {
+      "ele_ft": 2562,
+      "rank": 4,
+      "class": "peak",
+      "ele": 781
+     }
+    },
+    {
+     "name": "Passo del Ginestro",
+     "z": 8,
+     "props": {
+      "ele_ft": 2221,
+      "rank": 5,
+      "class": "saddle",
+      "ele": 677
+     }
+    },
+    {
+     "name": "Mont Vinaigre",
+     "z": 8,
+     "props": {
+      "ele_ft": 2028,
+      "rank": 1,
+      "class": "peak",
+      "ele": 618
+     }
+    },
+    {
+     "name": "Rastel d'Agay",
+     "z": 8,
+     "props": {
+      "ele_ft": 942,
+      "rank": 2,
+      "class": "peak",
+      "ele": 287
+     }
+    },
+    {
+     "name": "Col Saint-Antoine",
+     "z": 8,
+     "props": {
+      "ele_ft": 633,
+      "rank": 3,
+      "class": "saddle",
+      "ele": 193
+     }
+    },
+    {
+     "name": "Mont Boron",
+     "z": 8,
+     "props": {
+      "ele_ft": 630,
+      "rank": 4,
+      "class": "peak",
+      "ele": 192
+     }
+    },
+    {
+     "name": "San Peyre",
+     "z": 8,
+     "props": {
+      "ele_ft": 430,
+      "rank": 5,
+      "class": "peak",
+      "ele": 131
+     }
+    },
+    {
+     "name": "Montagne des Louquiers",
+     "z": 8,
+     "props": {
+      "ele_ft": 3734,
+      "rank": 4,
+      "class": "peak",
+      "ele": 1138
+     }
+    },
+    {
+     "name": "Mont Leuze",
+     "z": 8,
+     "props": {
+      "ele_ft": 1893,
+      "rank": 1,
+      "class": "peak",
+      "ele": 577
+     }
+    },
+    {
+     "name": "Cima di Pertegà / Cime de Pertègue",
+     "z": 10,
+     "props": {
+      "ele_ft": 7887,
+      "rank": 3,
+      "class": "peak",
+      "ele": 2404
+     }
+    },
+    {
+     "name": "Mont Saccarel",
+     "z": 10,
+     "props": {
+      "ele_ft": 7218,
+      "rank": 2,
+      "class": "peak",
+      "ele": 2200
+     }
+    },
+    {
+     "name": "Monte Frontè",
+     "z": 10,
+     "props": {
+      "ele_ft": 7057,
+      "rank": 1,
+      "class": "peak",
+      "ele": 2151
+     }
+    },
+    {
+     "name": "Cima Garlenda",
+     "z": 10,
+     "props": {
+      "ele_ft": 7024,
+      "rank": 2,
+      "class": "peak",
+      "ele": 2141
+     }
+    },
+    {
+     "name": "Cime de Marta",
+     "z": 10,
+     "props": {
+      "ele_ft": 7011,
+      "rank": 1,
+      "class": "peak",
+      "ele": 2137
+     }
+    },
+    {
+     "name": "Mont Tanarel / Monte Tanarello",
+     "z": 10,
+     "props": {
+      "ele_ft": 6870,
+      "rank": 3,
+      "class": "peak",
+      "ele": 2094
+     }
+    },
+    {
+     "name": "Passo Frontè",
+     "z": 10,
+     "props": {
+      "ele_ft": 6857,
+      "rank": 3,
+      "class": "saddle",
+      "ele": 2090
+     }
+    },
+    {
+     "name": "Pas du Tanarel / Passo Tanarello",
+     "z": 10,
+     "props": {
+      "ele_ft": 6709,
+      "rank": 4,
+      "class": "saddle",
+      "ele": 2045
+     }
+    },
+    {
+     "name": "Mont Peïrevieille / Monte Pietravecchia",
+     "z": 10,
+     "props": {
+      "ele_ft": 6690,
+      "rank": 2,
+      "class": "peak",
+      "ele": 2039
+     }
+    },
+    {
+     "name": "Passo di Garlenda",
+     "z": 10,
+     "props": {
+      "ele_ft": 6631,
+      "rank": 4,
+      "class": "saddle",
+      "ele": 2021
+     }
+    },
+    {
+     "name": "Mont Torrage / Monte Toraggio",
+     "z": 10,
+     "props": {
+      "ele_ft": 6470,
+      "rank": 3,
+      "class": "peak",
+      "ele": 1972
+     }
+    },
+    {
+     "name": "Monte Monega",
+     "z": 10,
+     "props": {
+      "ele_ft": 6191,
+      "rank": 5,
+      "class": "peak",
+      "ele": 1887
+     }
+    },
+    {
+     "name": "Monte Armetta",
+     "z": 10,
+     "props": {
+      "ele_ft": 5705,
+      "rank": 1,
+      "class": "peak",
+      "ele": 1739
+     }
+    },
+    {
+     "name": "Monte Ceppo",
+     "z": 10,
+     "props": {
+      "ele_ft": 5338,
+      "rank": 1,
+      "class": "peak",
+      "ele": 1627
+     }
+    },
+    {
+     "name": "Colletta delle Salse",
+     "z": 10,
+     "props": {
+      "ele_ft": 5325,
+      "rank": 5,
+      "class": "saddle",
+      "ele": 1623
+     }
+    },
+    {
+     "name": "Carmo di Brocchi",
+     "z": 10,
+     "props": {
+      "ele_ft": 5282,
+      "rank": 2,
+      "class": "peak",
+      "ele": 1610
+     }
+    },
+    {
+     "name": "Monte Dubasso",
+     "z": 10,
+     "props": {
+      "ele_ft": 5046,
+      "rank": 2,
+      "class": "peak",
+      "ele": 1538
+     }
+    },
+    {
+     "name": "Passo della Mezzaluna",
+     "z": 10,
+     "props": {
+      "ele_ft": 4770,
+      "rank": 3,
+      "class": "saddle",
+      "ele": 1454
+     }
+    },
+    {
+     "name": "Monte Carpasina",
+     "z": 10,
+     "props": {
+      "ele_ft": 4642,
+      "rank": 4,
+      "class": "peak",
+      "ele": 1415
+     }
+    }
+   ]
+  },
+  "poi": {
+   "features": 7,
+   "attributes": {
+    "subclass": {
+     "station": 7
+    },
+    "rank": {
+     "1": 7
+    },
+    "class": {
+     "railway": 7
+    }
+   },
+   "namedExamples": [
+    {
+     "name": "小野",
+     "z": 12,
+     "props": {
+      "subclass": "station",
+      "rank": 1,
+      "class": "railway"
+     }
+    },
+    {
+     "name": "信濃川島",
+     "z": 12,
+     "props": {
+      "subclass": "station",
+      "rank": 1,
+      "class": "railway"
+     }
+    },
+    {
+     "name": "伊那新町",
+     "z": 12,
+     "props": {
+      "subclass": "station",
+      "rank": 1,
+      "class": "railway"
+     }
+    },
+    {
+     "name": "羽場",
+     "z": 12,
+     "props": {
+      "subclass": "station",
+      "rank": 1,
+      "class": "railway"
+     }
+    },
+    {
+     "name": "辰野",
+     "z": 12,
+     "props": {
+      "subclass": "station",
+      "rank": 1,
+      "class": "railway"
+     }
+    },
+    {
+     "name": "宮木",
+     "z": 12,
+     "props": {
+      "subclass": "station",
+      "rank": 1,
+      "class": "railway"
+     }
+    },
+    {
+     "name": "川岸",
+     "z": 12,
+     "props": {
+      "subclass": "station",
+      "rank": 1,
+      "class": "railway"
+     }
+    }
+   ]
+  },
+  "aeroway": {
+   "features": 69,
+   "attributes": {
+    "class": {
+     "runway": 5,
+     "taxiway": 59,
+     "aerodrome": 3,
+     "apron": 2
+    },
+    "ref": {
+     "13/31": 2,
+     "A": 6,
+     "B": 2,
+     "D": 4,
+     "E": 2,
+     "G": 2,
+     "C": 4,
+     "F": 2,
+     "H": 2,
+     "04/22": 1,
+     "18/36": 1
+    }
+   },
+   "namedExamples": []
+  }
+ },
+ "allLayerIds": [
+  "background:background:",
+  "natural_earth:raster:",
+  "park:fill:park",
+  "park_outline:line:park",
+  "landuse_residential:fill:landuse",
+  "landcover_wood:fill:landcover",
+  "landcover_grass:fill:landcover",
+  "landcover_ice:fill:landcover",
+  "landcover_wetland:fill:landcover",
+  "landuse_pitch:fill:landuse",
+  "landuse_track:fill:landuse",
+  "landuse_cemetery:fill:landuse",
+  "landuse_hospital:fill:landuse",
+  "landuse_school:fill:landuse",
+  "waterway_tunnel:line:waterway",
+  "waterway_river:line:waterway",
+  "waterway_other:line:waterway",
+  "water:fill:water",
+  "landcover_sand:fill:landcover",
+  "aeroway_fill:fill:aeroway",
+  "aeroway_runway:line:aeroway",
+  "aeroway_taxiway:line:aeroway",
+  "tunnel_motorway_link_casing:line:transportation",
+  "tunnel_service_track_casing:line:transportation",
+  "tunnel_link_casing:line:transportation",
+  "tunnel_street_casing:line:transportation",
+  "tunnel_secondary_tertiary_casing:line:transportation",
+  "tunnel_trunk_primary_casing:line:transportation",
+  "tunnel_motorway_casing:line:transportation",
+  "tunnel_path_pedestrian:line:transportation",
+  "tunnel_motorway_link:line:transportation",
+  "tunnel_service_track:line:transportation",
+  "tunnel_link:line:transportation",
+  "tunnel_minor:line:transportation",
+  "tunnel_secondary_tertiary:line:transportation",
+  "tunnel_trunk_primary:line:transportation",
+  "tunnel_motorway:line:transportation",
+  "tunnel_major_rail:line:transportation",
+  "tunnel_major_rail_hatching:line:transportation",
+  "tunnel_transit_rail:line:transportation",
+  "tunnel_transit_rail_hatching:line:transportation",
+  "road_area_pattern:fill:transportation",
+  "road_motorway_link_casing:line:transportation",
+  "road_service_track_casing:line:transportation",
+  "road_link_casing:line:transportation",
+  "road_minor_casing:line:transportation",
+  "road_secondary_tertiary_casing:line:transportation",
+  "road_trunk_primary_casing:line:transportation",
+  "road_motorway_casing:line:transportation",
+  "road_path_pedestrian:line:transportation",
+  "road_motorway_link:line:transportation",
+  "road_service_track:line:transportation",
+  "road_link:line:transportation",
+  "road_minor:line:transportation",
+  "road_secondary_tertiary:line:transportation",
+  "road_trunk_primary:line:transportation",
+  "road_motorway:line:transportation",
+  "road_major_rail:line:transportation",
+  "road_major_rail_hatching:line:transportation",
+  "road_transit_rail:line:transportation",
+  "road_transit_rail_hatching:line:transportation",
+  "road_one_way_arrow:symbol:transportation",
+  "road_one_way_arrow_opposite:symbol:transportation",
+  "bridge_motorway_link_casing:line:transportation",
+  "bridge_service_track_casing:line:transportation",
+  "bridge_link_casing:line:transportation",
+  "bridge_street_casing:line:transportation",
+  "bridge_path_pedestrian_casing:line:transportation",
+  "bridge_secondary_tertiary_casing:line:transportation",
+  "bridge_trunk_primary_casing:line:transportation",
+  "bridge_motorway_casing:line:transportation",
+  "bridge_path_pedestrian:line:transportation",
+  "bridge_motorway_link:line:transportation",
+  "bridge_service_track:line:transportation",
+  "bridge_link:line:transportation",
+  "bridge_street:line:transportation",
+  "bridge_secondary_tertiary:line:transportation",
+  "bridge_trunk_primary:line:transportation",
+  "bridge_motorway:line:transportation",
+  "bridge_major_rail:line:transportation",
+  "bridge_major_rail_hatching:line:transportation",
+  "bridge_transit_rail:line:transportation",
+  "bridge_transit_rail_hatching:line:transportation",
+  "building:fill:building",
+  "building-3d:fill-extrusion:building",
+  "boundary_3:line:boundary",
+  "boundary_2:line:boundary",
+  "boundary_disputed:line:boundary",
+  "waterway_line_label:symbol:waterway",
+  "water_name_point_label:symbol:water_name",
+  "water_name_line_label:symbol:water_name",
+  "poi_r20:symbol:poi",
+  "poi_r7:symbol:poi",
+  "poi_r1:symbol:poi",
+  "poi_transit:symbol:poi",
+  "highway-name-path:symbol:transportation_name",
+  "highway-name-minor:symbol:transportation_name",
+  "highway-name-major:symbol:transportation_name",
+  "highway-shield-non-us:symbol:transportation_name",
+  "highway-shield-us-interstate:symbol:transportation_name",
+  "road_shield_us:symbol:transportation_name",
+  "airport:symbol:aerodrome_label",
+  "label_other:symbol:place",
+  "label_village:symbol:place",
+  "label_town:symbol:place",
+  "label_state:symbol:place",
+  "label_city:symbol:place",
+  "label_city_capital:symbol:place",
+  "label_country_3:symbol:place",
+  "label_country_2:symbol:place",
+  "label_country_1:symbol:place"
+ ]
+}
