@@ -245,9 +245,12 @@ check('index.html carga el motor astronomico y el cielo desde el propio reposito
         && !/(unpkg|jsdelivr|cdnjs)[^"']*astronomy/i.test(html);
 });
 
-check('index.html no declara precision del cielo que no haya medido (usa validation.json o lo dice)', () => {
+check('index.html no declara precision del cielo: el panel Cielo se retiro (decision del creador, 2026-11-07); la validacion sigue en CI', () => {
     const html = readIndex();
-    return /noValidation/.test(html) && /skyAccuracyText/.test(html) && /data\/sky\/validation\.json/.test(html);
+    // Sin panel no hay texto de precision. Si vuelve un panel, debe volver a leer data/sky/validation.json.
+    const noPanel = !/id="btn-sky"|id="sky"|skyAccuracyText/.test(html);
+    const claims = /noValidation|accuracy:\s*'/.test(html);
+    return noPanel && !claims;
 });
 
 // --- Simplificacion de paleocostas: no debe perder ni deformar datos en silencio ---

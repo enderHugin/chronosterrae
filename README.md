@@ -24,11 +24,11 @@ sale y cuánto se puede fiar de él.
   especulación), siempre visible.
 - **Datos recientes** de un recolector diario (artículos más vistos de Wikipedia con coordenadas
   en Wikidata), mostrados solo en el presente.
-- **Cielo** (botón «Cielo»): Sol, Luna con su fase, y Mercurio a Neptuno para cualquier fecha entre
-  el 2001 a. C. y hoy, hora solar local y lugar (el centro del mapa o el que escribas), con calendario
-  juliano hasta el 4-10-1582 y gregoriano después, refracción y crepúsculo. El cálculo está en
-  `sky/sky.js` y se contrasta con JPL Horizons en Actions: **el error medido se muestra en la propia
-  web** (segundos de arco hoy; unos 15′ para la Luna hacia el año 0 y ~1,2° hacia el 2000 a. C.).
+- **Cielo de fondo** (sin botón ni panel: el creador decidió el 2026-11-07 que no hacían falta): detrás del
+  globo se dibuja el cielo con estrellas, constelaciones, Sol, Luna con su fase y planetas, calculado para
+  la fecha elegida (2001 a. C. a hoy) con calendario juliano hasta el 4-10-1582 y gregoriano después. El
+  cálculo sigue en `sky/sky.js` y se contrasta con JPL Horizons en Actions (`data/sky/validation.json`);
+  la web ya no muestra ese error, que sigue publicado en el repositorio.
 - **Estrellas de la prehistoria** (−100.000 a −2001, solo estrellas, etiquetado «modelo»): movimiento
   propio **y velocidad radial** en 3D con el tiempo de luz exacto (`sky/stars3d.js`), precesión de largo
   plazo de Vondrák, Capitaine y Wallace 2011 (`sky/ltp.js`, tablas extraídas de ERFA, BSD-3) y rotación
