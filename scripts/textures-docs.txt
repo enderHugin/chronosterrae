@@ -1,12 +1,4 @@
-mercury_pds3.lbl https://astrogeology.usgs.gov/ckan/dataset/9d047a09-a10d-4e2a-865a-9b5e1b465315/resource/0091208c-1526-4931-8440-f9ae1af9ea72/download/mercury_messenger_mdis_basemap_loi_mosaic_global_166m_pds3.lbl
-mercury.lbl https://astrogeology.usgs.gov/ckan/dataset/9d047a09-a10d-4e2a-865a-9b5e1b465315/resource/00d4a2f3-82b6-44c0-b934-00a4317fcdc1/download/mercury_messenger_mdis_basemap_loi_mosaic_global_166m.lbl
-venus_pds3.lbl https://astrogeology.usgs.gov/ckan/dataset/bf10c4f9-7587-4357-b0d9-81d5b6e6637c/resource/8bfa6f51-41e4-4e1c-813b-7428dfc2f60f/download/venus_magellan_c3-mdir_global_mosaic_2025m_pds3.lbl
-mars_pds3.lbl https://astrogeology.usgs.gov/ckan/dataset/7131d503-cdc9-45a5-8f83-5126c0fd397e/resource/f760f110-93bd-4d0e-8256-6d3af337426f/download/mars_viking_mdim21_clrmosaic_global_232m_pds3.lbl
-io_pds3.lbl https://astrogeology.usgs.gov/ckan/dataset/f6924861-ce9c-490d-8a4b-7812a20f2de5/resource/fc8301d7-e6fa-4420-9e7e-e47afb84012f/download/io_galileossi-voyager_global_mosaic_clrmerge_1km_pds3.lbl
-europa_pds3.lbl https://astrogeology.usgs.gov/ckan/dataset/4080036f-afc5-422e-abe9-1c0c8e4f98ea/resource/8638d940-e761-4c28-ad71-a73819fa811f/download/europa_voyager_galileossi_global_mosaic_500m_pds3.lbl
-ganymede_pds3.lbl https://astrogeology.usgs.gov/ckan/dataset/57cad6e2-ed52-4b99-9d44-afbb9def6450/resource/5dd1a702-cc43-436e-b4ce-00776f29c7f2/download/ganymede_voyager_galileossi_global_mosaic_1km_pds3.lbl
-callisto_pds3.lbl https://astrogeology.usgs.gov/ckan/dataset/a80abd68-7ed9-440e-829a-76376779164f/resource/0b2f0b5f-36d9-4b02-8901-026cffa44393/download/callisto_voyager_galileossi_global_mosaic_1km_pds3.lbl
-jupiter_fig1.jpg https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia07/pia07782/figures/PIA07782_fig1.jpg
-jupiter_fig2.jpg https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia07/pia07782/figures/PIA07782_fig2.jpg
-jupiter_page.html https://science.nasa.gov/photojournal/cassinis-best-maps-of-jupiter-cylindrical-map/
-moon_page.html https://svs.gsfc.nasa.gov/4720/
+uvis_root.html https://pds-rings.seti.org/pds4/bundles/cassini_uvis_solarocc_beckerjarmak2023/cassini_uvis_solarocc_beckerjarmak2023_v1.0/
+uvis_data.html https://pds-rings.seti.org/pds4/bundles/cassini_uvis_solarocc_beckerjarmak2023/cassini_uvis_solarocc_beckerjarmak2023_v1.0/data/
+uvis_collection_data.html https://pds-rings.seti.org/pds4/bundles/cassini_uvis_solarocc_beckerjarmak2023/cassini_uvis_solarocc_beckerjarmak2023_v1.0/data_collection/
+uvis_doc.html https://pds-rings.seti.org/pds4/bundles/cassini_uvis_solarocc_beckerjarmak2023/cassini_uvis_solarocc_beckerjarmak2023_v1.0/document/
