@@ -40,7 +40,11 @@ const SUITE = [
     { id: 'iconos-europa-1805', events: true, year: 1805, lng: 10, lat: 48, zoom: 4.5 },
     { id: 'iconos-inglaterra-1066', events: true, year: 1066, lng: -1, lat: 51, zoom: 5 },
     // Reloj corriendo a ~1 año por segundo de pantalla durante 6 s: la ventana de sucesos es proporcional a la velocidad, con fundido por niveles
-    { id: 'ventana-europa-1936-1-ano-s', events: true, run: true, yearsPerSec: 1, year: 1936, lng: 15, lat: 50, zoom: 4 }
+    { id: 'ventana-europa-1936-1-ano-s', events: true, run: true, yearsPerSec: 1, year: 1936, lng: 15, lat: 50, zoom: 4 },
+    // Filtro de tipos de Ajustes: sin nacimientos ni muertes (el panel de Ajustes queda abierto en la imagen)
+    { id: 'tipos-sin-personas-europa-1939', events: true, tipos: ['birth', 'death'], year: 1939, lng: 15, lat: 50, zoom: 4 },
+    // Salto animado: la flecha con paso de 10 años barre el tramo; se fotografia a mitad de camino y al llegar
+    { id: 'barrido-europa-1936-10-anos', events: true, barrido: true, year: 1936, lng: 15, lat: 50, zoom: 4 }
 ];
 
 async function settle(page) {
@@ -129,7 +133,22 @@ async function runSuite(page, out, only) {
             if (v.hide) await page.evaluate(() => { if (!BR.off) document.getElementById('btn-borders').click(); });
             if (v.roads) await page.evaluate(() => { if (!ROADS.on) document.getElementById('btn-roads').click(); });
             if (v.events) { await page.evaluate(() => { if (!events.open) document.getElementById('btn-events').click(); }); await page.waitForFunction(() => events.shown.length > 0, null, { timeout: 40000 }).catch(() => {}); await page.waitForTimeout(1500); }
-            let ventana;
+            let ventana; let barrido; let tiposInfo;
+            if (v.tipos) tiposInfo = await page.evaluate((hid) => { panelsUI.setSettingsOpen(true); typesSet(ChronosEventIcons.hiddenToMask(hid), false); typesRender(); return { mascara: etMask, casilleros: document.querySelectorAll('#st-types input').length, marcados: [...document.querySelectorAll('#st-types input')].filter((c) => c.checked).length }; }, v.tipos);
+            if (v.barrido) {
+                await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});
+                const ini = await page.evaluate(() => {
+                    eventIconsAnimate(true); const jd0 = clock.jd; const sel = document.getElementById('key-step'); sel.value = '10y'; sel.dispatchEvent(new Event('change'));
+                    const sl = document.getElementById('slider'); sl.focus(); sl.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }));
+                    return { jd0, activo: glideOn(), destino: glide.target(), anioIni: ChronosSky.jdToCalendar(jd0, 'auto').year };
+                });
+                await page.waitForTimeout(1100);
+                const medio = await page.evaluate(() => ({ jd: clock.jd, activo: glideOn(), mostrados: events.shown.length, ventana: EV_ENTER.win, anio: ChronosSky.jdToCalendar(clock.jd, 'auto').year, toasts: events.toasts.size }));
+                await page.screenshot({ path: path.join(out, v.id + (dark ? '-oscuro' : '-claro') + '-medio.png') });
+                const fin = await page.evaluate(async () => { await new Promise((r) => { const iv = setInterval(() => { if (!glideOn()) { clearInterval(iv); r(); } }, 60); setTimeout(() => { clearInterval(iv); r(); }, 8000); }); await new Promise((r) => setTimeout(r, 1800)); return { jd: clock.jd, activo: glideOn(), anio: ChronosSky.jdToCalendar(clock.jd, 'auto').year, mostrados: events.shown.length, ventana: EV_ENTER.win }; });
+                await page.evaluate(() => eventIconsAnimate(false));
+                barrido = { ini, medio, fin, llegoExacto: fin.jd === ini.destino };
+            }
             if (v.run) await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});   // el cielo (efemerides) carga aparte
             if (v.run) {   // el reloj avanza por su punto de entrada real (clockSet) a v.yearsPerSec; se mide la ventana y se fotografia sin esperar (al parar, la ventana vuelve a la minima en ~2,5 s)
                 ventana = await page.evaluate(async (yps) => {
@@ -165,8 +184,9 @@ async function runSuite(page, out, only) {
                 feats.forEach((f) => { por[f.properties.icon] = (por[f.properties.icon] || 0) + 1; });
                 return { dibujados: events.shown.length, iconos: feats.length, por, capas: ['events-disc', 'events-pulse', 'events-icon-bob', 'events-icon-shake', 'events-circle'].map((l) => l + ':' + (map.getLayer(l) ? 'si' : 'NO')).join(' '), animacion: EVA.on };
             }) : undefined;
-            rows.push({ name, labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            rows.push({ name, labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
             if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
+            if (v.tipos) await page.evaluate(() => { typesSet(0, false); typesRender(); panelsUI.setSettingsOpen(false); });
             if (v.events) await page.evaluate(() => { if (events.open) document.getElementById('btn-events').click(); });
             fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));   // parcial: si el proceso muere, queda lo medido hasta aqui
             if (v.hide) await page.evaluate(() => { if (BR.off) document.getElementById('btn-borders').click(); });

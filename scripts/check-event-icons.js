@@ -155,5 +155,22 @@ check('stop deja la fase en reposo (0) aunque estuviera en 1', () => {
     const c = clock(); const ph = []; const p = I.createPulse({ period: 1000, setTimer: c.setTimer, clearTimer: c.clearTimer, apply: (v) => ph.push(v) }); p.start(); c.tick(1000); p.stop(); return ph.join() === '1,0' && p.phase() === 0;
 });
 
+/* ---------------------------- Grupos para el filtro de tipos ---------------------------- */
+check('grupos: todo icono dibujable esta en UN solo grupo (ni falta ni sobra ninguno)', () => {
+    const seen = {}; I.GROUPS.forEach((g) => g.icons.forEach((k) => { seen[k] = (seen[k] || 0) + 1; }));
+    const falta = I.KEYS.filter((k) => seen[k] !== 1); const sobra = Object.keys(seen).filter((k) => I.KEYS.indexOf(k) < 0);
+    return falta.length === 0 && sobra.length === 0 ? true : JSON.stringify({ falta, sobra });
+});
+check('grupos: ids unicos, con texto en español e ingles, y cabe todo en la mascara de la cookie (<= 16 bits)', () => new Set(I.GROUPS.map((g) => g.id)).size === I.GROUPS.length && I.GROUPS.every((g) => g.es && g.en && g.icons.length) && I.GROUPS.length <= 16 && I.GROUP_ALL_MASK === (1 << I.GROUPS.length) - 1);
+check('grupos: groupOf de un icono desconocido cae en «otros» (no desaparece)', () => I.groupOf('zzz') === 'other' && I.groupOf('sword') === 'war' && I.groupOf('tank') === 'war' && I.groupOf('musket') === 'war' && I.groupOf('election') === 'politics');
+check('grupos: hiddenToMask/maskToHidden hacen ida y vuelta; mascaras invalidas no ocultan nada', () => {
+    const l = ['war', 'birth', 'other']; const m = I.hiddenToMask(l);
+    return I.maskToHidden(m).sort().join() === l.slice().sort().join() && I.hiddenToMask([]) === 0 && I.hiddenToMask(['zzz']) === 0 && I.maskToHidden(I.GROUP_ALL_MASK + 1).length === 0 && I.maskToHidden(-1).length === 0 && I.maskToHidden(1.5).length === 0 && I.maskToHidden('3').length === 0 && I.maskToHidden(I.GROUP_ALL_MASK).length === I.GROUPS.length ? true : m;
+});
+check('grupos: iconShown oculta solo el grupo marcado (y todos sus iconos)', () => {
+    const m = I.hiddenToMask(['war']);
+    return !I.iconShown('sword', m) && !I.iconShown('musket', m) && !I.iconShown('tank', m) && I.iconShown('treaty', m) && I.iconShown('birth', m) && I.iconShown('zzz', m) && I.KEYS.every((k) => I.iconShown(k, 0)) && I.KEYS.every((k) => !I.iconShown(k, I.GROUP_ALL_MASK));
+});
+
 console.log(fails ? '\n' + fails + ' FALLO(S)' : '\nTodo en orden (event-icons).');
 process.exit(fails ? 1 : 0);

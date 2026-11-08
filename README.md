@@ -91,6 +91,16 @@ sale y cuánto se puede fiar de él.
   *mostrar siempre* por recuadro. Con el cursor encima no se ocultan y las advertencias nunca se ocultan solas. Los recuadros se mueven
   arrastrando su asa (⠿, o con las flechas) y se ocultan con ×; `Ctrl+Z` deshace y `Ctrl+Mayús+Z` / `Ctrl+Y` rehace ocultar y
   mover (en pantallas táctiles hay botones de deshacer y rehacer). Todo se recuerda en la cookie de preferencias.
+- **Tipos de suceso a tu gusto** (*Ajustes*): 14 grupos (guerras y batallas, tratados, alianzas y uniones, política, atentados, catástrofes,
+  accidentes, nacimientos, muertes, obras, descubrimientos, deporte y ceremonias, extinciones, otros) que se marcan y desmarcan; vale para
+  el mapa, el panel de sucesos y los avisos, se recuerda en la cookie (`et`) y no borra ningún dato.
+- **Saltos de tiempo animados** (`map/glide.js`): una flecha con paso de 10 años, un botón de época o un año escrito no «aparece» en la
+  fecha nueva: el reloj **barre** el tramo (1 h ≈ 0,45 s, 1 día ≈ 1 s, 10 años ≈ 2,3 s, 100 años ≈ 2,7 s). Los sucesos del tramo aparecen
+  en orden cronológico (hacia atrás, al revés) y a distancias proporcionales a sus fechas (velocidad casi constante: arranque y frenada
+  cortos); cada uno permanece el 40 % del recorrido, más transparente cuanto más antiguo, y al llegar la ventana se cierra poco a poco
+  (los más antiguos se van primero). La luz día/noche no gira como una peonza: en tramos largos los días avanzan enteros y la hora se
+  interpola por el camino corto. Tramos de menos de 1 h o de más de 120 años, y la animación apagada, saltan directamente.
+
 - **Cambios del elemento centrado** (botón *Cambios*): qué cambia y qué sucesos lo rodean. Las fronteras son
   fotografías sueltas (1715, 1783, 1800…), así que un salto entre ellas **no ocurre en un día**: el panel dice
   qué instantánea se muestra y hasta qué fechas, qué estados aparecen, desaparecen o cambian de superficie entre

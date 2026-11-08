@@ -116,6 +116,25 @@
         return r >= 0 ? { pastDays: behind, futureDays: ahead, flowing: true } : { pastDays: ahead, futureDays: behind, flowing: true };
     }
 
+    // Salto del reloj ANIMADO (map/glide.js): el reloj barre de una fecha a otra y los sucesos del tramo se ven pasar. Cada suceso se queda visible
+    // una fraccion del tramo (no un tiempo fijo): asi vale igual para 10 dias que para 100 años y siempre queda dentro del rango recorrido.
+    const GLIDE_HOLD = 0.4;           // el suceso permanece visible durante el 40 % del tramo (parametro editorial)
+    const GLIDE_MIN_DAYS = 7;         // por debajo no hay «recorrido»: vale la ventana normal
+    /** Ventana durante un barrido de spanDays dias en el sentido dir (+1 adelante, -1 atras). */
+    function windowForGlide(spanDays, dir) {
+        const S = Math.abs(Number.isFinite(spanDays) ? spanDays : 0);
+        if (S < GLIDE_MIN_DAYS) return { pastDays: BASE_HALF_DAYS, futureDays: BASE_HALF_DAYS, flowing: false };
+        const behind = GLIDE_HOLD * S; const ahead = Math.max(1, behind / 8);
+        return dir >= 0 ? { pastDays: behind, futureDays: ahead, flowing: true } : { pastDays: ahead, futureDays: behind, flowing: true };
+    }
+    /** Va cerrando una ventana larga hasta la normal (f = 1 entera, f = 0 normal): al acabar el barrido los sucesos mas antiguos se van primero. */
+    function shrinkWindow(win, f) {
+        const x = Math.max(0, Math.min(1, Number.isFinite(f) ? f : 0));
+        if (!win || !win.flowing || x === 0) return { pastDays: BASE_HALF_DAYS, futureDays: BASE_HALF_DAYS, flowing: false };
+        const mix = (v) => BASE_HALF_DAYS + (v - BASE_HALF_DAYS) * x;
+        return { pastDays: mix(win.pastDays), futureDays: mix(win.futureDays), flowing: true };
+    }
+
     /** Distancia relativa (0 = ahora, 1 = borde de la ventana) del suceso a la fecha jd; 0 si jd cae dentro de su tramo. */
     function ageFraction(f, jd, pastDays, futureDays) {
         const sp = span(f);
@@ -216,5 +235,5 @@
         return keys;
     }
 
-    return { span, isTimed, importanceFloor, selectVisible, notices, formatCountdown, shardKeys, dedupeAgainst, LEADS_S, windowFor, windowImportance, ageFraction, fadeAlpha, createMotion, BASE_HALF_DAYS, HOLD_S, MAX_PAST_DAYS, MAX_RATE };
+    return { span, isTimed, importanceFloor, selectVisible, notices, formatCountdown, shardKeys, dedupeAgainst, LEADS_S, windowFor, windowForGlide, shrinkWindow, GLIDE_HOLD, GLIDE_MIN_DAYS, windowImportance, ageFraction, fadeAlpha, createMotion, BASE_HALF_DAYS, HOLD_S, MAX_PAST_DAYS, MAX_RATE };
 });

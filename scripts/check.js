@@ -229,6 +229,13 @@ check('cookie de preferencias: pp (mostrar siempre, mascara de 5 bits) acepta 0.
     return ok && bad;
 });
 
+check('cookie de preferencias: et (tipos de suceso ocultos) acepta 0..mascara completa de los grupos y rechaza lo demas', () => {
+    const { parsePrefs } = prefsFns(); const ALL = require('../map/event-icons.js').GROUP_ALL_MASK;
+    const ok = [0, 1, 5, ALL].every((v) => parsePrefs(JSON.stringify({ et: v })).et === v);
+    const bad = [ALL + 1, -1, 2.5, '3', true, null, []].every((v) => !('et' in parsePrefs(JSON.stringify({ et: v }))));
+    return ok && bad ? true : JSON.stringify({ ok, bad, ALL });
+});
+
 check('cookie de preferencias: pn (posiciones) acepta el formato y rechaza caracteres raros o cadenas largas', () => {
     const { parsePrefs } = prefsFns();
     const ok = parsePrefs(JSON.stringify({ pn: 'info:12,-30;status:0,8' })).pn === 'info:12,-30;status:0,8' && parsePrefs(JSON.stringify({ pn: '' })).pn === '';

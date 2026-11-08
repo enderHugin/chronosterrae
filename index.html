@@ -270,6 +270,13 @@
         <div class="st-sub" data-i18n="ui.autohide.note"></div>
         <h3 data-i18n="ui.pins.title"></h3>
         <div id="st-pins" class="st-pins"></div>
+        <h3 data-i18n="ui.types.title"></h3>
+        <div id="st-types" class="st-pins"></div>
+        <div class="st-actions">
+            <button class="btn" id="st-types-all" type="button" data-i18n="ui.types.all"></button>
+            <button class="btn" id="st-types-none" type="button" data-i18n="ui.types.none"></button>
+        </div>
+        <div class="st-sub" data-i18n="ui.types.note"></div>
         <h3 data-i18n="ui.icons.title"></h3>
         <label><input type="checkbox" id="st-anim"><span data-i18n="ui.icons.anim"></span></label>
         <div class="st-sub" data-i18n="ui.icons.note"></div>
@@ -389,6 +396,7 @@
 <script src="./map/changes.js"></script>
 <script src="./map/panels.js"></script>
 <script src="./map/event-icons.js"></script>
+<script src="./map/glide.js"></script>
 <script src="./map/labels.js"></script>
 <script src="./map/sphere.js"></script>
 <script src="./sky/sky-view.js"></script>
@@ -449,7 +457,8 @@ const parsePrefs = (raw) => {
     if (Number.isInteger(p.ah) && p.ah >= 0 && p.ah <= 3) out.ah = p.ah;   // ocultar recuadros informativos solos: nivel 0 (nunca) a 3
     if (Number.isInteger(p.pp) && p.pp >= 0 && p.pp <= 31) out.pp = p.pp;   // recuadros «mostrar siempre» (mascara de bits)
     if (typeof p.pn === 'string' && p.pn.length <= 300 && /^[a-z0-9:,;-]*$/.test(p.pn)) out.pn = p.pn;   // posiciones de los recuadros (se valida pieza a pieza al usarlas)
-    if (p.ia === 0 || p.ia === 1) out.ia = p.ia === 1;   // iconos de sucesos animados
+    if (p.ia === 0 || p.ia === 1) out.ia = p.ia === 1;   // iconos de sucesos animados (y saltos de tiempo animados)
+    if (Number.isInteger(p.et) && p.et >= 0 && p.et <= 16383) out.et = p.et;   // tipos de suceso OCULTOS por el usuario (mascara de bits, un bit por grupo de map/event-icons.js)
     if (Number.isInteger(p.vf) && p.vf >= 0 && p.vf <= 127) out.vf = p.vf;   // filtros de verificacion de sucesos (mascara de bits)
     if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
     return out;
@@ -463,10 +472,14 @@ const readPrefs = () => {
 const prefs = readPrefs();
 let panelsUI = null;     // recuadros informativos (ocultar solos, mover, deshacer): se crea mas abajo
 let lastInfo = null;     // ultima ficha mostrada (para poder deshacer su cierre)
+let glide = null;         // salto de tiempo animado (map/glide.js); se crea junto al reloj
+const glideOn = () => glide !== null && glide.active();
+let typesReady = false;   // el panel de tipos se puede dibujar cuando ya existen los iconos (mas abajo)
+let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara de bits de ChronosEventIcons.GROUPS)
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia === undefined ? undefined : (prefs.ia ? 1 : 0) };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia === undefined ? undefined : (prefs.ia ? 1 : 0), et: prefs.et || undefined };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -568,7 +581,8 @@ const i18n = {
                 l0: 'Nunca', l1: 'Solo la ficha del elemento seleccionado', l2: 'Además avisos y notas de estado', l3: 'Además la ficha del cuerpo celeste'
             },
             pins: { title: 'Mostrar siempre (no se oculta solo)', info: 'Ficha del elemento seleccionado', status: 'Avisos y notas de estado', 'space-note': 'Nota del fondo espacial', 'solar-note': 'Nota del sistema solar', 'solar-info': 'Ficha del cuerpo celeste' },
-            icons: { title: 'Iconos de sucesos', anim: 'Animar los iconos', note: 'Espada, mosquete o tanque según la época para guerras y batallas; pluma y papiro para tratados; anillos para alianzas y uniones. Son una convención de dibujo, no un dato del suceso.' },
+            types: { title: 'Tipos de suceso', all: 'Marcar todos', none: 'Desmarcar todos', note: 'Marca los tipos que quieres ver en el mapa, en el panel de sucesos y en los avisos. Es una elección tuya: no borra ningún dato.' },
+            icons: { title: 'Iconos y movimiento', anim: 'Animar iconos y saltos de tiempo', note: 'Con la animación, un salto de tiempo recorre el tramo y los sucesos pasan en orden. Espada, mosquete o tanque según la época para guerras y batallas; pluma y papiro para tratados; anillos para alianzas y uniones. Son una convención de dibujo, no un dato del suceso.' },
             layout: { title: 'Posición de los recuadros', note: 'Ctrl+Z deshace y Ctrl+Mayús+Z (o Ctrl+Y) rehace ocultar y mover recuadros. En pantallas táctiles hay botones de deshacer y rehacer.' }
         },
         events: {
@@ -756,7 +770,8 @@ const i18n = {
                 l0: 'Never', l1: 'Only the selected element card', l2: 'Also status notices and notes', l3: 'Also the celestial body card'
             },
             pins: { title: 'Always show (never auto-hide)', info: 'Selected element card', status: 'Status notices and notes', 'space-note': 'Space background note', 'solar-note': 'Solar system note', 'solar-info': 'Celestial body card' },
-            icons: { title: 'Event icons', anim: 'Animate the icons', note: 'Sword, musket or tank by era for wars and battles; quill and scroll for treaties; rings for alliances and unions. This is a drawing convention, not a fact about the event.' },
+            types: { title: 'Event types', all: 'Select all', none: 'Select none', note: 'Tick the types you want on the map, in the events panel and in the notices. It is your choice: no data is deleted.' },
+            icons: { title: 'Icons and motion', anim: 'Animate icons and time jumps', note: 'With animation, a time jump sweeps through the span and events pass in order. Sword, musket or tank by era for wars and battles; quill and scroll for treaties; rings for alliances and unions. This is a drawing convention, not a fact about the event.' },
             layout: { title: 'Box positions', note: 'Ctrl+Z undoes and Ctrl+Shift+Z (or Ctrl+Y) redoes hiding and moving boxes. Touch screens get undo and redo buttons.' }
         },
         events: {
@@ -2172,7 +2187,7 @@ function renderPresets() {
     box.textContent = '';
     PRESETS.forEach((p) => {
         const b = el('button', { class: 'btn', type: 'button', text: p.label() });
-        b.addEventListener('click', () => { if (p.now && sky.ready) clockNow(); else setTime(p.ybp, { immediate: true }); });
+        b.addEventListener('click', () => { if (p.now && sky.ready) clockNow(); else if (!glideToYear(p.ybp)) { if (glide) glide.cancel(); setTime(p.ybp, { immediate: true }); } });
         box.appendChild(b);
     });
 }
@@ -2203,7 +2218,7 @@ function applyStrings() {
 /* ------------------------------------------------------------------ */
 /* Eventos                                                            */
 /* ------------------------------------------------------------------ */
-$('slider').addEventListener('input', (e) => setTime(sliderToYbp(parseInt(e.target.value, 10)), { fromSlider: true }));
+$('slider').addEventListener('input', (e) => { if (glide) glide.cancel(); setTime(sliderToYbp(parseInt(e.target.value, 10)), { fromSlider: true }); });
 
 /* Teclas de direccion con el deslizador en foco: cada pulsacion mueve el tiempo el paso que elija el usuario (1 minuto ... 100 Ma). */
 let keyStepId = ChronosTimeStep.byId(prefs.ks) ? prefs.ks : ChronosTimeStep.DEFAULT_ID;
@@ -2218,11 +2233,11 @@ $('key-step').addEventListener('change', (e) => { keyStepId = e.target.value; sa
 const KEY_DIR = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 1, PageDown: -1 };
 function keyStepTime(dir, count) {
     const ctx = {
-        jd: clockUsable() ? clock.jd : NaN, ybp: state.ybp, minYear: skyRange().minYear, nowYear: CFG.nowYear, present: CFG.present,
+        jd: clockUsable() ? (glideOn() ? glide.target() : clock.jd) : NaN, ybp: state.ybp, minYear: skyRange().minYear, nowYear: CFG.nowYear, present: CFG.present,
         minJD: clockMinJD(), maxJD: realNowJD(), minYbp: 1 - OFFSET, maxYbp: CFG.maxYbp
     };
     const r = ChronosTimeStep.move(ChronosSky, ctx, keyStepId, dir * count);
-    if (r.jd !== undefined) clockSet(r.jd, { user: true }); else setTime(r.ybp, { immediate: false });
+    if (r.jd !== undefined) { if (!glideJump(r.jd)) clockSet(r.jd, { user: true }); } else { if (glide) glide.cancel(); setTime(r.ybp, { immediate: false }); }
     const hint = $('step-hint');
     hint.textContent = r.note === 'minYear' ? t('step.minYear') : r.clipped ? t('step.clipped') : t('step.hint');
     hint.classList.toggle('warn', Boolean(r.note || r.clipped));
@@ -2238,7 +2253,7 @@ $('time-input').addEventListener('keydown', (e) => {
     const ybp = parseTime(e.target.value);
     if (ybp === null) { setStatus('warn', t('badTime')); return; }
     e.target.value = '';
-    setTime(ybp, { immediate: true });
+    if (!glideToYear(ybp)) { if (glide) glide.cancel(); setTime(ybp, { immediate: true }); }
     e.target.blur();
 });
 $('search').addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(e.target.value); });
@@ -2426,11 +2441,14 @@ panelsUI = (function () {
             c.addEventListener('change', () => { ah.setPinned(id, c.checked); savePrefs({ pp: P.pinsToMask(ah.pinned()) }); });
             lab.append(c, document.createTextNode(t('ui.pins.' + id))); pins.appendChild(lab);
         });
+        if (typesReady) typesRender();
     }
     function setSettingsOpen(open) { byId('settings').classList.toggle('open', open); byId('btn-settings').setAttribute('aria-pressed', String(open)); }
     byId('btn-settings').addEventListener('click', () => setSettingsOpen(!byId('settings').classList.contains('open')));
     byId('settings-close').addEventListener('click', () => setSettingsOpen(false));
     byId('st-anim').addEventListener('change', (e) => evAnimSet(e.target.checked, true));
+    byId('st-types-all').addEventListener('click', () => { typesSet(0, true); typesRender(); });
+    byId('st-types-none').addEventListener('click', () => { typesSet(ChronosEventIcons.GROUP_ALL_MASK, true); typesRender(); });
 
     const api = { touch: (id) => { if (byId(id) && byId(id).getClientRects().length) ah.touch(id); }, closeInfo, texts, scan, history, autoHide: ah, offsets, setSettingsOpen };
     P.IDS.forEach((id) => { if (offsets[id]) setOffset(id, offsets[id], false); });
@@ -2920,25 +2938,32 @@ const clockUsable = () => sky.ready && Number.isFinite(clock.jd);
 const clockStarsOnly = () => clockUsable() && yearStarsOnly(ChronosSky.jdToCalendar(clock.jd, 'auto').year);
 const clockFull = () => clockUsable() && !clockStarsOnly();
 
+// Instante (dia juliano) que tendria el reloj en el año dado conservando mes, dia y hora (o los de ahora si aun no hay reloj); NaN si el año queda fuera de la ventana.
+function clockJdForYear(year) {
+    if (!sky.ready) return NaN;
+    const W = skyRange();
+    if (year < W.minYear || year > W.maxYear || year > CFG.nowYear) return NaN;
+    const base = ChronosSky.jdToCalendar(Number.isFinite(clock.jd) ? clock.jd : realNowJD(), 'auto');
+    const secs = base.hour * 3600 + base.minute * 60 + Math.floor(base.second);
+    let jd = NaN;
+    for (let d = base.day; d >= 1 && !Number.isFinite(jd); d--) {
+        try { jd = ChronosSky.calendarToJD({ year, month: base.month, day: d, hour: Math.floor(secs / 3600), minute: Math.floor((secs % 3600) / 60), second: secs % 60 }, 'auto').jd; } catch (e) { /* ese dia no existe en ese mes o calendario: se prueba el anterior */ }
+    }
+    if (!Number.isFinite(jd)) jd = ChronosSky.calendarToJD({ year, month: 1, day: 1 }, 'auto').jd;
+    return Math.min(jd, realNowJD());
+}
 // Pone el reloj en el año dado conservando mes, dia y hora (o los de ahora si aun no habia reloj).
 function clockFromYear(year) {
     if (!sky.ready) return;
     const W = skyRange();
     if (year < W.minYear || year > W.maxYear || year > CFG.nowYear) { clock.jd = NaN; clock.running = false; clock.live = false; return; }
     if (Number.isFinite(clock.jd) && ChronosSky.jdToCalendar(clock.jd, 'auto').year === year) return;
-    const base = ChronosSky.jdToCalendar(Number.isFinite(clock.jd) ? clock.jd : realNowJD(), 'auto');
-    const secs = base.hour * 3600 + base.minute * 60 + Math.floor(base.second);
-    let jd = NaN;
-    for (let d = base.day; d >= 1 && !Number.isFinite(jd); d--) {
-        try { jd = ChronosSky.calendarToJD({ year, month: base.month, day: d, hour: Math.floor(secs / 3600), minute: Math.floor((secs % 3600) / 60), second: secs % 60 }, 'auto').jd; } catch (e) { /* ese dia no existe en ese mes o calendario */ }
-    }
-    if (!Number.isFinite(jd)) jd = ChronosSky.calendarToJD({ year, month: 1, day: 1 }, 'auto').jd;
-    clock.jd = Math.min(jd, realNowJD());
+    clock.jd = clockJdForYear(year);
     clock.live = false;
 }
 
 // Devuelve true si el instante pedido se salio de [inicio de la ventana, ahora] y se recorto.
-function clockSet(jd, { user = false, tick = false } = {}) {
+function clockSet(jd, { user = false, tick = false, quiet = false } = {}) {
     const prev = clock.jd;
     const lo = clockMinJD(); const hi = realNowJD();
     const clipped = jd > hi || jd < lo;
@@ -2947,17 +2972,53 @@ function clockSet(jd, { user = false, tick = false } = {}) {
     const y = ChronosSky.jdToCalendar(clock.jd, 'auto').year;
     if (y !== ybpToYear(state.ybp)) setTime(yearToYbp(y), { fromClock: true, persist: false });
     clockChanged({ tick });
-    eventsNotify(prev, clock.jd);
+    if (!quiet) eventsNotify(prev, clock.jd);      // en un barrido animado no hay avisos fotograma a fotograma: se ven pasar los iconos y al aterrizar salen los de siempre
     if (!tick) rememberTime();
     return clipped;
 }
 
 function clockNow() {
     if (!sky.ready) return;
-    clock.running = true; clock.live = true; clock.rate = 1; clock.dir = 1;
-    clockSet(realNowJD());
-    syncClockUI();
+    const land = () => { clock.running = true; clock.live = true; clock.rate = 1; clock.dir = 1; clockSet(realNowJD()); syncClockUI(); };
+    if (!glideJump(realNowJD(), land)) land();
 }
+
+/* ------------------------------------------------------------------ */
+/* Saltos de tiempo animados (map/glide.js)                            */
+/* ------------------------------------------------------------------ */
+// Un salto (flecha del teclado, boton de epoca, «Ahora», hora escrita) hace que el reloj BARRA el tramo en vez de aparecer en la fecha nueva:
+// los sucesos del tramo se ven pasar en orden cronologico y la luz dia/noche se desplaza con suavidad. Se apaga con la animacion (Ajustes,
+// «reducir movimiento»); los tramos de mas de 120 años o de menos de 1 hora saltan directamente.
+const GLIDE_TAIL_MS = 1500;      // al acabar, la ventana larga de sucesos se cierra poco a poco (los mas antiguos se van primero)
+const glideState = { win: null, endT: 0, after: null };
+function glideJump(jd1, after) {
+    if (!glide || !EVA.on || !clockUsable() || !Number.isFinite(jd1)) return false;
+    const to = Math.min(realNowJD(), Math.max(clockMinJD(), jd1));
+    glideState.after = after || null;
+    const started = glide.start(clock.jd, to);
+    if (started) { clock.live = false; syncClockUI(); } else glideState.after = null;
+    return started;
+}
+// Salto a un año (boton de epoca, hora escrita): la fecha de llegada conserva mes, dia y hora, como al mover el deslizador.
+function glideToYear(ybp) {
+    if (!glide || !EVA.on || !clockUsable()) return false;
+    const jd1 = clockJdForYear(ybpToYear(Math.min(Math.max(ybp, 1 - OFFSET), CFG.maxYbp)));
+    return glideJump(jd1);
+}
+function glideEnded(info) {
+    glideState.endT = performance.now();
+    const after = glideState.after; glideState.after = null;
+    rememberTime(); syncClockUI();
+    if (!info.canceled) { eventsNotify(info.from, info.to); if (after) after(); }   // aterrizaje: cuenta atras y sucesos del dia, como en un salto directo
+    eventsRefresh();
+}
+glide = ChronosGlide.createGlide({
+    now: () => performance.now(),
+    schedule: (fn) => (document.hidden ? setTimeout(fn, 50) : requestAnimationFrame(fn)),
+    cancel: (h) => { cancelAnimationFrame(h); clearTimeout(h); },
+    onFrame: (jd, info) => { glideState.win = ChronosTimed.windowForGlide(info.spanDays, info.dir); clockSet(jd, { tick: true, quiet: true }); },
+    onDone: glideEnded
+});
 
 function syncClockUI() {
     $('clock-play').textContent = clock.running ? '⏸' : '▶';
@@ -2983,7 +3044,7 @@ function renderClock() {
 
 // Todo lo que depende del instante se actualiza aqui.
 function clockChanged({ tick = false } = {}) {
-    if (evMotion) evMotion.note(clock.jd, performance.now());
+    if (evMotion && !glideOn()) evMotion.note(clock.jd, performance.now());   // el barrido tiene su propia ventana (windowForGlide)
     renderClock();
     const sec = Math.floor(clock.jd * 86400);
     const secChanged = sec !== clock.lastSec;
@@ -3000,7 +3061,7 @@ function clockTick() {
     const now = performance.now();
     const dt = (now - clock.wall) / 1000;
     clock.wall = now;
-    if (!clockUsable() || !clock.running) return;
+    if (!clockUsable() || !clock.running || glideOn()) return;
     const jd = clock.live ? realNowJD() : clock.jd + clock.dir * clock.rate * dt / 86400;
     const clipped = clockSet(jd, { tick: true });
     if (clipped) {
@@ -3210,7 +3271,7 @@ $('btn-space').addEventListener('click', () => {
 // Los datos son registros ChronosTerrae (data/events/): seed.json (con hora verificada) y un fichero por siglo (solo fecha).
 // Que se dibuja lo decide sky/timed.js segun el instante del reloj y la escala del mapa; de los avisos se ocupa el reloj.
 const KIND_COLORS = { birth: '#43a047', death: '#6d4c41', publication: '#1e88e5', composition: '#8e24aa', discovery: '#f9a825', extinction: '#e53935', event: '#fb8c00' };
-const events = { counts: { status: {}, evidence: {} }, seed: [], shards: new Map(), index: undefined, loading: new Set(), all: [], timed: [], byId: new Map(), toasts: new Map(), open: false, timer: 0, shown: [] };
+const events = { counts: { status: {}, evidence: {} }, seed: [], shards: new Map(), index: undefined, loading: new Set(), all: [], vis: [], visTimed: [], timed: [], byId: new Map(), toasts: new Map(), open: false, timer: 0, shown: [] };
 const evName = (f) => (f.properties.labels && f.properties.labels[lang]) || f.properties.name;
 const evKind = (f) => f.properties.kind || 'event';
 
@@ -3261,7 +3322,7 @@ function evLayersAdd() {
     // Disco de respaldo: el icono es rojo/ocre y el mapa politico tambien; sin fondo el mosquete o las espadas se pierden (visto en el render real, probe-shot)
     map.addLayer({ id: 'events-disc', type: 'circle', source: 'events', paint: {
         'circle-radius': ['-', EV_PULSE_BASE, 1.5], 'circle-color': '#0f1722', 'circle-stroke-width': 0,
-        'circle-opacity': ['*', ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], ['coalesce', ['get', 'fade'], 1], 0.55], 'circle-opacity-transition': { duration: 350, delay: 0 }
+        'circle-opacity': ['*', ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], ['coalesce', ['get', 'fade'], 1], ['coalesce', ['get', 'ent'], 1], 0.55], 'circle-opacity-transition': { duration: 350, delay: 0 }
     } });
     map.addLayer({ id: 'events-pulse', type: 'circle', source: 'events', paint: {
         'circle-radius': EV_PULSE_BASE, 'circle-color': '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': '#ffffff', 'circle-stroke-opacity': ['*', ['coalesce', ['get', 'fade'], 1], 0.55],
@@ -3323,7 +3384,34 @@ function eventsRebuild() {
     events.all = all.filter(vfPasses);
     events.byId = new Map(events.all.map((f) => [f.properties.id, f]));
     events.timed = events.all.filter((f) => window.ChronosTimed && ChronosTimed.isTimed(f));
+    eventsVisApply();
 }
+
+// Lo que se muestra = lo que pasa el filtro de verificacion (events.all) Y el de tipos del usuario (Ajustes). events.all se conserva entero: lo usan los cambios y las relaciones.
+function eventsVisApply() {
+    const shown = (f) => ChronosEventIcons.iconShown(evIconKey(f), etMask);
+    events.vis = etMask ? events.all.filter(shown) : events.all;
+    events.visTimed = etMask ? events.timed.filter(shown) : events.timed;
+}
+function typesSet(mask, persist) {
+    etMask = Math.max(0, Math.min(ChronosEventIcons.GROUP_ALL_MASK, mask | 0));
+    if (persist) savePrefs({ et: etMask });
+    eventsVisApply();
+    events.toasts.forEach((rec, id) => { if (!ChronosEventIcons.iconShown(evIconKey(rec.f), etMask)) toastRemove(id); });
+    eventsRefresh();
+    if (events.open) renderEventsPanel();
+}
+function typesRender() {
+    const box = document.getElementById('st-types'); if (!box) return;
+    box.textContent = '';
+    ChronosEventIcons.GROUPS.forEach((g, i) => {
+        const lab = document.createElement('label'); const c = document.createElement('input'); c.type = 'checkbox'; c.checked = !(etMask & (1 << i)); c.dataset.group = g.id;
+        c.addEventListener('change', () => typesSet(c.checked ? etMask & ~(1 << i) : etMask | (1 << i), true));
+        const ic = document.createElement('img'); ic.className = 'ev-ico'; ic.alt = ''; ic.setAttribute('aria-hidden', 'true'); ic.src = evIconUrl(g.icons[0]);
+        lab.append(c, ic, document.createTextNode(g[lang])); box.appendChild(lab);
+    });
+}
+typesReady = true; typesRender();
 
 async function eventsFetch(url) {
     const res = await fetch(url);
@@ -3372,21 +3460,28 @@ function viewMeters() {
 // Limitado, no "esperar a que pare": el reloj cambia cada 100 ms y un temporizador que se reinicia nunca llegaria a dispararse.
 function eventsRefresh() {
     if (events.timer) return;
-    events.timer = setTimeout(() => { events.timer = 0; eventsDraw(); }, 150);
+    events.timer = setTimeout(() => { events.timer = 0; eventsDraw(); }, glideOn() ? 60 : 150);   // durante un barrido se redibuja mas a menudo: los sucesos van apareciendo a su paso
 }
 
 // Velocidad a la que fluye el tiempo (reloj acelerado o arrastre del deslizador): de ella depende cuanto se queda cada suceso en pantalla.
 evMotion = ChronosTimed.createMotion();
 const EV_ENTER = { born: new Map(), timer: 0, sel: [], meta: new Map(), win: null };
+// Ventana temporal de los sucesos: normal, proporcional a la velocidad del reloj, o la de un barrido (y su cierre gradual al acabar).
+function evWindow() {
+    const now = performance.now();
+    if (glideOn()) { const i = glide.info(); return ChronosTimed.windowForGlide(i.spanDays, i.dir); }
+    if (glideState.win && now - glideState.endT < GLIDE_TAIL_MS) return ChronosTimed.shrinkWindow(glideState.win, 1 - (now - glideState.endT) / GLIDE_TAIL_MS);
+    return ChronosTimed.windowFor(evMotion.rate(now));
+}
 function eventsDraw() {
     if (!window.ChronosTimed || !map.getSource || !map.getSource('events')) return;
-    if (!clockFull() || !events.all.length) { map.getSource('events').setData(emptyFC()); events.shown = []; EV_ENTER.sel = []; if (events.open) renderEventsPanel(); return; }
+    if (!clockFull() || !events.vis.length) { map.getSource('events').setData(emptyFC()); events.shown = []; EV_ENTER.sel = []; if (events.open) renderEventsPanel(); return; }
     const vm = viewMeters();
     const zoomed = map.getZoom() >= 3;
     const b = zoomed ? map.getBounds() : null;
-    const win = ChronosTimed.windowFor(evMotion.rate(performance.now()));
+    const win = evWindow();
     const meta = new Map();
-    const sel = ChronosTimed.selectVisible(events.all, {
+    const sel = ChronosTimed.selectVisible(events.vis, {
         jd: clock.jd, viewMeters: vm, max: 80, cellPx: 40, bounds: b ? [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()] : null,
         pastDays: win.pastDays, futureDays: win.futureDays, meta,
         project: (lng, lat) => { const p = map.project([lng, lat]); return [p.x, p.y]; }
@@ -3394,7 +3489,8 @@ function eventsDraw() {
     events.shown = sel; EV_ENTER.sel = sel; EV_ENTER.meta = meta; EV_ENTER.win = win;
     evPush();
     // Mientras la ventana es larga, vuelve a calcularse al decaer la velocidad medida (si no, se quedaria ancha tras parar)
-    clearTimeout(events.decay); if (win.flowing) events.decay = setTimeout(eventsRefresh, 600);
+    clearTimeout(events.decay); const tail = !glideOn() && glideState.win && performance.now() - glideState.endT < GLIDE_TAIL_MS;
+    if (win.flowing || tail) events.decay = setTimeout(eventsRefresh, glideOn() || tail ? 100 : 600);
     if (events.open) renderEventsPanel();
 }
 
@@ -3409,10 +3505,11 @@ function evPush() {
         let b = EV_ENTER.born.get(id);
         if (!b || now - b.seen > 3000) { b = { t0: now, seen: now }; EV_ENTER.born.set(id, b); } else b.seen = now;
         let img = 'evi-' + key;
-        if (animate) { const fr = Math.min(F - 1, Math.floor((now - b.t0) / ms * (F - 1))); if (fr < F - 1) { img = 'evi-' + key + '~' + fr; entering = true; } }
+        let ent = 1;   // progreso de la entrada (0..1): el disco de respaldo entra a la vez que el icono
+        if (animate) { const fr = Math.min(F - 1, Math.floor((now - b.t0) / ms * (F - 1))); if (fr < F - 1) { img = 'evi-' + key + '~' + fr; ent = fr / (F - 1); entering = true; } }
         evEnsureImage(img);
         const m = EV_ENTER.meta.get(f);
-        return { type: 'Feature', geometry: f.geometry, properties: { id, name: evName(f), kind: evKind(f), importance: f.properties.importance, status: f.properties.status, icon: key, img, anim: ChronosEventIcons.animGroup(key), fade: m ? m.alpha : 1 } };
+        return { type: 'Feature', geometry: f.geometry, properties: { id, name: evName(f), kind: evKind(f), importance: f.properties.importance, status: f.properties.status, icon: key, img, anim: ChronosEventIcons.animGroup(key), ent, fade: m ? m.alpha : 1 } };
     });
     src.setData({ type: 'FeatureCollection', features: feats });
     if (EV_ENTER.born.size > 400) { for (const [k, v] of EV_ENTER.born) if (now - v.seen > 10000) EV_ENTER.born.delete(k); }
@@ -3480,7 +3577,7 @@ function renderEventsPanel() {
     const status = events.index === null && !events.seed.length ? t('events.none') : '';
     const floor = ChronosTimed.importanceFloor(viewMeters());
     const half = 183;
-    const items = events.all.filter((f) => {
+    const items = events.vis.filter((f) => {
         if (f.properties.importance < floor) return false;
         const sp = ChronosTimed.span(f);
         return sp.b >= clock.jd - half && sp.a <= clock.jd + half;
@@ -3745,7 +3842,9 @@ function toastShow(f, phase, eventJD) {
 function toastsTick() {
     events.toasts.forEach((rec, id) => {
         const left = (rec.eventJD - clock.jd) * 86400;
-        const stale = rec.phase === 'day' ? performance.now() - rec.born > 20000 : (left < -300 || left > 3600 || (rec.phase === 'jump' && left > 700));
+        // «Hoy» deja de ser cierto en cuanto el reloj sale de las fechas del suceso (un salto o un barrido lo habria dejado años atras)
+        const sp = rec.phase === 'day' ? ChronosTimed.span(rec.f) : null; const away = sp !== null && (clock.jd < sp.a - 1 || clock.jd >= sp.b + 1);
+        const stale = rec.phase === 'day' ? away || performance.now() - rec.born > 20000 : (left < -300 || left > 3600 || (rec.phase === 'jump' && left > 700));
         if (stale || !clockFull()) { toastRemove(id); return; }
         rec.node.querySelector('.toast-text').textContent = toastText(rec);
     });
@@ -3754,16 +3853,16 @@ function toastsTick() {
 // prev -> jd: avisos del recorrido continuo; al aterrizar tras un salto, cuenta atras si hay un suceso con hora cerca y,
 // como mucho, tres sucesos del dia en que se cae (los mas notorios).
 function eventsNotify(prev, jd) {
-    if (!window.ChronosTimed || !Number.isFinite(prev) || !events.all.length || !(jd > prev)) return;
+    if (!window.ChronosTimed || !Number.isFinite(prev) || !events.vis.length || !(jd > prev)) return;
     const stepS = (jd - prev) * 86400;
     const continuous = stepS <= 7200;
-    const pool = continuous && stepS < 3600 * 80 ? [...events.timed, ...events.all.filter((f) => { const a = ChronosTimed.span(f).a; return !ChronosTimed.isTimed(f) && f.properties.time.precision === 'day' && a > prev - 1 && a <= jd; })] : events.timed;
+    const pool = continuous && stepS < 3600 * 80 ? [...events.visTimed, ...events.vis.filter((f) => { const a = ChronosTimed.span(f).a; return !ChronosTimed.isTimed(f) && f.properties.time.precision === 'day' && a > prev - 1 && a <= jd; })] : events.timed;
     ChronosTimed.notices(pool, prev, jd, { minImportance: clock.rate >= 86400 ? 0.85 : 0.5 }).forEach((n) => {
         if (n.phase === 'lead' && n.leadS === 10 && stepS > 30) return;
         toastShow(n.feature, n.phase === 'jump' ? 'jump' : n.phase, n.eventJD);
     });
     if (!continuous) {
-        events.all.filter((f) => { const sp = ChronosTimed.span(f); return !sp.timed && f.properties.time.precision === 'day' && sp.a <= jd && jd < sp.b && f.properties.importance >= 0.75; })
+        events.vis.filter((f) => { const sp = ChronosTimed.span(f); return !sp.timed && f.properties.time.precision === 'day' && sp.a <= jd && jd < sp.b && f.properties.importance >= 0.75; })
             .sort((a, b) => b.properties.importance - a.properties.importance).slice(0, 3).forEach((f) => toastShow(f, 'day', ChronosTimed.span(f).a));
     }
 }

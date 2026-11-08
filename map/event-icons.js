@@ -318,5 +318,32 @@
         };
     }
 
-    return { ICON_CLASSES, KEYS, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
+    /* ---------------------------- Grupos para el filtro del usuario ---------------------------- */
+    // El usuario marca/desmarca TIPOS de suceso en Ajustes. Cada icono pertenece a un solo grupo (convencion editorial; se prueba que no falte ni sobre ninguno).
+    const GROUPS = [
+        { id: 'war', icons: ['sword', 'musket', 'tank'], es: 'Guerras y batallas', en: 'Wars and battles' },
+        { id: 'treaty', icons: ['treaty'], es: 'Tratados y acuerdos', en: 'Treaties and agreements' },
+        { id: 'union', icons: ['union'], es: 'Alianzas, bodas y uniones', en: 'Alliances, weddings and unions' },
+        { id: 'politics', icons: ['political', 'election'], es: 'Política y elecciones', en: 'Politics and elections' },
+        { id: 'violence', icons: ['violence'], es: 'Atentados y violencia', en: 'Attacks and violence' },
+        { id: 'natural', icons: ['natural'], es: 'Catástrofes naturales y epidemias', en: 'Natural disasters and epidemics' },
+        { id: 'accident', icons: ['accident'], es: 'Accidentes', en: 'Accidents' },
+        { id: 'birth', icons: ['birth'], es: 'Nacimientos', en: 'Births' },
+        { id: 'death', icons: ['death'], es: 'Muertes', en: 'Deaths' },
+        { id: 'works', icons: ['publication', 'composition'], es: 'Obras (libros, música)', en: 'Works (books, music)' },
+        { id: 'discovery', icons: ['discovery'], es: 'Descubrimientos', en: 'Discoveries' },
+        { id: 'culture', icons: ['sport', 'ceremony'], es: 'Deporte y ceremonias', en: 'Sport and ceremonies' },
+        { id: 'extinction', icons: ['extinction'], es: 'Extinciones', en: 'Extinctions' },
+        { id: 'other', icons: ['event', 'calendar'], es: 'Otros sucesos', en: 'Other events' }
+    ];
+    const GROUP_OF = {}; GROUPS.forEach((g) => g.icons.forEach((k) => { GROUP_OF[k] = g.id; }));
+    const groupOf = (icon) => GROUP_OF[icon] || 'other';   // un icono nuevo sin grupo cae en «otros» en vez de desaparecer
+    const GROUP_ALL_MASK = (1 << GROUPS.length) - 1;
+    /** Lista de ids OCULTOS -> mascara de bits (un bit por grupo, en el orden de GROUPS). */
+    const hiddenToMask = (list) => GROUPS.reduce((m, g, i) => (list && list.indexOf(g.id) >= 0 ? m | (1 << i) : m), 0);
+    const maskToHidden = (m) => (Number.isInteger(m) && m >= 0 && m <= GROUP_ALL_MASK ? GROUPS.filter((g, i) => m & (1 << i)).map((g) => g.id) : []);
+    /** ¿Se muestra este icono con esta mascara de grupos ocultos? */
+    const iconShown = (icon, hiddenMask) => { const i = GROUPS.findIndex((g) => g.id === groupOf(icon)); return !(hiddenMask & (1 << i)); };
+
+    return { ICON_CLASSES, KEYS, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
 });
