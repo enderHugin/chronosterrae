@@ -3216,7 +3216,7 @@ const evKind = (f) => f.properties.kind || 'event';
 
 /* ---- Iconos de los sucesos (map/event-icons.js) ----
    Cada suceso se dibuja con un icono de borde blanco que dice QUE es (guerra, tratado, enlace, obra...), no con un punto de color.
-   Capas: events-circle (invisible, es la zona de toque/hover), events-pulse (anillo que respira) y dos capas de simbolos por tipo de
+   Capas: events-circle (invisible, es la zona de toque/hover), events-disc (disco oscuro de respaldo), events-pulse (anillo que respira) y dos capas de simbolos por tipo de
    animacion (flotar / sacudirse). La animacion solo mueve propiedades de pintura (barato) y deja reposo entre fases para que el mapa llegue a «idle». */
 const EV_SPRITE = { box: 48, pad: 4, ratio: 2 };
 const evIconCache = new WeakMap();
@@ -3258,6 +3258,11 @@ const EV_PULSE_BASE = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12
 function evLayersAdd() {
     evIconsRegister();
     const hit = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 15];
+    // Disco de respaldo: el icono es rojo/ocre y el mapa politico tambien; sin fondo el mosquete o las espadas se pierden (visto en el render real, probe-shot)
+    map.addLayer({ id: 'events-disc', type: 'circle', source: 'events', paint: {
+        'circle-radius': ['-', EV_PULSE_BASE, 1.5], 'circle-color': '#0f1722', 'circle-stroke-width': 0,
+        'circle-opacity': ['*', ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], ['coalesce', ['get', 'fade'], 1], 0.55], 'circle-opacity-transition': { duration: 350, delay: 0 }
+    } });
     map.addLayer({ id: 'events-pulse', type: 'circle', source: 'events', paint: {
         'circle-radius': EV_PULSE_BASE, 'circle-color': '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': '#ffffff', 'circle-stroke-opacity': ['*', ['coalesce', ['get', 'fade'], 1], 0.55],
         'circle-radius-transition': { duration: 900, delay: 0 }, 'circle-stroke-opacity-transition': { duration: 900, delay: 0 }
