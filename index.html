@@ -2972,7 +2972,7 @@ function clockSet(jd, { user = false, tick = false, quiet = false } = {}) {
     const y = ChronosSky.jdToCalendar(clock.jd, 'auto').year;
     if (y !== ybpToYear(state.ybp)) setTime(yearToYbp(y), { fromClock: true, persist: false });
     clockChanged({ tick });
-    if (!quiet) eventsNotify(prev, clock.jd);      // en un barrido animado no hay avisos fotograma a fotograma: se ven pasar los iconos y al aterrizar salen los de siempre
+    if (!quiet) eventsNotify(prev, clock.jd, { tick });      // en un barrido animado no hay avisos fotograma a fotograma: se ven pasar los iconos y al aterrizar salen los de siempre
     if (!tick) rememberTime();
     return clipped;
 }
@@ -3852,10 +3852,13 @@ function toastsTick() {
 
 // prev -> jd: avisos del recorrido continuo; al aterrizar tras un salto, cuenta atras si hay un suceso con hora cerca y,
 // como mucho, tres sucesos del dia en que se cae (los mas notorios).
-function eventsNotify(prev, jd) {
+function eventsNotify(prev, jd, o) {
     if (!window.ChronosTimed || !Number.isFinite(prev) || !events.vis.length || !(jd > prev)) return;
     const stepS = (jd - prev) * 86400;
     const continuous = stepS <= 7200;
+    // Con el reloj corriendo tan deprisa que cada paso salta mas de 2 h (desde ~1 dia/s), un aviso por dia seria una avalancha: los sucesos se ven pasar
+    // en el mapa (ventana proporcional a la velocidad) y los avisos se reservan para el aterrizaje de un salto y para el reloj lento.
+    if (o && o.tick && !continuous) return;
     const pool = continuous && stepS < 3600 * 80 ? [...events.visTimed, ...events.vis.filter((f) => { const a = ChronosTimed.span(f).a; return !ChronosTimed.isTimed(f) && f.properties.time.precision === 'day' && a > prev - 1 && a <= jd; })] : events.timed;
     ChronosTimed.notices(pool, prev, jd, { minImportance: clock.rate >= 86400 ? 0.85 : 0.5 }).forEach((n) => {
         if (n.phase === 'lead' && n.leadS === 10 && stepS > 30) return;

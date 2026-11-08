@@ -99,7 +99,7 @@ sale y cuánto se puede fiar de él.
   en orden cronológico (hacia atrás, al revés) y a distancias proporcionales a sus fechas (velocidad casi constante: arranque y frenada
   cortos); cada uno permanece el 40 % del recorrido, más transparente cuanto más antiguo, y al llegar la ventana se cierra poco a poco
   (los más antiguos se van primero). La luz día/noche no gira como una peonza: en tramos largos los días avanzan enteros y la hora se
-  interpola por el camino corto. Tramos de menos de 1 h o de más de 120 años, y la animación apagada, saltan directamente.
+  interpola por el camino corto. Con el reloj corriendo desde ~1 día/s no hay un aviso por día (se ven pasar en el mapa). Tramos de menos de 1 h o de más de 120 años, y la animación apagada, saltan directamente.
 
 - **Cambios del elemento centrado** (botón *Cambios*): qué cambia y qué sucesos lo rodean. Las fronteras son
   fotografías sueltas (1715, 1783, 1800…), así que un salto entre ellas **no ocurre en un día**: el panel dice
