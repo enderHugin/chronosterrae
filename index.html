@@ -158,15 +158,51 @@
         #changes ul.chg-names { margin: 4px 0 4px 18px; padding: 0; }
         #changes button.chg-go { margin-top: 4px; cursor: pointer; }
         #events-list { list-style: none; margin: 6px 0; padding: 0; }
-        #events-list li { display: grid; grid-template-columns: 12px 1fr; gap: 0 8px; padding: 6px 4px; border-top: 1px solid rgba(128, 128, 128, 0.25); cursor: pointer; font-size: 13px; }
+        #events-list li { display: grid; grid-template-columns: 22px 1fr; gap: 0 8px; padding: 6px 4px; border-top: 1px solid rgba(128, 128, 128, 0.25); cursor: pointer; font-size: 13px; }
         #events-list li:hover, #events-list li:focus { background: rgba(128, 128, 128, 0.12); outline: none; }
-        .ev-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; grid-row: 1 / span 2; }
+        #events-list .ev-ico { grid-row: 1 / span 2; margin-top: 0; }
+
+        /* Recuadros informativos: ocultacion automatica con fundido, asas para moverlos y panel de ajustes (map/panels.js).
+           Se usan atributos data-* y no clases porque setStatus() reescribe className entera. */
+        .panel, #space-note { transition: opacity 0.45s ease; }
+        [data-pfade] { opacity: 0 !important; pointer-events: none; }
+        #solar-info[data-pfade] { pointer-events: auto; }   /* trae controles (zoom): al acercar el cursor reaparece */
+        #solar-info[data-pfade]:hover { opacity: 1 !important; }
+        [data-pgone] { display: none !important; }
+        [data-pempty] > .p-tools { display: none; }   /* recuadro sin contenido: nada que mover ni ocultar */
+        .p-tools { position: absolute; top: 3px; right: 3px; display: flex; gap: 2px; opacity: 0; transition: opacity 0.15s; z-index: 3; pointer-events: auto; }
+        #info > .p-tools { right: 30px; }
+        .panel:hover > .p-tools, .p-tools:focus-within, .p-tools:hover { opacity: 1; }
+        #status > .p-tools, #space-note > .p-tools, #solar-note > .p-tools { top: -13px; right: 4px; }   /* recuadros pequenos y sin recorte: las asas van encima del borde, no sobre el texto */
+        #space-note > .p-tools, #solar-note > .p-tools { opacity: 0.4; }
+        @media (pointer: coarse) { .p-tools, #space-note > .p-tools, #solar-note > .p-tools { opacity: 0.85; } .p-tools button { width: 30px; height: 30px; font-size: 16px; } #status > .p-tools, #space-note > .p-tools, #solar-note > .p-tools { top: -17px; } }
+        .p-tools button { width: 22px; height: 22px; padding: 0; line-height: 1; border-radius: 11px; border: 1px solid var(--accent); background: var(--panel); color: var(--text); font-size: 12px; cursor: pointer; }
+        .p-tools .p-grip { cursor: grab; touch-action: none; }
+        .p-tools .p-grip:active, body.p-dragging .p-grip { cursor: grabbing; }
+        body.p-dragging { user-select: none; }
+        #settings { position: absolute; top: 60px; right: 372px; width: 330px; max-width: calc(100% - 28px); max-height: calc(100% - 140px); overflow: auto; padding: 12px 14px 12px; z-index: 12; display: none; box-sizing: border-box; font-size: 13px; line-height: 1.4; }
+        #settings.open { display: block; }
+        @media (max-width: 900px) { #settings { right: 14px; top: 108px; } }
+        #settings h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
+        #settings h3 { margin: 12px 0 4px; font: 700 13px var(--font); }
+        #settings .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #settings label { display: flex; gap: 7px; align-items: flex-start; padding: 2px 0; }
+        #settings .st-sub { color: var(--muted); font-size: 11.5px; }
+        #settings .st-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+        #settings .st-actions .btn { padding: 4px 10px; font-size: 12px; }
+        #settings .btn:disabled { opacity: 0.4; cursor: default; }
+        #settings .st-pins { margin-left: 14px; }
+        #undo-bar { position: absolute; left: 14px; bottom: 120px; z-index: 14; display: none; gap: 6px; }
+        body.touch #undo-bar { display: flex; }
+        #undo-bar .btn { min-width: 44px; min-height: 44px; font-size: 18px; padding: 0 10px; }
+        #undo-bar .btn:disabled { opacity: 0.35; }
+        .ev-ico { width: 20px; height: 20px; flex: none; display: block; }
         .ev-name { font-weight: 600; }
         .ev-when { grid-column: 2; font-size: 11.5px; color: var(--muted); }
         #events-note { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
         #toasts { position: absolute; top: 96px; left: 50%; transform: translateX(-50%); z-index: 13; display: flex; flex-direction: column; gap: 8px; width: min(92%, 520px); pointer-events: none; }
         .toast { pointer-events: auto; display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); cursor: pointer; font-size: 14px; line-height: 1.35; }
-        .toast-dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+        .toast-ico { margin: 0; }
         .toast-text { flex: 1; font-variant-numeric: tabular-nums; }
         .toast-x { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
         #sky { position: absolute; top: 60px; left: 14px; width: 344px; max-width: calc(100% - 28px); max-height: calc(100% - 300px); overflow: auto; padding: 12px 14px 10px; z-index: 11; display: none; box-sizing: border-box; }
@@ -221,8 +257,33 @@
         <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
         <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
         <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
+        <button class="btn" id="btn-settings" type="button" aria-pressed="false" data-i18n="ui.button"></button>
         <button class="btn" id="btn-lang" type="button">EN / ES</button>
         <button class="btn" id="btn-theme" type="button">Dark</button>
+    </div>
+
+    <div id="settings" class="panel" role="region" aria-label="Settings">
+        <button class="close" id="settings-close" type="button" aria-label="Close">&times;</button>
+        <h2 data-i18n="ui.title"></h2>
+        <h3 data-i18n="ui.autohide.title"></h3>
+        <div id="st-levels" role="radiogroup"></div>
+        <div class="st-sub" data-i18n="ui.autohide.note"></div>
+        <h3 data-i18n="ui.pins.title"></h3>
+        <div id="st-pins" class="st-pins"></div>
+        <h3 data-i18n="ui.icons.title"></h3>
+        <label><input type="checkbox" id="st-anim"><span data-i18n="ui.icons.anim"></span></label>
+        <div class="st-sub" data-i18n="ui.icons.note"></div>
+        <h3 data-i18n="ui.layout.title"></h3>
+        <div class="st-actions">
+            <button class="btn" id="st-undo" type="button"></button>
+            <button class="btn" id="st-redo" type="button"></button>
+            <button class="btn" id="st-reset" type="button"></button>
+        </div>
+        <div class="st-sub" data-i18n="ui.layout.note"></div>
+    </div>
+    <div id="undo-bar" role="group" aria-label="Undo / redo">
+        <button class="btn" id="undo-btn" type="button" aria-label="Undo" disabled>&#8630;</button>
+        <button class="btn" id="redo-btn" type="button" aria-label="Redo" disabled>&#8631;</button>
     </div>
 
     <div id="events" class="panel" role="region" aria-label="Events">
@@ -326,6 +387,8 @@
 <script src="./map/borders-inner.js"></script>
 <script src="./map/borders-resolution.js"></script>
 <script src="./map/changes.js"></script>
+<script src="./map/panels.js"></script>
+<script src="./map/event-icons.js"></script>
 <script src="./map/labels.js"></script>
 <script src="./map/sphere.js"></script>
 <script src="./sky/sky-view.js"></script>
@@ -383,6 +446,10 @@ const parsePrefs = (raw) => {
     if (p.bh === 0 || p.bh === 1) out.bh = p.bh === 1;   // fronteras historicas ocultas por el usuario (de cerca)
     if (p.rd === 0 || p.rd === 1) out.rd = p.rd === 1;   // capa de carreteras y ferrocarriles de hoy (apagada por defecto)
     if (typeof p.ks === 'string' && /^[0-9A-Za-z]{1,5}$/.test(p.ks)) out.ks = p.ks;   // paso de las flechas (id; se valida al usarlo)
+    if (Number.isInteger(p.ah) && p.ah >= 0 && p.ah <= 3) out.ah = p.ah;   // ocultar recuadros informativos solos: nivel 0 (nunca) a 3
+    if (Number.isInteger(p.pp) && p.pp >= 0 && p.pp <= 31) out.pp = p.pp;   // recuadros «mostrar siempre» (mascara de bits)
+    if (typeof p.pn === 'string' && p.pn.length <= 300 && /^[a-z0-9:,;-]*$/.test(p.pn)) out.pn = p.pn;   // posiciones de los recuadros (se valida pieza a pieza al usarlas)
+    if (p.ia === 0 || p.ia === 1) out.ia = p.ia === 1;   // iconos de sucesos animados
     if (Number.isInteger(p.vf) && p.vf >= 0 && p.vf <= 127) out.vf = p.vf;   // filtros de verificacion de sucesos (mascara de bits)
     if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
     return out;
@@ -394,9 +461,11 @@ const readPrefs = () => {
     } catch (err) { return {}; }
 };
 const prefs = readPrefs();
+let panelsUI = null;     // recuadros informativos (ocultar solos, mover, deshacer): se crea mas abajo
+let lastInfo = null;     // ultima ficha mostrada (para poder deshacer su cierre)
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia === undefined ? undefined : (prefs.ia ? 1 : 0) };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -489,6 +558,17 @@ const i18n = {
             naturalShown: 'Ahora se muestra la imagen natural.', naturalHidden: 'Ahora no se muestra la imagen natural.',
             plates: 'Modelo de placas: el mapa se calcula para {ma} Ma y se redondea a Ma enteros; dos fechas que difieren menos de 1 Ma muestran el mismo mapa.',
             noGeo: 'Sucesos geológicos (terremotos, impactos, erupciones): ChronosTerrae no registra ninguno para esta época.'
+        },
+        ui: {
+            button: 'Ajustes', title: 'Ajustes', move: 'Mover', hide: 'Ocultar', undo: 'Deshacer', redo: 'Rehacer', reset: 'Restablecer posiciones', moveHint: 'Arrastra para mover (o usa las flechas)',
+            autohide: {
+                title: 'Ocultar recuadros informativos solos (2 s)',
+                note: 'Se desvanecen a los 2 s y reaparecen al cambiar su contenido. Con el cursor encima no se ocultan, y los avisos y advertencias nunca se ocultan solos.',
+                l0: 'Nunca', l1: 'Solo la ficha del elemento seleccionado', l2: 'Además avisos y notas de estado', l3: 'Además la ficha del cuerpo celeste'
+            },
+            pins: { title: 'Mostrar siempre (no se oculta solo)', info: 'Ficha del elemento seleccionado', status: 'Avisos y notas de estado', 'space-note': 'Nota del fondo espacial', 'solar-note': 'Nota del sistema solar', 'solar-info': 'Ficha del cuerpo celeste' },
+            icons: { title: 'Iconos de sucesos', anim: 'Animar los iconos', note: 'Espada, mosquete o tanque según la época para guerras y batallas; pluma y papiro para tratados; anillos para alianzas y uniones. Son una convención de dibujo, no un dato del suceso.' },
+            layout: { title: 'Posición de los recuadros', note: 'Ctrl+Z deshace y Ctrl+Mayús+Z (o Ctrl+Y) rehace ocultar y mover recuadros. En pantallas táctiles hay botones de deshacer y rehacer.' }
         },
         events: {
             button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
@@ -667,6 +747,17 @@ const i18n = {
             plates: 'Plate model: the map is computed for {ma} Ma and rounded to whole Ma; two dates less than 1 Ma apart show the same map.',
             noGeo: 'Geological events (earthquakes, impacts, eruptions): ChronosTerrae records none for this epoch.'
         },
+        ui: {
+            button: 'Settings', title: 'Settings', move: 'Move', hide: 'Hide', undo: 'Undo', redo: 'Redo', reset: 'Reset positions', moveHint: 'Drag to move (or use the arrow keys)',
+            autohide: {
+                title: 'Auto-hide info boxes (2 s)',
+                note: 'They fade out after 2 s and reappear when their content changes. They stay while the cursor is over them, and warnings and errors never hide by themselves.',
+                l0: 'Never', l1: 'Only the selected element card', l2: 'Also status notices and notes', l3: 'Also the celestial body card'
+            },
+            pins: { title: 'Always show (never auto-hide)', info: 'Selected element card', status: 'Status notices and notes', 'space-note': 'Space background note', 'solar-note': 'Solar system note', 'solar-info': 'Celestial body card' },
+            icons: { title: 'Event icons', anim: 'Animate the icons', note: 'Sword, musket or tank by era for wars and battles; quill and scroll for treaties; rings for alliances and unions. This is a drawing convention, not a fact about the event.' },
+            layout: { title: 'Box positions', note: 'Ctrl+Z undoes and Ctrl+Shift+Z (or Ctrl+Y) redoes hiding and moving boxes. Touch screens get undo and redo buttons.' }
+        },
         events: {
             button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
             basisUtc: 'UTC/GMT', basisLocal: 'official local time (UTC{off})', noPlace: 'no place', empty: 'No sourced events near this instant at this scale. Zoom in or change the year.',
@@ -813,6 +904,7 @@ function setStatus(level, message, autoHideMs) {
     const el = $('status');
     el.className = 'panel visible ' + level;
     el.textContent = message;
+    if (panelsUI) panelsUI.touch('status');
     clearTimeout(statusTimer);
     if (autoHideMs) statusTimer = setTimeout(() => { el.className = 'panel'; }, autoHideMs);
 }
@@ -836,11 +928,13 @@ function fillRows(body, rows) {
     });
 }
 function showInfo(title, rows) {
+    lastInfo = { title, rows };
     $('info-title').textContent = title;
     const body = $('info-body');
     body.textContent = '';
     fillRows(body, rows);
     $('info').style.display = 'block';
+    if (panelsUI) panelsUI.touch('info');
 }
 // Un punto de pantalla fuera del disco de la Tierra es cielo, no mapa (MapLibre desproyecta ahi a lng/lat falsos)
 // Disco que la Tierra dibuja en el lienzo (centro y radio en px): lo de fuera es cielo. Sirve para los toques y para decidir si se ven las fronteras.
@@ -1094,15 +1188,7 @@ mapReady.then(() => {
     map.addLayer({ id: 'night-fill', type: 'fill', source: 'night', layout: { visibility: 'none' }, paint: { 'fill-color': '#000a1f', 'fill-opacity': 0.34 } }, 'live-points');
     updateNight(true);
     map.addSource('events', { type: 'geojson', data: emptyFC() });
-    map.addLayer({
-        id: 'events-circle', type: 'circle', source: 'events',
-        paint: {
-            'circle-radius': ['interpolate', ['linear'], ['get', 'importance'], 0.3, 4, 1, 8],
-            'circle-color': ['match', ['get', 'kind'], 'birth', KIND_COLORS.birth, 'death', KIND_COLORS.death, 'publication', KIND_COLORS.publication, 'composition', KIND_COLORS.composition, 'discovery', KIND_COLORS.discovery, 'extinction', KIND_COLORS.extinction, KIND_COLORS.event],
-            'circle-opacity': ['match', ['get', 'status'], 'raw', 0.55, 'community', 0.75, 1],
-            'circle-stroke-width': 1.5, 'circle-stroke-color': ['match', ['get', 'status'], 'raw', '#b0b0b0', '#ffffff']
-        }
-    });
+    evLayersAdd();
     eventsRefresh();
     detailApply();
 });
@@ -2106,6 +2192,7 @@ function applyStrings() {
     keyStepTexts();
     zoomControl.texts();
     solarView.texts();
+    if (panelsUI) panelsUI.texts();
     syncClockUI();
     toastsTick();
     eventsRefresh();
@@ -2156,7 +2243,199 @@ $('time-input').addEventListener('keydown', (e) => {
 $('search').addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(e.target.value); });
 $('btn-lang').addEventListener('click', () => { lang = lang === 'es' ? 'en' : 'es'; applyStrings(); savePrefs({ lang }); });
 $('btn-theme').addEventListener('click', () => { state.dark = !state.dark; applyTheme(); savePrefs({ dark: state.dark }); });
-$('info-close').addEventListener('click', hideInfo);
+$('info-close').addEventListener('click', () => { if (panelsUI) panelsUI.closeInfo(); else hideInfo(); });
+
+/* ------------------------------------------------------------------ */
+/* Recuadros informativos: ocultar solos, mover, deshacer (map/panels.js) */
+/* ------------------------------------------------------------------ */
+// La logica (niveles, historial, posiciones) esta en map/panels.js y se prueba en Node; aqui solo se conecta con el DOM.
+// Se observa el DOM en lugar de tocar cada sitio que escribe en un recuadro: asi cubre tambien los que crea solar-view.js.
+panelsUI = (function () {
+    const P = ChronosPanels;
+    const byId = (id) => document.getElementById(id);
+    const offsets = P.parseLayout(prefs.pn || '');
+    const gone = new Set();
+    const known = {};
+    const wired = new WeakSet();
+    let snapshot = null;
+    let drag = null;
+    const isTouch = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+    if (isTouch) document.body.classList.add('touch');
+
+    const ah = P.createAutoHide({ onFade: (id, faded) => { const e = byId(id); if (e) { if (faded) e.setAttribute('data-pfade', '1'); else e.removeAttribute('data-pfade'); } } });
+    ah.setPinnedSet(P.maskToPins(prefs.pp || 0));
+    ah.setLevel(Number.isInteger(prefs.ah) ? prefs.ah : 0);
+
+    const history = P.createHistory({ apply: applyAction, onChange: syncUndo });
+    function syncUndo(st) {
+        const s = st || { canUndo: history.canUndo(), canRedo: history.canRedo() };
+        ['undo-btn', 'st-undo'].forEach((id) => { const b = byId(id); if (b) b.disabled = !s.canUndo; });
+        ['redo-btn', 'st-redo'].forEach((id) => { const b = byId(id); if (b) b.disabled = !s.canRedo; });
+    }
+
+    function persistLayout() { savePrefs({ pn: P.serializeLayout(offsets) }); }
+    function setOffset(id, off, persist) {
+        const e = byId(id); if (!e) return;
+        if (off.dx || off.dy) offsets[id] = { dx: off.dx, dy: off.dy }; else delete offsets[id];
+        e.style.translate = off.dx || off.dy ? off.dx + 'px ' + off.dy + 'px' : '';
+        if (persist) persistLayout();
+    }
+    const curOffset = (id) => offsets[id] || { dx: 0, dy: 0 };
+    function rect0Of(id) {
+        const e = byId(id); const r = e.getBoundingClientRect(); const c = curOffset(id);
+        return { left: r.left - c.dx, top: r.top - c.dy, width: r.width, height: r.height };
+    }
+    function reclamp(id) {                 // si cambio la ventana (o el recuadro), que no quede fuera de la pantalla
+        const e = byId(id); if (!e || !offsets[id] || !e.getClientRects().length) return;
+        const c = offsets[id]; const o = P.clampOffset(c.dx, c.dy, rect0Of(id), window.innerWidth, window.innerHeight);
+        if (o.dx !== c.dx || o.dy !== c.dy) setOffset(id, o, true);
+    }
+
+    function setGone(id, on) {
+        const e = byId(id); if (!e) return;
+        if (on) { gone.add(id); e.setAttribute('data-pgone', '1'); } else { gone.delete(id); e.removeAttribute('data-pgone'); }
+        scan();
+    }
+    function userHide(id) { if (gone.has(id)) return; setGone(id, true); history.push({ type: 'hide', id }); }
+    function closeInfo() {                  // la × de la ficha: se puede deshacer (vuelve la ficha y el resaltado del mapa)
+        if (lastInfo && $('info').style.display === 'block') history.push({ type: 'hide', id: 'info', snap: { info: lastInfo, key: GAP.sel } });
+        hideInfo();
+    }
+    function applyAction(a, dir) {
+        if (a.type === 'move') { setOffset(a.id, dir === 'undo' ? a.from : a.to, true); reclamp(a.id); return; }
+        if (a.id === 'info') {
+            if (dir === 'undo' && a.snap) { showInfo(a.snap.info.title, a.snap.info.rows); if (a.snap.key) setHighlightKey(a.snap.key); } else if (dir === 'redo') hideInfo();
+            return;
+        }
+        setGone(a.id, dir === 'redo');
+    }
+
+    /* ---- Asas: mover y ocultar ---- */
+    function nudge(id, dx, dy) {
+        const c = curOffset(id); const o = P.clampOffset(c.dx + dx, c.dy + dy, rect0Of(id), window.innerWidth, window.innerHeight);
+        const from = { dx: c.dx, dy: c.dy }; setOffset(id, o, true); history.push({ type: 'move', id, from, to: o });
+    }
+    function ensureTools(id) {
+        const e = byId(id); if (!e) return;
+        if (!wired.has(e)) {
+            wired.add(e);
+            e.addEventListener('pointerenter', () => ah.hover(id, true)); e.addEventListener('pointerleave', () => { if (!drag) ah.hover(id, false); });
+            e.addEventListener('focusin', () => ah.hover(id, true)); e.addEventListener('focusout', () => ah.hover(id, false));
+            new MutationObserver(scan).observe(e, { attributes: true, attributeFilter: ['style', 'class', 'hidden'], childList: true, subtree: true, characterData: true });
+        }
+        if (e.querySelector(':scope > .p-tools')) return;
+        const box = document.createElement('div'); box.className = 'p-tools';
+        const grip = document.createElement('button'); grip.type = 'button'; grip.className = 'p-grip'; grip.textContent = '⠿';
+        grip.addEventListener('pointerdown', (ev) => {
+            if (ev.button !== undefined && ev.button !== 0) return;
+            ev.preventDefault(); const c = curOffset(id);
+            drag = { id, sx: ev.clientX, sy: ev.clientY, from: { dx: c.dx, dy: c.dy }, rect0: rect0Of(id), pid: ev.pointerId };
+            try { grip.setPointerCapture(ev.pointerId); } catch (err) { /* sin captura: el arrastre sigue mientras el puntero este encima */ }
+            document.body.classList.add('p-dragging'); ah.hover(id, true);
+        });
+        grip.addEventListener('pointermove', (ev) => {
+            if (!drag || drag.pid !== ev.pointerId) return;
+            setOffset(id, P.clampOffset(drag.from.dx + ev.clientX - drag.sx, drag.from.dy + ev.clientY - drag.sy, drag.rect0, window.innerWidth, window.innerHeight), false);
+        });
+        const end = (ev) => {
+            if (!drag || drag.pid !== ev.pointerId) return;
+            const d = drag; drag = null; document.body.classList.remove('p-dragging'); persistLayout();
+            history.push({ type: 'move', id, from: d.from, to: curOffset(id) }); ah.hover(id, e.matches(':hover'));
+        };
+        grip.addEventListener('pointerup', end); grip.addEventListener('pointercancel', end);
+        grip.addEventListener('keydown', (ev) => {
+            const k = { ArrowLeft: [-10, 0], ArrowRight: [10, 0], ArrowUp: [0, -10], ArrowDown: [0, 10] }[ev.key];
+            if (k) { ev.preventDefault(); nudge(id, k[0], k[1]); }
+        });
+        box.appendChild(grip);
+        if (id !== 'info') {               // la ficha ya tiene su ×
+            const hide = document.createElement('button'); hide.type = 'button'; hide.textContent = '×';
+            hide.addEventListener('click', () => userHide(id)); box.appendChild(hide);
+        }
+        e.appendChild(box); texts();
+    }
+    function texts() {
+        P.IDS.forEach((id) => {
+            const e = byId(id); if (!e) return; const box = e.querySelector(':scope > .p-tools'); if (!box) return;
+            const [g, h] = box.children; g.title = t('ui.moveHint'); g.setAttribute('aria-label', t('ui.move') + ': ' + t('ui.pins.' + id));
+            if (h) { h.title = t('ui.hide'); h.setAttribute('aria-label', t('ui.hide') + ': ' + t('ui.pins.' + id)); }
+        });
+        [['undo-btn', 'ui.undo'], ['redo-btn', 'ui.redo']].forEach(([id, k]) => { const b = byId(id); if (b) { b.title = t(k); b.setAttribute('aria-label', t(k)); } });
+        const set = (id, k) => { const b = byId(id); if (b) b.textContent = t(k); };
+        set('st-undo', 'ui.undo'); set('st-redo', 'ui.redo'); set('st-reset', 'ui.reset');
+        renderSettings();
+    }
+
+    /* ---- Observacion del DOM ---- */
+    const sigOf = (id, e) => {
+        if (id === 'info') return byId('info-title').textContent;
+        if (id === 'solar-info') { const h = e.querySelector('h2'); return h ? h.textContent : ''; }   // el resto de la ficha se actualiza con el reloj: no cuenta como contenido nuevo
+        return [...e.childNodes].filter((n) => !(n.classList && n.classList.contains('p-tools'))).map((n) => n.textContent).join('|');
+    };
+    let scanning = false;
+    function scan() {
+        if (scanning) return; scanning = true;
+        try {
+            P.IDS.forEach((id) => {
+                const e = byId(id); if (!e) return;
+                ensureTools(id);
+                const prev = known[id] || { shown: false, sig: null };
+                const sig = sigOf(id, e);
+                if (gone.has(id) && prev.sig !== null && sig !== prev.sig && sig.trim()) setGone(id, false);   // contenido nuevo: el que se oculto era el anterior
+                const shown = e.getClientRects().length > 0 && getComputedStyle(e).visibility !== 'hidden' && sig.trim().length > 0 && !e.hasAttribute('data-pgone');
+                if (sig.trim()) e.removeAttribute('data-pempty'); else e.setAttribute('data-pempty', '1');
+                if (id === 'status') ah.setProtected('status', /\b(warn|error)\b/.test(e.className));
+                if (shown && (!prev.shown || sig !== prev.sig)) { ah.touch(id); reclamp(id); } else if (!shown && prev.shown) ah.release(id);
+                known[id] = { shown, sig };
+            });
+        } finally { scanning = false; }
+    }
+    new MutationObserver(scan).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    const solarRoot = byId('solar'); if (solarRoot) new MutationObserver(scan).observe(solarRoot, { attributes: true, attributeFilter: ['hidden'], childList: true, subtree: true });
+    window.addEventListener('resize', () => P.IDS.forEach(reclamp));
+
+    /* ---- Teclado: Ctrl+Z / Ctrl+Mayus+Z / Ctrl+Y ---- */
+    const typing = (el) => el && (el.isContentEditable || el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && !/^(range|checkbox|radio|button)$/.test(el.type)));
+    window.addEventListener('keydown', (ev) => {
+        if (!(ev.ctrlKey || ev.metaKey) || ev.altKey || typing(document.activeElement)) return;
+        const k = ev.key.toLowerCase();
+        const redo = (k === 'z' && ev.shiftKey) || (k === 'y' && !ev.shiftKey); const undo = k === 'z' && !ev.shiftKey;
+        if (!undo && !redo) return;
+        if (redo ? history.redo() : history.undo()) ev.preventDefault();
+    });
+    byId('undo-btn').addEventListener('click', () => history.undo()); byId('redo-btn').addEventListener('click', () => history.redo());
+    byId('st-undo').addEventListener('click', () => history.undo()); byId('st-redo').addEventListener('click', () => history.redo());
+    byId('st-reset').addEventListener('click', () => {
+        const ids = P.IDS.filter((id) => offsets[id]); if (!ids.length) return;
+        ids.forEach((id) => { const from = curOffset(id); setOffset(id, { dx: 0, dy: 0 }, false); history.push({ type: 'move', id, from: { dx: from.dx, dy: from.dy }, to: { dx: 0, dy: 0 } }); });
+        persistLayout();
+    });
+
+    /* ---- Panel de ajustes ---- */
+    function renderSettings() {
+        const lv = byId('st-levels'); const pins = byId('st-pins'); if (!lv || !pins) return;
+        lv.textContent = ''; pins.textContent = '';
+        for (let i = 0; i <= P.MAX_LEVEL; i++) {
+            const lab = document.createElement('label'); const r = document.createElement('input'); r.type = 'radio'; r.name = 'st-level'; r.value = String(i); r.checked = ah.level() === i;
+            r.addEventListener('change', () => { ah.setLevel(i); savePrefs({ ah: i }); });
+            lab.append(r, document.createTextNode(t('ui.autohide.l' + i))); lv.appendChild(lab);
+        }
+        P.IDS.forEach((id) => {
+            const lab = document.createElement('label'); const c = document.createElement('input'); c.type = 'checkbox'; c.checked = ah.pinned().indexOf(id) >= 0;
+            c.addEventListener('change', () => { ah.setPinned(id, c.checked); savePrefs({ pp: P.pinsToMask(ah.pinned()) }); });
+            lab.append(c, document.createTextNode(t('ui.pins.' + id))); pins.appendChild(lab);
+        });
+    }
+    function setSettingsOpen(open) { byId('settings').classList.toggle('open', open); byId('btn-settings').setAttribute('aria-pressed', String(open)); }
+    byId('btn-settings').addEventListener('click', () => setSettingsOpen(!byId('settings').classList.contains('open')));
+    byId('settings-close').addEventListener('click', () => setSettingsOpen(false));
+    byId('st-anim').addEventListener('change', (e) => evAnimSet(e.target.checked, true));
+
+    const api = { touch: (id) => { if (byId(id) && byId(id).getClientRects().length) ah.touch(id); }, closeInfo, texts, scan, history, autoHide: ah, offsets, setSettingsOpen };
+    P.IDS.forEach((id) => { if (offsets[id]) setOffset(id, offsets[id], false); });
+    return api;
+})();
+panelsUI.texts(); panelsUI.scan();
 
 /* ------------------------------------------------------------------ */
 /* Cielo: Sol, Luna, planetas y estrellas para un instante y un lugar  */
@@ -2933,6 +3212,77 @@ const events = { counts: { status: {}, evidence: {} }, seed: [], shards: new Map
 const evName = (f) => (f.properties.labels && f.properties.labels[lang]) || f.properties.name;
 const evKind = (f) => f.properties.kind || 'event';
 
+/* ---- Iconos de los sucesos (map/event-icons.js) ----
+   Cada suceso se dibuja con un icono de borde blanco que dice QUE es (guerra, tratado, enlace, obra...), no con un punto de color.
+   Capas: events-circle (invisible, es la zona de toque/hover), events-pulse (anillo que respira) y dos capas de simbolos por tipo de
+   animacion (flotar / sacudirse). La animacion solo mueve propiedades de pintura (barato) y deja reposo entre fases para que el mapa llegue a «idle». */
+const EV_SPRITE = { box: 48, pad: 4, ratio: 2 };
+const evIconCache = new WeakMap();
+const evIconKey = (f) => {
+    let k = evIconCache.get(f); if (k) return k;
+    const p = f.properties; let year = NaN; try { year = ChronosChanges.eventYears(f).from; } catch (e) { /* sin fecha valida: epoca por defecto */ }
+    k = ChronosEventIcons.classify({ kind: p.kind, name: p.name, classes: p.classes, year }).icon; evIconCache.set(f, k); return k;
+};
+function evSpriteCanvas(key, size, pad) {
+    const total = size + 2 * pad; const c = document.createElement('canvas'); c.width = c.height = total;
+    ChronosEventIcons.draw(c.getContext('2d'), key, size, { x: pad, y: pad });
+    return c;
+}
+const evUrlCache = new Map();
+function evIconUrl(key) {
+    if (!evUrlCache.has(key)) evUrlCache.set(key, evSpriteCanvas(key, 40, 3).toDataURL());
+    return evUrlCache.get(key);
+}
+function evIconImg(f) {
+    const img = document.createElement('img'); img.className = 'ev-ico'; img.alt = ''; img.src = evIconUrl(evIconKey(f)); img.setAttribute('aria-hidden', 'true'); return img;
+}
+function evIconsRegister() {       // setStyle borra las imagenes: se vuelven a añadir cada vez que se rehace el estilo
+    ChronosEventIcons.KEYS.forEach((k) => {
+        if (map.hasImage('evi-' + k)) return;
+        const c = evSpriteCanvas(k, EV_SPRITE.box, EV_SPRITE.pad);
+        map.addImage('evi-' + k, c.getContext('2d').getImageData(0, 0, c.width, c.height), { pixelRatio: EV_SPRITE.ratio });
+    });
+}
+const EVA = { on: false, phase: 0, pulse: null };
+const EV_PULSE_BASE = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 16];
+function evLayersAdd() {
+    evIconsRegister();
+    const hit = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 15];
+    map.addLayer({ id: 'events-pulse', type: 'circle', source: 'events', paint: {
+        'circle-radius': EV_PULSE_BASE, 'circle-color': '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': '#ffffff', 'circle-stroke-opacity': 0.55,
+        'circle-radius-transition': { duration: 900, delay: 0 }, 'circle-stroke-opacity-transition': { duration: 900, delay: 0 }
+    } });
+    ['bob', 'shake'].forEach((g) => map.addLayer({
+        id: 'events-icon-' + g, type: 'symbol', source: 'events', filter: ['==', ['get', 'anim'], g],
+        layout: { 'icon-image': ['concat', 'evi-', ['get', 'icon']], 'icon-size': ['interpolate', ['linear'], ['get', 'importance'], 0.3, 0.68, 1, 0.95], 'icon-allow-overlap': true, 'icon-ignore-placement': true, 'symbol-sort-key': ['get', 'importance'] },
+        paint: { 'icon-opacity': ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], 'icon-translate': [0, 0], 'icon-translate-transition': { duration: g === 'shake' ? 520 : 800, delay: 0 } }
+    }));
+    // Zona de toque: invisible, pero es la que consultan el hover y el clic (queryRenderedFeatures)
+    map.addLayer({ id: 'events-circle', type: 'circle', source: 'events', paint: { 'circle-radius': hit, 'circle-color': '#000000', 'circle-opacity': 0, 'circle-stroke-opacity': 0 } });
+    evAnimApply(EVA.phase);
+    eventsRefresh();
+    detailApply();
+}
+function evAnimApply(phase) {
+    EVA.phase = phase;
+    if (!map.getLayer('events-pulse')) return;
+    map.setPaintProperty('events-pulse', 'circle-radius', ['+', EV_PULSE_BASE, phase ? 5 : 0]);
+    map.setPaintProperty('events-pulse', 'circle-stroke-opacity', phase ? 0 : 0.55);
+    map.setPaintProperty('events-icon-bob', 'icon-translate', [0, phase ? -3 : 0]);
+    map.setPaintProperty('events-icon-shake', 'icon-translate', [phase ? 2.5 : -2.5, 0]);
+}
+/** Enciende o apaga la animacion (la fase vuelve a reposo al apagarla). persist: recordar la eleccion. */
+function evAnimSet(on, persist) {
+    EVA.on = Boolean(on);
+    if (persist) savePrefs({ ia: EVA.on });
+    if (EVA.on) EVA.pulse.start(); else EVA.pulse.stop();
+    const box = document.getElementById('st-anim'); if (box) box.checked = EVA.on;
+}
+EVA.pulse = ChronosEventIcons.createPulse({ period: 1500, apply: evAnimApply, enabled: () => EVA.on && !document.hidden && events.shown.length > 0 && Boolean(map.getLayer('events-pulse')) });
+window.eventIconsAnimate = (on) => evAnimSet(on, false);   // gancho para las capturas automaticas (probe-shot): la animacion no deja que el mapa llegue a idle
+// Iconos animados: eleccion del usuario; si no hay, se respeta «reducir movimiento» del sistema
+evAnimSet(prefs.ia !== undefined ? prefs.ia : !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches), false);
+
 // Filtros de verificacion (mascara de bits, recordada en la cookie): el usuario decide que ver.
 // Bits 1-8: nivel de revision (raw, community, reviewed, consensus). Bits 16/32/64: documental, reconstruccion o modelo, especulacion.
 const VF_STATUS = ['raw', 'community', 'reviewed', 'consensus'];
@@ -3023,7 +3373,7 @@ function eventsDraw() {
     events.shown = sel;
     map.getSource('events').setData({
         type: 'FeatureCollection',
-        features: sel.map((f) => ({ type: 'Feature', geometry: f.geometry, properties: { id: f.properties.id, name: evName(f), kind: evKind(f), importance: f.properties.importance, status: f.properties.status } }))
+        features: sel.map((f) => ({ type: 'Feature', geometry: f.geometry, properties: { id: f.properties.id, name: evName(f), kind: evKind(f), importance: f.properties.importance, status: f.properties.status, icon: evIconKey(f), anim: ChronosEventIcons.animGroup(evIconKey(f)) } }))
     });
     if (events.open) renderEventsPanel();
 }
@@ -3096,7 +3446,7 @@ function renderEventsPanel() {
     }).map((f) => ({ f, d: Math.abs(ChronosTimed.span(f).a - clock.jd) })).sort((a, b) => a.d - b.d || b.f.properties.importance - a.f.properties.importance).slice(0, 40);
     items.forEach(({ f }) => {
         const li = el('li', { tabindex: '0', role: 'button' }, [
-            el('span', { class: 'ev-dot', style: 'background:' + (KIND_COLORS[evKind(f)] || '#888') }),
+            evIconImg(f),
             el('span', { class: 'ev-name', text: evName(f) }),
             el('span', { class: 'ev-when', text: eventDateText(f) + (f.geometry ? '' : ' · ' + t('events.noPlace')) })
         ]);
@@ -3206,7 +3556,7 @@ CHANGE_PROVIDERS.push({
 
 function chgEventItem(it, listed) {
     const f = it.f; const p = f.properties;
-    const sum = el('summary', {}, [el('span', { class: 'ev-dot', style: 'background:' + (KIND_COLORS[evKind(f)] || '#888') + ';display:inline-block;margin-right:6px' }), el('b', { text: evName(f) }), el('span', { class: 'chg-when', text: eventDateText(f) })]);
+    const sum = el('summary', {}, [Object.assign(evIconImg(f), { style: 'display:inline-block;vertical-align:middle;margin-right:6px;width:18px;height:18px' }), el('b', { text: evName(f) }), el('span', { class: 'chg-when', text: eventDateText(f) })]);
     const body = el('div', { class: 'chg-ev-body' });
     const rows = [{ label: t('changes.relation'), value: t('changes.tierNote.' + it.tier) }];
     if (it.polities.length) rows.push({ label: t('changes.polities'), value: it.polities.join(', ') });
@@ -3339,7 +3689,7 @@ function toastShow(f, phase, eventJD) {
     let rec = events.toasts.get(id);
     if (!rec) {
         while (events.toasts.size >= 4) toastRemove(events.toasts.keys().next().value);
-        const node = el('div', { class: 'toast', role: 'status' }, [el('span', { class: 'toast-dot', style: 'background:' + (KIND_COLORS[evKind(f)] || '#888') }), el('span', { class: 'toast-text' }), el('button', { class: 'toast-x', type: 'button', 'aria-label': 'Close', text: '×' })]);
+        const node = el('div', { class: 'toast', role: 'status' }, [Object.assign(evIconImg(f), { className: 'ev-ico toast-ico' }), el('span', { class: 'toast-text' }), el('button', { class: 'toast-x', type: 'button', 'aria-label': 'Close', text: '×' })]);
         rec = { f, node, phase, eventJD, born: performance.now() };
         node.querySelector('.toast-x').addEventListener('click', (e) => { e.stopPropagation(); toastRemove(id); });
         node.addEventListener('click', () => eventFocus(f));

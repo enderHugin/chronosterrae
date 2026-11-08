@@ -34,7 +34,11 @@ const SUITE = [
     { id: 'islandia-2026-sin-fronteras', names: true, year: 2026, lng: -19, lat: 64.9, zoom: 6.2, hide: true },
     // Carreteras (boton aparte, apagado por defecto): con ellas encendidas, y sin fronteras para ver que no se cuelan nombres politicos
     { id: 'carreteras-roma-2026', names: true, roads: true, year: 2026, lng: 12.49, lat: 41.9, zoom: 11 },
-    { id: 'carreteras-alpes-2026-sin-fronteras', names: true, roads: true, year: 2026, lng: 7.2, lat: 45.9, zoom: 9, hide: true }
+    { id: 'carreteras-alpes-2026-sin-fronteras', names: true, roads: true, year: 2026, lng: 7.2, lat: 45.9, zoom: 9, hide: true },
+    // Iconos de sucesos (map/event-icons.js): tanque (>=1914), mosquete (1500-1913), espada (<1500). Se abre el panel de sucesos para que carguen los datos.
+    { id: 'iconos-europa-1939', events: true, year: 1939, lng: 15, lat: 50, zoom: 4 },
+    { id: 'iconos-europa-1805', events: true, year: 1805, lng: 10, lat: 48, zoom: 4.5 },
+    { id: 'iconos-inglaterra-1066', events: true, year: 1066, lng: -1, lat: 51, zoom: 5 }
 ];
 
 async function settle(page) {
@@ -117,11 +121,12 @@ async function runSuite(page, out, only) {
     const rows = [];
     for (const dark of [true, false]) {
         await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark);
-        for (const v of SUITE.filter((x) => !only || x.names)) {
+        for (const v of SUITE.filter((x) => !only || (only === 'iconos' ? x.events : x.names))) {
             await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
             await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
             if (v.hide) await page.evaluate(() => { if (!BR.off) document.getElementById('btn-borders').click(); });
             if (v.roads) await page.evaluate(() => { if (!ROADS.on) document.getElementById('btn-roads').click(); });
+            if (v.events) { await page.evaluate(() => { if (!events.open) document.getElementById('btn-events').click(); }); await page.waitForFunction(() => events.shown.length > 0, null, { timeout: 40000 }).catch(() => {}); await page.waitForTimeout(1500); }
             await settle(page);
             const name = v.id + (dark ? '-oscuro' : '-claro');
             await page.screenshot({ path: path.join(out, name + '.png') });
@@ -137,13 +142,20 @@ async function runSuite(page, out, only) {
                 const vis = ids.filter((i) => map.getLayoutProperty(i, 'visibility') !== 'none');
                 return { btnHidden: document.getElementById('btn-roads').hidden, on: ROADS.on, capas: ids.length, visibles: vis.length, dibujados: vis.length ? map.queryRenderedFeatures({ layers: vis }).length : 0 };
             });
-            rows.push({ name, labels, road, ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            const ev = v.events ? await page.evaluate(() => {
+                const q = (l) => map.queryRenderedFeatures({ layers: [l] });
+                const feats = [...q('events-icon-bob'), ...q('events-icon-shake')]; const por = {};
+                feats.forEach((f) => { por[f.properties.icon] = (por[f.properties.icon] || 0) + 1; });
+                return { dibujados: events.shown.length, iconos: feats.length, por, capas: ['events-pulse', 'events-icon-bob', 'events-icon-shake', 'events-circle'].map((l) => l + ':' + (map.getLayer(l) ? 'si' : 'NO')).join(' '), animacion: EVA.on };
+            }) : undefined;
+            rows.push({ name, labels, road, ...(ev ? { eventos: ev } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
             if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
+            if (v.events) await page.evaluate(() => { if (events.open) document.getElementById('btn-events').click(); });
             fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));   // parcial: si el proceso muere, queda lo medido hasta aqui
             if (v.hide) await page.evaluate(() => { if (BR.off) document.getElementById('btn-borders').click(); });
         }
     }
-    if (only) { fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2)); return; }   // modo `nombres`: solo las vistas de nombres geograficos
+    if (only) { fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2)); return; }   // modos `nombres` e `iconos`: solo esas vistas
     try { await runTiming(page, out); } catch (e) { fs.writeFileSync(path.join(out, 'timing-error.txt'), String(e)); }
     try { await runContinuity(page, out); } catch (e) { fs.writeFileSync(path.join(out, 'continuity-error.txt'), String(e)); }
     // Alejar el zoom del globo (sin boton ni modo): del zoom minimo del mapa hacia el sistema solar, y a otros cuerpos. Claro y oscuro no cambian el espacio.
@@ -183,7 +195,8 @@ async function runSuite(page, out, only) {
     globalThis.__logCounts = () => [...counts].filter(([, c]) => c > 1).map(([m, c]) => ({ n: c, m }));
     await page.goto(url, { waitUntil: 'load' });
     await page.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
-    if (process.argv[4] === 'nombres') { await runSuite(page, out, true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
+    await page.evaluate(() => { if (window.eventIconsAnimate) eventIconsAnimate(false); });   // la animacion de los iconos impide que el mapa llegue a idle: las capturas son de un fotograma fijo
+    if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
     if (!diag) { await runSuite(page, out); await browser.close(); return; }
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
     await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [lng, lat, zoom]);

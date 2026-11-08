@@ -215,6 +215,32 @@ check('cookie de preferencias: rd (carreteras) acepta 0/1 y rechaza lo demas', (
     return ok && bad;
 });
 
+check('cookie de preferencias: ah (ocultar recuadros solos) acepta enteros 0..3 y rechaza lo demas', () => {
+    const { parsePrefs } = prefsFns();
+    const ok = [0, 1, 2, 3].every((v) => parsePrefs(JSON.stringify({ ah: v })).ah === v);
+    const bad = [4, -1, 1.5, '2', true, null, [], {}].every((v) => !('ah' in parsePrefs(JSON.stringify({ ah: v }))));
+    return ok && bad;
+});
+
+check('cookie de preferencias: pp (mostrar siempre, mascara de 5 bits) acepta 0..31 y rechaza lo demas', () => {
+    const { parsePrefs } = prefsFns();
+    const ok = [0, 5, 31].every((v) => parsePrefs(JSON.stringify({ pp: v })).pp === v);
+    const bad = [32, -1, 2.5, '3', true, null, []].every((v) => !('pp' in parsePrefs(JSON.stringify({ pp: v }))));
+    return ok && bad;
+});
+
+check('cookie de preferencias: pn (posiciones) acepta el formato y rechaza caracteres raros o cadenas largas', () => {
+    const { parsePrefs } = prefsFns();
+    const ok = parsePrefs(JSON.stringify({ pn: 'info:12,-30;status:0,8' })).pn === 'info:12,-30;status:0,8' && parsePrefs(JSON.stringify({ pn: '' })).pn === '';
+    const bad = ['<script>', 'info:1,1 ', 'INFO:1,1', 'a'.repeat(301), 5, null, {}, ['info:1,1']].every((v) => !('pn' in parsePrefs(JSON.stringify({ pn: v }))));
+    return ok && bad;
+});
+
+check('cookie de preferencias: ia (iconos animados) acepta 0/1 y rechaza lo demas', () => {
+    const { parsePrefs } = prefsFns();
+    return parsePrefs(JSON.stringify({ ia: 1 })).ia === true && parsePrefs(JSON.stringify({ ia: 0 })).ia === false && [2, '1', true, null, {}].every((v) => !('ia' in parsePrefs(JSON.stringify({ ia: v }))));
+});
+
 check('cookie de preferencias: cc (centrar al clic) acepta 0/1 y rechaza lo demas', () => {
     const { parsePrefs } = prefsFns();
     return parsePrefs(JSON.stringify({ cc: 1 })).cc === true && parsePrefs(JSON.stringify({ cc: 0 })).cc === false && [2, '1', true, null, {}].every((v) => !('cc' in parsePrefs(JSON.stringify({ cc: v }))));

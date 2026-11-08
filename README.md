@@ -76,6 +76,17 @@ sale y cuánto se puede fiar de él.
   «acaba de…»; si solo se conoce el día, avisa al entrar en ese día («hora desconocida»). **Nunca se
   inventa una hora.** Hoy la semilla verificada tiene 5 sucesos con hora; la carga masiva desde Wikidata
   (CC0) se está construyendo en Actions.
+- **Iconos de sucesos** (`map/event-icons.js`): cada suceso se dibuja con un icono de borde blanco que dice qué es, en lugar de un
+  punto de color: espada, mosquete o tanque para guerras y batallas (según la época: antes de 1500, 1500–1913, desde 1914), pluma y
+  papiro para tratados, anillos para alianzas y uniones, urna, trofeo, bandera, volcán, etc. El tipo sale de las clases de Wikidata
+  del propio registro (cada QID de la tabla se contrasta con los datos en `npm run check:event-icons`); solo si el registro no trae
+  clases se deduce del nombre. La época es una convención de dibujo, no un dato del suceso. Animación suave (flotar o sacudirse y un
+  anillo que respira) que se puede apagar en *Ajustes* y que respeta «reducir movimiento» del sistema.
+- **Ajustes y recuadros informativos** (botón *Ajustes*, `map/panels.js`): ocultar solos los recuadros informativos a los 2 s con
+  fundido, en 3 niveles (solo la ficha del elemento seleccionado; además avisos y notas; además la ficha del cuerpo celeste), con
+  *mostrar siempre* por recuadro. Con el cursor encima no se ocultan y las advertencias nunca se ocultan solas. Los recuadros se mueven
+  arrastrando su asa (⠿, o con las flechas) y se ocultan con ×; `Ctrl+Z` deshace y `Ctrl+Mayús+Z` / `Ctrl+Y` rehace ocultar y
+  mover (en pantallas táctiles hay botones de deshacer y rehacer). Todo se recuerda en la cookie de preferencias.
 - **Cambios del elemento centrado** (botón *Cambios*): qué cambia y qué sucesos lo rodean. Las fronteras son
   fotografías sueltas (1715, 1783, 1800…), así que un salto entre ellas **no ocurre en un día**: el panel dice
   qué instantánea se muestra y hasta qué fechas, qué estados aparecen, desaparecen o cambian de superficie entre
