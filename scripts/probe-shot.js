@@ -38,7 +38,9 @@ const SUITE = [
     // Iconos de sucesos (map/event-icons.js): tanque (>=1914), mosquete (1500-1913), espada (<1500). Se abre el panel de sucesos para que carguen los datos.
     { id: 'iconos-europa-1939', events: true, year: 1939, lng: 15, lat: 50, zoom: 4 },
     { id: 'iconos-europa-1805', events: true, year: 1805, lng: 10, lat: 48, zoom: 4.5 },
-    { id: 'iconos-inglaterra-1066', events: true, year: 1066, lng: -1, lat: 51, zoom: 5 }
+    { id: 'iconos-inglaterra-1066', events: true, year: 1066, lng: -1, lat: 51, zoom: 5 },
+    // Reloj corriendo a ~1 año por segundo de pantalla durante 6 s: la ventana de sucesos es proporcional a la velocidad, con fundido por niveles
+    { id: 'ventana-europa-1936-1-ano-s', events: true, run: true, yearsPerSec: 1, year: 1936, lng: 15, lat: 50, zoom: 4 }
 ];
 
 async function settle(page) {
@@ -127,7 +129,22 @@ async function runSuite(page, out, only) {
             if (v.hide) await page.evaluate(() => { if (!BR.off) document.getElementById('btn-borders').click(); });
             if (v.roads) await page.evaluate(() => { if (!ROADS.on) document.getElementById('btn-roads').click(); });
             if (v.events) { await page.evaluate(() => { if (!events.open) document.getElementById('btn-events').click(); }); await page.waitForFunction(() => events.shown.length > 0, null, { timeout: 40000 }).catch(() => {}); await page.waitForTimeout(1500); }
-            await settle(page);
+            let ventana;
+            if (v.run) await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});   // el cielo (efemerides) carga aparte
+            if (v.run) {   // el reloj avanza por su punto de entrada real (clockSet) a v.yearsPerSec; se mide la ventana y se fotografia sin esperar (al parar, la ventana vuelve a la minima en ~2,5 s)
+                ventana = await page.evaluate(async (yps) => {
+                    const YEAR = 31557600; let last = performance.now(); const rates = []; const sinReloj = !Number.isFinite(clock.jd);
+                    if (sinReloj) return { sinReloj };
+                    const jd0 = clock.jd;
+                    for (let i = 0; i < 60; i++) {
+                        await new Promise((r) => setTimeout(r, 100)); const now = performance.now(); const dt = (now - last) / 1000; last = now;
+                        clockSet(clock.jd + yps * YEAR * dt / 86400, { tick: true }); rates.push(Math.round(evMotion.rate(performance.now()) / YEAR * 100) / 100);
+                    }
+                    eventsRefresh(); await new Promise((r) => setTimeout(r, 500));
+                    const imp = events.shown.map((f) => f.properties.importance); const fades = [...new Set([...EV_ENTER.meta.values()].map((m) => m.alpha))].sort();
+                    return { avanzoAnios: Math.round((clock.jd - jd0) / 365.25 * 100) / 100, tasaFinal: rates[rates.length - 1], ventana: EV_ENTER.win, dibujados: events.shown.length, impMin: imp.length ? Math.min(...imp) : null, niveles: fades };
+                }, v.yearsPerSec);
+            } else await settle(page);
             const name = v.id + (dark ? '-oscuro' : '-claro');
             await page.screenshot({ path: path.join(out, name + '.png') });
             // Que rotulos se dibujan de verdad: por capa de origen y clase (el hecho que importa con las fronteras apagadas; no se deduce de la imagen)
@@ -148,7 +165,7 @@ async function runSuite(page, out, only) {
                 feats.forEach((f) => { por[f.properties.icon] = (por[f.properties.icon] || 0) + 1; });
                 return { dibujados: events.shown.length, iconos: feats.length, por, capas: ['events-pulse', 'events-icon-bob', 'events-icon-shake', 'events-circle'].map((l) => l + ':' + (map.getLayer(l) ? 'si' : 'NO')).join(' '), animacion: EVA.on };
             }) : undefined;
-            rows.push({ name, labels, road, ...(ev ? { eventos: ev } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            rows.push({ name, labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
             if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
             if (v.events) await page.evaluate(() => { if (events.open) document.getElementById('btn-events').click(); });
             fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));   // parcial: si el proceso muere, queda lo medido hasta aqui
