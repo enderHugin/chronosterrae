@@ -184,28 +184,84 @@
         return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => f(v).toString(16).padStart(2, '0')).join('');
     };
 
+    /* ---------------------------- Entrada animada ---------------------------- */
+    // Al aparecer, cada icono hace un gesto corto y sobrio que dice lo que es (≈1 s, aceleracion suave, sin rebotes ni efectos): dos espadas que
+    // se cruzan, una lapida que emerge de la tierra, un tanque que entra rodando, una pluma que escribe, dos anillos que se juntan, un brote que
+    // crece... El resultado se pre-dibuja en ENTER_FRAMES fotogramas por icono (t de 0 a 1); el ultimo es identico al sprite estatico.
+    const ENTER_FRAMES = 10;
+    const ENTER_MS = 1100;
+    const clamp01 = (x) => Math.max(0, Math.min(1, x));
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const easeOut = (t) => 1 - Math.pow(1 - clamp01(t), 3);
+    const sub = (e, a, b) => clamp01((e - a) / (b - a));                    // tramo [a,b] de la entrada, de 0 a 1
+    const settle = (t) => { const x = clamp01(t) - 1; return 1 + 2.2 * x * x * x + 1.2 * x * x; };   // llega con un asentamiento minimo (≈4 %)
+    // Transformacion por parte: dx, dy (unidades de la caja 24x24), rot (grados, ADICIONAL a la propia del dibujo), sx, sy, a (opacidad), pv (pivote), clip (y del suelo)
+    const ENTER = {
+        sword: (e, i) => { const k = settle(e); return { rot: (i < 4 ? -44 : 44) * (1 - k), a: sub(e, 0, 0.35) }; },
+        musket: (e) => ({ rot: -40 * (1 - e), a: sub(e, 0, 0.4) }),
+        tank: (e) => ({ dx: -16 * (1 - e), a: sub(e, 0, 0.35) }),
+        treaty: (e, i) => {
+            if (i <= 1) return { a: sub(e, 0, 0.3) };
+            if (i <= 4) { const k = i - 2; return { sx: sub(e, 0.3 + 0.17 * k, 0.55 + 0.17 * k), pv: [7.5, 12], a: sub(e, 0.25, 0.4) }; }   // las lineas se van escribiendo
+            return { dx: 5 * (1 - e), dy: -4 * (1 - e), a: sub(e, 0.1, 0.4) };                                                              // la pluma llega escribiendo
+        },
+        union: (e, i) => ({ dx: (i === 0 ? -6 : 6) * (1 - e), a: sub(e, 0, 0.4) }),
+        political: (e, i) => (i === 0 ? { a: sub(e, 0, 0.3) } : { sx: sub(e, 0.15, 1), pv: [5.5, 8], a: sub(e, 0.1, 0.3) }),   // la bandera se despliega
+        natural: (e, i) => (i === 0 ? { dy: 4 * (1 - e), a: sub(e, 0, 0.5) } : { sy: sub(e, 0.4, 1), pv: [12, 8.4], a: sub(e, 0.4, 0.6) }),
+        violence: (e) => { const k = lerp(0.3, 1, settle(e)); return { sx: k, sy: k, a: sub(e, 0, 0.3) }; },
+        election: (e, i) => (i <= 1 ? { dy: -6 * (1 - e), a: sub(e, 0, 0.5) } : { a: sub(e, 0, 0.3) }),   // la papeleta baja a la urna
+        sport: (e) => ({ dy: 6 * (1 - e), a: sub(e, 0, 0.4) }),
+        ceremony: (e) => { const k = lerp(0.5, 1, e); return { rot: -30 * (1 - e), sx: k, sy: k, a: sub(e, 0, 0.4) }; },
+        accident: (e) => { const k = lerp(0.55, 1, e); return { sx: k, sy: k, pv: [12, 20.5], a: sub(e, 0, 0.4) }; },
+        calendar: (e, i) => (i < 4 ? { dy: 4 * (1 - e), a: sub(e, 0, 0.35) } : { a: sub(e, 0.45 + 0.08 * (i - 4), 0.75 + 0.08 * (i - 4)) }),
+        birth: (e, i) => (i === 0 ? { sy: sub(e, 0, 0.55), pv: [12, 21.5], a: sub(e, 0, 0.15) } : { sx: sub(e, 0.3, 1), sy: sub(e, 0.3, 1), pv: [12, 13], a: sub(e, 0.25, 0.5) }),   // el brote crece
+        death: (e) => ({ dy: 16 * (1 - e), clip: 21.5 }),                                                                                   // la lapida emerge de la tierra
+        publication: (e) => ({ sx: sub(e, 0, 1), pv: [12, 12], a: sub(e, 0, 0.3) }),                                                        // el libro se abre
+        composition: (e) => ({ dy: 6 * (1 - e), a: sub(e, 0, 0.5) }),
+        discovery: (e) => ({ rot: -35 * (1 - e), pv: [20, 20], a: sub(e, 0, 0.4) }),
+        extinction: (e) => { const k = lerp(0.8, 1, e); return { sx: k, sy: k, a: sub(e, 0, 0.6) }; },
+        event: (e) => { const k = lerp(0.4, 1, e); return { sx: k, sy: k, a: sub(e, 0, 0.5) }; }
+    };
+    const IDENT = { dx: 0, dy: 0, rot: 0, sx: 1, sy: 1, a: 1, pv: [12, 12], clip: null };
+    /** Transformacion de la parte `i` del icono `key` en el instante t (0..1) de su entrada. En t >= 1 es la identidad. */
+    function enterParams(key, t, i) {
+        if (!(t < 1)) return Object.assign({}, IDENT);
+        const f = ENTER[key]; if (!f) return Object.assign({}, IDENT);
+        return Object.assign({}, IDENT, f(easeOut(Number.isFinite(t) ? t : 0), i));
+    }
+    const isIdent = (tr) => tr.dx === 0 && tr.dy === 0 && tr.rot === 0 && tr.sx === 1 && tr.sy === 1 && tr.a === 1 && tr.clip === null;
+
     /**
-     * Dibuja el icono `key` centrado en un cuadrado de `size` px (esquina superior izquierda en (x,y)): primero el borde blanco de toda la
-     * silueta y encima el relleno. `o.Path2D` y `o.color` son opcionales (en el navegador, Path2D global y el color del icono).
+     * Dibuja el icono `key` en un cuadrado de `size` px (esquina superior izquierda en (x,y)): primero el borde blanco de toda la silueta y encima
+     * el relleno. Opciones: `Path2D` y `color` (por defecto, el global y el color del icono) y `t` (0..1, instante de la entrada animada; sin él,
+     * el dibujo final).
      */
     function draw(ctx, key, size, o) {
         const parts = GLYPHS[key]; if (!parts) throw new Error('icono desconocido: ' + key);
         const P2D = (o && o.Path2D) || (typeof Path2D !== 'undefined' ? Path2D : null); if (!P2D) throw new Error('falta Path2D');
         const color = (o && o.color) || COLORS[key]; const dark = shade(color, -0.4); const light = '#ffffff';
         const x = (o && o.x) || 0; const y = (o && o.y) || 0; const k = size / 24;
-        const place = (p) => { ctx.translate(x, y); ctx.scale(k, k); if (p.r) { ctx.translate(12, 12); ctx.rotate(p.r * Math.PI / 180); ctx.translate(-12, -12); } };
+        const t = o && o.t !== undefined ? o.t : 1;
+        const trs = parts.map((p, i) => enterParams(key, t, i));
+        const place = (p, tr) => {
+            ctx.translate(x, y); ctx.scale(k, k);
+            if (tr.clip !== null) { ctx.beginPath(); ctx.rect(-5, -5, 34, tr.clip + 5); ctx.clip(); }
+            if (!isIdent(tr)) { ctx.translate(tr.dx, tr.dy); ctx.translate(tr.pv[0], tr.pv[1]); ctx.rotate(tr.rot * Math.PI / 180); ctx.scale(tr.sx, tr.sy); ctx.translate(-tr.pv[0], -tr.pv[1]); }
+            if (p.r) { ctx.translate(12, 12); ctx.rotate(p.r * Math.PI / 180); ctx.translate(-12, -12); }
+        };
         ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-        for (const p of parts) {                                   // 1. borde blanco de todo lo que no es detalle claro
-            if (p.t === 'l' || p.t === 'c') continue;
-            ctx.save(); place(p); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = BORDER + ((p.t === 's' || p.t === 'd') ? (p.w || 2) : 0); ctx.stroke(new P2D(p.d)); ctx.restore();
-        }
-        for (const p of parts) {                                   // 2. relleno y trazos
-            ctx.save(); place(p);
+        parts.forEach((p, i) => {                                  // 1. borde blanco de todo lo que no es detalle claro
+            const tr = trs[i]; if (p.t === 'l' || p.t === 'c' || tr.a <= 0 || tr.sx === 0 || tr.sy === 0) return;
+            ctx.save(); place(p, tr); ctx.globalAlpha = tr.a; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = BORDER + ((p.t === 's' || p.t === 'd') ? (p.w || 2) : 0); ctx.stroke(new P2D(p.d)); ctx.restore();
+        });
+        parts.forEach((p, i) => {                                  // 2. relleno y trazos
+            const tr = trs[i]; if (tr.a <= 0 || tr.sx === 0 || tr.sy === 0) return;
+            ctx.save(); place(p, tr); ctx.globalAlpha = tr.a;
             const path = new P2D(p.d);
             if (p.t === 'f' || p.t === 'k' || p.t === 'l') { ctx.fillStyle = p.t === 'f' ? color : p.t === 'k' ? dark : light; ctx.fill(path); }
             else { ctx.strokeStyle = p.t === 's' ? color : p.t === 'd' ? dark : light; ctx.lineWidth = p.w || 2; ctx.stroke(path); }
             ctx.restore();
-        }
+        });
         ctx.restore();
     }
 
@@ -262,5 +318,5 @@
         };
     }
 
-    return { ICON_CLASSES, KEYS, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, pathBox, createPulse, shade, BORDER };
+    return { ICON_CLASSES, KEYS, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
 });

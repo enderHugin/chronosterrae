@@ -11,8 +11,8 @@ const passes = [];
 const check = (name, fn) => {
     try {
         const result = fn();
-        if (result === false) failures.push(name);
-        else passes.push(name);
+        if (result === true) passes.push(name);          // solo `true` pasa: una cadena de diagnostico o un objeto NO es exito
+        else failures.push(result === false ? name : `${name} -> devolvio ${String(result).slice(0, 200)}`);
     } catch (err) {
         failures.push(`${name} -> ${err.message}`);
     }

@@ -13,7 +13,7 @@ const passes = [];
 const check = (name, fn) => {
     try {
         const r = fn();
-        if (r === false) failures.push(name); else passes.push(name);
+        if (r === true) passes.push(name); else failures.push(r === false ? name : `${name} -> devolvio ${String(r).slice(0, 200)}`);   // solo `true` pasa
     } catch (err) {
         failures.push(`${name} -> ${err.message}`);
     }

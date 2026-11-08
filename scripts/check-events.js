@@ -12,7 +12,7 @@ const seedBuilder = require('./build-seed.js');
 
 const root = path.resolve(__dirname, '..');
 const failures = []; const passes = [];
-const check = (name, fn) => { try { const r = fn(); if (r === false) failures.push(name); else passes.push(name); } catch (e) { failures.push(name + ' -> ' + e.message); } };
+const check = (name, fn) => { try { const r = fn(); if (r === true) passes.push(name); else failures.push(name + (r === false ? '' : ' -> ' + String(r).slice(0, 300))); } catch (e) { failures.push(name + ' -> ' + e.message); } };
 
 const ajv = new Ajv2020({ allErrors: true, strict: true }); addFormats(ajv);
 const validate = ajv.compile(JSON.parse(fs.readFileSync(path.join(root, 'schemas/record.schema.json'), 'utf8')));
@@ -205,6 +205,75 @@ const mk = (id, imp, lng, lat, jd, precision = 'day', extra = {}) => ({
     });
 }
 
+/* ---------- Ventana segun la velocidad del tiempo y desvanecido ---------- */
+{
+    const YEAR_S = 31557600;
+    check('ventana: con tiempo parado o lento (hasta 1 mes/s) vale el minimo de siempre, simetrico y sin «flowing»', () => [0, 1, 3600, 86400, 2629800].every((r) => { const w = T.windowFor(r); return w.pastDays === 183 && w.futureDays === 183 && w.flowing === false; }));
+    check('ventana: a 1 año/s el pasado es proporcional a la velocidad (6 s reales) y por delante queda un margen corto', () => {
+        const w = T.windowFor(YEAR_S); return Math.abs(w.pastDays - YEAR_S * 6 / 86400) < 1e-6 && w.flowing && w.futureDays >= 30 && w.futureDays < w.pastDays / 4;
+    });
+    check('ventana: doblar la velocidad dobla la ventana (mientras no llegue al tope)', () => Math.abs(T.windowFor(2 * YEAR_S).pastDays / T.windowFor(YEAR_S).pastDays - 2) < 1e-9);
+    check('ventana: hacia atras es el espejo (la ventana larga queda del lado de donde viene el tiempo)', () => { const a = T.windowFor(YEAR_S); const b = T.windowFor(-YEAR_S); return a.pastDays === b.futureDays && a.futureDays === b.pastDays; });
+    check('ventana: tiene tope (100 años) aunque la velocidad sea enorme', () => T.windowFor(1e12).pastDays === T.MAX_PAST_DAYS && T.windowFor(-1e12).futureDays === T.MAX_PAST_DAYS);
+    check('ventana: velocidades absurdas (NaN, Infinity, undefined) no rompen: caen en el minimo o en el tope', () => T.windowFor(NaN).flowing === false && T.windowFor(undefined).flowing === false && Number.isFinite(T.windowFor(Infinity).pastDays));
+    check('umbral por ventana: no baja nunca al alargarla y sube de 0 a 0.78', () => {
+        let prev = -1; for (const d of [1, 183, 400, 1000, 3700, 5000, 11000, 36525]) { const f = T.windowImportance(d); if (f < prev) return false; prev = f; }
+        return T.windowImportance(183) === 0 && T.windowImportance(36525) === 0.78;
+    });
+    check('desvanecido: 4 niveles, nunca sube con la antiguedad, 1 en el presente y >0 en el borde', () => {
+        const xs = [0, 0.1, 0.15, 0.2, 0.4, 0.5, 0.7, 0.9, 1, 5]; const as = xs.map(T.fadeAlpha);
+        return as.every((a, i) => i === 0 || a <= as[i - 1]) && as[0] === 1 && new Set(as).size === 4 && as[as.length - 1] > 0 ? true : as.join();
+    });
+    check('desvanecido: valores invalidos (NaN, negativo, undefined) no dan NaN', () => [NaN, undefined, -3, Infinity].every((x) => { const a = T.fadeAlpha(x); return Number.isFinite(a) && a > 0 && a <= 1; }));
+    const jdw = jdOf(1900, 1, 1);
+    const ev = (id, imp, daysAgo, lng = 10) => mk(id, imp, lng, 40, jdw - daysAgo, 'year', { end_ybp: (2433282.5 - (jdw - daysAgo)) / 365.25 });
+    check('antiguedad: dentro del tramo del suceso es 0; fuera crece hasta 1 en el borde de la ventana y se queda en 1', () => {
+        const f = ev('a', 0.9, 100); f.properties.time.start_ybp = (2433282.5 - (jdw - 150)) / 365.25; f.properties.time.end_ybp = (2433282.5 - (jdw - 50)) / 365.25; f.properties.time.precision = 'range';
+        return T.ageFraction(f, jdw - 100, 1000, 1000) === 0 && Math.abs(T.ageFraction(f, jdw + 450, 1000, 1000) - 0.5) < 1e-9 && T.ageFraction(f, jdw + 5000, 1000, 1000) === 1;
+    });
+    check('antiguedad: un suceso aun por llegar se mide contra la ventana de futuro', () => { const f = ev('fut', 0.9, -50); return Math.abs(T.ageFraction(f, jdw, 1000, 100) - 0.5) < 1e-6; });
+    const evs = [ev('hace1a', 0.9, 365), ev('hace5a', 0.9, 5 * 365, 11), ev('hace20a', 0.9, 20 * 365, 12), ev('menor', 0.3, 100, 13), ev('manana', 0.9, -10, 14)];
+    const pick = (o) => T.selectVisible(evs, { jd: jdw, viewMeters: 1e4, ...o }).map((f) => f.properties.id).sort().join();
+    check('ventana por velocidad: con tiempo parado solo se ve lo de ±6 meses; a 1 año/s entra lo de hace 5 años y sigue fuera lo de hace 20', () => {
+        const still = pick({ ...T.windowFor(0) }); const fast = pick({ ...T.windowFor(YEAR_S) });
+        return still === 'manana,menor' && fast === 'hace1a,hace5a,manana' ? true : still + ' | ' + fast;
+    });
+    check('ventana por velocidad: a mas velocidad solo los significativos (el de importancia 0.3 deja de verse)', () => !pick({ ...T.windowFor(YEAR_S) }).includes('menor') && pick({ ...T.windowFor(0) }).includes('menor'));
+    check('ventana por velocidad: a 10 años/s (ventana de 60 años) solo salen los muy notorios', () => {
+        const w = T.windowFor(10 * YEAR_S); const sel = T.selectVisible([ev('muy', 0.9, 20 * 365), ev('medio', 0.7, 20 * 365, 20)], { jd: jdw, viewMeters: 1e4, ...w }).map((f) => f.properties.id);
+        return sel.join() === 'muy' ? true : sel.join();
+    });
+    check('ventana por velocidad: hacia atras, lo reciente por venir queda detras y entra lo futuro', () => {
+        const back = pick({ ...T.windowFor(-YEAR_S) });
+        return back.includes('manana') && !back.includes('hace5a') ? true : back;
+    });
+    check('meta: cada suceso dibujado recibe su nivel de desvanecido y los mas antiguos son mas tenues', () => {
+        const meta = new Map(); const sel = T.selectVisible(evs, { jd: jdw, viewMeters: 1e4, ...T.windowFor(YEAR_S), meta });
+        const al = (id) => meta.get(sel.find((f) => f.properties.id === id)).alpha;
+        return meta.size === sel.length && al('manana') >= al('hace1a') && al('hace1a') > al('hace5a') && al('hace5a') > 0 ? true : [...meta.values()].map((m) => m.alpha).join();
+    });
+    check('ventana: sin pastDays/futureDays todo sigue como antes (halfWindowDays y sin umbral por ventana)', () => T.selectVisible([ev('lejos', 0.5, 600)], { jd: jdw, viewMeters: 1e4 }).length === 0 && T.selectVisible([ev('lejos', 0.5, 600)], { jd: jdw, viewMeters: 1e4, halfWindowDays: 700 }).length === 1);
+
+    // ---- Medidor de velocidad
+    const feed = (m, jdPerS, fromMs, toMs, stepMs, jd0) => { let jd = jd0; for (let t = fromMs; t <= toMs; t += stepMs) { m.note(jd, t); jd += jdPerS * stepMs / 1000; } return jd; };
+    check('medidor: reloj a 1 año/s a 16 ms por nota mide ~1 año/s en 2 s', () => {
+        const m = T.createMotion(); feed(m, 365.25, 0, 2000, 16, jdw); const r = m.rate(2000); return Math.abs(r / YEAR_S - 1) < 0.05 ? true : r / YEAR_S;
+    });
+    check('medidor: hacia atras da velocidad negativa', () => { const m = T.createMotion(); feed(m, -365.25, 0, 2000, 16, jdw); return m.rate(2000) < -0.9 * YEAR_S; });
+    check('medidor: un salto aislado (un boton de epoca) NO cuenta como tiempo que fluye', () => {
+        const m = T.createMotion(); m.note(jdw, 0); m.note(jdw + 36525, 5000); m.note(jdw + 73050, 10000); return m.rate(10000) === 0;
+    });
+    check('medidor: al parar baja despacio (a los ~3 s queda ~la mitad) y a los 20 s es casi nada', () => {
+        const m = T.createMotion(); feed(m, 365.25, 0, 2000, 16, jdw); const v0 = m.rate(2000); const r1 = m.rate(2000 + 400 + 2500) / v0; const r2 = m.rate(22000) / v0;
+        return r1 > 0.4 && r1 < 0.6 && r2 < 0.01 ? true : [r1, r2].join();
+    });
+    check('medidor: tiempo real (1 s/s) queda dentro del minimo de ventana', () => { const m = T.createMotion(); feed(m, 1 / 86400, 0, 3000, 50, jdw); return T.windowFor(m.rate(3000)).flowing === false; });
+    check('medidor: entradas invalidas se ignoran sin romper; reset lo deja a cero', () => {
+        const m = T.createMotion(); m.note(NaN, 0); m.note(jdw, NaN); feed(m, 365.25, 0, 1000, 16, jdw); const ok = m.rate(1000) > 0; m.reset(); return ok && m.rate(1000) === 0;
+    });
+    check('medidor: velocidad acotada al tope aunque las notas sean disparatadas', () => { const m = T.createMotion(); for (let i = 0; i < 50; i++) m.note(jdw + i * 1e6, i * 10); return Math.abs(m.rate(500)) <= T.MAX_RATE; });
+}
+
 /* ---------- Avisos ---------- */
 {
     const ev = seed.features.find((f) => f.properties.id === 'seed.vostok-1-launch');
@@ -264,7 +333,7 @@ const mk = (id, imp, lng, lat, jd, precision = 'day', extra = {}) => ({
         return r.features.length === 1 && validate(f) && tm.iso === '1605/1618' && tm.precision === 'year' && /varias fechas/.test(f.properties.sources[0].citation) ? true : JSON.stringify(f);
     });
     check('intervalo: el fin es anterior al inicio -> descartado con ese motivo (no roto)', () => { const r = conv([srow({ a: '1915-05-17T00:00:00Z', b: '1915-04-19T00:00:00Z' })]); return r.features.length === 0 && r.skipped['el fin es anterior al inicio'] === 1 ? true : JSON.stringify(r); });
-    check('intervalo: sin fin en la fila -> descartado como fecha ilegible, no se inventa un fin', () => { const r = conv([srow({ b: null })]); return r.features.length === 0 && /ilegible/.test(Object.keys(r.skipped).join()) ? true : JSON.stringify(r); });
+    check('intervalo: sin fin en la fila -> descartado (por «fecha ilegible» o «calendario desconocido», lo que se compruebe antes), no se inventa un fin', () => { const r = conv([srow({ b: null })]); const k = Object.keys(r.skipped); return r.features.length === 0 && k.length === 1 && ['fecha ilegible', 'calendario desconocido'].includes(k[0]) && r.skipped[k[0]] === 1 ? true : JSON.stringify(r); });
     check('intervalo: calendarios distintos en inicio y fin -> descartado con ese motivo', () => { const r = conv([srow({ cb: JUL })]); return r.features.length === 0 && r.skipped['calendarios distintos en inicio y fin'] === 1 ? true : JSON.stringify(r); });
     check('intervalo: calendario desconocido, etiqueta ausente o que es un QID, id que no es Q<n>, anterior al año 1 -> descartados cada uno por su motivo', () => {
         const r = conv([srow({ ca: E + 'Q9', cb: E + 'Q9' }), srow({ q: 'Q3', label: 'Q123' }), { ...srow({ q: 'Q4' }), item: { value: E + 'xyz' } }, srow({ q: 'Q5', a: '-0100-01-01T00:00:00Z', b: '-0050-01-01T00:00:00Z' })]);

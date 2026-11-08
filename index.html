@@ -463,6 +463,7 @@ const readPrefs = () => {
 const prefs = readPrefs();
 let panelsUI = null;     // recuadros informativos (ocultar solos, mover, deshacer): se crea mas abajo
 let lastInfo = null;     // ultima ficha mostrada (para poder deshacer su cierre)
+let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
     const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia === undefined ? undefined : (prefs.ia ? 1 : 0) };
@@ -2982,6 +2983,7 @@ function renderClock() {
 
 // Todo lo que depende del instante se actualiza aqui.
 function clockChanged({ tick = false } = {}) {
+    if (evMotion) evMotion.note(clock.jd, performance.now());
     renderClock();
     const sec = Math.floor(clock.jd * 86400);
     const secChanged = sec !== clock.lastSec;
@@ -3223,9 +3225,10 @@ const evIconKey = (f) => {
     const p = f.properties; let year = NaN; try { year = ChronosChanges.eventYears(f).from; } catch (e) { /* sin fecha valida: epoca por defecto */ }
     k = ChronosEventIcons.classify({ kind: p.kind, name: p.name, classes: p.classes, year }).icon; evIconCache.set(f, k); return k;
 };
-function evSpriteCanvas(key, size, pad) {
+function evSpriteCanvas(key, size, pad, t) {
     const total = size + 2 * pad; const c = document.createElement('canvas'); c.width = c.height = total;
-    ChronosEventIcons.draw(c.getContext('2d'), key, size, { x: pad, y: pad });
+    // willReadFrequently: respaldo en CPU. Con el lienzo en GPU, getImageData sincroniza con ella (medido: 1,5 s para ~100 fotogramas en un mismo tramo).
+    ChronosEventIcons.draw(c.getContext('2d', { willReadFrequently: true }), key, size, { x: pad, y: pad, t });
     return c;
 }
 const evUrlCache = new Map();
@@ -3243,19 +3246,26 @@ function evIconsRegister() {       // setStyle borra las imagenes: se vuelven a 
         map.addImage('evi-' + k, c.getContext('2d').getImageData(0, 0, c.width, c.height), { pixelRatio: EV_SPRITE.ratio });
     });
 }
+// Fotogramas de la entrada animada: 'evi-<icono>~<n>' (el ultimo, el estatico 'evi-<icono>'). Se dibujan la primera vez que hacen falta y se re-añaden si setStyle los borra.
+function evEnsureImage(name) {
+    if (map.hasImage(name)) return;
+    const m = /^evi-([a-z]+)~(\d+)$/.exec(name); if (!m) return;
+    const c = evSpriteCanvas(m[1], EV_SPRITE.box, EV_SPRITE.pad, Number(m[2]) / (ChronosEventIcons.ENTER_FRAMES - 1));
+    map.addImage(name, c.getContext('2d').getImageData(0, 0, c.width, c.height), { pixelRatio: EV_SPRITE.ratio });
+}
 const EVA = { on: false, phase: 0, pulse: null };
 const EV_PULSE_BASE = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 16];
 function evLayersAdd() {
     evIconsRegister();
     const hit = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 15];
     map.addLayer({ id: 'events-pulse', type: 'circle', source: 'events', paint: {
-        'circle-radius': EV_PULSE_BASE, 'circle-color': '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': '#ffffff', 'circle-stroke-opacity': 0.55,
+        'circle-radius': EV_PULSE_BASE, 'circle-color': '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': '#ffffff', 'circle-stroke-opacity': ['*', ['coalesce', ['get', 'fade'], 1], 0.55],
         'circle-radius-transition': { duration: 900, delay: 0 }, 'circle-stroke-opacity-transition': { duration: 900, delay: 0 }
     } });
     ['bob', 'shake'].forEach((g) => map.addLayer({
         id: 'events-icon-' + g, type: 'symbol', source: 'events', filter: ['==', ['get', 'anim'], g],
-        layout: { 'icon-image': ['concat', 'evi-', ['get', 'icon']], 'icon-size': ['interpolate', ['linear'], ['get', 'importance'], 0.3, 0.68, 1, 0.95], 'icon-allow-overlap': true, 'icon-ignore-placement': true, 'symbol-sort-key': ['get', 'importance'] },
-        paint: { 'icon-opacity': ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], 'icon-translate': [0, 0], 'icon-translate-transition': { duration: g === 'shake' ? 520 : 800, delay: 0 } }
+        layout: { 'icon-image': ['get', 'img'], 'icon-size': ['interpolate', ['linear'], ['get', 'importance'], 0.3, 0.68, 1, 0.95], 'icon-allow-overlap': true, 'icon-ignore-placement': true, 'symbol-sort-key': ['get', 'importance'] },
+        paint: { 'icon-opacity': ['*', ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], ['coalesce', ['get', 'fade'], 1]], 'icon-opacity-transition': { duration: 350, delay: 0 }, 'icon-translate': [0, 0], 'icon-translate-transition': { duration: g === 'shake' ? 520 : 800, delay: 0 } }
     }));
     // Zona de toque: invisible, pero es la que consultan el hover y el clic (queryRenderedFeatures)
     map.addLayer({ id: 'events-circle', type: 'circle', source: 'events', paint: { 'circle-radius': hit, 'circle-color': '#000000', 'circle-opacity': 0, 'circle-stroke-opacity': 0 } });
@@ -3267,9 +3277,9 @@ function evAnimApply(phase) {
     EVA.phase = phase;
     if (!map.getLayer('events-pulse')) return;
     map.setPaintProperty('events-pulse', 'circle-radius', ['+', EV_PULSE_BASE, phase ? 5 : 0]);
-    map.setPaintProperty('events-pulse', 'circle-stroke-opacity', phase ? 0 : 0.55);
-    map.setPaintProperty('events-icon-bob', 'icon-translate', [0, phase ? -3 : 0]);
-    map.setPaintProperty('events-icon-shake', 'icon-translate', [phase ? 2.5 : -2.5, 0]);
+    map.setPaintProperty('events-pulse', 'circle-stroke-opacity', ['*', ['coalesce', ['get', 'fade'], 1], phase ? 0 : 0.55]);
+    map.setPaintProperty('events-icon-bob', 'icon-translate', [0, phase ? -2 : 0]);
+    map.setPaintProperty('events-icon-shake', 'icon-translate', [phase ? 1.6 : -1.6, 0]);
 }
 /** Enciende o apaga la animacion (la fase vuelve a reposo al apagarla). persist: recordar la eleccion. */
 function evAnimSet(on, persist) {
@@ -3360,22 +3370,48 @@ function eventsRefresh() {
     events.timer = setTimeout(() => { events.timer = 0; eventsDraw(); }, 150);
 }
 
+// Velocidad a la que fluye el tiempo (reloj acelerado o arrastre del deslizador): de ella depende cuanto se queda cada suceso en pantalla.
+evMotion = ChronosTimed.createMotion();
+const EV_ENTER = { born: new Map(), timer: 0, sel: [], meta: new Map(), win: null };
 function eventsDraw() {
     if (!window.ChronosTimed || !map.getSource || !map.getSource('events')) return;
-    if (!clockFull() || !events.all.length) { map.getSource('events').setData(emptyFC()); events.shown = []; if (events.open) renderEventsPanel(); return; }
+    if (!clockFull() || !events.all.length) { map.getSource('events').setData(emptyFC()); events.shown = []; EV_ENTER.sel = []; if (events.open) renderEventsPanel(); return; }
     const vm = viewMeters();
     const zoomed = map.getZoom() >= 3;
     const b = zoomed ? map.getBounds() : null;
+    const win = ChronosTimed.windowFor(evMotion.rate(performance.now()));
+    const meta = new Map();
     const sel = ChronosTimed.selectVisible(events.all, {
         jd: clock.jd, viewMeters: vm, max: 80, cellPx: 40, bounds: b ? [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()] : null,
+        pastDays: win.pastDays, futureDays: win.futureDays, meta,
         project: (lng, lat) => { const p = map.project([lng, lat]); return [p.x, p.y]; }
     });
-    events.shown = sel;
-    map.getSource('events').setData({
-        type: 'FeatureCollection',
-        features: sel.map((f) => ({ type: 'Feature', geometry: f.geometry, properties: { id: f.properties.id, name: evName(f), kind: evKind(f), importance: f.properties.importance, status: f.properties.status, icon: evIconKey(f), anim: ChronosEventIcons.animGroup(evIconKey(f)) } }))
-    });
+    events.shown = sel; EV_ENTER.sel = sel; EV_ENTER.meta = meta; EV_ENTER.win = win;
+    evPush();
+    // Mientras la ventana es larga, vuelve a calcularse al decaer la velocidad medida (si no, se quedaria ancha tras parar)
+    clearTimeout(events.decay); if (win.flowing) events.decay = setTimeout(eventsRefresh, 600);
     if (events.open) renderEventsPanel();
+}
+
+// Pinta los sucesos elegidos. Los recien llegados hacen su entrada animada (fotogramas pre-dibujados): mientras alguno este entrando se vuelve
+// a poner la fuente cada ~90 ms; en cuanto ninguno entra, se para. La entrada se apaga con la animacion (ajustes, «reducir movimiento»).
+function evPush() {
+    const src = map.getSource && map.getSource('events'); if (!src) return;
+    const now = performance.now(); const F = ChronosEventIcons.ENTER_FRAMES; const ms = ChronosEventIcons.ENTER_MS;
+    const animate = EVA.on && !document.hidden; let entering = false;
+    const feats = EV_ENTER.sel.map((f) => {
+        const id = f.properties.id; const key = evIconKey(f);
+        let b = EV_ENTER.born.get(id);
+        if (!b || now - b.seen > 3000) { b = { t0: now, seen: now }; EV_ENTER.born.set(id, b); } else b.seen = now;
+        let img = 'evi-' + key;
+        if (animate) { const fr = Math.min(F - 1, Math.floor((now - b.t0) / ms * (F - 1))); if (fr < F - 1) { img = 'evi-' + key + '~' + fr; entering = true; } }
+        evEnsureImage(img);
+        const m = EV_ENTER.meta.get(f);
+        return { type: 'Feature', geometry: f.geometry, properties: { id, name: evName(f), kind: evKind(f), importance: f.properties.importance, status: f.properties.status, icon: key, img, anim: ChronosEventIcons.animGroup(key), fade: m ? m.alpha : 1 } };
+    });
+    src.setData({ type: 'FeatureCollection', features: feats });
+    if (EV_ENTER.born.size > 400) { for (const [k, v] of EV_ENTER.born) if (now - v.seen > 10000) EV_ENTER.born.delete(k); }
+    clearTimeout(EV_ENTER.timer); EV_ENTER.timer = entering ? setTimeout(evPush, 90) : 0;
 }
 
 function eventDateText(f) {

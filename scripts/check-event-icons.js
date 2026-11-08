@@ -86,7 +86,8 @@ check('cada icono tiene al menos una parte con color propio (no es solo detalle 
 // ---- draw() con un contexto falso: primero el borde blanco, luego el color
 function fakeCtx() {
     const calls = []; const ctx = { calls };
-    for (const m of ['save', 'restore', 'translate', 'scale', 'rotate']) ctx[m] = () => calls.push(m);
+    for (const m of ['save', 'restore', 'beginPath', 'clip']) ctx[m] = () => calls.push(m);
+    for (const m of ['translate', 'scale', 'rotate', 'rect']) ctx[m] = (...a) => calls.push(m + ':' + a.join(','));
     ctx.stroke = () => calls.push('stroke:' + ctx.strokeStyle + ':' + ctx.lineWidth); ctx.fill = () => calls.push('fill:' + ctx.fillStyle);
     return ctx;
 }
@@ -105,6 +106,39 @@ check('draw con icono desconocido o sin Path2D lanza un error claro', () => {
     return a && b;
 });
 check('shade oscurece y aclara', () => I.shade('#808080', -0.5) === '#404040' && I.shade('#000000', 1) === '#ffffff');
+
+// ---- Entrada animada
+const parts = (k) => I.GLYPHS[k].length;
+check('en t >= 1 (y con t invalido) la entrada es la identidad para todas las partes de todos los iconos', () => I.KEYS.every((k) => I.GLYPHS[k].every((_, i) => [1, 1.5, NaN].every((t) => { const p = I.enterParams(k, t, i); return p.dx === 0 && p.dy === 0 && p.rot === 0 && p.sx === 1 && p.sy === 1 && p.a === 1 && p.clip === null; }))));
+check('en t = 0 todos los iconos arrancan distintos del dibujo final (algo se mueve, crece o aparece)', () => I.KEYS.every((k) => I.GLYPHS[k].some((_, i) => { const p = I.enterParams(k, 0, i); return p.dx !== 0 || p.dy !== 0 || p.rot !== 0 || p.sx !== 1 || p.sy !== 1 || p.a !== 1 || p.clip !== null; })));
+check('los parametros de entrada son finitos y acotados (gesto sobrio: nada sale disparado ni gira mas de 60°)', () => {
+    for (const k of I.KEYS) for (let i = 0; i < parts(k); i++) for (let f = 0; f < I.ENTER_FRAMES; f++) {
+        const p = I.enterParams(k, f / (I.ENTER_FRAMES - 1), i);
+        const nums = [p.dx, p.dy, p.rot, p.sx, p.sy, p.a, p.pv[0], p.pv[1]];
+        if (!nums.every(Number.isFinite) || Math.abs(p.dx) > 20 || Math.abs(p.dy) > 20 || Math.abs(p.rot) > 60 || p.sx < 0 || p.sx > 1.1 || p.sy < 0 || p.sy > 1.1 || p.a < 0 || p.a > 1) return k + ' parte ' + i + ' f' + f + ' ' + JSON.stringify(p);
+    }
+    return true;
+});
+check('la opacidad de cada parte nunca baja mientras avanza la entrada (aparece, no parpadea)', () => I.KEYS.every((k) => I.GLYPHS[k].every((_, i) => { let prev = -1; for (let f = 0; f < I.ENTER_FRAMES; f++) { const a = I.enterParams(k, f / (I.ENTER_FRAMES - 1), i).a; if (a < prev - 1e-9) return false; prev = a; } return true; })));
+check('el desplazamiento y el giro se acercan monotonamente al reposo (sin vaivenes), salvo el asentamiento minimo de las espadas', () => {
+    for (const k of I.KEYS) { if (k === 'sword') continue; for (let i = 0; i < parts(k); i++) { let prev = Infinity; for (let f = 0; f < I.ENTER_FRAMES; f++) { const p = I.enterParams(k, f / (I.ENTER_FRAMES - 1), i); const m = Math.abs(p.dx) + Math.abs(p.dy) + Math.abs(p.rot); if (m > prev + 1e-9) return k + ' f' + f; prev = m; } } }
+    return true;
+});
+check('espadas: se cruzan (giro adicional se reduce a 0) con un asentamiento de menos del 6 % del recorrido', () => {
+    const rots = []; for (let f = 0; f < I.ENTER_FRAMES; f++) rots.push(I.enterParams('sword', f / (I.ENTER_FRAMES - 1), 0).rot);
+    const over = Math.max(...rots.map((r) => (r > 0 ? r : 0))); return rots[0] < -20 && rots[rots.length - 1] === 0 && over < 0.06 * 44 ? true : rots.join();
+});
+check('lapida: emerge de la tierra, recortada por la linea del suelo (clip) hasta llegar', () => { const a = I.enterParams('death', 0.5, 0); const z = I.enterParams('death', 1, 0); return a.clip === 21.5 && a.dy > 0 && z.clip === null && z.dy === 0; });
+check('la ultima fotografia de la entrada (t=1) emite exactamente las mismas operaciones que el dibujo estatico', () => I.KEYS.every((k) => { const a = fakeCtx(); I.draw(a, k, 48, { Path2D: FakePath, x: 4, y: 4 }); const b = fakeCtx(); I.draw(b, k, 48, { Path2D: FakePath, x: 4, y: 4, t: 1 }); return JSON.stringify(a.calls) === JSON.stringify(b.calls); }));
+check('draw con cualquier fotograma de la entrada funciona, termina equilibrado y distinto del final para los intermedios', () => I.KEYS.every((k) => {
+    const fin = JSON.stringify((() => { const c = fakeCtx(); I.draw(c, k, 48, { Path2D: FakePath }); return c.calls; })());
+    return Array.from({ length: I.ENTER_FRAMES }, (_, f) => f / (I.ENTER_FRAMES - 1)).every((t) => {
+        const c = fakeCtx(); I.draw(c, k, 48, { Path2D: FakePath, t }); const sv = c.calls.filter((x) => x === 'save').length; const rs = c.calls.filter((x) => x === 'restore').length;
+        return sv === rs && (t === 1 || JSON.stringify(c.calls) !== fin);
+    });
+}));
+check('la entrada dura entre 0,8 y 1,5 s y se reparte en 8-12 fotogramas', () => I.ENTER_MS >= 800 && I.ENTER_MS <= 1500 && I.ENTER_FRAMES >= 8 && I.ENTER_FRAMES <= 12);
+check('t negativo o texto no rompen el dibujo (se trata como el inicio)', () => { const c = fakeCtx(); I.draw(c, 'tank', 48, { Path2D: FakePath, t: -3 }); const d = fakeCtx(); I.draw(d, 'tank', 48, { Path2D: FakePath, t: 'x' }); return c.calls.length > 0 && d.calls.length > 0; });
 
 // ---- Animacion
 function clock() { let now = 0; let seq = 1; const t = new Map(); return { setTimer: (fn, ms) => { const h = seq++; t.set(h, { at: now + ms, fn }); return h; }, clearTimer: (h) => t.delete(h), tick(ms) { const end = now + ms; for (;;) { let b = null; for (const [h, x] of t) if (x.at <= end && (!b || x.at < b.x.at)) b = { h, x }; if (!b) break; now = b.x.at; t.delete(b.h); b.x.fn(); } now = end; }, pending: () => t.size }; }

@@ -71,8 +71,12 @@ sale y cuánto se puede fiar de él.
   El paso elegido se recuerda en la cookie de preferencias (`sky/timestep.js`).
 - **Reloj** con horas, minutos y segundos (tiempo real, pausa, acelerado, atrás), enlazado al deslizador.
 - **Sucesos con hora conocida y avisos**: nacimientos, muertes, composiciones, obras, descubrimientos…
-  El alcance decide qué se ve (ventana temporal ±6 meses, umbral de importancia según el zoom, un
-  marcador por celda: nada se satura). Si la hora está documentada llega el aviso «dentro de 5 minutos…»,
+  El alcance decide qué se ve (umbral de importancia según el zoom, un marcador por celda: nada se satura) y
+  **la ventana temporal es proporcional a la velocidad del tiempo**: parado se ven ±6 meses; con el tiempo corriendo, un suceso
+  permanece unos 6 s *de pantalla* (como mucho 100 años de ventana), así que a 1 año/s se ven los de unos 5 años atrás, sin exigir
+  día y hora. Cuanto más antiguo respecto al reloj, más transparente (cuatro niveles de fundido) y, cuanto más larga la ventana, más
+  alto el umbral de importancia: a gran velocidad solo lo significativo. Al aparecer, cada icono entra con su gesto (las espadas se
+  cruzan, el tanque avanza, el tratado se va escribiendo, la bandera se despliega…) en 1,1 s. Si la hora está documentada llega el aviso «dentro de 5 minutos…»,
   «acaba de…»; si solo se conoce el día, avisa al entrar en ese día («hora desconocida»). **Nunca se
   inventa una hora.** Hoy la semilla verificada tiene 5 sucesos con hora; la carga masiva desde Wikidata
   (CC0) se está construyendo en Actions.
@@ -80,7 +84,7 @@ sale y cuánto se puede fiar de él.
   punto de color: espada, mosquete o tanque para guerras y batallas (según la época: antes de 1500, 1500–1913, desde 1914), pluma y
   papiro para tratados, anillos para alianzas y uniones, urna, trofeo, bandera, volcán, etc. El tipo sale de las clases de Wikidata
   del propio registro (cada QID de la tabla se contrasta con los datos en `npm run check:event-icons`); solo si el registro no trae
-  clases se deduce del nombre. La época es una convención de dibujo, no un dato del suceso. Animación suave (flotar o sacudirse y un
+  clases se deduce del nombre. La época es una convención de dibujo, no un dato del suceso. Animación suave y sobria (flotar o sacudirse levemente y un
   anillo que respira) que se puede apagar en *Ajustes* y que respeta «reducir movimiento» del sistema.
 - **Ajustes y recuadros informativos** (botón *Ajustes*, `map/panels.js`): ocultar solos los recuadros informativos a los 2 s con
   fundido, en 3 niveles (solo la ficha del elemento seleccionado; además avisos y notas; además la ficha del cuerpo celeste), con
