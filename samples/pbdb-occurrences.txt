@@ -1,0 +1,8 @@
+{
+"elapsed_time":0.341,
+"records": [
+{"oid":"occ:139255","eid":"rei:18015","cid":"col:11898","tna":"Albertosaurus sarcophagus","rnk":3,"tid":"txn:56319","oei":"Late Maastrichtian","eag":72.2,"lag":66,"rid":"ref:9259","lng":"-112.981903","lat":"51.804600"},
+{"oid":"occ:139256","eid":"rei:30781","cid":"col:11899","tna":"Albertosaurus sarcophagus","rnk":3,"tid":"txn:56319","oei":"Early Maastrichtian","eag":72.2,"lag":66,"rid":"ref:4205","lng":"-112.981903","lat":"51.819099"},
+{"oid":"occ:139257","cid":"col:11900","idn":"Albertosaurus arctunguis n. sp.","iid":"txn:63710","tna":"Albertosaurus sarcophagus","rnk":3,"tid":"txn:56319","oei":"Early Maastrichtian","eag":72.2,"lag":66,"rid":"ref:12347","lng":"-112.818901","lat":"51.542702"}
+]
+}
