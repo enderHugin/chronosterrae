@@ -1,20 +1,39 @@
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-11-07T09:52:53.216Z",
-    "source_date": "2026/11/06",
+    "harvest_date": "2026-11-10T10:57:15.317Z",
+    "source_date": "2026/11/09",
     "node_origin": "ChronosTerrae_Harvester_0.2",
-    "total_anomalies_detected": 1,
+    "total_anomalies_detected": 2,
     "status": "ok"
   },
   "features": [
     {
       "type": "Feature",
       "properties": {
+        "name": "2026 Kraków shooting",
+        "timestamp": "2026-11-07T00:00:00Z",
+        "date_precision": "day",
+        "harvest_date": "2026-11-10T10:57:15.317Z",
+        "source": "Wikidata:Q142077465",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.936888888,
+          50.062777777
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "name": "disappearance of Natalee Holloway",
         "timestamp": "2005-05-30T00:00:00Z",
         "date_precision": "day",
-        "harvest_date": "2026-11-07T09:52:53.216Z",
+        "harvest_date": "2026-11-10T10:57:15.317Z",
         "source": "Wikidata:Q51722302",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
