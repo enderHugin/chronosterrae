@@ -118,8 +118,9 @@ sale y cuánto se puede fiar de él.
   boda), bandera (política), urna (votación), estallido (atentado, violencia), volcán (desastre natural), señal de peligro (accidente),
   **cochecito de bebé (nacimiento; antes un brote, que no decía «persona que nace»)**, lápida sin símbolo religioso (muerte), libro
   abierto, notas musicales, lupa (descubrimiento), dinosaurio (extinción de especies), copa (deporte), medalla (premio), chincheta
-  (suceso sin tipo) y calendario. El color va por familia y se distingue de lejos, cuando los iconos pasan a puntos: rojo guerra, vino
-  violencia, naranja lava desastre natural, ámbar accidente, azules política y votaciones, verde tratados, rosa uniones, cian
+  (suceso sin tipo) y calendario. El color va por familia y se distingue de lejos, cuando los iconos pasan a puntos, con el **brillo igualado** entre
+  tipos (OKLCH, todos ≥ 5,5:1 frente al borde negro): rojo guerra, magenta
+  violencia, naranja desastre natural, amarillo accidente, azules política y votaciones, verde tratados, rosa uniones, cian
   nacimientos, grafito muertes, morados obras, verde azulado descubrimientos, oro premios y deporte, pardo fósil extinciones y gris
   azulado lo genérico (`npm run check:event-icons` exige ≥ 60 de distancia RGB entre grupos). El anillo que respira solo rodea los puntos.
   Los iconos son **siempre opacos**: sin niveles de fundido por antigüedad ni atenuación por revisión (el estado de revisión se ve

@@ -110,6 +110,13 @@ check('colores: de lejos (puntos) cada grupo se distingue de los demas (>= 60 de
     for (const a of I.KEYS) for (const b of I.KEYS) { if (a >= b || I.groupOf(a) === I.groupOf(b)) continue; const d = Math.hypot(...rgb(I.COLORS[a]).map((v, i) => v - rgb(I.COLORS[b])[i])); if (d < 60) bad.push(a + '/' + b + ' ' + d.toFixed(0)); }
     return bad.length === 0 ? true : bad.join(' | ');
 });
+check('colores: todos contrastan con el borde negro (>= 5,5:1) y el brillo es parecido entre tipos (el mas oscuro no baja de 0,4 del mas claro)', () => {
+    const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    const lum = (h) => { const [r, g, b] = [1, 3, 5].map((i) => lin(parseInt(h.slice(i, i + 2), 16))); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+    const cr = I.KEYS.map((k) => [k, (lum(I.COLORS[k]) + 0.05) / 0.05]); const lo = cr.filter(([, c]) => c < 5.5);
+    const max = Math.max(...cr.map(([, c]) => c)), min = Math.min(...cr.map(([, c]) => c));
+    return lo.length === 0 && min / max >= 0.4 ? true : 'bajos: ' + lo.map(([k, c]) => k + ' ' + c.toFixed(1)).join(', ') + ' | min/max ' + (min / max).toFixed(2);
+});
 check('colores: dentro de un mismo grupo los iconos comparten familia de color (la guerra es siempre roja)', () => I.COLORS.sword === I.COLORS.musket && I.COLORS.musket === I.COLORS.tank && I.COLORS.sport === I.COLORS.ceremony);
 check('nacimiento ya no es un vegetal: el cochecito tiene capota (relleno), cuna, asa y dos ruedas', () => I.GLYPHS.birth.length === 5 && I.GLYPHS.birth.filter((p) => /a1\.8 1\.8/.test(p.d)).length === 2);
 check('zoom: con la Tierra cerca (zoom >= 3,2) los iconos tienen su tamano de siempre y al alejarse solo encogen (monotono)', () => {

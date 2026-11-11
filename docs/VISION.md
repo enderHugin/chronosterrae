@@ -276,3 +276,4 @@ Decisiones:
   Ajuste del mismo día: trazo un 18 % más fino, iconos siempre opacos (fuera los niveles de fundido por antigüedad y la atenuación de lo sin revisar) y cambio seco icono ↔ punto; un suceso que sale de la ventana desaparece en el acto.
   Segundo ajuste: borde negro pegado a la línea y solo el filo exterior blanco ("que solo el borde exterior sea el blanco"), y colores más saturados y luminosos (siguen distinguiéndose entre grupos, probado).
   Tercer ajuste: el creador elige solo borde negro, sin filo blanco.
+  Cuarto ajuste: colores con el brillo igualado (OKLCH, luminosidad 0,65-0,86 y máximo croma; todos ≥ 5,5:1 frente al negro), porque violencia, votaciones, muertes y libros quedaban apagados junto a los demás.

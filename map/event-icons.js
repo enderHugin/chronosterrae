@@ -184,15 +184,17 @@
     };
     const KEYS = Object.keys(GLYPHS);
 
-    // Color del icono: intenso y por FAMILIA, para que de lejos (puntos de color) tambien se distinga el tipo. Rojo guerra, vino violencia,
-    // naranja lava desastre natural, ambar peligro (accidente), azules politica y votaciones, verde tratados (paz), rosa uniones y bodas,
-    // cian nacimientos, grafito muertes, morados obras, verde azulado descubrimientos, oro premios y deporte, pardo fosil extinciones, gris
-    // azulado lo generico. scripts/check-event-icons.js comprueba que cada grupo se distingue de los demas.
+    // Color del icono: intenso y por FAMILIA, para que de lejos (puntos de color) tambien se distinga el tipo. Rojo guerra, magenta violencia,
+    // naranja desastre natural, amarillo peligro (accidente), azules politica y votaciones, verde tratados (paz), rosa uniones y bodas,
+    // cian nacimientos, gris muertes, morados obras, verde azulado descubrimientos, oro premios y deporte, pardo fosil extinciones, gris
+    // azulado claro lo generico. Brillo IGUALADO (2026-11-11, pedido del creador: que no haya tipos apagados junto a otros brillantes):
+    // elegidos en OKLCH con luminosidad 0,65-0,86 y el maximo croma que cabe, asi todos contrastan con el borde negro (>= 5,5:1).
+    // scripts/check-event-icons.js comprueba ese contraste, que el brillo no se dispare entre tipos y que cada grupo se distinga de los demas.
     const COLORS = {
-        sword: '#ff1f1f', musket: '#ff1f1f', tank: '#ff1f1f', violence: '#c4005f', natural: '#ff6a00', accident: '#ffc400',
-        political: '#1f6fff', election: '#3d3dff', treaty: '#14b83c', union: '#ff4fa8',
-        birth: '#00c8ff', death: '#6d7480', publication: '#8c4dff', composition: '#b84dff', discovery: '#00c9a7',
-        sport: '#c98a00', ceremony: '#c98a00', extinction: '#a8692c', event: '#7fa6bf', calendar: '#7fa6bf'
+        sword: '#fe353d', musket: '#fe353d', tank: '#fe353d', violence: '#f43bce', natural: '#ff963d', accident: '#edd207',
+        political: '#5c9eff', election: '#7099ff', treaty: '#33d34b', union: '#ff9cb3',
+        birth: '#25d1ff', death: '#9399a2', publication: '#bb78fe', composition: '#dd6bff', discovery: '#0fd4b7',
+        sport: '#c59707', ceremony: '#c59707', extinction: '#c78858', event: '#a6cae0', calendar: '#a6cae0'
     };
     // Grupo de animacion: 'shake' = sacudida horizontal (conflicto, desastre); 'bob' = flotar vertical (el resto).
     const SHAKE = new Set(['sword', 'musket', 'tank', 'violence', 'political', 'natural', 'accident']);
