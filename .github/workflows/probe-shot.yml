@@ -31,7 +31,12 @@ jobs:
       - name: Instalar Playwright (sin guardar en el repo)
         run: |
           npm install --no-save --no-package-lock playwright@1.49.1
-          npx playwright install --with-deps chromium
+          # Los paquetes del sistema llegan por apt y a veces el DNS del ejecutor falla un rato (paso el 2026-11-11): hasta 3 intentos.
+          for i in 1 2 3; do
+            if npx playwright install --with-deps chromium; then exit 0; fi
+            echo "Intento $i fallido; reintento en $((i * 45)) s"; sleep $((i * 45)); sudo apt-get update || true
+          done
+          exit 1
       - name: Fotografiar la demo publicada
         env:
           LNG: ${{ github.event.inputs.lng }}
