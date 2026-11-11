@@ -3464,7 +3464,7 @@ function evSpriteCanvas(key, size, pad, t) {
     const total = size + 2 * pad; const c = document.createElement('canvas'); c.width = c.height = total;
     // willReadFrequently: respaldo en CPU. Con el lienzo en GPU, getImageData sincroniza con ella (medido: 1,5 s para ~100 fotogramas en un mismo tramo).
     const es = evIconStyle();
-    ChronosEventIcons.draw(c.getContext('2d', { willReadFrequently: true }), key, size, { x: pad, y: pad, t, rim: es ? es.rim : undefined, tint: es ? es.tint : undefined });   // borde negro (HALO) con filo exterior claro: blanco o el de la epoca
+    ChronosEventIcons.draw(c.getContext('2d', { willReadFrequently: true }), key, size, { x: pad, y: pad, t, tint: es ? es.tint : undefined });   // solo borde negro (HALO) en todas las epocas; la epoca pone el matiz
     return c;
 }
 const evUrlCache = new Map();

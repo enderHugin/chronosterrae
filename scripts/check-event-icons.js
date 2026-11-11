@@ -92,8 +92,13 @@ function fakeCtx() {
     return ctx;
 }
 class FakePath { constructor(d) { if (typeof d !== 'string') throw new Error('d'); I.pathBox(d); this.d = d; } }
-check('draw pinta primero el filo blanco (mas ancho), luego el borde negro y al final el color; save/restore equilibrados', () => {
+check('draw: por defecto solo borde negro (sin filo blanco) y despues el color', () => {
     const c = fakeCtx(); I.draw(c, 'sword', 48, { Path2D: FakePath });
+    const black = c.calls.map((s, i) => (s.startsWith('stroke:#000000') ? i : -1)).filter((i) => i >= 0); const color = c.calls.map((s, i) => (s.startsWith('fill:' + I.COLORS.sword) || s.startsWith('stroke:' + I.COLORS.sword) ? i : -1)).filter((i) => i >= 0);
+    return I.OUTER === null && black.length > 0 && !c.calls.some((s) => s.startsWith('stroke:#ffffff')) && Math.max(...black) < Math.min(...color) ? true : JSON.stringify(c.calls.slice(0, 10));
+});
+check('draw con `outer` pinta primero ese filo (mas ancho), luego el borde negro y al final el color; save/restore equilibrados', () => {
+    const c = fakeCtx(); I.draw(c, 'sword', 48, { Path2D: FakePath, outer: '#ffffff' });
     const idx = (re) => c.calls.map((s, i) => (re.test(s) ? i : -1)).filter((i) => i >= 0);
     const white = idx(/^stroke:#ffffff/), black = idx(/^stroke:#000000/), color = idx(new RegExp('^(fill|stroke):' + I.COLORS.sword));
     const wW = parseFloat(c.calls[white[0]].split(':')[2]), wB = parseFloat(c.calls[black[0]].split(':')[2]);
@@ -126,11 +131,11 @@ check('puntos: un color valido para cada tipo de icono (el suyo) y uno por defec
     const t = I.dotColorExpr(() => '#123456');
     return e[0] === 'match' && keys.length === I.KEYS.length && I.KEYS.every((k, i) => keys[i] === k && cols[i] === I.COLORS[k]) && /^#[0-9a-f]{6}$/i.test(e[e.length - 1]) && t.slice(2, -1).filter((_, i) => i % 2 === 1).every((c) => c === '#123456');
 });
-check('draw: borde negro con filo exterior blanco por defecto; con `halo` cambia el negro, y nunca un valor invalido', () => {
+check('draw: borde negro por defecto; con `halo` cambia el negro, y nunca un valor invalido', () => {
     const n = fakeCtx(); I.draw(n, 'death', 48, { Path2D: FakePath });
     const c = fakeCtx(); I.draw(c, 'death', 48, { Path2D: FakePath, halo: '#e9e1d2' });
     const bad = fakeCtx(); I.draw(bad, 'death', 48, { Path2D: FakePath, halo: 'red; background:url(x)' });
-    return I.HALO === '#000000' && I.OUTER === '#ffffff' && n.calls.some((s) => s.startsWith('stroke:#000000')) && n.calls.some((s) => s.startsWith('stroke:#ffffff'))
+    return I.HALO === '#000000' && n.calls.some((s) => s.startsWith('stroke:#000000')) && !n.calls.some((s) => s.startsWith('stroke:#ffffff'))
         && c.calls.some((s) => s.startsWith('stroke:#e9e1d2')) && bad.calls.some((s) => s.startsWith('stroke:#000000')) && !bad.calls.some((s) => /red|url/.test(s)) ? true : JSON.stringify(n.calls.slice(0, 8));
 });
 check('draw: con `tint` el color se mezcla un poco hacia el matiz (reconocible) y sin tint o con amt 0 no cambia', () => {

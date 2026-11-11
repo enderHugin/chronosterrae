@@ -200,8 +200,8 @@
 
     const BORDER = 2.6;                // grosor del borde (unidades de la caja 24x24; se ve la mitad por fuera)
     const HALO = '#000000';            // color del borde: negro (2026-11-11, prueba pedida por el creador; antes blanco)...
-    const OUTER = '#ffffff';           // ...con un filo exterior blanco ("que solo el borde exterior sea el blanco")
-    const OUTER_W = 0.9;               // grosor del filo exterior a cada lado (unidades de la caja)
+    const OUTER = null;                // sin filo exterior: solo negro (decision del creador tras probar el filo blanco). Con `outer` en las opciones se puede añadir uno
+    const OUTER_W = 0.9;               // grosor del filo exterior opcional a cada lado (unidades de la caja)
     const shade = (hex, k) => {        // oscurece (k<0) o aclara (k>0) un #rrggbb
         const n = parseInt(hex.slice(1), 16); const f = (v) => Math.max(0, Math.min(255, Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k)));
         return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => f(v).toString(16).padStart(2, '0')).join('');
@@ -272,7 +272,7 @@
         const tint = o && o.tint && o.tint.amt > 0 ? o.tint : null;      // matiz de la epoca (ChronosEras): mezcla suave, el icono sigue siendo reconocible
         const color = (o && o.color) || (tint ? mixHex(COLORS[key], tint.color, Math.min(tint.amt, 0.35)) : COLORS[key]); const dark = shade(color, -0.4);
         const light = hexOr(o && o.halo, HALO);               // borde que sigue la silueta (negro por defecto; `halo` lo cambia)
-        const outer = hexOr(o && (o.outer || o.rim), OUTER);  // filo exterior (blanco, o el claro de la epoca)
+        const outer = o && o.outer ? hexOr(o.outer, null) : OUTER;   // filo exterior opcional (por defecto ninguno)
         const x = (o && o.x) || 0; const y = (o && o.y) || 0; const k = size / 24;
         const t = o && o.t !== undefined ? o.t : 1;
         const trs = parts.map((p, i) => enterParams(key, t, i));
@@ -283,9 +283,8 @@
             if (p.r) { ctx.translate(12, 12); ctx.rotate(p.r * Math.PI / 180); ctx.translate(-12, -12); }
         };
         ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-        // 1. borde de toda la silueta en dos capas: filo exterior claro (OUTER) y, dentro, el borde negro (HALO). Asi la linea de color queda
-        //    perfilada en negro y el conjunto se lee tambien sobre fondos oscuros.
-        [[outer, BORDER + 2 * OUTER_W], [light, BORDER]].forEach(([col, bw]) => parts.forEach((p, i) => {
+        // 1. borde negro (HALO) de toda la silueta; si se pide, debajo un filo exterior (`outer`, mas ancho)
+        [[outer, BORDER + 2 * OUTER_W], [light, BORDER]].filter(([col]) => col).forEach(([col, bw]) => parts.forEach((p, i) => {
             const tr = trs[i]; if (p.t === 'l' || p.t === 'c' || tr.a <= 0 || tr.sx === 0 || tr.sy === 0) return;
             ctx.save(); place(p, tr); ctx.globalAlpha = tr.a; ctx.strokeStyle = col; ctx.lineWidth = bw + ((p.t === 's' || p.t === 'd') ? (p.w || 2) : 0); ctx.stroke(new P2D(p.d)); ctx.restore();
         }));
