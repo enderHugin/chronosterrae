@@ -3453,7 +3453,7 @@ const evKind = (f) => f.properties.kind || 'event';
    Cada suceso se dibuja con un icono de borde blanco que dice QUE es (guerra, tratado, enlace, obra...), no con un punto de color.
    Capas: events-circle (invisible, es la zona de toque/hover), events-dot (puntos de color con la Tierra lejos), events-pulse (anillo que respira, solo alrededor de los puntos) y dos capas de simbolos por tipo de
    animacion (flotar / sacudirse). La animacion solo mueve propiedades de pintura (barato) y deja reposo entre fases para que el mapa llegue a «idle». */
-const EV_SPRITE = { box: 48, pad: 4, ratio: 2 };
+const EV_SPRITE = { box: 48, pad: 6, ratio: 2 };   // pad 6: cabe el borde doble (negro + filo blanco)
 const evIconCache = new WeakMap();
 const evIconKey = (f) => {
     let k = evIconCache.get(f); if (k) return k;
@@ -3464,7 +3464,7 @@ function evSpriteCanvas(key, size, pad, t) {
     const total = size + 2 * pad; const c = document.createElement('canvas'); c.width = c.height = total;
     // willReadFrequently: respaldo en CPU. Con el lienzo en GPU, getImageData sincroniza con ella (medido: 1,5 s para ~100 fotogramas en un mismo tramo).
     const es = evIconStyle();
-    ChronosEventIcons.draw(c.getContext('2d', { willReadFrequently: true }), key, size, { x: pad, y: pad, t, rim: es ? es.rim : undefined, tint: es ? es.tint : undefined });
+    ChronosEventIcons.draw(c.getContext('2d', { willReadFrequently: true }), key, size, { x: pad, y: pad, t, rim: es ? es.rim : undefined, tint: es ? es.tint : undefined });   // borde negro (HALO) con filo exterior claro: blanco o el de la epoca
     return c;
 }
 const evUrlCache = new Map();
@@ -3500,7 +3500,7 @@ function evLayersAdd() {
     // Con la Tierra lejos todo se encoge (EI.zoomScaled) y, muy lejos, los iconos ceden el sitio a puntos de su color (EI.iconFade / EI.dotFade).
     // Sin disco ni anillo alrededor de los iconos (pedido del creador, 2026-11-11): el contraste lo da el borde claro que sigue la silueta.
     map.addLayer({ id: 'events-dot', type: 'circle', source: 'events', paint: {
-        'circle-radius': EI.DOT_RADIUS, 'circle-color': evDotColors(es), 'circle-stroke-width': 0.9, 'circle-stroke-color': es ? es.rim : '#ffffff',
+        'circle-radius': EI.DOT_RADIUS, 'circle-color': evDotColors(es), 'circle-stroke-width': 0.9, 'circle-stroke-color': ChronosEventIcons.HALO,
         'circle-opacity': EI.dotFade(seen), 'circle-stroke-opacity': EI.dotFade(seen)
     } });
     map.addLayer({ id: 'events-pulse', type: 'circle', source: 'events', paint: {
@@ -4170,7 +4170,7 @@ function evIconsRestyle() {
     EV_STYLE_KEY = key; evUrlCache.clear();
     if (map.getLayer('events-dot')) {
         map.setPaintProperty('events-pulse', 'circle-color', st ? st.rim : '#ffffff'); map.setPaintProperty('events-pulse', 'circle-stroke-color', st ? st.rim : '#ffffff');
-        map.setPaintProperty('events-dot', 'circle-color', evDotColors(st)); map.setPaintProperty('events-dot', 'circle-stroke-color', st ? st.rim : '#ffffff');
+        map.setPaintProperty('events-dot', 'circle-color', evDotColors(st)); map.setPaintProperty('events-dot', 'circle-stroke-color', ChronosEventIcons.HALO);
     }
     map.listImages().forEach((n) => {
         const m = /^evi-([a-z]+)(?:~(\d+))?$/.exec(n); if (!m || !ChronosEventIcons.GLYPHS[m[1]]) return;

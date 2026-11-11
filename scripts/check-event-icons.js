@@ -92,11 +92,13 @@ function fakeCtx() {
     return ctx;
 }
 class FakePath { constructor(d) { if (typeof d !== 'string') throw new Error('d'); I.pathBox(d); this.d = d; } }
-check('draw pinta el borde blanco antes que el relleno y termina con save/restore equilibrados', () => {
+check('draw pinta primero el filo blanco (mas ancho), luego el borde negro y al final el color; save/restore equilibrados', () => {
     const c = fakeCtx(); I.draw(c, 'sword', 48, { Path2D: FakePath });
-    const firstFill = c.calls.findIndex((s) => s.startsWith('fill:')); const lastWhite = c.calls.map((s, i) => (s.startsWith('stroke:#ffffff') ? i : -1)).filter((i) => i >= 0).pop();
+    const idx = (re) => c.calls.map((s, i) => (re.test(s) ? i : -1)).filter((i) => i >= 0);
+    const white = idx(/^stroke:#ffffff/), black = idx(/^stroke:#000000/), color = idx(new RegExp('^(fill|stroke):' + I.COLORS.sword));
+    const wW = parseFloat(c.calls[white[0]].split(':')[2]), wB = parseFloat(c.calls[black[0]].split(':')[2]);
     const saves = c.calls.filter((s) => s === 'save').length; const restores = c.calls.filter((s) => s === 'restore').length;
-    return firstFill > lastWhite && lastWhite >= 0 && saves === restores && c.calls.some((s) => s === 'fill:' + I.COLORS.sword) ? true : JSON.stringify(c.calls.slice(0, 12));
+    return white.length > 0 && black.length > 0 && color.length > 0 && Math.max(...white) < Math.min(...black) && Math.max(...black) < Math.min(...color) && wW > wB && saves === restores ? true : JSON.stringify(c.calls.slice(0, 14));
 });
 check('colores: de lejos (puntos) cada grupo se distingue de los demas (>= 60 de distancia RGB entre colores de grupos distintos)', () => {
     const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); const bad = [];
@@ -124,10 +126,12 @@ check('puntos: un color valido para cada tipo de icono (el suyo) y uno por defec
     const t = I.dotColorExpr(() => '#123456');
     return e[0] === 'match' && keys.length === I.KEYS.length && I.KEYS.every((k, i) => keys[i] === k && cols[i] === I.COLORS[k]) && /^#[0-9a-f]{6}$/i.test(e[e.length - 1]) && t.slice(2, -1).filter((_, i) => i % 2 === 1).every((c) => c === '#123456');
 });
-check('draw: con `rim` el borde y los detalles claros usan ese color en vez del blanco, y nunca un valor invalido', () => {
-    const c = fakeCtx(); I.draw(c, 'death', 48, { Path2D: FakePath, rim: '#e9e1d2' });
-    const bad = fakeCtx(); I.draw(bad, 'death', 48, { Path2D: FakePath, rim: 'red; background:url(x)' });
-    return c.calls.some((s) => s.startsWith('stroke:#e9e1d2')) && !c.calls.some((s) => s.startsWith('stroke:#ffffff')) && bad.calls.some((s) => s.startsWith('stroke:#ffffff')) && !bad.calls.some((s) => /red|url/.test(s)) ? true : JSON.stringify(c.calls.slice(0, 8));
+check('draw: borde negro con filo exterior blanco por defecto; con `halo` cambia el negro, y nunca un valor invalido', () => {
+    const n = fakeCtx(); I.draw(n, 'death', 48, { Path2D: FakePath });
+    const c = fakeCtx(); I.draw(c, 'death', 48, { Path2D: FakePath, halo: '#e9e1d2' });
+    const bad = fakeCtx(); I.draw(bad, 'death', 48, { Path2D: FakePath, halo: 'red; background:url(x)' });
+    return I.HALO === '#000000' && I.OUTER === '#ffffff' && n.calls.some((s) => s.startsWith('stroke:#000000')) && n.calls.some((s) => s.startsWith('stroke:#ffffff'))
+        && c.calls.some((s) => s.startsWith('stroke:#e9e1d2')) && bad.calls.some((s) => s.startsWith('stroke:#000000')) && !bad.calls.some((s) => /red|url/.test(s)) ? true : JSON.stringify(n.calls.slice(0, 8));
 });
 check('draw: con `tint` el color se mezcla un poco hacia el matiz (reconocible) y sin tint o con amt 0 no cambia', () => {
     const base = I.COLORS.sword; const a = fakeCtx(); I.draw(a, 'sword', 48, { Path2D: FakePath, tint: { color: '#2e8b78', amt: 0.24 } });

@@ -5,7 +5,7 @@
  *    los datos reales de data/events/ (scripts/check-event-icons.js comprueba que cada QID existe con esa etiqueta): ninguno de memoria.
  *    Las guerras y batallas llevan espada, mosquete o tanque segun la EPOCA del suceso (corte editorial, ver ERA_*): es una convencion de
  *    dibujo para distinguirlas de un vistazo, no una afirmacion sobre el armamento de ese conflicto concreto.
- * 2. GLYPHS: dibujos vectoriales (rutas SVG en una caja de 24x24). draw() los pinta con borde blanco sobre cualquier CanvasRenderingContext2D.
+ * 2. GLYPHS: dibujos vectoriales (rutas SVG en una caja de 24x24). draw() los pinta con borde negro (HALO) sobre cualquier CanvasRenderingContext2D.
  * 3. createPulse(): metrónomo que alterna dos fases para la animacion (MapLibre interpola solo entre una fase y la otra: solo propiedades de
  *    pintura, baratas); con huecos de reposo para que el mapa llegue a `idle`.
  * Sin dependencias del DOM: se prueba en Node (rutas, clasificacion, reloj falso); el dibujo real se mira en el render (probe-shot).
@@ -103,8 +103,8 @@
     const ellipse = (cx, cy, rx, ry) => 'M' + r1(cx - rx) + ' ' + cy + ' a' + rx + ' ' + ry + ' 0 1 0 ' + r1(2 * rx) + ' 0 a' + rx + ' ' + ry + ' 0 1 0 ' + r1(-2 * rx) + ' 0 Z';
 
     // Partes: t = 'f' relleno del color del icono, 'k' relleno oscuro, 'l' relleno claro, 's' trazo del color (w = grosor), 'd' trazo oscuro, 'c' trazo claro. r = giro en grados alrededor de (12,12).
-    // ESTILO (2026-11-11, pedido del creador): linea gruesa de color intenso y forma facil de reconocer, sin circulo alrededor; el borde claro
-    // (blanco o el de la epoca) sigue la silueta para que se lea sobre cualquier mapa. Cada dibujo dice lo que es: espadas, mosquete
+    // ESTILO (2026-11-11, pedido del creador): linea gruesa de color intenso y forma facil de reconocer, sin circulo alrededor; el borde negro
+    // sigue la silueta para que se lea sobre cualquier mapa. Cada dibujo dice lo que es: espadas, mosquete
     // humeante, tanque, papiro y pluma, anillos, bandera, urna, estallido, volcan, senal de peligro, cochecito de bebe (nacimiento), lapida,
     // libro abierto, notas musicales, lupa, dinosaurio (extincion), copa, medalla, chincheta (suceso) y calendario.
     const W = 2.05;                      // grosor del trazo principal (unidades de la caja 24x24); 2,5 al principio, algo mas fino a peticion del creador
@@ -189,16 +189,19 @@
     // cian nacimientos, grafito muertes, morados obras, verde azulado descubrimientos, oro premios y deporte, pardo fosil extinciones, gris
     // azulado lo generico. scripts/check-event-icons.js comprueba que cada grupo se distingue de los demas.
     const COLORS = {
-        sword: '#d32f2f', musket: '#d32f2f', tank: '#d32f2f', violence: '#8e1650', natural: '#e65100', accident: '#e8a000',
-        political: '#1565c0', election: '#283593', treaty: '#2e7d32', union: '#e0447f',
-        birth: '#00a3d9', death: '#4a4f57', publication: '#6a3fb5', composition: '#8e44c4', discovery: '#00897b',
-        sport: '#a87f00', ceremony: '#a87f00', extinction: '#7a5528', event: '#607d8b', calendar: '#607d8b'
+        sword: '#ff1f1f', musket: '#ff1f1f', tank: '#ff1f1f', violence: '#c4005f', natural: '#ff6a00', accident: '#ffc400',
+        political: '#1f6fff', election: '#3d3dff', treaty: '#14b83c', union: '#ff4fa8',
+        birth: '#00c8ff', death: '#6d7480', publication: '#8c4dff', composition: '#b84dff', discovery: '#00c9a7',
+        sport: '#c98a00', ceremony: '#c98a00', extinction: '#a8692c', event: '#7fa6bf', calendar: '#7fa6bf'
     };
     // Grupo de animacion: 'shake' = sacudida horizontal (conflicto, desastre); 'bob' = flotar vertical (el resto).
     const SHAKE = new Set(['sword', 'musket', 'tank', 'violence', 'political', 'natural', 'accident']);
     const animGroup = (icon) => (SHAKE.has(icon) ? 'shake' : 'bob');
 
-    const BORDER = 3.0;                // grosor del borde claro (unidades de la caja 24x24; se ve la mitad por fuera)
+    const BORDER = 2.6;                // grosor del borde (unidades de la caja 24x24; se ve la mitad por fuera)
+    const HALO = '#000000';            // color del borde: negro (2026-11-11, prueba pedida por el creador; antes blanco)...
+    const OUTER = '#ffffff';           // ...con un filo exterior blanco ("que solo el borde exterior sea el blanco")
+    const OUTER_W = 0.9;               // grosor del filo exterior a cada lado (unidades de la caja)
     const shade = (hex, k) => {        // oscurece (k<0) o aclara (k>0) un #rrggbb
         const n = parseInt(hex.slice(1), 16); const f = (v) => Math.max(0, Math.min(255, Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k)));
         return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => f(v).toString(16).padStart(2, '0')).join('');
@@ -259,7 +262,7 @@
     const isIdent = (tr) => tr.dx === 0 && tr.dy === 0 && tr.rot === 0 && tr.sx === 1 && tr.sy === 1 && tr.a === 1 && tr.clip === null;
 
     /**
-     * Dibuja el icono `key` en un cuadrado de `size` px (esquina superior izquierda en (x,y)): primero el borde blanco de toda la silueta y encima
+     * Dibuja el icono `key` en un cuadrado de `size` px (esquina superior izquierda en (x,y)): primero el borde (negro, HALO) de toda la silueta y encima
      * el relleno. Opciones: `Path2D` y `color` (por defecto, el global y el color del icono) y `t` (0..1, instante de la entrada animada; sin él,
      * el dibujo final).
      */
@@ -268,7 +271,8 @@
         const P2D = (o && o.Path2D) || (typeof Path2D !== 'undefined' ? Path2D : null); if (!P2D) throw new Error('falta Path2D');
         const tint = o && o.tint && o.tint.amt > 0 ? o.tint : null;      // matiz de la epoca (ChronosEras): mezcla suave, el icono sigue siendo reconocible
         const color = (o && o.color) || (tint ? mixHex(COLORS[key], tint.color, Math.min(tint.amt, 0.35)) : COLORS[key]); const dark = shade(color, -0.4);
-        const light = hexOr(o && o.rim, '#ffffff');          // borde y detalles claros: blanco, o el de la epoca
+        const light = hexOr(o && o.halo, HALO);               // borde que sigue la silueta (negro por defecto; `halo` lo cambia)
+        const outer = hexOr(o && (o.outer || o.rim), OUTER);  // filo exterior (blanco, o el claro de la epoca)
         const x = (o && o.x) || 0; const y = (o && o.y) || 0; const k = size / 24;
         const t = o && o.t !== undefined ? o.t : 1;
         const trs = parts.map((p, i) => enterParams(key, t, i));
@@ -279,10 +283,12 @@
             if (p.r) { ctx.translate(12, 12); ctx.rotate(p.r * Math.PI / 180); ctx.translate(-12, -12); }
         };
         ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-        parts.forEach((p, i) => {                                  // 1. borde blanco de todo lo que no es detalle claro
+        // 1. borde de toda la silueta en dos capas: filo exterior claro (OUTER) y, dentro, el borde negro (HALO). Asi la linea de color queda
+        //    perfilada en negro y el conjunto se lee tambien sobre fondos oscuros.
+        [[outer, BORDER + 2 * OUTER_W], [light, BORDER]].forEach(([col, bw]) => parts.forEach((p, i) => {
             const tr = trs[i]; if (p.t === 'l' || p.t === 'c' || tr.a <= 0 || tr.sx === 0 || tr.sy === 0) return;
-            ctx.save(); place(p, tr); ctx.globalAlpha = tr.a; ctx.strokeStyle = light; ctx.lineWidth = BORDER + ((p.t === 's' || p.t === 'd') ? (p.w || 2) : 0); ctx.stroke(new P2D(p.d)); ctx.restore();
-        });
+            ctx.save(); place(p, tr); ctx.globalAlpha = tr.a; ctx.strokeStyle = col; ctx.lineWidth = bw + ((p.t === 's' || p.t === 'd') ? (p.w || 2) : 0); ctx.stroke(new P2D(p.d)); ctx.restore();
+        }));
         parts.forEach((p, i) => {                                  // 2. relleno y trazos
             const tr = trs[i]; if (tr.a <= 0 || tr.sx === 0 || tr.sy === 0) return;
             ctx.save(); place(p, tr); ctx.globalAlpha = tr.a;
@@ -427,5 +433,5 @@
     /** Color de cada punto: el del icono (o el que devuelva colorOf, p. ej. con el matiz de la epoca). Expresion 'match' sobre la propiedad icon. */
     const dotColorExpr = (colorOf) => ['match', ['get', 'icon']].concat(...KEYS.map((k) => [k, colorOf ? colorOf(COLORS[k], k) : COLORS[k]]), ['#888888']);
 
-    return { ZOOM_SCALE, DOT_ZOOM, DOT_SWITCH, zoomScale, iconShare, zoomScaled, iconFade, dotFade, DOT_RADIUS, dotColorExpr, ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
+    return { HALO, OUTER, OUTER_W, ZOOM_SCALE, DOT_ZOOM, DOT_SWITCH, zoomScale, iconShare, zoomScaled, iconFade, dotFade, DOT_RADIUS, dotColorExpr, ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
 });

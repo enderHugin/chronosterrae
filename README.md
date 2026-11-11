@@ -112,8 +112,8 @@ sale y cuánto se puede fiar de él.
 - **Detalle al acercar**: desde zoom 4,6 se superpone el mapa vectorial actual de OpenFreeMap
   (OpenStreetMap, ODbL): estilo completo desde 1950, solo agua y vegetación hasta hace 11 000 años (como
   aproximación, y así se rotula) y nada antes, porque el nivel del mar era otro.
-- **Iconos de línea (2026-11-11).** Los iconos de sucesos son ahora de **línea gruesa y color intenso**, sin disco ni anillo
-  alrededor: el contraste lo da un borde claro que sigue la silueta (blanco, o el de la época). Cada dibujo dice lo que es: espadas
+- **Iconos de línea (2026-11-11).** Los iconos de sucesos son ahora de **línea de color muy intenso**, sin disco ni anillo
+  alrededor: la línea va perfilada por un **borde negro con un filo exterior blanco** (o el claro de la época) que sigue la silueta. Cada dibujo dice lo que es: espadas
   cruzadas (guerra antes de 1500), mosquetes cruzados (1500–1913), tanque (desde 1914), papiro y pluma (tratado), anillos (alianza o
   boda), bandera (política), urna (votación), estallido (atentado, violencia), volcán (desastre natural), señal de peligro (accidente),
   **cochecito de bebé (nacimiento; antes un brote, que no decía «persona que nace»)**, lápida sin símbolo religioso (muerte), libro
