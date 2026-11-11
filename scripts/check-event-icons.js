@@ -64,7 +64,7 @@ check('todo suceso real recibe un icono con dibujo (y se reparte en varios tipos
 
 // ---- Dibujos
 check('hay un dibujo, un color y un grupo de animacion para cada icono (y ningun color suelto)', () => I.KEYS.length >= 20 && I.KEYS.every((k) => /^#[0-9a-f]{6}$/i.test(I.COLORS[k]) && (I.animGroup(k) === 'bob' || I.animGroup(k) === 'shake')) && Object.keys(I.COLORS).every((k) => I.GLYPHS[k]));
-check('los iconos pedidos existen: espada, mosquete, tanque, pluma y papiro (treaty), anillos (union)', () => ['sword', 'musket', 'tank', 'treaty', 'union'].every((k) => I.GLYPHS[k]));
+check('los iconos pedidos existen: espada, mosquete, tanque, pluma y papiro (treaty), anillos (union), cochecito (nacimiento)', () => ['sword', 'musket', 'tank', 'treaty', 'union', 'birth'].every((k) => I.GLYPHS[k]));
 check('todas las rutas estan bien formadas y caben en la caja 24x24 (margen para el borde)', () => {
     const bad = [];
     for (const k of I.KEYS) for (const p of I.GLYPHS[k]) {
@@ -98,6 +98,13 @@ check('draw pinta el borde blanco antes que el relleno y termina con save/restor
     const saves = c.calls.filter((s) => s === 'save').length; const restores = c.calls.filter((s) => s === 'restore').length;
     return firstFill > lastWhite && lastWhite >= 0 && saves === restores && c.calls.some((s) => s === 'fill:' + I.COLORS.sword) ? true : JSON.stringify(c.calls.slice(0, 12));
 });
+check('colores: de lejos (puntos) cada grupo se distingue de los demas (>= 60 de distancia RGB entre colores de grupos distintos)', () => {
+    const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); const bad = [];
+    for (const a of I.KEYS) for (const b of I.KEYS) { if (a >= b || I.groupOf(a) === I.groupOf(b)) continue; const d = Math.hypot(...rgb(I.COLORS[a]).map((v, i) => v - rgb(I.COLORS[b])[i])); if (d < 60) bad.push(a + '/' + b + ' ' + d.toFixed(0)); }
+    return bad.length === 0 ? true : bad.join(' | ');
+});
+check('colores: dentro de un mismo grupo los iconos comparten familia de color (la guerra es siempre roja)', () => I.COLORS.sword === I.COLORS.musket && I.COLORS.musket === I.COLORS.tank && I.COLORS.sport === I.COLORS.ceremony);
+check('nacimiento ya no es un vegetal: el cochecito tiene capota (relleno), cuna, asa y dos ruedas', () => I.GLYPHS.birth.length === 5 && I.GLYPHS.birth.filter((p) => /a1\.8 1\.8/.test(p.d)).length === 2);
 check('zoom: con la Tierra cerca (zoom >= 3,2) los iconos tienen su tamano de siempre y al alejarse solo encogen (monotono)', () => {
     let prev = -1; for (let z = 0; z <= 6; z += 0.05) { const k = I.zoomScale(z); if (k < prev - 1e-9) return 'baja en ' + z.toFixed(2); prev = k; }
     return I.zoomScale(3.2) === 1 && I.zoomScale(5) === 1 && I.zoomScale(0) < 0.4 && I.zoomScale(-3) === I.zoomScale(0);
@@ -157,7 +164,7 @@ check('espadas: se cruzan (giro adicional se reduce a 0) con un asentamiento de 
     const rots = []; for (let f = 0; f < I.ENTER_FRAMES; f++) rots.push(I.enterParams('sword', f / (I.ENTER_FRAMES - 1), 0).rot);
     const over = Math.max(...rots.map((r) => (r > 0 ? r : 0))); return rots[0] < -20 && rots[rots.length - 1] === 0 && over < 0.06 * 44 ? true : rots.join();
 });
-check('lapida: emerge de la tierra, recortada por la linea del suelo (clip) hasta llegar', () => { const a = I.enterParams('death', 0.5, 0); const z = I.enterParams('death', 1, 0); return a.clip === 21.5 && a.dy > 0 && z.clip === null && z.dy === 0; });
+check('lapida: emerge de la tierra, recortada por la linea del suelo (clip) hasta llegar', () => { const a = I.enterParams('death', 0.5, 0); const z = I.enterParams('death', 1, 0); const g = I.enterParams('death', 0.5, 1); return a.clip === 21 && a.dy > 0 && z.clip === null && z.dy === 0 && g.dy === 0 && g.clip === null; });   // el suelo (parte 1) no se mueve
 check('la ultima fotografia de la entrada (t=1) emite exactamente las mismas operaciones que el dibujo estatico', () => I.KEYS.every((k) => { const a = fakeCtx(); I.draw(a, k, 48, { Path2D: FakePath, x: 4, y: 4 }); const b = fakeCtx(); I.draw(b, k, 48, { Path2D: FakePath, x: 4, y: 4, t: 1 }); return JSON.stringify(a.calls) === JSON.stringify(b.calls); }));
 check('draw con cualquier fotograma de la entrada funciona, termina equilibrado y distinto del final para los intermedios', () => I.KEYS.every((k) => {
     const fin = JSON.stringify((() => { const c = fakeCtx(); I.draw(c, k, 48, { Path2D: FakePath }); return c.calls; })());

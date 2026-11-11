@@ -34,7 +34,7 @@ check('el 1939 de las pruebas de siempre es del siglo XX y el 2026 de hoy es dig
 check('plantilla: todas las epocas rellenan todas las ranuras', () => eachEra((e) => E.SLOTS.every((s) => e[s] !== undefined) || 'falta una ranura'));
 check('plantilla: nombre y nota en es y en', () => eachEra((e) => ['es', 'en'].every((l) => typeof e.name[l] === 'string' && e.name[l].length > 2 && typeof e.note[l] === 'string' && e.note[l].length > 5)));
 check('plantilla: las edades dicen que son convenciones regionales (Bronce, Hierro, Medievales)', () => ['bronze', 'iron', 'earlymed', 'highmed', 'classical'].every((id) => /convenci|Europe|Eurasia|Greece|Grecia|region|regi/i.test(E.byId(id).note.es + E.byId(id).note.en)));
-check('plantilla: colores todos #rrggbb', () => eachEra((e) => ['light', 'dark'].every((t) => ['bg', 'panel', 'text', 'muted', 'accent', 'ok', 'warn', 'err'].every((k) => HEX.test(e[t][k]))) && ['light', 'dark'].every((t) => ['ocean', 'shelf', 'land', 'landLine', 'line'].every((k) => HEX.test(e.map[t][k]))) && HEX.test(e.icons.rim) && HEX.test(e.icons.disc) && HEX.test(e.icons.tint.color)));
+check('plantilla: colores todos #rrggbb', () => eachEra((e) => ['light', 'dark'].every((t) => ['bg', 'panel', 'text', 'muted', 'accent', 'ok', 'warn', 'err'].every((k) => HEX.test(e[t][k]))) && ['light', 'dark'].every((t) => ['ocean', 'shelf', 'land', 'landLine', 'line'].every((k) => HEX.test(e.map[t][k]))) && HEX.test(e.icons.rim) && HEX.test(e.icons.tint.color) && !('disc' in e.icons)));
 check('tipografia: solo familias del sistema y acaba en una generica (nada de fuentes externas)', () => eachEra((e) => [e.type.heading, e.type.ui].every((f) => /(serif|sans-serif|monospace)\s*$/.test(f) && !/url\(|http|@import/i.test(f))));
 check('forma: estilos de borde y medidas razonables (el borde doble necesita >= 3 px)', () => eachEra((e) => ['solid', 'double', 'ridge', 'dashed', 'dotted'].includes(e.shape.border) && e.shape.bw >= 1 && e.shape.bw <= 5 && e.shape.radius >= 0 && e.shape.radius <= 20 && e.shape.btnRadius >= 0 && e.shape.btnRadius <= 14 && (e.shape.border !== 'double' || e.shape.bw >= 3)));
 check('ornamentos: cada esquina, filete y trama nombrados existen', () => eachEra((e) => !!(E.CORNERS[e.ornament.corner] && E.DIVIDERS[e.ornament.divider] && (e.ornament.texture === 'none' || E.TEXTURES[e.ornament.texture]))));
@@ -60,7 +60,7 @@ check('mapa: la tierra se distingue del mar (>= 1,15:1) y la linea de costa/fron
     for (const t of ['light', 'dark']) { const m = e.map[t]; if (E.contrast(m.land, m.ocean) < 1.15) return t + ' tierra/mar ' + E.contrast(m.land, m.ocean).toFixed(2); if (E.contrast(m.line, m.land) < 3) return t + ' frontera/tierra ' + E.contrast(m.line, m.land).toFixed(2); }
     return true;
 }));
-check('iconos: el borde contrasta con el disco de respaldo (>= 4:1) para que se vea sobre cualquier mapa', () => eachEra((e) => E.contrast(e.icons.rim, e.icons.disc) >= 4 || E.contrast(e.icons.rim, e.icons.disc).toFixed(2)));
+check('iconos: el borde que sigue la silueta es claro (luminancia >= 0,6), para que el trazo de color se lea sobre mapas oscuros', () => eachEra((e) => E.lum(e.icons.rim) >= 0.6 || E.lum(e.icons.rim).toFixed(2)));
 
 /* ---------------------------- "de un vistazo": epocas vecinas claramente distintas ---------------------------- */
 const dist = (a, b) => { const x = E.toRgb(a), y = E.toRgb(b); return Math.hypot(x[0] - y[0], x[1] - y[1], x[2] - y[2]); };

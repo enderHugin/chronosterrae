@@ -112,6 +112,16 @@ sale y cuánto se puede fiar de él.
 - **Detalle al acercar**: desde zoom 4,6 se superpone el mapa vectorial actual de OpenFreeMap
   (OpenStreetMap, ODbL): estilo completo desde 1950, solo agua y vegetación hasta hace 11 000 años (como
   aproximación, y así se rotula) y nada antes, porque el nivel del mar era otro.
+- **Iconos de línea (2026-11-11).** Los iconos de sucesos son ahora de **línea gruesa y color intenso**, sin disco ni anillo
+  alrededor: el contraste lo da un borde claro que sigue la silueta (blanco, o el de la época). Cada dibujo dice lo que es: espadas
+  cruzadas (guerra antes de 1500), mosquetes cruzados (1500–1913), tanque (desde 1914), papiro y pluma (tratado), anillos (alianza o
+  boda), bandera (política), urna (votación), estallido (atentado, violencia), volcán (desastre natural), señal de peligro (accidente),
+  **cochecito de bebé (nacimiento; antes un brote, que no decía «persona que nace»)**, lápida sin símbolo religioso (muerte), libro
+  abierto, notas musicales, lupa (descubrimiento), dinosaurio (extinción de especies), copa (deporte), medalla (premio), chincheta
+  (suceso sin tipo) y calendario. El color va por familia y se distingue de lejos, cuando los iconos pasan a puntos: rojo guerra, vino
+  violencia, naranja lava desastre natural, ámbar accidente, azules política y votaciones, verde tratados, rosa uniones, cian
+  nacimientos, grafito muertes, morados obras, verde azulado descubrimientos, oro premios y deporte, pardo fósil extinciones y gris
+  azulado lo genérico (`npm run check:event-icons` exige ≥ 60 de distancia RGB entre grupos). El anillo que respira solo rodea los puntos.
 - **Iconos según la distancia (2026-11-11).** Con la Tierra lejos los iconos de sucesos encogen (tamaño normal con zoom ≥ 3,2;
   80 % en la vista inicial; ~45 % a zoom 1,15) y, con la Tierra muy lejos (zoom < 1,3), se funden en **puntos de su color** (el del
   icono, con el matiz de la época) que conservan el anillo que respira. La zona de toque nunca baja de 7 px. Escala y fundido son

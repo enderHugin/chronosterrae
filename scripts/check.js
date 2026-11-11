@@ -446,6 +446,12 @@ check('epocas: index.html carga map/eras.js antes del script principal y usa Chr
     const h = readIndex();
     return h.indexOf('./map/eras.js') > 0 && h.indexOf('./map/eras.js') < h.indexOf("'use strict';") && /ChronosEras\.cssVars/.test(h) && /ChronosEras\.at\(/.test(h);
 });
+check('index.html: todos los <script> en linea compilan (un error de sintaxis deja la pagina en blanco)', () => {
+    const vm = require('vm'); const h = readIndex(); const bad = [];
+    const re = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g; let m; let n = 0;
+    while ((m = re.exec(h))) { n++; try { new vm.Script(m[1], { filename: 'index.html#script' + n }); } catch (e) { bad.push('script ' + n + ': ' + e.message); } }
+    return n > 0 && bad.length === 0 ? true : (bad.join(' | ') || 'no hay scripts');
+});
 /* ---- Maquetacion: los recuadros viven en columnas en flujo (nada de coordenadas absolutas sueltas) y los botones, en menus ---- */
 check('maquetacion: los recuadros estan en #dock-l / #dock-r', () => {
     const h = readIndex();

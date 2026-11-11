@@ -103,76 +103,96 @@
     const ellipse = (cx, cy, rx, ry) => 'M' + r1(cx - rx) + ' ' + cy + ' a' + rx + ' ' + ry + ' 0 1 0 ' + r1(2 * rx) + ' 0 a' + rx + ' ' + ry + ' 0 1 0 ' + r1(-2 * rx) + ' 0 Z';
 
     // Partes: t = 'f' relleno del color del icono, 'k' relleno oscuro, 'l' relleno claro, 's' trazo del color (w = grosor), 'd' trazo oscuro, 'c' trazo claro. r = giro en grados alrededor de (12,12).
+    // ESTILO (2026-11-11, pedido del creador): linea gruesa de color intenso y forma facil de reconocer, sin circulo alrededor; el borde claro
+    // (blanco o el de la epoca) sigue la silueta para que se lea sobre cualquier mapa. Cada dibujo dice lo que es: espadas, mosquete
+    // humeante, tanque, papiro y pluma, anillos, bandera, urna, estallido, volcan, senal de peligro, cochecito de bebe (nacimiento), lapida,
+    // libro abierto, notas musicales, lupa, dinosaurio (extincion), copa, medalla, chincheta (suceso) y calendario.
+    const W = 2.5;                       // grosor del trazo principal (unidades de la caja 24x24)
     const SWORD = [
-        { d: 'M12 0.8 L13.5 3.4 V14.2 H10.5 V3.4 Z', t: 'f' }, { d: 'M5.6 14.2 H18.4 V16.6 H5.6 Z', t: 'k' }, { d: 'M11 16.6 H13 V20.6 H11 Z', t: 'k' }, { d: circle(12, 22.2, 1.6), t: 'f' }
+        { d: 'M12 1.8 V14.6', t: 's', w: W }, { d: 'M7.6 14.6 H16.4', t: 's', w: W }, { d: 'M12 14.6 V20', t: 's', w: W }, { d: circle(12, 21.6, 1.7), t: 'f' }
     ];
     const rot = (parts, r) => parts.map((p) => Object.assign({ r }, p));
+    const MUSKET = [
+        { d: 'M12 1.4 V13.8', t: 's', w: 2 }, { d: 'M10.4 13 H13.6 L15 21.6 C13.6 22.6 10.4 22.6 9 21.6 Z', t: 'f' }, { d: 'M13.6 15.6 C15.4 15.8 15.6 17.6 14.4 18.2', t: 's', w: 1.4 }
+    ];
     const GLYPHS = {
-        sword: rot(SWORD, -36).concat(rot(SWORD, 36)),
-        musket: [
-            { d: 'M1.5 8.6 H17 V12.2 H1.5 Z', t: 'f', r: -32 }, { d: 'M13 12.2 H17 L22.5 13.4 V18 H19 L16 15.6 H13 Z', t: 'k', r: -32 },
-            { d: 'M3 7 V8.6', t: 'd', w: 1.8, r: -32 }, { d: circle(0.9, 6.6, 1.7), t: 'l', r: -32 }
-        ],
+        sword: rot(SWORD, -38).concat(rot(SWORD, 38)),
+        // Mosquetes cruzados: canon largo y culata ancha (se distinguen de las espadas por la culata y la falta de guarda)
+        musket: rot(MUSKET, -30).concat(rot(MUSKET, 30)),
         tank: [
-            { d: 'M16 8.4 H23 V10.4 H16 Z', t: 'k' }, { d: 'M7.5 12 V9.8 a1.6 1.6 0 0 1 1.6 -1.6 H14.2 a1.6 1.6 0 0 1 1.6 1.6 V12 Z', t: 'f' },
-            { d: 'M3 15.2 a3.2 3.2 0 0 1 3.2 -3.2 H17.8 a3.2 3.2 0 0 1 3.2 3.2 a3.2 3.2 0 0 1 -3.2 3.2 H6.2 a3.2 3.2 0 0 1 -3.2 -3.2 Z', t: 'f' },
-            { d: circle(6.4, 15.2, 1.15), t: 'l' }, { d: circle(12, 15.2, 1.15), t: 'l' }, { d: circle(17.6, 15.2, 1.15), t: 'l' }
+            { d: 'M15 11.6 H22.6', t: 's', w: 2.2 }, { d: 'M7.6 14.8 V11 a1.4 1.4 0 0 1 1.4 -1.4 H13.6 a1.4 1.4 0 0 1 1.4 1.4 V14.8', t: 's', w: W },
+            { d: 'M5.2 14.8 H18.8 a3 3 0 0 1 0 6 H5.2 a3 3 0 0 1 0 -6 Z', t: 's', w: W },
+            { d: circle(7.4, 17.8, 1.1), t: 'f' }, { d: circle(12, 17.8, 1.1), t: 'f' }, { d: circle(16.6, 17.8, 1.1), t: 'f' }
         ],
         treaty: [
-            { d: 'M5 4 H17.5 V16 H5 Z', t: 'f' }, { d: 'M4.2 16 H18.3 a1.9 1.9 0 0 1 0 3.8 H6.1 a1.9 1.9 0 0 1 -1.9 -1.9 Z', t: 'k' },
-            { d: 'M7.5 7.4 H14', t: 'c', w: 1.3 }, { d: 'M7.5 10.2 H13', t: 'c', w: 1.3 }, { d: 'M7.5 13 H11', t: 'c', w: 1.3 },
-            { d: 'M21.5 1.8 C14.5 3.6 11.4 9 10.2 14.6 L12 13.8 C16.6 11.8 19.6 8 21.5 1.8 Z', t: 'k' }, { d: 'M10.2 14.6 L8.2 21', t: 'd', w: 1.5 }
+            { d: 'M6 4 H16.6 V18.4 H6 Z', t: 's', w: W }, { d: 'M4 18.6 H18.6', t: 's', w: W },
+            { d: 'M8.6 8 H13.8', t: 's', w: 1.5 }, { d: 'M8.6 11 H13.8', t: 's', w: 1.5 }, { d: 'M8.6 14 H11.8', t: 's', w: 1.5 },
+            { d: 'M22 1.8 C17 3.4 14.6 7.4 13.6 12.4 L15.2 11.8 C18.8 10 21 6.6 22 1.8 Z', t: 'f' }, { d: 'M13.6 12.4 L12 17', t: 's', w: 1.6 }
         ],
         union: [
-            { d: circle(9, 12, 5.4), t: 's', w: 2.6 }, { d: circle(15, 12, 5.4), t: 's', w: 2.6 }
+            { d: circle(8.8, 12.6, 5.6), t: 's', w: W + 0.2 }, { d: circle(15.2, 12.6, 5.6), t: 's', w: W + 0.2 }
         ],
         political: [
-            { d: 'M5.5 3 V22', t: 'd', w: 1.9 }, { d: 'M5.5 4 H19.5 L16.2 8.6 L19.5 13.2 H5.5 Z', t: 'f' }
+            { d: 'M5.4 2.6 V21.8', t: 's', w: W }, { d: 'M5.4 3.6 H19.6 L16.2 8.4 L19.6 13.2 H5.4 Z', t: 'f' }
         ],
         natural: [
-            { d: 'M1.5 21 L8.6 9.5 H15.4 L22.5 21 Z', t: 'f' }, { d: 'M12 8.4 C8.6 6.6 10.4 3.4 12 1.8 C13.6 3.4 15.4 6.6 12 8.4 Z', t: 'k' }
+            { d: 'M1.8 21 L8.4 10.2 H15.6 L22.2 21 Z', t: 's', w: W }, { d: 'M12 8.4 V3.6 M8.8 7.6 L6.8 4.4 M15.2 7.6 L17.2 4.4', t: 's', w: 2.2 }
         ],
-        violence: [{ d: star(12, 12, 11, 5.2, 8, -Math.PI / 2 + Math.PI / 16), t: 'f' }, { d: circle(12, 12, 2.6), t: 'l' }],
+        violence: [{ d: star(12, 12, 10.4, 4.8, 8, -Math.PI / 2 + Math.PI / 16), t: 's', w: 2.2 }, { d: circle(12, 12, 2), t: 'f' }],
         election: [
-            { d: 'M8 2.5 H16 V10 H8 Z', t: 'l' }, { d: 'M9.6 6.2 L11.4 8 L14.6 4', t: 's', w: 1.4 },
-            { d: 'M3.5 10 H20.5 V21 H3.5 Z', t: 'f' }, { d: 'M7 13.6 H17', t: 'd', w: 1.8 }
+            { d: 'M8.4 2.2 H15.6 V10.4 H8.4 Z', t: 's', w: 1.9 }, { d: 'M10.2 6.6 L11.6 8 L13.8 4.8', t: 's', w: 1.5 },
+            { d: 'M3.6 11.4 H20.4 V21 H3.6 Z', t: 's', w: W }, { d: 'M8.4 14.6 H15.6', t: 's', w: 2.2 }
         ],
         sport: [
-            { d: 'M7 3 H17 V9 a5 5 0 0 1 -10 0 Z', t: 'f' }, { d: 'M7 5 H4.2 a2.8 2.8 0 0 0 2.9 5', t: 's', w: 1.6 }, { d: 'M17 5 H19.8 a2.8 2.8 0 0 1 -2.9 5', t: 's', w: 1.6 },
-            { d: 'M10.8 13.8 H13.2 V17.6 H10.8 Z', t: 'f' }, { d: 'M7.5 17.6 H16.5 V21 H7.5 Z', t: 'k' }
+            { d: 'M7 3.4 H17 V8.6 a5 5 0 0 1 -10 0 Z', t: 's', w: W }, { d: 'M7 5.4 H4.4 a2.6 2.6 0 0 0 2.8 4.8', t: 's', w: 1.8 }, { d: 'M17 5.4 H19.6 a2.6 2.6 0 0 1 -2.8 4.8', t: 's', w: 1.8 },
+            { d: 'M12 13.8 V18', t: 's', w: W }, { d: 'M7.6 20.4 H16.4', t: 's', w: W + 0.4 }
         ],
-        ceremony: [{ d: star(12, 12.8, 10.6, 4.4, 5), t: 'f' }],
-        accident: [{ d: 'M12 2.5 L22.5 20.5 H1.5 Z', t: 'f' }, { d: 'M12 9 V14.4', t: 'c', w: 2 }, { d: circle(12, 17.4, 1.2), t: 'l' }],
+        ceremony: [
+            { d: 'M7.4 1.8 L12 9.4 L16.6 1.8', t: 's', w: 2.2 }, { d: circle(12, 15.2, 5.6), t: 's', w: W }, { d: star(12, 15.2, 3.2, 1.35, 5), t: 'f' }
+        ],
+        accident: [{ d: 'M12 2.8 L22 20.4 H2 Z', t: 's', w: W }, { d: 'M12 9.4 V14', t: 's', w: 2.6 }, { d: circle(12, 17.2, 1.45), t: 'f' }],
         calendar: [
-            { d: 'M3 5 H21 V21 H3 Z', t: 'f' }, { d: 'M3 5 H21 V9.4 H3 Z', t: 'k' }, { d: 'M8 2.4 V6.2', t: 'd', w: 1.8 }, { d: 'M16 2.4 V6.2', t: 'd', w: 1.8 },
-            { d: 'M6.2 12 H9 V14.4 H6.2 Z', t: 'l' }, { d: 'M10.6 12 H13.4 V14.4 H10.6 Z', t: 'l' }, { d: 'M15 12 H17.8 V14.4 H15 Z', t: 'l' }, { d: 'M6.2 16.2 H9 V18.6 H6.2 Z', t: 'l' }, { d: 'M10.6 16.2 H13.4 V18.6 H10.6 Z', t: 'l' }
+            { d: 'M3.6 5.4 H20.4 V20.8 H3.6 Z', t: 's', w: W }, { d: 'M3.6 9.6 H20.4', t: 's', w: 2 }, { d: 'M8 2.6 V7', t: 's', w: 2.2 }, { d: 'M16 2.6 V7', t: 's', w: 2.2 },
+            { d: circle(8, 13.4, 1.1), t: 'f' }, { d: circle(12, 13.4, 1.1), t: 'f' }, { d: circle(16, 13.4, 1.1), t: 'f' }, { d: circle(8, 17.2, 1.1), t: 'f' }, { d: circle(12, 17.2, 1.1), t: 'f' }
         ],
+        // Nacimiento: cochecito de bebe (capota, cuna, asa y ruedas). Antes era un brote: no decia «persona que nace».
         birth: [
-            { d: 'M12 21.5 V11', t: 's', w: 1.9 },
-            { d: 'M12 14 C6 14 3.6 10 3.6 5.4 C9 5.4 12 8.6 12 14 Z', t: 'f' }, { d: 'M12 11.4 C12 6.4 15 3 20.4 3 C20.4 8.4 17.2 11.4 12 11.4 Z', t: 'f' }
+            { d: 'M4.6 11.6 A7.2 7.2 0 0 1 11.8 4.4 V11.6 Z', t: 'f' },
+            { d: 'M4.6 11.6 H19.4 C19.4 15 16.4 17 12 17 C7.6 17 4.6 15 4.6 11.6 Z', t: 's', w: W }, { d: 'M19.4 11.6 L21.6 7.2', t: 's', w: 2.2 },
+            { d: circle(8, 20.2, 1.8), t: 's', w: 1.8 }, { d: circle(16, 20.2, 1.8), t: 's', w: 1.8 }
         ],
-        death: [{ d: 'M5.5 21.5 V10 a6.5 6.5 0 0 1 13 0 V21.5 Z', t: 'f' }, { d: 'M12 8 V16', t: 'c', w: 1.8 }, { d: 'M8.8 11.2 H15.2', t: 'c', w: 1.8 }],
+        // Muerte: lapida sobre el suelo (sin simbolo religioso)
+        death: [
+            { d: 'M6.2 20.6 V10.2 a5.8 5.8 0 0 1 11.6 0 V20.6', t: 's', w: W }, { d: 'M2.8 21 H21.2', t: 's', w: W }, { d: 'M9.6 12 H14.4 M9.6 15.4 H14.4', t: 's', w: 1.6 }
+        ],
         publication: [
-            { d: 'M1.8 5.2 C6 4 10 4.4 12 6.6 V20.4 C10 18.4 6 18 1.8 19.2 Z', t: 'f' }, { d: 'M22.2 5.2 C18 4 14 4.4 12 6.6 V20.4 C14 18.4 18 18 22.2 19.2 Z', t: 'k' }
+            { d: 'M12 6.4 C9.6 4.6 6 4.2 2.4 5.2 V19.2 C6 18.2 9.6 18.6 12 20.4', t: 's', w: W },
+            { d: 'M12 6.4 C14.4 4.6 18 4.2 21.6 5.2 V19.2 C18 18.2 14.4 18.6 12 20.4', t: 's', w: W }, { d: 'M12 6.4 V20.4', t: 's', w: 2 }
         ],
         composition: [
-            { d: 'M9 17.4 V6.4', t: 's', w: 1.8 }, { d: 'M19 15.4 V4.4', t: 's', w: 1.8 }, { d: 'M9 6.2 L19 4 V7.8 L9 10 Z', t: 'f' },
+            { d: 'M9 17.4 V6.4', t: 's', w: 2.2 }, { d: 'M19 15.4 V4.4', t: 's', w: 2.2 }, { d: 'M9 6.2 L19 4 V7.8 L9 10 Z', t: 'f' },
             { d: ellipse(6.4, 17.6, 3.2, 2.5), t: 'f' }, { d: ellipse(16.4, 15.6, 3.2, 2.5), t: 'f' }
         ],
-        discovery: [{ d: circle(9.6, 9.6, 6), t: 's', w: 2.6 }, { d: 'M14.2 14.2 L21 21', t: 's', w: 3.4 }, { d: 'M6.8 8.4 a3.2 3.2 0 0 1 2.6 -2.2', t: 'c', w: 1.3 }],
+        discovery: [{ d: circle(9.8, 9.8, 6.2), t: 's', w: W + 0.2 }, { d: 'M14.4 14.4 L21 21', t: 's', w: 3.6 }, { d: 'M7 8.6 a3.2 3.2 0 0 1 2.6 -2.2', t: 's', w: 1.4 }],
+        // Extincion de especies: dinosaurio (saurópodo) de perfil
         extinction: [
-            { d: 'M12 2 C6.4 2 3 5.8 3 10.4 C3 13.4 4.6 15.4 7 16.4 V20.6 H17 V16.4 C19.4 15.4 21 13.4 21 10.4 C21 5.8 17.6 2 12 2 Z', t: 'f' },
-            { d: circle(8.4, 10.6, 2.3), t: 'l' }, { d: circle(15.6, 10.6, 2.3), t: 'l' }, { d: 'M10 20.6 V17.4 M14 20.6 V17.4', t: 'd', w: 1.2 }
+            { d: 'M2 15.6 C5.4 15.6 6.6 11.8 10.6 11.8 H15 C16.6 11.8 17 9 17.4 6.2 C17.6 4.6 19 3.8 20.6 4.4 L21.6 5.6', t: 's', w: W },
+            { d: 'M7.4 15.6 H16 C17.4 15.6 18 14 17.8 12', t: 's', w: 2.2 }, { d: 'M9.6 15.6 V20.4 M15 15.6 V20.4', t: 's', w: W }
         ],
-        event: [{ d: circle(12, 12, 8.2), t: 'f' }, { d: circle(12, 12, 3), t: 'l' }]
+        // Suceso sin tipo propio: chincheta de mapa
+        event: [{ d: 'M12 21.6 C7.4 16 5.2 12.8 5.2 9.6 a6.8 6.8 0 0 1 13.6 0 C18.8 12.8 16.6 16 12 21.6 Z', t: 's', w: W }, { d: circle(12, 9.6, 2.3), t: 'f' }]
     };
     const KEYS = Object.keys(GLYPHS);
 
-    // Color del icono. Los tipos de registro mantienen los colores de siempre (KIND_COLORS de index.html); las clases, uno propio.
+    // Color del icono: intenso y por FAMILIA, para que de lejos (puntos de color) tambien se distinga el tipo. Rojo guerra, vino violencia,
+    // naranja lava desastre natural, ambar peligro (accidente), azules politica y votaciones, verde tratados (paz), rosa uniones y bodas,
+    // cian nacimientos, grafito muertes, morados obras, verde azulado descubrimientos, oro premios y deporte, pardo fosil extinciones, gris
+    // azulado lo generico. scripts/check-event-icons.js comprueba que cada grupo se distingue de los demas.
     const COLORS = {
-        sword: '#c62828', musket: '#c62828', tank: '#c62828', treaty: '#8d6e3f', union: '#d4a017', political: '#ef6c00', natural: '#00897b', violence: '#8e1b52',
-        election: '#3949ab', sport: '#00838f', ceremony: '#e91e63', accident: '#f9a825', calendar: '#607d8b',
-        birth: '#43a047', death: '#6d4c41', publication: '#1e88e5', composition: '#8e24aa', discovery: '#f9a825', extinction: '#e53935', event: '#fb8c00'
+        sword: '#d32f2f', musket: '#d32f2f', tank: '#d32f2f', violence: '#8e1650', natural: '#e65100', accident: '#e8a000',
+        political: '#1565c0', election: '#283593', treaty: '#2e7d32', union: '#e0447f',
+        birth: '#00a3d9', death: '#4a4f57', publication: '#6a3fb5', composition: '#8e44c4', discovery: '#00897b',
+        sport: '#a87f00', ceremony: '#a87f00', extinction: '#7a5528', event: '#607d8b', calendar: '#607d8b'
     };
     // Grupo de animacion: 'shake' = sacudida horizontal (conflicto, desastre); 'bob' = flotar vertical (el resto).
     const SHAKE = new Set(['sword', 'musket', 'tank', 'violence', 'political', 'natural', 'accident']);
@@ -193,8 +213,8 @@
 
     /* ---------------------------- Entrada animada ---------------------------- */
     // Al aparecer, cada icono hace un gesto corto y sobrio que dice lo que es (≈1 s, aceleracion suave, sin rebotes ni efectos): dos espadas que
-    // se cruzan, una lapida que emerge de la tierra, un tanque que entra rodando, una pluma que escribe, dos anillos que se juntan, un brote que
-    // crece... El resultado se pre-dibuja en ENTER_FRAMES fotogramas por icono (t de 0 a 1); el ultimo es identico al sprite estatico.
+    // se cruzan, una lapida que emerge de la tierra, un tanque que entra rodando, una pluma que escribe, dos anillos que se juntan, un cochecito
+    // que llega rodando, una medalla que se cuelga, un mosquete que echa humo... El resultado se pre-dibuja en ENTER_FRAMES fotogramas por icono (t de 0 a 1); el ultimo es identico al sprite estatico.
     const ENTER_FRAMES = 10;
     const ENTER_MS = 1100;
     const clamp01 = (x) => Math.max(0, Math.min(1, x));
@@ -205,11 +225,11 @@
     // Transformacion por parte: dx, dy (unidades de la caja 24x24), rot (grados, ADICIONAL a la propia del dibujo), sx, sy, a (opacidad), pv (pivote), clip (y del suelo)
     const ENTER = {
         sword: (e, i) => { const k = settle(e); return { rot: (i < 4 ? -44 : 44) * (1 - k), a: sub(e, 0, 0.35) }; },
-        musket: (e) => ({ rot: -40 * (1 - e), a: sub(e, 0, 0.4) }),
+        musket: (e, i) => ({ rot: (i < 3 ? -40 : 40) * (1 - e), a: sub(e, 0, 0.35) }),                                                     // los mosquetes se cruzan
         tank: (e) => ({ dx: -16 * (1 - e), a: sub(e, 0, 0.35) }),
         treaty: (e, i) => {
             if (i <= 1) return { a: sub(e, 0, 0.3) };
-            if (i <= 4) { const k = i - 2; return { sx: sub(e, 0.3 + 0.17 * k, 0.55 + 0.17 * k), pv: [7.5, 12], a: sub(e, 0.25, 0.4) }; }   // las lineas se van escribiendo
+            if (i <= 4) { const k = i - 2; return { sx: sub(e, 0.3 + 0.17 * k, 0.55 + 0.17 * k), pv: [8.6, 12], a: sub(e, 0.25, 0.4) }; }   // las lineas se van escribiendo
             return { dx: 5 * (1 - e), dy: -4 * (1 - e), a: sub(e, 0.1, 0.4) };                                                              // la pluma llega escribiendo
         },
         union: (e, i) => ({ dx: (i === 0 ? -6 : 6) * (1 - e), a: sub(e, 0, 0.4) }),
@@ -218,16 +238,16 @@
         violence: (e) => { const k = lerp(0.3, 1, settle(e)); return { sx: k, sy: k, a: sub(e, 0, 0.3) }; },
         election: (e, i) => (i <= 1 ? { dy: -6 * (1 - e), a: sub(e, 0, 0.5) } : { a: sub(e, 0, 0.3) }),   // la papeleta baja a la urna
         sport: (e) => ({ dy: 6 * (1 - e), a: sub(e, 0, 0.4) }),
-        ceremony: (e) => { const k = lerp(0.5, 1, e); return { rot: -30 * (1 - e), sx: k, sy: k, a: sub(e, 0, 0.4) }; },
+        ceremony: (e) => ({ rot: -32 * (1 - e), pv: [12, 1.8], a: sub(e, 0, 0.35) }),                                             // la medalla se cuelga y oscila
         accident: (e) => { const k = lerp(0.55, 1, e); return { sx: k, sy: k, pv: [12, 20.5], a: sub(e, 0, 0.4) }; },
         calendar: (e, i) => (i < 4 ? { dy: 4 * (1 - e), a: sub(e, 0, 0.35) } : { a: sub(e, 0.45 + 0.08 * (i - 4), 0.75 + 0.08 * (i - 4)) }),
-        birth: (e, i) => (i === 0 ? { sy: sub(e, 0, 0.55), pv: [12, 21.5], a: sub(e, 0, 0.15) } : { sx: sub(e, 0.3, 1), sy: sub(e, 0.3, 1), pv: [12, 13], a: sub(e, 0.25, 0.5) }),   // el brote crece
-        death: (e) => ({ dy: 16 * (1 - e), clip: 21.5 }),                                                                                   // la lapida emerge de la tierra
+        birth: (e) => ({ dx: -9 * (1 - e), a: sub(e, 0, 0.35) }),                                                                           // el cochecito llega rodando
+        death: (e, i) => (i === 1 ? { a: sub(e, 0, 0.3) } : { dy: 16 * (1 - e), clip: 21 }),                                               // la lapida emerge de la tierra (el suelo ya esta)
         publication: (e) => ({ sx: sub(e, 0, 1), pv: [12, 12], a: sub(e, 0, 0.3) }),                                                        // el libro se abre
         composition: (e) => ({ dy: 6 * (1 - e), a: sub(e, 0, 0.5) }),
         discovery: (e) => ({ rot: -35 * (1 - e), pv: [20, 20], a: sub(e, 0, 0.4) }),
         extinction: (e) => { const k = lerp(0.8, 1, e); return { sx: k, sy: k, a: sub(e, 0, 0.6) }; },
-        event: (e) => { const k = lerp(0.4, 1, e); return { sx: k, sy: k, a: sub(e, 0, 0.5) }; }
+        event: (e) => ({ dy: -7 * (1 - e), a: sub(e, 0, 0.4) })                                                                    // la chincheta se clava
     };
     const IDENT = { dx: 0, dy: 0, rot: 0, sx: 1, sy: 1, a: 1, pv: [12, 12], clip: null };
     /** Transformacion de la parte `i` del icono `key` en el instante t (0..1) de su entrada. En t >= 1 es la identidad. */

@@ -13,7 +13,7 @@
  *   shape           border (solid/double/ridge/dashed/dotted), bw (px), radius (px de los recuadros), btnRadius
  *   ornament        corner (adorno de esquinas), divider (filete bajo los titulos), texture (trama muy tenue del fondo de los recuadros)
  *   cursor          glifo del cursor sobre el mapa (null = el del sistema)
- *   icons           estilo de los iconos de sucesos: rim (borde), tint {color, amt} (matiz sobre el color propio, que sigue siendo reconocible), disc (disco de respaldo)
+ *   icons           estilo de los iconos de sucesos: rim (borde claro que sigue la silueta), tint {color, amt} (matiz sobre el color propio, que sigue siendo reconocible)
  * Intensidad: 0 = sin ambientacion (aspecto neutro de siempre); 1 = sutil (paleta, tipografia y nombre de la epoca); 2 = completa (ademas formas,
  * ornamentos, texturas, cursor, iconos y colores del mapa).
  */
@@ -53,7 +53,7 @@
             type: { heading: "'Rockwell', 'Roboto Slab', 'Courier New', serif", ui: SYS_UI, weight: 800, transform: 'uppercase', spacing: '0.08em', style: 'normal' },
             shape: { border: 'solid', bw: 2, radius: 14, btnRadius: 10 },
             ornament: { corner: 'chip', divider: 'strata', texture: 'strata' }, cursor: 'pick',
-            icons: { rim: '#e9e1d2', tint: { color: '#8a3410', amt: 0.22 }, disc: '#1d1713' } },
+            icons: { rim: '#e9e1d2', tint: { color: '#8a3410', amt: 0.22 } } },
         { id: 'paleolithic', from: -3000000, name: { es: 'Paleolítico', en: 'Palaeolithic' },
             note: { es: 'Era glacial y cazadores-recolectores (convención).', en: 'Ice age hunter-gatherers (convention).' },
             light: pl('#e8dcc9', '#f0e6d4', '#2a1d14', '#5e4a39', '#8a3517'), dark: pd('#1a130e', '#231a13', '#ecdfcc', '#a8967f', '#e58a5c'),
@@ -61,7 +61,7 @@
             type: { heading: "'Rockwell', 'Roboto Slab', 'Courier New', serif", ui: SYS_UI, weight: 800, transform: 'uppercase', spacing: '0.06em', style: 'normal' },
             shape: { border: 'solid', bw: 3, radius: 16, btnRadius: 12 },
             ornament: { corner: 'hands', divider: 'dots', texture: 'grain' }, cursor: 'flint',
-            icons: { rim: '#f1e2c6', tint: { color: '#a0502a', amt: 0.3 }, disc: '#24160e' } },
+            icons: { rim: '#f1e2c6', tint: { color: '#a0502a', amt: 0.3 } } },
         { id: 'neolithic', from: -9500, name: { es: 'Neolítico', en: 'Neolithic' },
             note: { es: 'Agricultura y aldeas; el momento varía mucho según la región.', en: 'Farming and villages; timing varies a lot by region.' },
             light: pl('#e5e7cc', '#eef0d9', '#262a14', '#555c33', '#3f6a10'), dark: pd('#13170d', '#1b2013', '#e6e9cc', '#a3ab82', '#8ed46a'),
@@ -69,7 +69,7 @@
             type: { heading: "'Rockwell', 'Cambria', 'Georgia', serif", ui: SYS_UI, weight: 700, transform: 'none', spacing: '0.02em', style: 'normal' },
             shape: { border: 'dashed', bw: 2, radius: 12, btnRadius: 9 },
             ornament: { corner: 'spiral', divider: 'zigzag', texture: 'weave' }, cursor: 'axe',
-            icons: { rim: '#eef0cf', tint: { color: '#6d7a1c', amt: 0.28 }, disc: '#1a2010' } },
+            icons: { rim: '#eef0cf', tint: { color: '#6d7a1c', amt: 0.28 } } },
         { id: 'bronze', from: -3299, name: { es: 'Edad del Bronce', en: 'Bronze Age' },
             note: { es: 'Convención sobre todo del Próximo Oriente y Europa; en otras regiones no hubo, o fue otra fecha.', en: 'Mainly a Near East / Europe convention; elsewhere it did not happen, or at another date.' },
             light: pl('#dfe9e2', '#e9f2ec', '#17261f', '#46584d', '#0f6b5c'), dark: pd('#0e1715', '#15211e', '#dcebe4', '#97aaa1', '#5fd6c0'),
@@ -77,7 +77,7 @@
             type: { heading: "'Trajan Pro', 'Optima', 'Palatino Linotype', 'Book Antiqua', serif", ui: SYS_UI, weight: 700, transform: 'uppercase', spacing: '0.07em', style: 'normal' },
             shape: { border: 'double', bw: 4, radius: 3, btnRadius: 3 },
             ornament: { corner: 'step', divider: 'meander', texture: 'none' }, cursor: 'spear',
-            icons: { rim: '#e2c98f', tint: { color: '#2e8b78', amt: 0.24 }, disc: '#10211e' } },
+            icons: { rim: '#ecd8a6', tint: { color: '#2e8b78', amt: 0.24 } } },
         { id: 'iron', from: -1199, name: { es: 'Edad del Hierro', en: 'Iron Age' },
             note: { es: 'Convención eurasiática; empieza en fechas distintas según la región.', en: 'Eurasian convention; begins at different dates by region.' },
             light: pl('#e1e2e6', '#eaebee', '#1d2026', '#4c525c', '#8a2f1a'), dark: pd('#121317', '#1a1c21', '#e4e6ea', '#9ba0aa', '#e8826a'),
@@ -85,7 +85,7 @@
             type: { heading: "'Palatino Linotype', 'Book Antiqua', 'Palatino', serif", ui: SYS_UI, weight: 800, transform: 'uppercase', spacing: '0.05em', style: 'normal' },
             shape: { border: 'ridge', bw: 4, radius: 2, btnRadius: 2 },
             ornament: { corner: 'knotwork', divider: 'rope', texture: 'weave' }, cursor: 'celtic',
-            icons: { rim: '#d3d6dc', tint: { color: '#8a3b22', amt: 0.26 }, disc: '#16181d' } },
+            icons: { rim: '#d3d6dc', tint: { color: '#8a3b22', amt: 0.26 } } },
         { id: 'classical', from: -499, name: { es: 'Antigüedad clásica', en: 'Classical antiquity' },
             note: { es: 'Grecia y Roma; en el resto del mundo, otros periodos.', en: 'Greece and Rome; other periods elsewhere in the world.' },
             light: pl('#f3f0e8', '#faf8f2', '#1b2433', '#4a5568', '#1c4d8c'), dark: pd('#0d1420', '#142031', '#e4ebf6', '#97a6bd', '#85b4ee'),
@@ -93,7 +93,7 @@
             type: { heading: "'Trajan Pro', 'Cinzel', 'Palatino Linotype', 'Book Antiqua', serif", ui: "'Palatino Linotype', 'Book Antiqua', Palatino, serif", weight: 700, transform: 'uppercase', spacing: '0.1em', style: 'normal' },
             shape: { border: 'double', bw: 4, radius: 0, btnRadius: 0 },
             ornament: { corner: 'meander', divider: 'meander2', texture: 'none' }, cursor: 'laurel',
-            icons: { rim: '#f7f3e8', tint: { color: '#2a5fa8', amt: 0.2 }, disc: '#0f1a2c' } },
+            icons: { rim: '#f7f3e8', tint: { color: '#2a5fa8', amt: 0.2 } } },
         { id: 'earlymed', from: 476, name: { es: 'Alta Edad Media', en: 'Early Middle Ages' },
             note: { es: 'Del 476 al 1000 aprox.; convención europea.', en: 'c. 476–1000; a European convention.' },
             light: pl('#ece3c6', '#f4edd4', '#1f2a1c', '#4f5a47', '#2b5a34'), dark: pd('#10160e', '#181f14', '#e9eed8', '#a1ac90', '#97cf86'),
@@ -101,7 +101,7 @@
             type: { heading: "'Papyrus', 'Uncial Antiqua', 'Palatino Linotype', 'Book Antiqua', serif", ui: "'Palatino Linotype', 'Book Antiqua', Palatino, serif", weight: 700, transform: 'none', spacing: '0.03em', style: 'italic' },
             shape: { border: 'solid', bw: 3, radius: 8, btnRadius: 6 },
             ornament: { corner: 'knot', divider: 'vine', texture: 'paper' }, cursor: 'quill',
-            icons: { rim: '#f3e6b4', tint: { color: '#2f6b3a', amt: 0.24 }, disc: '#14200f' } },
+            icons: { rim: '#f3e6b4', tint: { color: '#2f6b3a', amt: 0.24 } } },
         { id: 'highmed', from: 1000, name: { es: 'Plena y Baja Edad Media', en: 'High and Late Middle Ages' },
             note: { es: 'Del 1000 a 1450 aprox.; convención europea.', en: 'c. 1000–1450; a European convention.' },
             light: pl('#eee1d0', '#f6ebdc', '#2a1620', '#634452', '#5a1f7a'), dark: pd('#0f1021', '#171832', '#ecebf8', '#a3a6c4', '#c79bff'),
@@ -109,7 +109,7 @@
             type: { heading: "'Garamond', 'Palatino Linotype', 'Book Antiqua', serif", ui: "'Garamond', 'Palatino Linotype', 'Book Antiqua', serif", weight: 700, transform: 'none', spacing: '0.04em', style: 'normal' },
             shape: { border: 'double', bw: 4, radius: 0, btnRadius: 0 },
             ornament: { corner: 'trefoil', divider: 'diamonds', texture: 'paper' }, cursor: 'sword',
-            icons: { rim: '#f2e4b9', tint: { color: '#8a1f33', amt: 0.24 }, disc: '#1a1330' } },
+            icons: { rim: '#f2e4b9', tint: { color: '#8a1f33', amt: 0.24 } } },
         { id: 'renaissance', from: 1450, name: { es: 'Renacimiento y Barroco', en: 'Renaissance and Baroque' },
             note: { es: 'De 1450 a 1700 aprox.; convención europea.', en: 'c. 1450–1700; a European convention.' },
             light: pl('#f0e3c9', '#f8edd7', '#2b1d10', '#5f4a30', '#6e4f08'), dark: pd('#1a120b', '#241912', '#f0e2c8', '#ad9a7e', '#e6bd62'),
@@ -117,7 +117,7 @@
             type: { heading: "'Baskerville', 'Garamond', 'Palatino Linotype', serif", ui: "'Baskerville', 'Garamond', 'Palatino Linotype', serif", weight: 600, transform: 'none', spacing: '0.02em', style: 'italic' },
             shape: { border: 'double', bw: 3, radius: 2, btnRadius: 2 },
             ornament: { corner: 'flourish', divider: 'scroll', texture: 'linen' }, cursor: 'dividers',
-            icons: { rim: '#f6e3b0', tint: { color: '#8a5d0a', amt: 0.3 }, disc: '#24160b' } },
+            icons: { rim: '#f6e3b0', tint: { color: '#8a5d0a', amt: 0.3 } } },
         { id: 'enlightenment', from: 1700, name: { es: 'Ilustración y revoluciones', en: 'Enlightenment and revolutions' },
             note: { es: 'De 1700 a 1830 aprox.; convención europea y atlántica.', en: 'c. 1700–1830; a European and Atlantic convention.' },
             light: pl('#f1ece7', '#f9f5f1', '#2a1c2a', '#5f4a5d', '#a02b5f'), dark: pd('#181219', '#221a24', '#efe4f0', '#ab97ab', '#f08fb4'),
@@ -125,7 +125,7 @@
             type: { heading: "'Baskerville', 'Didot', 'Bodoni 72', 'Times New Roman', serif", ui: "'Baskerville', 'Times New Roman', serif", weight: 700, transform: 'none', spacing: '0.01em', style: 'normal' },
             shape: { border: 'solid', bw: 2, radius: 4, btnRadius: 4 },
             ornament: { corner: 'laurel', divider: 'garland', texture: 'linen' }, cursor: 'nib',
-            icons: { rim: '#f7eef4', tint: { color: '#7a3a68', amt: 0.22 }, disc: '#20142a' } },
+            icons: { rim: '#f7eef4', tint: { color: '#7a3a68', amt: 0.22 } } },
         { id: 'industrial', from: 1830, name: { es: 'Era industrial', en: 'Industrial age' },
             note: { es: 'De 1830 a 1914 aprox.; convención europea y norteamericana.', en: 'c. 1830–1914; a European and North American convention.' },
             light: pl('#e6dfd2', '#efe9dd', '#231c17', '#574c42', '#962d12'), dark: pd('#151210', '#1e1a17', '#ece5da', '#aaa093', '#ee8a5a'),
@@ -133,7 +133,7 @@
             type: { heading: "'Rockwell', 'Clarendon', 'Georgia', serif", ui: "'Georgia', serif", weight: 800, transform: 'none', spacing: '0', style: 'normal' },
             shape: { border: 'ridge', bw: 4, radius: 3, btnRadius: 3 },
             ornament: { corner: 'rivet', divider: 'cogs', texture: 'hatch' }, cursor: 'arrow-chunky',
-            icons: { rim: '#e9ddc6', tint: { color: '#6e3a22', amt: 0.28 }, disc: '#1e1814' } },
+            icons: { rim: '#e9ddc6', tint: { color: '#6e3a22', amt: 0.28 } } },
         { id: 'modern', from: 1914, name: { es: 'Siglo XX', en: '20th century' },
             note: { es: 'De 1914 a 1990 aprox.', en: 'c. 1914–1990.' },
             light: pl('#efede6', '#f7f5ef', '#1a1a1a', '#53514b', '#00756a'), dark: pd('#0f0f10', '#18181a', '#f0eee6', '#a6a49b', '#4fd6c8'),
@@ -141,7 +141,7 @@
             type: { heading: "'Futura', 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif", ui: "'Futura', 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif", weight: 700, transform: 'uppercase', spacing: '0.12em', style: 'normal' },
             shape: { border: 'solid', bw: 2, radius: 0, btnRadius: 0 },
             ornament: { corner: 'deco', divider: 'deco', texture: 'halftone' }, cursor: 'arrow',
-            icons: { rim: '#ffffff', tint: { color: '#b02e0c', amt: 0.12 }, disc: '#111111' } },
+            icons: { rim: '#ffffff', tint: { color: '#b02e0c', amt: 0.12 } } },
         { id: 'digital', from: 1990, name: { es: 'Era digital', en: 'Digital age' },
             note: { es: 'De 1990 a hoy.', en: 'c. 1990 to today.' },
             light: pl('#f3f5f8', '#fbfcfd', '#14181f', '#4d5663', '#1f5fbf'), dark: pd('#0e1116', '#161b22', '#e7ebf1', '#9aa4b2', '#6aa7ff'),
@@ -149,7 +149,7 @@
             type: { heading: SYS_UI, ui: SYS_UI, weight: 700, transform: 'none', spacing: '0', style: 'normal' },
             shape: { border: 'solid', bw: 1, radius: 10, btnRadius: 8 },
             ornament: { corner: 'bracket', divider: 'line', texture: 'none' }, cursor: null,
-            icons: { rim: '#ffffff', tint: { color: '#1f5fbf', amt: 0 }, disc: '#0f1722' } },
+            icons: { rim: '#ffffff', tint: { color: '#1f5fbf', amt: 0 } } },
         { id: 'future', from: 2027, name: { es: 'Futuro (proyección)', en: 'Future (projection)' },
             note: { es: 'Fechas posteriores a hoy: no hay registros, solo proyecciones.', en: 'Dates after today: no records, only projections.' },
             light: pl('#e6f2f4', '#f0f8f9', '#0d1f24', '#3f5a61', '#00606e'), dark: pd('#050a10', '#0b131c', '#e0f6fa', '#8fb2ba', '#5ef0ff'),
@@ -157,7 +157,7 @@
             type: { heading: "'Orbitron', 'Eurostile', 'Bank Gothic', ui-monospace, 'SF Mono', Menlo, Consolas, monospace", ui: SYS_UI, weight: 700, transform: 'uppercase', spacing: '0.12em', style: 'normal' },
             shape: { border: 'solid', bw: 1, radius: 2, btnRadius: 2 },
             ornament: { corner: 'target', divider: 'scan', texture: 'scan' }, cursor: 'arrow-future',
-            icons: { rim: '#d8fbff', tint: { color: '#00a3b8', amt: 0.3 }, disc: '#06121a' } }
+            icons: { rim: '#d8fbff', tint: { color: '#00a3b8', amt: 0.3 } } }
     ];
 
     const BY_ID = {}; ERAS.forEach((e) => { BY_ID[e.id] = e; });
@@ -291,7 +291,7 @@
     }
     /** Paleta del mapa de la epoca (ocean, shelf, land, landLine, line) o null si la intensidad es < 2. */
     function mapPalette(era, dark, level) { return era && level >= 2 ? (dark ? era.map.dark : era.map.light) : null; }
-    /** Estilo de los iconos de la epoca ({rim, tint, disc}) o null si la intensidad es < 2. */
+    /** Estilo de los iconos de la epoca ({rim, tint}) o null si la intensidad es < 2. */
     function iconStyle(era, level) { return era && level >= 2 ? era.icons : null; }
 
     return { ERAS, SLOTS, GLYPHS, CORNERS, DIVIDERS, TEXTURES, byId, at, indexOf, lastYear, labelOf, noteOf, contrast, mix, toRgb, lum, rgba, PANEL_ALPHA,
