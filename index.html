@@ -3477,21 +3477,27 @@ function evLayersAdd() {
     const es = evIconStyle(); EV_STYLE_KEY = evStyleKey(es);       // sprites, disco y anillo nacen ya con el estilo de la epoca
     const hit = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 15];
     // Disco de respaldo: el icono es rojo/ocre y el mapa politico tambien; sin fondo el mosquete o las espadas se pierden (visto en el render real, probe-shot)
+    const EI = ChronosEventIcons; const seen = ['*', ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], ['coalesce', ['get', 'fade'], 1], ['coalesce', ['get', 'ent'], 1]];
+    // Con la Tierra lejos todo se encoge (EI.zoomScaled) y, muy lejos, los iconos ceden el sitio a puntos de su color (EI.iconFade / EI.dotFade)
     map.addLayer({ id: 'events-disc', type: 'circle', source: 'events', paint: {
-        'circle-radius': ['-', EV_PULSE_BASE, 1.5], 'circle-color': es ? es.disc : '#0f1722', 'circle-stroke-width': 0,
-        'circle-opacity': ['*', ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], ['coalesce', ['get', 'fade'], 1], ['coalesce', ['get', 'ent'], 1], 0.55], 'circle-opacity-transition': { duration: 350, delay: 0 }
+        'circle-radius': EI.zoomScaled(['-', EV_PULSE_BASE, 1.5]), 'circle-color': es ? es.disc : '#0f1722', 'circle-stroke-width': 0,
+        'circle-opacity': EI.iconFade(['*', seen, 0.55]), 'circle-opacity-transition': { duration: 350, delay: 0 }
+    } });
+    map.addLayer({ id: 'events-dot', type: 'circle', source: 'events', paint: {
+        'circle-radius': EI.DOT_RADIUS, 'circle-color': evDotColors(es), 'circle-stroke-width': 0.9, 'circle-stroke-color': es ? es.rim : '#ffffff',
+        'circle-opacity': EI.dotFade(seen), 'circle-stroke-opacity': EI.dotFade(['*', seen, 0.85]), 'circle-opacity-transition': { duration: 350, delay: 0 }
     } });
     map.addLayer({ id: 'events-pulse', type: 'circle', source: 'events', paint: {
-        'circle-radius': EV_PULSE_BASE, 'circle-color': es ? es.rim : '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': es ? es.rim : '#ffffff', 'circle-stroke-opacity': ['*', ['coalesce', ['get', 'fade'], 1], 0.55],
+        'circle-radius': EI.zoomScaled(EV_PULSE_BASE), 'circle-color': es ? es.rim : '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': es ? es.rim : '#ffffff', 'circle-stroke-opacity': ['*', ['coalesce', ['get', 'fade'], 1], 0.55],
         'circle-radius-transition': { duration: 900, delay: 0 }, 'circle-stroke-opacity-transition': { duration: 900, delay: 0 }
     } });
     ['bob', 'shake'].forEach((g) => map.addLayer({
         id: 'events-icon-' + g, type: 'symbol', source: 'events', filter: ['==', ['get', 'anim'], g],
-        layout: { 'icon-image': ['get', 'img'], 'icon-size': ['interpolate', ['linear'], ['get', 'importance'], 0.3, 0.68, 1, 0.95], 'icon-allow-overlap': true, 'icon-ignore-placement': true, 'symbol-sort-key': ['get', 'importance'] },
-        paint: { 'icon-opacity': ['*', ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], ['coalesce', ['get', 'fade'], 1]], 'icon-opacity-transition': { duration: 350, delay: 0 }, 'icon-translate': [0, 0], 'icon-translate-transition': { duration: g === 'shake' ? 520 : 800, delay: 0 } }
+        layout: { 'icon-image': ['get', 'img'], 'icon-size': EI.zoomScaled(['interpolate', ['linear'], ['get', 'importance'], 0.3, 0.68, 1, 0.95]), 'icon-allow-overlap': true, 'icon-ignore-placement': true, 'symbol-sort-key': ['get', 'importance'] },
+        paint: { 'icon-opacity': EI.iconFade(['*', ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], ['coalesce', ['get', 'fade'], 1]]), 'icon-opacity-transition': { duration: 350, delay: 0 }, 'icon-translate': [0, 0], 'icon-translate-transition': { duration: g === 'shake' ? 520 : 800, delay: 0 } }
     }));
     // Zona de toque: invisible, pero es la que consultan el hover y el clic (queryRenderedFeatures)
-    map.addLayer({ id: 'events-circle', type: 'circle', source: 'events', paint: { 'circle-radius': hit, 'circle-color': '#000000', 'circle-opacity': 0, 'circle-stroke-opacity': 0 } });
+    map.addLayer({ id: 'events-circle', type: 'circle', source: 'events', paint: { 'circle-radius': EI.zoomScaled(hit, 7), 'circle-color': '#000000', 'circle-opacity': 0, 'circle-stroke-opacity': 0 } });
     evAnimApply(EVA.phase);
     eventsRefresh();
     detailApply();
@@ -3499,7 +3505,7 @@ function evLayersAdd() {
 function evAnimApply(phase) {
     EVA.phase = phase;
     if (!map.getLayer('events-pulse')) return;
-    map.setPaintProperty('events-pulse', 'circle-radius', ['+', EV_PULSE_BASE, phase ? 5 : 0]);
+    map.setPaintProperty('events-pulse', 'circle-radius', ChronosEventIcons.zoomScaled(['+', EV_PULSE_BASE, phase ? 5 : 0]));
     map.setPaintProperty('events-pulse', 'circle-stroke-opacity', ['*', ['coalesce', ['get', 'fade'], 1], phase ? 0 : 0.55]);
     map.setPaintProperty('events-icon-bob', 'icon-translate', [0, phase ? -2 : 0]);
     map.setPaintProperty('events-icon-shake', 'icon-translate', [phase ? 1.6 : -1.6, 0]);
@@ -4119,6 +4125,8 @@ const ERA_MIN_MS = 700;       // los cambios de epoca seguidos (saltos largos, r
 const ERA_HEAVY_MS = 350;     // lo caro (colores del mapa, sprites de los iconos) espera a que la epoca deje de cambiar
 let EV_STYLE_KEY = '';        // estilo de iconos con el que se dibujaron los sprites actuales
 function evIconStyle() { return ChronosEras.iconStyle(ERA.cur, ERA.level); }
+/** Colores de los puntos (Tierra lejos): el de cada icono, con el mismo matiz de epoca que los sprites. */
+const evDotColors = (st) => ChronosEventIcons.dotColorExpr(st && st.tint.amt > 0 ? (c) => ChronosEras.mix(c, st.tint.color, Math.min(st.tint.amt, 0.35)) : null);
 const evStyleKey = (st) => (st ? [st.rim, st.disc, st.tint.color, st.tint.amt].join() : '');
 /** Variables CSS de la epoca sobre <body> (sus valores en linea ganan a .dark, asi que dependen del tema). Con intensidad 0 se quitan y vuelve el aspecto neutro. */
 function eraVars() {
@@ -4143,6 +4151,7 @@ function evIconsRestyle() {
     if (map.getLayer('events-disc')) {
         map.setPaintProperty('events-disc', 'circle-color', st ? st.disc : '#0f1722');
         map.setPaintProperty('events-pulse', 'circle-color', st ? st.rim : '#ffffff'); map.setPaintProperty('events-pulse', 'circle-stroke-color', st ? st.rim : '#ffffff');
+        map.setPaintProperty('events-dot', 'circle-color', evDotColors(st)); map.setPaintProperty('events-dot', 'circle-stroke-color', st ? st.rim : '#ffffff');
     }
     map.listImages().forEach((n) => {
         const m = /^evi-([a-z]+)(?:~(\d+))?$/.exec(n); if (!m || !ChronosEventIcons.GLYPHS[m[1]]) return;

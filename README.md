@@ -112,6 +112,10 @@ sale y cuánto se puede fiar de él.
 - **Detalle al acercar**: desde zoom 4,6 se superpone el mapa vectorial actual de OpenFreeMap
   (OpenStreetMap, ODbL): estilo completo desde 1950, solo agua y vegetación hasta hace 11 000 años (como
   aproximación, y así se rotula) y nada antes, porque el nivel del mar era otro.
+- **Iconos según la distancia (2026-11-11).** Con la Tierra lejos los iconos de sucesos encogen (tamaño normal con zoom ≥ 3,2;
+  80 % en la vista inicial; ~45 % a zoom 1,15) y, con la Tierra muy lejos (zoom < 1,3), se funden en **puntos de su color** (el del
+  icono, con el matiz de la época) que conservan el anillo que respira. La zona de toque nunca baja de 7 px. Escala y fundido son
+  funciones puras de `map/event-icons.js` (`zoomScale`, `iconShare`, `zoomScaled`, `iconFade`, `dotFade`) probadas en Node.
 - **Maquetación sin solapes (2026-11-11).** Los recuadros ya no se colocan con coordenadas sueltas: viven en dos columnas en
   flujo (`#dock-l`: Sucesos, Cambios, Cielo, avisos; `#dock-r`: avisos flotantes, Ajustes, ficha del elemento, nota del fondo) entre
   la barra superior y la línea de tiempo, cuya altura mide el JS (`--top-h`, `--bot-h`). Se reparten el hueco y nunca bajan de un

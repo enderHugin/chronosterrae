@@ -98,6 +98,23 @@ check('draw pinta el borde blanco antes que el relleno y termina con save/restor
     const saves = c.calls.filter((s) => s === 'save').length; const restores = c.calls.filter((s) => s === 'restore').length;
     return firstFill > lastWhite && lastWhite >= 0 && saves === restores && c.calls.some((s) => s === 'fill:' + I.COLORS.sword) ? true : JSON.stringify(c.calls.slice(0, 12));
 });
+check('zoom: con la Tierra cerca (zoom >= 3,2) los iconos tienen su tamano de siempre y al alejarse solo encogen (monotono)', () => {
+    let prev = -1; for (let z = 0; z <= 6; z += 0.05) { const k = I.zoomScale(z); if (k < prev - 1e-9) return 'baja en ' + z.toFixed(2); prev = k; }
+    return I.zoomScale(3.2) === 1 && I.zoomScale(5) === 1 && I.zoomScale(0) < 0.4 && I.zoomScale(-3) === I.zoomScale(0);
+});
+check('zoom: en la vista inicial (2,1) se ven iconos algo menores; los puntos solo con la Tierra muy lejos', () => I.zoomScale(2.1) >= 0.75 && I.zoomScale(2.1) < 1 && I.iconShare(2.1) === 1 && I.iconShare(1.3) === 1 && I.iconShare(1.0) === 0 && I.iconShare(0.2) === 0 && I.iconShare(1.15) > 0 && I.iconShare(1.15) < 1 && I.DOT_ZOOM[1] < 2.1);
+check('zoom: las expresiones tienen el zoom arriba del todo (MapLibre lo exige) y paradas crecientes', () => {
+    const okStops = (e, from) => { const st = e.slice(from).filter((_, i) => i % 2 === 0); return st.every((z, i) => i === 0 || z > st[i - 1]); };
+    const zs = I.zoomScaled(['get', 'importance']); const zm = I.zoomScaled(['get', 'importance'], 7);
+    const f1 = I.iconFade(['get', 'fade']), f2 = I.dotFade(['get', 'fade']);
+    return [zs, zm, f1, f2, I.DOT_RADIUS].every((e) => e[0] === 'interpolate' && JSON.stringify(e[2]) === '["zoom"]' && okStops(e, 3) && !JSON.stringify(e.slice(3)).includes('"zoom"'))
+        && JSON.stringify(zm).includes('"max",7') && f1[4] === 0 && JSON.stringify(f1[6]) === '["get","fade"]' && f2[6] === 0 && JSON.stringify(f2[4]) === '["get","fade"]';
+});
+check('puntos: un color valido para cada tipo de icono (el suyo) y uno por defecto; con colorOf se aplica a todos', () => {
+    const e = I.dotColorExpr(); const pairs = e.slice(2, -1); const keys = pairs.filter((_, i) => i % 2 === 0), cols = pairs.filter((_, i) => i % 2 === 1);
+    const t = I.dotColorExpr(() => '#123456');
+    return e[0] === 'match' && keys.length === I.KEYS.length && I.KEYS.every((k, i) => keys[i] === k && cols[i] === I.COLORS[k]) && /^#[0-9a-f]{6}$/i.test(e[e.length - 1]) && t.slice(2, -1).filter((_, i) => i % 2 === 1).every((c) => c === '#123456');
+});
 check('draw: con `rim` el borde y los detalles claros usan ese color en vez del blanco, y nunca un valor invalido', () => {
     const c = fakeCtx(); I.draw(c, 'death', 48, { Path2D: FakePath, rim: '#e9e1d2' });
     const bad = fakeCtx(); I.draw(bad, 'death', 48, { Path2D: FakePath, rim: 'red; background:url(x)' });

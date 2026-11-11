@@ -381,5 +381,30 @@
     /** ¿Se muestra este icono con esta mascara de grupos ocultos? */
     const iconShown = (icon, hiddenMask) => { const i = GROUPS.findIndex((g) => g.id === groupOf(icon)); return !(hiddenMask & (1 << i)); };
 
-    return { ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
+    /* ---------------------------- Tamano segun la distancia (zoom) ----------------------------
+     * Con la Tierra lejos los iconos se encogen y, muy lejos, pasan a puntos de su color (sin perder el respiro del anillo).
+     * ZOOM_SCALE: factor sobre el tamano normal por zoom (interpolado). DOT_ZOOM: [z0, z1]: por debajo de z0 solo puntos, por encima de z1 solo iconos,
+     * entre ambos un fundido. Se construyen expresiones de MapLibre con 'zoom' en el nivel superior (obligatorio en MapLibre).
+     */
+    const ZOOM_SCALE = [[0, 0.3], [1.15, 0.45], [2.1, 0.8], [3.2, 1]];
+    const DOT_ZOOM = [1.0, 1.3];
+    function zoomScale(z) {
+        const S = ZOOM_SCALE; if (!(z > S[0][0])) return S[0][1]; if (z >= S[S.length - 1][0]) return S[S.length - 1][1];
+        for (let i = 1; i < S.length; i++) if (z <= S[i][0]) { const t = (z - S[i - 1][0]) / (S[i][0] - S[i - 1][0]); return S[i - 1][1] + t * (S[i][1] - S[i - 1][1]); }
+        return 1;
+    }
+    /** Cuanto se ve de los iconos (1) frente a los puntos (0) a un zoom dado. */
+    function iconShare(z) { const [a, b] = DOT_ZOOM; return z <= a ? 0 : z >= b ? 1 : (z - a) / (b - a); }
+    /** expr (tamano a escala 1) multiplicado por la escala del zoom: ['interpolate', ['linear'], ['zoom'], z, ['*', expr, k], ...]. */
+    const zoomScaled = (expr, min) => ['interpolate', ['linear'], ['zoom']].concat(...ZOOM_SCALE.map(([z, k]) => [z, min === undefined ? ['*', expr, k] : ['max', min, ['*', expr, k]]]));
+    /** Opacidad de los iconos (y su disco): 0 con puntos, expr con iconos, fundido entre medias. */
+    const iconFade = (expr) => ['interpolate', ['linear'], ['zoom'], DOT_ZOOM[0], 0, DOT_ZOOM[1], expr];
+    /** Opacidad de los puntos: expr con la Tierra muy lejos, 0 cuando ya se ven los iconos. */
+    const dotFade = (expr) => ['interpolate', ['linear'], ['zoom'], DOT_ZOOM[0], expr, DOT_ZOOM[1], 0];
+    /** Radio del punto de color (px): crece un poco con la importancia y con el zoom. */
+    const DOT_RADIUS = ['interpolate', ['linear'], ['zoom'], 0, ['interpolate', ['linear'], ['get', 'importance'], 0.3, 2, 1, 3.2], DOT_ZOOM[1], ['interpolate', ['linear'], ['get', 'importance'], 0.3, 2.8, 1, 4.4]];
+    /** Color de cada punto: el del icono (o el que devuelva colorOf, p. ej. con el matiz de la epoca). Expresion 'match' sobre la propiedad icon. */
+    const dotColorExpr = (colorOf) => ['match', ['get', 'icon']].concat(...KEYS.map((k) => [k, colorOf ? colorOf(COLORS[k], k) : COLORS[k]]), ['#888888']);
+
+    return { ZOOM_SCALE, DOT_ZOOM, zoomScale, iconShare, zoomScaled, iconFade, dotFade, DOT_RADIUS, dotColorExpr, ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
 });
