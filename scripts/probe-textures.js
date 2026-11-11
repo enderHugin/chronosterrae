@@ -6,19 +6,26 @@
  *   3. Para cada URL candidata: estado HTTP, tipo, tamano y cabecera Access-Control-Allow-Origin.
  * Salida: JSON en stdout, progreso en stderr. Solo Node 18+, sin dependencias. */
 'use strict';
+// 2026-11-12: Tierra vista de lejos (Blue Marble) y mapas globales de Saturno, Urano y Neptuno. Las anteriores (Mercurio, lunas de
+// Jupiter...) ya estan comprobadas y construidas (ver manifest.json); esta ronda solo busca lo que falta.
 const PAGES = [
-    'https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_basemap_loi_global_mosaic_166m',
-    'https://astrogeology.usgs.gov/search/map/mercury_messenger_mdis_global_color_mosaic_665m',
-    'https://astrogeology.usgs.gov/search/map/io_galileo_ssi_voyager_color_merged_global_mosaic_1km',
-    'https://astrogeology.usgs.gov/search/map/europa_voyager_galileo_ssi_global_mosaic_500m',
-    'https://astrogeology.usgs.gov/search/map/callisto_galileo_voyager_global_mosaic_1km',
-    'https://astrogeology.usgs.gov/search/map/ganymede_voyager_galileo_ssi_global_mosaic_1km',
-    'https://astrogeology.usgs.gov/search/map/triton_voyager_2_global_color_mosaic_600m',
-    'https://astrogeology.usgs.gov/search/map/iapetus_cassini_voyager_global_mosaic_803m',
-    'https://astrogeology.usgs.gov/search/map/dione_voyager_airbrush_mosaic_610m'
+    'https://svs.gsfc.nasa.gov/12564/',
+    'https://www.visibleearth.nasa.gov/images/57752/blue-marble-land-surface-shallow-water-and-shaded-topography',
+    'https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/',
+    'https://photojournal.jpl.nasa.gov/catalog/PIA00046',
+    'https://photojournal.jpl.nasa.gov/catalog/PIA01492',
+    'https://photojournal.jpl.nasa.gov/catalog/PIA00011',
+    'https://photojournal.jpl.nasa.gov/catalog/PIA14914',
+    'https://www.planetary.org/space-images/neptune_voyager_global_bjorn',
+    'https://www.planetary.org/articles/1210-revisiting-uranus-with-voyager-2',
+    'https://stevealbers.net/albers/sos/sos.html'
 ];
 const INDEXES = [];
-const CANDIDATES = [];
+// GIBS (el mismo servicio que ya da las imagenes del mapa): la capa Blue Marble entera en una sola imagen 2048x1024 equirectangular
+const CANDIDATES = [
+    'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=BlueMarble_ShadedRelief_Bathymetry&CRS=EPSG:4326&BBOX=-90,-180,90,180&WIDTH=2048&HEIGHT=1024&FORMAT=image/jpeg',
+    'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=BlueMarble_NextGeneration&CRS=EPSG:4326&BBOX=-90,-180,90,180&WIDTH=2048&HEIGHT=1024&FORMAT=image/jpeg'
+];
 const UA = 'ChronosTerrae-probe/1.0 (+https://github.com/enderHugin/chronosterrae)';
 const log = (...a) => process.stderr.write(a.join(' ') + '\n');
 async function get(url, init) {
@@ -35,7 +42,7 @@ function links(html, base) {
     }
     return [...out];
 }
-const interesting = (u) => /\.(tif|tiff|jpg|jpeg|png|exr|lbl|cub|img|pdf|zip|txt|tab|csv)(\?|$)/i.test(u) || /planetarymaps|astropedia|assets\.science|svs\.gsfc/i.test(u);
+const interesting = (u) => /\.(tif|tiff|jpg|jpeg|png|exr|lbl|cub|img|pdf|zip|txt|tab|csv)(\?|$)/i.test(u) || /planetarymaps|astropedia|assets\.science|svs\.gsfc|eoimages|photojournal|license|creative|copyright|usage/i.test(u);
 (async () => {
     const report = { when: new Date().toISOString(), pages: [], indexes: [], candidates: [] };
     for (const p of PAGES) {
@@ -43,7 +50,8 @@ const interesting = (u) => /\.(tif|tiff|jpg|jpeg|png|exr|lbl|cub|img|pdf|zip|txt
         const { r, err, ms } = await get(p);
         if (!r) { report.pages.push({ url: p, error: err, ms }); continue; }
         const html = await r.text();
-        report.pages.push({ url: p, status: r.status, ms, bytes: html.length, title: (html.match(/<title>([^<]*)/i) || [])[1] || null, links: links(html, r.url).filter(interesting).slice(0, 400) });
+        const lic = [...html.replace(/<[^>]+>/g, ' ').matchAll(/[^.]{0,160}(licen[cs]e|copyright|public domain|dominio p|courtesy|credit)[^.]{0,200}/gi)].slice(0, 8).map((m) => m[0].replace(/\s+/g, ' ').trim());
+        report.pages.push({ url: p, status: r.status, ms, bytes: html.length, title: (html.match(/<title>([^<]*)/i) || [])[1] || null, license: lic, links: links(html, r.url).filter(interesting).slice(0, 400) });
     }
     for (const p of INDEXES) {
         log('indice', p);
