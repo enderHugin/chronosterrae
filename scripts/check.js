@@ -243,9 +243,9 @@ check('cookie de preferencias: pn (posiciones) acepta el formato y rechaza carac
     return ok && bad;
 });
 
-check('cookie de preferencias: ia (iconos animados) acepta 0/1 y rechaza lo demas', () => {
+check('cookie de preferencias: ia (animacion) acepta 0 apagada, 1 ahorro y 2 completa; rechaza lo demas (booleanos incluidos)', () => {
     const { parsePrefs } = prefsFns();
-    return parsePrefs(JSON.stringify({ ia: 1 })).ia === true && parsePrefs(JSON.stringify({ ia: 0 })).ia === false && [2, '1', true, null, {}].every((v) => !('ia' in parsePrefs(JSON.stringify({ ia: v }))));
+    return [0, 1, 2].every((v) => parsePrefs(JSON.stringify({ ia: v })).ia === v) && [3, -1, 1.5, '1', true, false, null, {}].every((v) => !('ia' in parsePrefs(JSON.stringify({ ia: v }))));
 });
 
 check('cookie de preferencias: cc (centrar al clic) acepta 0/1 y rechaza lo demas', () => {

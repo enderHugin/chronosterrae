@@ -302,21 +302,48 @@
      * periodo (el resto es reposo, y deja que el mapa llegue a `idle`). Reloj inyectado: setTimer/clearTimer.
      */
     function createPulse(o) {
-        const period = (o && o.period) || 1500; const apply = (o && o.apply) || (() => {}); const enabled = (o && o.enabled) || (() => true);
+        let period = (o && o.period) || 1500; let rest = (o && o.rest) || 0; const apply = (o && o.apply) || (() => {}); const enabled = (o && o.enabled) || (() => true);
         const setT = (o && o.setTimer) || ((fn, ms) => setTimeout(fn, ms)); const clearT = (o && o.clearTimer) || ((h) => clearTimeout(h));
         let timer = null; let phase = 0; let running = false;
+        // Con `rest` > 0 el pulso es un RESPIRO: sube, aguanta `period` ms, baja y descansa `rest` ms (el mapa no se repinta mientras descansa).
+        const delay = () => (rest > 0 && phase === 0 ? rest : period);
         function tick() {
             timer = null; if (!running) return;
             if (enabled()) { phase = phase ? 0 : 1; apply(phase); }
-            timer = setT(tick, period);
+            timer = setT(tick, delay());
         }
         return {
-            period,
-            start() { if (running) return false; running = true; timer = setT(tick, period); return true; },
+            get period() { return period; }, get rest() { return rest; },
+            start() { if (running) return false; running = true; timer = setT(tick, delay()); return true; },
             stop() { running = false; if (timer !== null) { clearT(timer); timer = null; } if (phase !== 0) { phase = 0; apply(0); } },
+            /** Cambia el ritmo en marcha (p. ej. de «completa» a «ahorro»): la fase vuelve a reposo y se reprograma. */
+            configure(c) {
+                if (c && c.period > 0) period = c.period; if (c && c.rest >= 0) rest = c.rest;
+                if (!running) return;
+                if (timer !== null) { clearT(timer); timer = null; } if (phase !== 0) { phase = 0; apply(0); }
+                timer = setT(tick, delay());
+            },
             running: () => running, phase: () => phase
         };
     }
+
+    /**
+     * ¿Va justo el equipo? gaps = milisegundos entre repintados CONSECUTIVOS del mapa mientras hay animacion (los huecos de reposo no cuentan).
+     * Lento = la mediana supera `limitMs` (45 ms ≈ menos de 22 fotogramas por segundo) con al menos `minSamples` muestras.
+     */
+    function isSlow(gaps, limitMs, minSamples) {
+        const g = (gaps || []).filter((x) => Number.isFinite(x) && x >= 0);
+        if (g.length < (minSamples || 30)) return false;
+        const sorted = g.slice().sort((a, b) => a - b);
+        return sorted[Math.floor(sorted.length / 2)] > (limitMs || 45);
+    }
+    /** Modos de animacion: 0 apagada, 1 ahorro, 2 completa (valor de la cookie `ia`). Pulso, tope de fotogramas de un barrido y paso de la entrada de cada uno. */
+    const ANIM_MODES = [
+        { id: 'off', n: 0, pulse: null, glideMinMs: 0, enterStepMs: 0 },
+        { id: 'saver', n: 1, pulse: { period: 800, rest: 7000 }, glideMinMs: 40, enterStepMs: 130 },
+        { id: 'full', n: 2, pulse: { period: 1500, rest: 0 }, glideMinMs: 0, enterStepMs: 90 }
+    ];
+    const animMode = (n) => ANIM_MODES.find((m) => m.n === n) || ANIM_MODES[1];
 
     /* ---------------------------- Grupos para el filtro del usuario ---------------------------- */
     // El usuario marca/desmarca TIPOS de suceso en Ajustes. Cada icono pertenece a un solo grupo (convencion editorial; se prueba que no falte ni sobre ninguno).
@@ -345,5 +372,5 @@
     /** ¿Se muestra este icono con esta mascara de grupos ocultos? */
     const iconShown = (icon, hiddenMask) => { const i = GROUPS.findIndex((g) => g.id === groupOf(icon)); return !(hiddenMask & (1 << i)); };
 
-    return { ICON_CLASSES, KEYS, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
+    return { ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
 });

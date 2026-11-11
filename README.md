@@ -85,7 +85,7 @@ sale y cuánto se puede fiar de él.
   papiro para tratados, anillos para alianzas y uniones, urna, trofeo, bandera, volcán, etc. El tipo sale de las clases de Wikidata
   del propio registro (cada QID de la tabla se contrasta con los datos en `npm run check:event-icons`); solo si el registro no trae
   clases se deduce del nombre. La época es una convención de dibujo, no un dato del suceso. Animación suave y sobria (flotar o sacudirse levemente y un
-  anillo que respira) que se puede apagar en *Ajustes* y que respeta «reducir movimiento» del sistema.
+  anillo que respira) con **tres modos** en *Ajustes → Iconos y movimiento*: **Ahorro** (por defecto: un respiro de ~0,8 s cada ~7,8 s, el mapa descansa entre respiros; los saltos de tiempo van a ~25 fotogramas/s), **Completa** (movimiento continuo; si el equipo va justo, pasa sola a Ahorro y lo avisa) y **Apagada** (nada se mueve, los saltos son directos). «Reducir movimiento» del sistema arranca en Apagada que se puede apagar en *Ajustes* y que respeta «reducir movimiento» del sistema.
 - **Ajustes y recuadros informativos** (botón *Ajustes*, `map/panels.js`): ocultar solos los recuadros informativos a los 2 s con
   fundido, en 3 niveles (solo la ficha del elemento seleccionado; además avisos y notas; además la ficha del cuerpo celeste), con
   *mostrar siempre* por recuadro. Con el cursor encima no se ocultan y las advertencias nunca se ocultan solas. Los recuadros se mueven

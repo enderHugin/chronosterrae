@@ -277,8 +277,8 @@
             <button class="btn" id="st-types-none" type="button" data-i18n="ui.types.none"></button>
         </div>
         <div class="st-sub" data-i18n="ui.types.note"></div>
-        <h3 data-i18n="ui.icons.title"></h3>
-        <label><input type="checkbox" id="st-anim"><span data-i18n="ui.icons.anim"></span></label>
+        <h3 id="st-anim-title" data-i18n="ui.icons.title"></h3>
+        <div id="st-anim-modes" role="radiogroup" aria-labelledby="st-anim-title"></div>
         <div class="st-sub" data-i18n="ui.icons.note"></div>
         <h3 data-i18n="ui.layout.title"></h3>
         <div class="st-actions">
@@ -457,7 +457,7 @@ const parsePrefs = (raw) => {
     if (Number.isInteger(p.ah) && p.ah >= 0 && p.ah <= 3) out.ah = p.ah;   // ocultar recuadros informativos solos: nivel 0 (nunca) a 3
     if (Number.isInteger(p.pp) && p.pp >= 0 && p.pp <= 31) out.pp = p.pp;   // recuadros «mostrar siempre» (mascara de bits)
     if (typeof p.pn === 'string' && p.pn.length <= 300 && /^[a-z0-9:,;-]*$/.test(p.pn)) out.pn = p.pn;   // posiciones de los recuadros (se valida pieza a pieza al usarlas)
-    if (p.ia === 0 || p.ia === 1) out.ia = p.ia === 1;   // iconos de sucesos animados (y saltos de tiempo animados)
+    if (p.ia === 0 || p.ia === 1 || p.ia === 2) out.ia = p.ia;   // animacion de iconos y saltos de tiempo: 0 apagada, 1 ahorro, 2 completa (antes 0/1: el 1 antiguo pasa a ahorro)
     if (Number.isInteger(p.et) && p.et >= 0 && p.et <= 16383) out.et = p.et;   // tipos de suceso OCULTOS por el usuario (mascara de bits, un bit por grupo de map/event-icons.js)
     if (Number.isInteger(p.vf) && p.vf >= 0 && p.vf <= 127) out.vf = p.vf;   // filtros de verificacion de sucesos (mascara de bits)
     if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
@@ -479,7 +479,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia === undefined ? undefined : (prefs.ia ? 1 : 0), et: prefs.et || undefined };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, et: prefs.et || undefined };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -582,7 +582,8 @@ const i18n = {
             },
             pins: { title: 'Mostrar siempre (no se oculta solo)', info: 'Ficha del elemento seleccionado', status: 'Avisos y notas de estado', 'space-note': 'Nota del fondo espacial', 'solar-note': 'Nota del sistema solar', 'solar-info': 'Ficha del cuerpo celeste' },
             types: { title: 'Tipos de suceso', all: 'Marcar todos', none: 'Desmarcar todos', note: 'Marca los tipos que quieres ver en el mapa, en el panel de sucesos y en los avisos. Es una elección tuya: no borra ningún dato.' },
-            icons: { title: 'Iconos y movimiento', anim: 'Animar iconos y saltos de tiempo', note: 'Con la animación, un salto de tiempo recorre el tramo y los sucesos pasan en orden. Espada, mosquete o tanque según la época para guerras y batallas; pluma y papiro para tratados; anillos para alianzas y uniones. Son una convención de dibujo, no un dato del suceso.' },
+            anim: { off: 'Apagada', saver: 'Ahorro (recomendada)', full: 'Completa', auto: 'La animación se ha reducido sola porque este equipo va justo. Puedes cambiarlo en Ajustes → Iconos y movimiento.' },
+            icons: { title: 'Iconos y movimiento', note: 'Ahorro: los iconos se mueven un instante cada pocos segundos y los saltos de tiempo van a 25 fotogramas por segundo. Completa: movimiento continuo, gasta más batería y procesador. Apagada: no se mueve nada y los saltos son directos. Espada, mosquete o tanque según la época para guerras y batallas; pluma y papiro para tratados; anillos para alianzas y uniones. Son una convención de dibujo, no un dato del suceso.' },
             layout: { title: 'Posición de los recuadros', note: 'Ctrl+Z deshace y Ctrl+Mayús+Z (o Ctrl+Y) rehace ocultar y mover recuadros. En pantallas táctiles hay botones de deshacer y rehacer.' }
         },
         events: {
@@ -771,7 +772,8 @@ const i18n = {
             },
             pins: { title: 'Always show (never auto-hide)', info: 'Selected element card', status: 'Status notices and notes', 'space-note': 'Space background note', 'solar-note': 'Solar system note', 'solar-info': 'Celestial body card' },
             types: { title: 'Event types', all: 'Select all', none: 'Select none', note: 'Tick the types you want on the map, in the events panel and in the notices. It is your choice: no data is deleted.' },
-            icons: { title: 'Icons and motion', anim: 'Animate icons and time jumps', note: 'With animation, a time jump sweeps through the span and events pass in order. Sword, musket or tank by era for wars and battles; quill and scroll for treaties; rings for alliances and unions. This is a drawing convention, not a fact about the event.' },
+            anim: { off: 'Off', saver: 'Saver (recommended)', full: 'Full', auto: 'Animation was reduced automatically because this device is struggling. You can change it in Settings → Icons and motion.' },
+            icons: { title: 'Icons and motion', note: 'Saver: icons move for a moment every few seconds and time jumps run at 25 frames per second. Full: continuous motion, uses more battery and CPU. Off: nothing moves and jumps are direct. Sword, musket or tank by era for wars and battles; quill and scroll for treaties; rings for alliances and unions. This is a drawing convention, not a fact about the event.' },
             layout: { title: 'Box positions', note: 'Ctrl+Z undoes and Ctrl+Shift+Z (or Ctrl+Y) redoes hiding and moving boxes. Touch screens get undo and redo buttons.' }
         },
         events: {
@@ -2441,12 +2443,11 @@ panelsUI = (function () {
             c.addEventListener('change', () => { ah.setPinned(id, c.checked); savePrefs({ pp: P.pinsToMask(ah.pinned()) }); });
             lab.append(c, document.createTextNode(t('ui.pins.' + id))); pins.appendChild(lab);
         });
-        if (typesReady) typesRender();
+        if (typesReady) { typesRender(); animRender(); }
     }
     function setSettingsOpen(open) { byId('settings').classList.toggle('open', open); byId('btn-settings').setAttribute('aria-pressed', String(open)); }
     byId('btn-settings').addEventListener('click', () => setSettingsOpen(!byId('settings').classList.contains('open')));
     byId('settings-close').addEventListener('click', () => setSettingsOpen(false));
-    byId('st-anim').addEventListener('change', (e) => evAnimSet(e.target.checked, true));
     byId('st-types-all').addEventListener('click', () => { typesSet(0, true); typesRender(); });
     byId('st-types-none').addEventListener('click', () => { typesSet(ChronosEventIcons.GROUP_ALL_MASK, true); typesRender(); });
 
@@ -3014,7 +3015,8 @@ function glideEnded(info) {
 }
 glide = ChronosGlide.createGlide({
     now: () => performance.now(),
-    schedule: (fn) => (document.hidden ? setTimeout(fn, 50) : requestAnimationFrame(fn)),
+    // En modo ahorro el barrido se limita a ~25 fotogramas por segundo (cada fotograma recalcula sucesos, cielo y fronteras)
+    schedule: (fn) => (document.hidden ? setTimeout(fn, 50) : (ChronosEventIcons.animMode(EVA.mode).glideMinMs ? setTimeout(() => requestAnimationFrame(fn), ChronosEventIcons.animMode(EVA.mode).glideMinMs - 16) : requestAnimationFrame(fn))),
     cancel: (h) => { cancelAnimationFrame(h); clearTimeout(h); },
     onFrame: (jd, info) => { glideState.win = ChronosTimed.windowForGlide(info.spanDays, info.dir); clockSet(jd, { tick: true, quiet: true }); },
     onDone: glideEnded
@@ -3314,7 +3316,7 @@ function evEnsureImage(name) {
     const c = evSpriteCanvas(m[1], EV_SPRITE.box, EV_SPRITE.pad, Number(m[2]) / (ChronosEventIcons.ENTER_FRAMES - 1));
     map.addImage(name, c.getContext('2d').getImageData(0, 0, c.width, c.height), { pixelRatio: EV_SPRITE.ratio });
 }
-const EVA = { on: false, phase: 0, pulse: null };
+const EVA = { on: false, mode: 1, phase: 0, pulse: null, gaps: [], lastRender: 0 };   // mode: 0 apagada, 1 ahorro, 2 completa (ChronosEventIcons.ANIM_MODES)
 const EV_PULSE_BASE = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 16];
 function evLayersAdd() {
     evIconsRegister();
@@ -3347,17 +3349,38 @@ function evAnimApply(phase) {
     map.setPaintProperty('events-icon-bob', 'icon-translate', [0, phase ? -2 : 0]);
     map.setPaintProperty('events-icon-shake', 'icon-translate', [phase ? 1.6 : -1.6, 0]);
 }
-/** Enciende o apaga la animacion (la fase vuelve a reposo al apagarla). persist: recordar la eleccion. */
-function evAnimSet(on, persist) {
-    EVA.on = Boolean(on);
-    if (persist) savePrefs({ ia: EVA.on });
-    if (EVA.on) EVA.pulse.start(); else EVA.pulse.stop();
-    const box = document.getElementById('st-anim'); if (box) box.checked = EVA.on;
+/** Elige el modo de animacion (0 apagada, 1 ahorro, 2 completa; tambien 'off'/'saver'/'full' y booleanos). persist: recordar la eleccion. */
+function evAnimMode(m, persist) {
+    const n = m === true ? 1 : m === false ? 0 : typeof m === 'string' ? ({ off: 0, saver: 1, full: 2 }[m] ?? 1) : (Number.isInteger(m) ? m : 1);
+    const mode = ChronosEventIcons.animMode(n);
+    EVA.mode = mode.n; EVA.on = mode.n > 0; EVA.gaps = []; EVA.lastRender = 0;
+    if (persist) savePrefs({ ia: EVA.mode });
+    if (!EVA.on) EVA.pulse.stop(); else { EVA.pulse.configure(mode.pulse); EVA.pulse.start(); }
+    animRender();
 }
-EVA.pulse = ChronosEventIcons.createPulse({ period: 1500, apply: evAnimApply, enabled: () => EVA.on && !document.hidden && events.shown.length > 0 && Boolean(map.getLayer('events-pulse')) });
-window.eventIconsAnimate = (on) => evAnimSet(on, false);   // gancho para las capturas automaticas (probe-shot): la animacion no deja que el mapa llegue a idle
-// Iconos animados: eleccion del usuario; si no hay, se respeta «reducir movimiento» del sistema
-evAnimSet(prefs.ia !== undefined ? prefs.ia : !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches), false);
+function animRender() {
+    const box = document.getElementById('st-anim-modes'); if (!box) return;
+    if (!box.firstChild) {
+        ChronosEventIcons.ANIM_MODES.forEach((m) => {
+            const lab = document.createElement('label'); const r = document.createElement('input'); r.type = 'radio'; r.name = 'st-anim'; r.value = String(m.n);
+            r.addEventListener('change', () => { if (r.checked) evAnimMode(m.n, true); });
+            const sp = document.createElement('span'); sp.dataset.i18n = 'ui.anim.' + m.id; lab.append(r, sp); box.appendChild(lab);
+        });
+    }
+    box.querySelectorAll('input').forEach((r) => { r.checked = Number(r.value) === EVA.mode; });
+    box.querySelectorAll('[data-i18n]').forEach((sp) => { sp.textContent = t(sp.dataset.i18n); });
+}
+EVA.pulse = ChronosEventIcons.createPulse({ period: 800, rest: 7000, apply: evAnimApply, enabled: () => EVA.on && !document.hidden && events.shown.length > 0 && Boolean(map.getLayer('events-pulse')) });
+window.eventIconsAnimate = (on) => evAnimMode(on, false);   // gancho para las capturas automaticas (probe-shot): la animacion no deja que el mapa llegue a idle
+// Elegir a la baja sola: en modo completa, si los repintados consecutivos van a menos de ~22 fotogramas por segundo, se pasa a ahorro (sin recordarlo)
+map.on('render', () => {
+    if (EVA.mode !== 2 || document.hidden) { EVA.lastRender = 0; return; }
+    const now = performance.now(); const gap = now - EVA.lastRender; EVA.lastRender = now;
+    if (gap > 0 && gap < 200) EVA.gaps.push(gap);                  // los huecos de reposo (>200 ms) no cuentan
+    if (EVA.gaps.length >= 60) { const slow = ChronosEventIcons.isSlow(EVA.gaps, 45, 30); EVA.gaps = []; if (slow) { evAnimMode(1, false); setStatus('ok', t('ui.anim.auto'), 12000); } }
+});
+// Animacion de iconos: eleccion del usuario; si no hay, ahorro, o apagada si el sistema pide «reducir movimiento»
+evAnimMode(prefs.ia !== undefined ? prefs.ia : ((window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 0 : 1), false);
 
 // Filtros de verificacion (mascara de bits, recordada en la cookie): el usuario decide que ver.
 // Bits 1-8: nivel de revision (raw, community, reviewed, consensus). Bits 16/32/64: documental, reconstruccion o modelo, especulacion.
@@ -3513,7 +3536,7 @@ function evPush() {
     });
     src.setData({ type: 'FeatureCollection', features: feats });
     if (EV_ENTER.born.size > 400) { for (const [k, v] of EV_ENTER.born) if (now - v.seen > 10000) EV_ENTER.born.delete(k); }
-    clearTimeout(EV_ENTER.timer); EV_ENTER.timer = entering ? setTimeout(evPush, 90) : 0;
+    clearTimeout(EV_ENTER.timer); EV_ENTER.timer = entering ? setTimeout(evPush, ChronosEventIcons.animMode(EVA.mode).enterStepMs || 90) : 0;
 }
 
 function eventDateText(f) {

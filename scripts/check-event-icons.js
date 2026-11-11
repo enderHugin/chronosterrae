@@ -155,6 +155,29 @@ check('stop deja la fase en reposo (0) aunque estuviera en 1', () => {
     const c = clock(); const ph = []; const p = I.createPulse({ period: 1000, setTimer: c.setTimer, clearTimer: c.clearTimer, apply: (v) => ph.push(v) }); p.start(); c.tick(1000); p.stop(); return ph.join() === '1,0' && p.phase() === 0;
 });
 
+// ---- Modo ahorro: el pulso es un respiro (sube, aguanta, baja, descansa) y el mapa solo se repinta mientras se mueve
+check('respiro: con rest, sube a los 7 s, baja 0,8 s despues y descansa otros 7 s (se repite cada 7,8 s)', () => {
+    const c = clock(); const ph = []; const t = []; let now = 0; const p = I.createPulse({ period: 800, rest: 7000, setTimer: c.setTimer, clearTimer: c.clearTimer, apply: (v) => { ph.push(v); t.push(now); } });
+    p.start(); for (let ms = 0; ms < 16000; ms += 100) { now += 100; c.tick(100); }
+    return ph.join() === '1,0,1,0' && t.join() === '7000,7800,14800,15600' ? true : ph.join() + ' ' + t.join();
+});
+check('respiro: sin rest se comporta como antes (alterna cada periodo)', () => { const c = clock(); const ph = []; const p = I.createPulse({ period: 1000, rest: 0, setTimer: c.setTimer, clearTimer: c.clearTimer, apply: (v) => ph.push(v) }); p.start(); c.tick(3500); p.stop(); return ph.join() === '1,0,1,0'; });
+check('configure: pasa de completa a ahorro en marcha, vuelve a reposo y reprograma sin duplicar temporizadores', () => {
+    const c = clock(); const ph = []; const p = I.createPulse({ period: 1500, rest: 0, setTimer: c.setTimer, clearTimer: c.clearTimer, apply: (v) => ph.push(v) });
+    p.start(); c.tick(1500); const arriba = p.phase() === 1; p.configure({ period: 800, rest: 7000 });
+    return arriba && p.phase() === 0 && ph.join() === '1,0' && c.pending() === 1 && p.rest === 7000 && p.period === 800 ? true : ph.join() + ' ' + c.pending();
+});
+check('configure parado no arranca nada y datos invalidos no cambian el ritmo', () => { const c = clock(); const p = I.createPulse({ period: 1000, rest: 5, setTimer: c.setTimer, clearTimer: c.clearTimer }); p.configure({ period: -3, rest: -1 }); p.configure(null); p.configure({ period: 200 }); return c.pending() === 0 && p.period === 200 && p.rest === 5; });
+check('modos de animacion: 0 apagada, 1 ahorro, 2 completa; lo desconocido cae en ahorro; el ahorro gasta menos que la completa', () => {
+    const [o, a, f] = I.ANIM_MODES;
+    const duty = (m) => (m.pulse.rest > 0 ? (m.pulse.period * 2) / (m.pulse.period * 2 + m.pulse.rest) : 0.47);
+    return o.id === 'off' && a.id === 'saver' && f.id === 'full' && o.pulse === null && I.animMode(0) === o && I.animMode(2) === f && I.animMode(7) === a && I.animMode(undefined) === a && I.animMode('1') === a && duty(a) < duty(f) / 2 && a.glideMinMs >= 33 && f.glideMinMs === 0 && a.enterStepMs > f.enterStepMs ? true : duty(a) + ' ' + duty(f);
+});
+check('isSlow: mediana de huecos por encima de 45 ms con suficientes muestras; pocas muestras, no; un pico aislado, no', () => {
+    const fast = Array(40).fill(16); const slow = Array(40).fill(70); const spike = Array(39).fill(16).concat([900]);
+    return I.isSlow(slow) === true && I.isSlow(fast) === false && I.isSlow(spike) === false && I.isSlow(Array(10).fill(90)) === false && I.isSlow([]) === false && I.isSlow(null) === false && I.isSlow(Array(40).fill(NaN)) === false && I.isSlow(Array(40).fill(46)) === true && I.isSlow(Array(40).fill(45)) === false ? true : 'fallo';
+});
+
 /* ---------------------------- Grupos para el filtro de tipos ---------------------------- */
 check('grupos: todo icono dibujable esta en UN solo grupo (ni falta ni sobra ninguno)', () => {
     const seen = {}; I.GROUPS.forEach((g) => g.icons.forEach((k) => { seen[k] = (seen[k] || 0) + 1; }));
