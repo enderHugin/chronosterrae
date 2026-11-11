@@ -1,0 +1,69 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "harvest_date": "2026-11-11T10:39:39.316Z",
+    "source_date": "2026/11/10",
+    "node_origin": "ChronosTerrae_Harvester_0.2",
+    "total_anomalies_detected": 3,
+    "status": "ok"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "SS Edmund Fitzgerald",
+        "timestamp": "Indeterminado",
+        "date_precision": "unknown",
+        "harvest_date": "2026-11-11T10:39:39.316Z",
+        "source": "Wikidata:Q1286267",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.11,
+          46.998333333
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "2026 Kraków shooting",
+        "timestamp": "2026-11-07T00:00:00Z",
+        "date_precision": "day",
+        "harvest_date": "2026-11-11T10:39:39.316Z",
+        "source": "Wikidata:Q142077465",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.936888888,
+          50.062777777
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "disappearance of Natalee Holloway",
+        "timestamp": "2005-05-30T00:00:00Z",
+        "date_precision": "day",
+        "harvest_date": "2026-11-11T10:39:39.316Z",
+        "source": "Wikidata:Q51722302",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.035833333,
+          12.518611111
+        ]
+      }
+    }
+  ]
+}
