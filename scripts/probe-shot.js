@@ -208,7 +208,7 @@ async function runSuite(page, out, only) {
                 return { dibujados: events.shown.length, iconos: feats.length, por, capas: ['events-disc', 'events-pulse', 'events-icon-bob', 'events-icon-shake', 'events-circle'].map((l) => l + ':' + (map.getLayer(l) ? 'si' : 'NO')).join(' '), animacion: EVA.on };
             }) : undefined;
             const diseno = v.diseno ? await page.evaluate(() => {
-                const sel = ['#topbar', '#events', '#changes', '#sky', '#settings', '#info', '#status', '#space-note', '#timeline', '#toasts .toast', '#menu-layers-pop'];
+                const sel = ['#topbar', '#events', '#changes', '#sky', '#settings', '#info', '#status', '#space-note', '#timeline', '#toasts .toast', '#menu-layers-pop', '.maplibregl-ctrl-bottom-right'];
                 const bx = {}; sel.forEach((q) => { const e = document.querySelector(q); if (!e) return; const cs = getComputedStyle(e); const r = e.getBoundingClientRect(); if (cs.display === 'none' || cs.visibility === 'hidden' || r.width < 2 || r.height < 2) return; bx[q] = [Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom)]; });
                 const nombres = Object.keys(bx); const solapes = [];
                 for (let i = 0; i < nombres.length; i++) for (let j = i + 1; j < nombres.length; j++) { const a = bx[nombres[i]], b = bx[nombres[j]]; if (nombres[i] === '#menu-layers-pop' || nombres[j] === '#menu-layers-pop') continue; if (Math.min(a[2], b[2]) - Math.max(a[0], b[0]) > 1 && Math.min(a[3], b[3]) - Math.max(a[1], b[1]) > 1) solapes.push(nombres[i] + ' x ' + nombres[j]); }
