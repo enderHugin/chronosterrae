@@ -112,6 +112,13 @@ sale y cuánto se puede fiar de él.
 - **Detalle al acercar**: desde zoom 4,6 se superpone el mapa vectorial actual de OpenFreeMap
   (OpenStreetMap, ODbL): estilo completo desde 1950, solo agua y vegetación hasta hace 11 000 años (como
   aproximación, y así se rotula) y nada antes, porque el nivel del mar era otro.
+- **Maquetación sin solapes (2026-11-11).** Los recuadros ya no se colocan con coordenadas sueltas: viven en dos columnas en
+  flujo (`#dock-l`: Sucesos, Cambios, Cielo, avisos; `#dock-r`: avisos flotantes, Ajustes, ficha del elemento, nota del fondo) entre
+  la barra superior y la línea de tiempo, cuya altura mide el JS (`--top-h`, `--bot-h`). Se reparten el hueco y nunca bajan de un
+  alto mínimo. Los botones se agrupan: a la vista *Sucesos* y *Cielo*; en *Capas ▾* fronteras, carreteras, centrar y estrellas;
+  en *Más ▾* cambios, ajustes, idioma y tema (mismos ids y manejadores). En pantalla estrecha (≤ 760 px) las columnas pasan a una
+  pila, solo hay una hoja abierta a la vez y la línea de tiempo se pliega (botón «⋯»); con puntero táctil los objetivos miden ≥ 44 px.
+  Comprobado con Playwright en 1280×800, 1024×768, 768×1024, 390×844 y 844×390 (ningún par de recuadros se cruza, todo cabe).
 - ES/EN, tema claro/oscuro; idioma, tema, instante y cámara se recuerdan en una cookie propia.
 
 ## Límites conocidos (dichos sin adornos)

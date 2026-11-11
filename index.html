@@ -47,8 +47,33 @@
             backdrop-filter: blur(8px);
         }
 
-        #top-left { position: absolute; top: 14px; left: 14px; z-index: 10; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 200px); }
-        #top-right { position: absolute; top: 14px; right: 14px; z-index: 10; display: flex; gap: 6px; }
+        /* Maquetacion: barra superior + dos columnas de recuadros (#dock-l, #dock-r) + linea de tiempo. Los recuadros viven en flujo
+           (flex), nunca en coordenadas absolutas sueltas: asi no se solapan. --top-h y --bot-h los mide el JS (layoutMeasure). */
+        #topbar { position: absolute; top: 14px; left: 14px; right: 14px; z-index: 20; display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; pointer-events: none; }
+        #topbar > * { pointer-events: auto; }
+        #top-left { flex: 1 1 200px; min-width: 0; max-width: 300px; display: flex; }
+        #top-right { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+        #dock { position: absolute; left: 14px; right: 14px; top: var(--top-h, 60px); bottom: var(--bot-h, 180px); z-index: 11; display: flex; justify-content: space-between; gap: 10px; pointer-events: none; }
+        #dock-l, #dock-r { display: flex; flex-direction: column; gap: 8px; min-height: 0; min-width: 0; align-items: stretch; }
+        #dock-l { flex: 0 1 372px; }
+        #dock-r { flex: 0 1 330px; align-items: flex-end; }
+        #dock-l > *, #dock-r > * { pointer-events: auto; flex: 0 1 auto; min-height: 0; box-sizing: border-box; width: 100%; }
+        #dock-r > #toasts { pointer-events: none; flex: none; }
+        #dock-l > #status { min-height: 3.2em; }
+        #events, #changes, #sky, #settings, #info { min-height: 110px; }   /* al repartirse el hueco no se aplastan hasta desaparecer */
+        @media (max-height: 520px) { #events, #changes, #sky, #settings, #info { min-height: 48px; } }
+        #dock-l > #undo-bar { flex: none; }
+        .menu { position: relative; }
+        .menu-btn::after { content: ' \25BE'; font-size: 11px; }
+        .menu-btn[aria-expanded="true"] { background: var(--accent); color: var(--bg); }
+        .menu-pop { background: var(--bg); backdrop-filter: none; position: absolute; top: calc(100% + 6px); right: 0; min-width: 190px; padding: 6px; display: flex; flex-direction: column; gap: 3px; z-index: 30; }
+        .menu-pop[hidden] { display: none; }
+        .menu-pop .btn { text-align: left; border-color: transparent; background: transparent; padding: 9px 12px; white-space: nowrap; }
+        .menu-pop .btn:hover, .menu-pop .btn:focus-visible { background: var(--accent); color: var(--bg); }
+        .menu-pop .btn[aria-pressed]::before { content: '\2610  '; }
+        .menu-pop .btn[aria-pressed="true"]::before { content: '\2611  '; }
+        .menu-pop .btn[aria-pressed="false"] { opacity: 0.75; }
+        .menu-pop .menu-sep { height: 1px; margin: 3px 4px; background: rgba(128, 128, 128, 0.35); }
 
         .btn {
             background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 6px;
@@ -63,7 +88,7 @@
         }
 
         #status {
-            position: absolute; left: 14px; bottom: 168px; z-index: 12; max-width: 360px; padding: 8px 12px;
+            position: relative; margin-top: auto; max-height: 9em; overflow: auto; padding: 8px 12px;
             font-size: 12px; line-height: 1.4; border-left: 4px solid var(--muted); display: none;
         }
         #status.visible { display: block; }
@@ -72,8 +97,7 @@
         #status.error { border-left-color: var(--err); }
 
         #info {
-            position: absolute; top: 60px; right: 14px; width: 310px; max-width: calc(100% - 28px);
-            max-height: calc(100% - 260px); overflow: auto; padding: 14px 16px; z-index: 10; display: none;
+            position: relative; overflow: auto; padding: 14px 16px; display: none;
         }
         #info h2 { margin: 0 0 6px; font: 700 18px var(--font); color: var(--accent); }
         #info .row { margin-top: 7px; font-size: 13px; line-height: 1.4; word-break: break-word; }
@@ -103,6 +127,15 @@
         #credits a { color: var(--muted); }
         .kofi { background: #29abe0; color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font: 700 13px var(--font-ui); }
 
+        #tl-toggle { display: none; }
+        @media (max-width: 760px), (max-height: 520px) {
+            #tl-toggle { display: inline-block; }
+            #timeline { padding: 8px 12px 6px; }
+            #timeline.tl-collapsed #step-row, #timeline.tl-collapsed #presets, #timeline.tl-collapsed #credits, #timeline.tl-collapsed .kofi { display: none; }
+            #time-label { font-size: 19px; min-width: 0; }
+        }
+        @media (max-height: 520px) { .toast:nth-child(n+2) { display: none; } #status { max-height: 4.2em; } #time-sub, #clock-sub { display: none; } #time-label { font-size: 17px; } #clock-controls { margin-top: 0; } #slider { margin: 4px 0 0; } }
+        @media (max-width: 760px) { .toast { padding: 6px 10px; font-size: 13px; } .toast:nth-child(n+2) { display: none; } #status { max-height: 5.6em; } #events, #changes, #sky, #settings, #info { min-height: 90px; } }
         [hidden] { display: none !important; }
         #space { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
         /* Sistema solar: continuacion del zoom del globo. El lienzo de detras es #space; el mapa (la Tierra) queda entre ese y este */
@@ -110,20 +143,22 @@
         #solar[hidden] { display: none; }
         #solar-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; pointer-events: auto; }
         #solar-canvas:active { cursor: grabbing; }
-        #solar-chips { position: absolute; top: 56px; left: 14px; z-index: 7; pointer-events: auto; display: flex; gap: 5px; flex-wrap: wrap; max-width: calc(100% - 28px); }
-        #solar-chips .btn { padding: 4px 9px; font-size: 12px; }
+        #solar-chips { position: absolute; top: var(--top-h, 56px); left: 14px; z-index: 7; pointer-events: auto; display: flex; gap: 5px; flex-wrap: wrap; max-width: calc(100% - 28px); }
+        #solar-chips { flex-wrap: nowrap !important; overflow-x: auto; padding-bottom: 4px; }   /* una sola fila que se desplaza: nunca invade la ficha de debajo */
+        #solar-chips .btn { padding: 4px 9px; font-size: 12px; flex: none; }
         #solar-chips .btn.on { background: var(--accent); color: var(--bg); }
-        #solar-info { position: absolute; top: 100px; left: 14px; z-index: 7; pointer-events: auto; width: 290px; max-width: calc(100% - 28px); padding: 10px 14px 12px; box-sizing: border-box; }
+        #solar-info { overflow: auto; max-height: calc(100% - var(--top-h, 56px) - var(--bot-h, 180px) - 52px); position: absolute; top: calc(var(--top-h, 56px) + 44px); left: 14px; z-index: 7; pointer-events: auto; width: 290px; max-width: calc(100% - 28px); padding: 10px 14px 12px; box-sizing: border-box; }
         #solar-info h2 { margin: 0 0 4px; font: 700 18px var(--font); color: var(--accent); }
         #solar-info .solar-lines div { font-size: 12px; line-height: 1.45; margin-top: 3px; }
         #solar-zoom { width: 100%; margin: 10px 0 8px; accent-color: var(--accent); }
         #solar-back { padding: 4px 10px; font-size: 12px; }
         #solar-note { position: absolute; left: 14px; bottom: 214px; z-index: 7; max-width: 360px; padding: 8px 12px; font-size: 11.5px; line-height: 1.4; border-left: 4px solid #1565c0; }
-        body.solar-on #space-note, body.solar-on #status, body.solar-on #info { visibility: hidden; pointer-events: none; }
+        body.solar-on #space-note, body.solar-on #status, body.solar-on #info, body.solar-on #events, body.solar-on #changes, body.solar-on #sky { display: none !important; }   /* en la vista del sistema solar no pintan nada y dejarian hueco en las columnas */
         body.solar-on .maplibregl-canvas-container { transition: opacity .25s ease; }
         body.solar-on .maplibregl-ctrl-bottom-right { z-index: 8; }
-        @media (max-width: 760px) { #solar-info { top: 130px; width: 250px; } #solar-note { display: none; } }
-        #space-note { position: absolute; top: 56px; left: 50%; transform: translateX(-50%); z-index: 5; font-size: 11.5px; color: #9aa6c0; pointer-events: none; text-align: center; max-width: 80%; }
+        @media (max-width: 760px) { #solar-info { width: 250px; } #solar-note { display: none; } }
+        #space-note:empty { display: none; }
+        #space-note { position: relative; margin-top: auto; font-size: 11.5px; color: #9aa6c0; pointer-events: none !important; text-align: right; }
         .btn[aria-pressed="false"] { opacity: 0.6; }
         #clock { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
         #clock-time { font: 700 15px var(--font-ui); font-variant-numeric: tabular-nums; }
@@ -132,7 +167,7 @@
         #clock-controls .btn { padding: 3px 10px; font-size: 12px; }
         #clock-rate { padding: 3px 6px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); font: 600 12px var(--font-ui); }
         #clock-rate option { color: #222; }
-        #events { position: absolute; top: 60px; left: 14px; width: 344px; max-width: calc(100% - 28px); max-height: calc(100% - 300px); overflow: auto; padding: 12px 14px 10px; z-index: 11; display: none; box-sizing: border-box; }
+        #events { position: relative; overflow: auto; padding: 12px 14px 10px; display: none; }
         #events.open { display: block; }
         #events h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
         #events .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
@@ -141,7 +176,7 @@
         #events-verif label { display: flex; gap: 7px; align-items: flex-start; padding: 2px 0; line-height: 1.3; }
         #events-verif .vf-n { color: var(--muted); }
         #events-verif .vf-sep { margin: 6px 0 2px; color: var(--muted); font-size: 11.5px; }
-        #changes { position: absolute; top: 60px; left: 14px; width: 372px; max-width: calc(100% - 28px); max-height: calc(100% - 300px); overflow: auto; padding: 12px 14px 10px; z-index: 11; display: none; box-sizing: border-box; font-size: 13px; line-height: 1.4; }
+        #changes { position: relative; overflow: auto; padding: 12px 14px 10px; display: none; font-size: 13px; line-height: 1.4; }
         #changes.open { display: block; }
         #changes h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
         #changes .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
@@ -173,16 +208,16 @@
         .p-tools { position: absolute; top: 3px; right: 3px; display: flex; gap: 2px; opacity: 0; transition: opacity 0.15s; z-index: 3; pointer-events: auto; }
         #info > .p-tools { right: 30px; }
         .panel:hover > .p-tools, .p-tools:focus-within, .p-tools:hover { opacity: 1; }
-        #status > .p-tools, #space-note > .p-tools, #solar-note > .p-tools { top: -13px; right: 4px; }   /* recuadros pequenos y sin recorte: las asas van encima del borde, no sobre el texto */
+        #space-note > .p-tools, #solar-note > .p-tools { top: -13px; right: 4px; }
+        #status > .p-tools { top: 3px; right: 4px; }   /* #status ahora tiene scroll propio: las asas van dentro, no sobre el borde (se recortarian) */   /* recuadros pequenos y sin recorte: las asas van encima del borde, no sobre el texto */
         #space-note > .p-tools, #solar-note > .p-tools { opacity: 0.4; }
-        @media (pointer: coarse) { .p-tools, #space-note > .p-tools, #solar-note > .p-tools { opacity: 0.85; } .p-tools button { width: 30px; height: 30px; font-size: 16px; } #status > .p-tools, #space-note > .p-tools, #solar-note > .p-tools { top: -17px; } }
+        @media (pointer: coarse) { .p-tools, #space-note > .p-tools, #solar-note > .p-tools { opacity: 0.85; } .p-tools button { width: 30px; height: 30px; font-size: 16px; } #space-note > .p-tools, #solar-note > .p-tools { top: -17px; } }
         .p-tools button { width: 22px; height: 22px; padding: 0; line-height: 1; border-radius: 11px; border: 1px solid var(--accent); background: var(--panel); color: var(--text); font-size: 12px; cursor: pointer; }
         .p-tools .p-grip { cursor: grab; touch-action: none; }
         .p-tools .p-grip:active, body.p-dragging .p-grip { cursor: grabbing; }
         body.p-dragging { user-select: none; }
-        #settings { position: absolute; top: 60px; right: 372px; width: 330px; max-width: calc(100% - 28px); max-height: calc(100% - 140px); overflow: auto; padding: 12px 14px 12px; z-index: 12; display: none; box-sizing: border-box; font-size: 13px; line-height: 1.4; }
+        #settings { position: relative; overflow: auto; padding: 12px 14px 12px; display: none; font-size: 13px; line-height: 1.4; }
         #settings.open { display: block; }
-        @media (max-width: 900px) { #settings { right: 14px; top: 108px; } }
         #settings h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
         #settings h3 { margin: 12px 0 4px; font: 700 13px var(--font); }
         #settings .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
@@ -192,20 +227,24 @@
         #settings .st-actions .btn { padding: 4px 10px; font-size: 12px; }
         #settings .btn:disabled { opacity: 0.4; cursor: default; }
         #settings .st-pins { margin-left: 14px; }
-        #undo-bar { position: absolute; left: 14px; bottom: 120px; z-index: 14; display: none; gap: 6px; }
+        #undo-bar { position: relative; display: none; gap: 6px; width: auto !important; }
         body.touch #undo-bar { display: flex; }
+        /* La barra deshacer/rehacer flotante no cabe en pantallas pequenas (esta tambien en Ajustes) */
+        @media (max-width: 760px), (max-height: 520px) { body.touch #undo-bar { display: none; } }
         #undo-bar .btn { min-width: 44px; min-height: 44px; font-size: 18px; padding: 0 10px; }
         #undo-bar .btn:disabled { opacity: 0.35; }
         .ev-ico { width: 20px; height: 20px; flex: none; display: block; }
         .ev-name { font-weight: 600; }
         .ev-when { grid-column: 2; font-size: 11.5px; color: var(--muted); }
         #events-note { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
-        #toasts { position: absolute; top: 96px; left: 50%; transform: translateX(-50%); z-index: 13; display: flex; flex-direction: column; gap: 8px; width: min(92%, 520px); pointer-events: none; }
+        #toasts { display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        /* Con sitio de sobra, los avisos van centrados entre las dos columnas; si no, forman parte de la columna derecha (no tapan nada). */
+        @media (min-width: 1300px) { #toasts { position: fixed !important; top: calc(var(--top-h, 60px) + 26px); left: 50%; transform: translateX(-50%); width: min(520px, calc(100% - 2 * 400px)) !important; z-index: 13; } }
         .toast { pointer-events: auto; display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); cursor: pointer; font-size: 14px; line-height: 1.35; }
         .toast-ico { margin: 0; }
         .toast-text { flex: 1; font-variant-numeric: tabular-nums; }
         .toast-x { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
-        #sky { position: absolute; top: 60px; left: 14px; width: 344px; max-width: calc(100% - 28px); max-height: calc(100% - 300px); overflow: auto; padding: 12px 14px 10px; z-index: 11; display: none; box-sizing: border-box; }
+        #sky { position: relative; overflow: auto; padding: 12px 14px 10px; display: none; }
         #sky.open { display: block; }
         #sky h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
         #sky .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
@@ -229,12 +268,25 @@
         #sky-list tr.down { opacity: 0.55; }
         #sky-note, #sky-accuracy, #sky-stars-note { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: 6px; }
 
-        @media (max-width: 640px) {
-            #sky { top: 108px; right: 14px; width: auto; max-height: calc(100% - 330px); }
-            #top-left { max-width: 100%; top: 56px; }
+        /* Telefono / tableta vertical: las dos columnas pasan a ser una sola pila entre la barra y la linea de tiempo. */
+        @media (max-width: 760px) {
+            #dock { flex-direction: column; justify-content: flex-start; gap: 8px; }
+            #dock-l, #dock-r { flex: 0 1 auto; width: 100%; align-items: stretch; }
+            #dock-r { order: -1; }
+            #dock-l { flex: 1 1 0; }
+            #dock-r { max-height: 70%; }
+            #dock-l > #status { margin-top: 0; }
+            #top-left { max-width: none; flex-basis: 140px; }
             #time-label { font-size: 19px; min-width: 0; }
-            #info { top: 108px; max-height: calc(100% - 330px); }
-            #status { bottom: 222px; }
+        }
+        /* Dedos: objetivos tactiles de al menos 44 px */
+        @media (pointer: coarse) {
+            .btn, #search, .menu-pop .btn { min-height: 44px; }
+            #presets .btn, #clock-controls .btn, #settings .st-actions .btn, .sky-actions .btn, #solar-chips .btn { min-height: 40px; min-width: 40px; }
+            #info .close, #events .close, #changes .close, #settings .close, #sky .close { width: 44px; height: 44px; top: 0; right: 0; font-size: 24px; }
+            #slider { height: 32px; }
+            #key-step, #clock-rate, #time-input, .sky-grid select, .sky-grid input { min-height: 40px; }
+            #settings label, #events-verif label, .sky-toggles label { padding: 6px 0; }
         }
     </style>
 </head>
@@ -242,120 +294,139 @@
 
     <canvas id="space" aria-hidden="true"></canvas>
     <div id="map"></div>
-    <div id="space-note" role="status"></div>
     <div id="solar" hidden></div>
 
-    <div id="top-left">
-        <input id="search" type="search" data-i18n-placeholder="searchPlaceholder" aria-label="Search" autocomplete="off">
-    </div>
-
-    <div id="top-right">
-        <button class="btn" id="btn-borders" type="button" aria-pressed="false" hidden data-i18n="borders.button"></button>
-        <button class="btn" id="btn-roads" type="button" aria-pressed="false" hidden data-i18n="roads.button"></button>
-        <button class="btn" id="btn-center" type="button" aria-pressed="false" data-i18n="center.button"></button>
-        <button class="btn" id="btn-changes" type="button" aria-pressed="false" data-i18n="changes.button"></button>
-        <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
-        <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
-        <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
-        <button class="btn" id="btn-settings" type="button" aria-pressed="false" data-i18n="ui.button"></button>
-        <button class="btn" id="btn-lang" type="button">EN / ES</button>
-        <button class="btn" id="btn-theme" type="button">Dark</button>
-    </div>
-
-    <div id="settings" class="panel" role="region" aria-label="Settings">
-        <button class="close" id="settings-close" type="button" aria-label="Close">&times;</button>
-        <h2 data-i18n="ui.title"></h2>
-        <h3 data-i18n="ui.autohide.title"></h3>
-        <div id="st-levels" role="radiogroup"></div>
-        <div class="st-sub" data-i18n="ui.autohide.note"></div>
-        <h3 data-i18n="ui.pins.title"></h3>
-        <div id="st-pins" class="st-pins"></div>
-        <h3 data-i18n="ui.types.title"></h3>
-        <div id="st-types" class="st-pins"></div>
-        <div class="st-actions">
-            <button class="btn" id="st-types-all" type="button" data-i18n="ui.types.all"></button>
-            <button class="btn" id="st-types-none" type="button" data-i18n="ui.types.none"></button>
+    <div id="topbar">
+        <div id="top-left">
+            <input id="search" type="search" data-i18n-placeholder="searchPlaceholder" aria-label="Search" autocomplete="off" style="width:100%">
         </div>
-        <div class="st-sub" data-i18n="ui.types.note"></div>
-        <h3 id="st-anim-title" data-i18n="ui.icons.title"></h3>
-        <div id="st-anim-modes" role="radiogroup" aria-labelledby="st-anim-title"></div>
-        <div class="st-sub" data-i18n="ui.icons.note"></div>
-        <h3 data-i18n="ui.layout.title"></h3>
-        <div class="st-actions">
-            <button class="btn" id="st-undo" type="button"></button>
-            <button class="btn" id="st-redo" type="button"></button>
-            <button class="btn" id="st-reset" type="button"></button>
-        </div>
-        <div class="st-sub" data-i18n="ui.layout.note"></div>
-    </div>
-    <div id="undo-bar" role="group" aria-label="Undo / redo">
-        <button class="btn" id="undo-btn" type="button" aria-label="Undo" disabled>&#8630;</button>
-        <button class="btn" id="redo-btn" type="button" aria-label="Redo" disabled>&#8631;</button>
-    </div>
-
-    <div id="events" class="panel" role="region" aria-label="Events">
-        <button class="close" id="events-close" type="button" aria-label="Close">&times;</button>
-        <h2 data-i18n="events.title"></h2>
-        <details id="events-verif" open><summary data-i18n="events.verif.title"></summary><div id="events-verif-box"></div></details>
-        <ul id="events-list"></ul>
-        <div id="events-note"></div>
-    </div>
-
-    <div id="changes" class="panel" role="region" aria-label="Changes">
-        <button class="close" id="changes-close" type="button" aria-label="Close">&times;</button>
-        <h2 data-i18n="changes.title"></h2>
-        <div id="changes-body"></div>
-    </div>
-
-    <div id="toasts" aria-live="polite"></div>
-
-    <div id="sky" class="panel" role="region" aria-label="Sky">
-        <button class="close" id="sky-close" type="button" aria-label="Close">&times;</button>
-        <h2 data-i18n="sky.title"></h2>
-        <div id="sky-range"></div>
-        <div id="sky-body">
-            <canvas id="sky-chart" width="320" height="320"></canvas>
-            <div id="sky-when"></div>
-            <div id="sky-error"></div>
-            <div class="sky-grid">
-                <label><span data-i18n="sky.month"></span><select id="sky-month"></select></label>
-                <label><span data-i18n="sky.day"></span><input id="sky-day" type="number" min="1" max="31" step="1"></label>
-                <label><span data-i18n="sky.time"></span><input id="sky-time" type="time"></label>
-                <label><span data-i18n="sky.calendar"></span>
-                    <select id="sky-cal">
-                        <option value="auto" data-i18n="sky.cal.auto"></option>
-                        <option value="julian" data-i18n="sky.cal.julian"></option>
-                        <option value="gregorian" data-i18n="sky.cal.gregorian"></option>
-                    </select></label>
-                <label class="check wide"><input id="sky-follow" type="checkbox" checked><span data-i18n="sky.follow"></span></label>
-                <label><span data-i18n="sky.lat"></span><input id="sky-lat" type="number" min="-90" max="90" step="0.1"></label>
-                <label><span data-i18n="sky.lon"></span><input id="sky-lon" type="number" min="-180" max="180" step="0.1"></label>
+        <div id="top-right">
+            <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
+            <button class="btn" id="btn-sky" type="button" data-i18n="sky.button"></button>
+            <div class="menu" id="menu-layers">
+                <button class="btn menu-btn" id="menu-layers-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu-layers-pop" data-i18n="menu.layers"></button>
+                <div class="menu-pop panel" id="menu-layers-pop" role="group" hidden>
+                    <button class="btn" id="btn-borders" type="button" aria-pressed="false" hidden data-i18n="borders.button"></button>
+                    <button class="btn" id="btn-roads" type="button" aria-pressed="false" hidden data-i18n="roads.button"></button>
+                    <button class="btn" id="btn-center" type="button" aria-pressed="false" data-i18n="center.button"></button>
+                    <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
+                </div>
             </div>
-            <div class="sky-actions">
-                <button class="btn" id="sky-now" type="button" data-i18n="sky.now"></button>
-                <span class="sky-toggles">
-                    <label><input id="sky-t-stars" type="checkbox" checked> <span data-i18n="sky.stars"></span></label>
-                    <label><input id="sky-t-names" type="checkbox" checked> <span data-i18n="sky.names"></span></label>
-                    <label><input id="sky-t-lines" type="checkbox" checked> <span data-i18n="sky.lines"></span></label>
-                    <label><input id="sky-t-day" type="checkbox"> <span data-i18n="sky.dayStars"></span></label>
-                </span>
+            <div class="menu" id="menu-more">
+                <button class="btn menu-btn" id="menu-more-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu-more-pop" data-i18n="menu.more"></button>
+                <div class="menu-pop panel" id="menu-more-pop" role="group" hidden>
+                    <button class="btn" id="btn-changes" type="button" aria-pressed="false" data-i18n="changes.button"></button>
+                    <button class="btn" id="btn-settings" type="button" aria-pressed="false" data-i18n="ui.button"></button>
+                    <div class="menu-sep" role="separator"></div>
+                    <button class="btn" id="btn-lang" type="button">EN / ES</button>
+                    <button class="btn" id="btn-theme" type="button">Dark</button>
+                </div>
             </div>
-            <div id="sky-twilight"></div>
-            <table id="sky-list"><thead><tr><th></th><th data-i18n="sky.colAlt"></th><th data-i18n="sky.colAz"></th><th data-i18n="sky.colMag"></th><th></th></tr></thead><tbody id="sky-rows"></tbody></table>
-            <div id="sky-stars-note"></div>
-            <div id="sky-note"><span class="badge model" data-i18n="sky.model"></span> <span data-i18n="sky.note"></span></div>
-            <div id="sky-accuracy"></div>
-            <div id="sky-caption" data-i18n="sky.caption" style="font-size:11px;color:var(--muted);margin-top:6px"></div>
         </div>
     </div>
 
-    <div id="info" class="panel" role="region" aria-live="polite">
-        <button class="close" id="info-close" type="button" aria-label="Close">×</button>
-        <h2 id="info-title"></h2>
-        <div id="info-body"></div>
-    </div>
+    <div id="dock">
+      <div id="dock-l">
+        <div id="events" class="panel" role="region" aria-label="Events">
+            <button class="close" id="events-close" type="button" aria-label="Close">&times;</button>
+            <h2 data-i18n="events.title"></h2>
+            <details id="events-verif" open><summary data-i18n="events.verif.title"></summary><div id="events-verif-box"></div></details>
+            <ul id="events-list"></ul>
+            <div id="events-note"></div>
+        </div>
 
-    <div id="status" class="panel" role="status"></div>
+        <div id="changes" class="panel" role="region" aria-label="Changes">
+            <button class="close" id="changes-close" type="button" aria-label="Close">&times;</button>
+            <h2 data-i18n="changes.title"></h2>
+            <div id="changes-body"></div>
+        </div>
+
+        <div id="sky" class="panel" role="region" aria-label="Sky">
+            <button class="close" id="sky-close" type="button" aria-label="Close">&times;</button>
+            <h2 data-i18n="sky.title"></h2>
+            <div id="sky-range"></div>
+            <div id="sky-body">
+                <canvas id="sky-chart" width="320" height="320"></canvas>
+                <div id="sky-when"></div>
+                <div id="sky-error"></div>
+                <div class="sky-grid">
+                    <label><span data-i18n="sky.month"></span><select id="sky-month"></select></label>
+                    <label><span data-i18n="sky.day"></span><input id="sky-day" type="number" min="1" max="31" step="1"></label>
+                    <label><span data-i18n="sky.time"></span><input id="sky-time" type="time"></label>
+                    <label><span data-i18n="sky.calendar"></span>
+                        <select id="sky-cal">
+                            <option value="auto" data-i18n="sky.cal.auto"></option>
+                            <option value="julian" data-i18n="sky.cal.julian"></option>
+                            <option value="gregorian" data-i18n="sky.cal.gregorian"></option>
+                        </select></label>
+                    <label class="check wide"><input id="sky-follow" type="checkbox" checked><span data-i18n="sky.follow"></span></label>
+                    <label><span data-i18n="sky.lat"></span><input id="sky-lat" type="number" min="-90" max="90" step="0.1"></label>
+                    <label><span data-i18n="sky.lon"></span><input id="sky-lon" type="number" min="-180" max="180" step="0.1"></label>
+                </div>
+                <div class="sky-actions">
+                    <button class="btn" id="sky-now" type="button" data-i18n="sky.now"></button>
+                    <span class="sky-toggles">
+                        <label><input id="sky-t-stars" type="checkbox" checked> <span data-i18n="sky.stars"></span></label>
+                        <label><input id="sky-t-names" type="checkbox" checked> <span data-i18n="sky.names"></span></label>
+                        <label><input id="sky-t-lines" type="checkbox" checked> <span data-i18n="sky.lines"></span></label>
+                        <label><input id="sky-t-day" type="checkbox"> <span data-i18n="sky.dayStars"></span></label>
+                    </span>
+                </div>
+                <div id="sky-twilight"></div>
+                <table id="sky-list"><thead><tr><th></th><th data-i18n="sky.colAlt"></th><th data-i18n="sky.colAz"></th><th data-i18n="sky.colMag"></th><th></th></tr></thead><tbody id="sky-rows"></tbody></table>
+                <div id="sky-stars-note"></div>
+                <div id="sky-note"><span class="badge model" data-i18n="sky.model"></span> <span data-i18n="sky.note"></span></div>
+                <div id="sky-accuracy"></div>
+                <div id="sky-caption" data-i18n="sky.caption" style="font-size:11px;color:var(--muted);margin-top:6px"></div>
+            </div>
+        </div>
+
+        <div id="status" class="panel" role="status"></div>
+
+        <div id="undo-bar" role="group" aria-label="Undo / redo">
+            <button class="btn" id="undo-btn" type="button" aria-label="Undo" disabled>&#8630;</button>
+            <button class="btn" id="redo-btn" type="button" aria-label="Redo" disabled>&#8631;</button>
+        </div>
+
+      </div>
+      <div id="dock-r">
+        <div id="toasts" aria-live="polite"></div>
+
+        <div id="settings" class="panel" role="region" aria-label="Settings">
+            <button class="close" id="settings-close" type="button" aria-label="Close">&times;</button>
+            <h2 data-i18n="ui.title"></h2>
+            <h3 data-i18n="ui.autohide.title"></h3>
+            <div id="st-levels" role="radiogroup"></div>
+            <div class="st-sub" data-i18n="ui.autohide.note"></div>
+            <h3 data-i18n="ui.pins.title"></h3>
+            <div id="st-pins" class="st-pins"></div>
+            <h3 data-i18n="ui.types.title"></h3>
+            <div id="st-types" class="st-pins"></div>
+            <div class="st-actions">
+                <button class="btn" id="st-types-all" type="button" data-i18n="ui.types.all"></button>
+                <button class="btn" id="st-types-none" type="button" data-i18n="ui.types.none"></button>
+            </div>
+            <div class="st-sub" data-i18n="ui.types.note"></div>
+            <h3 id="st-anim-title" data-i18n="ui.icons.title"></h3>
+            <div id="st-anim-modes" role="radiogroup" aria-labelledby="st-anim-title"></div>
+            <div class="st-sub" data-i18n="ui.icons.note"></div>
+            <h3 data-i18n="ui.layout.title"></h3>
+            <div class="st-actions">
+                <button class="btn" id="st-undo" type="button"></button>
+                <button class="btn" id="st-redo" type="button"></button>
+                <button class="btn" id="st-reset" type="button"></button>
+            </div>
+            <div class="st-sub" data-i18n="ui.layout.note"></div>
+        </div>
+        <div id="info" class="panel" role="region" aria-live="polite">
+            <button class="close" id="info-close" type="button" aria-label="Close">×</button>
+            <h2 id="info-title"></h2>
+            <div id="info-body"></div>
+        </div>
+
+        <div id="space-note" role="status"></div>
+      </div>
+    </div>
 
     <div id="timeline" class="panel">
         <div id="time-row">
@@ -373,6 +444,7 @@
                 </div>
             </div>
             <input id="time-input" type="text" data-i18n-placeholder="timePlaceholder" aria-label="Go to a date" autocomplete="off">
+            <button class="btn" id="tl-toggle" type="button" aria-expanded="false" aria-controls="step-row presets credits">&#8943;</button>
             <a class="kofi" href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" rel="noopener" data-i18n="donate"></a>
         </div>
         <input id="slider" type="range" min="0" max="10000" value="0" step="1" aria-label="Time" dir="ltr" aria-describedby="step-row">
@@ -408,6 +480,11 @@
 <script src="./solar/solar-view.js"></script>
 <script>
 'use strict';
+
+/** Pantalla estrecha (movil / tableta vertical): las columnas de recuadros pasan a una pila y solo hay una hoja abierta. Coincide con la mediaquery del CSS. */
+const PHONE = window.matchMedia('(max-width: 760px)');
+/** Pantalla pequena en cualquier orientacion: la linea de tiempo se pliega. */
+const COMPACT = window.matchMedia('(max-width: 760px), (max-height: 520px)');
 
 /* ------------------------------------------------------------------ */
 /* Configuración                                                      */
@@ -573,6 +650,7 @@ const i18n = {
             plates: 'Modelo de placas: el mapa se calcula para {ma} Ma y se redondea a Ma enteros; dos fechas que difieren menos de 1 Ma muestran el mismo mapa.',
             noGeo: 'Sucesos geológicos (terremotos, impactos, erupciones): ChronosTerrae no registra ninguno para esta época.'
         },
+        menu: { layers: 'Capas', more: 'Más', layersTip: 'Capas del mapa', moreTip: 'Cambios, ajustes, idioma y tema' },
         ui: {
             button: 'Ajustes', title: 'Ajustes', move: 'Mover', hide: 'Ocultar', undo: 'Deshacer', redo: 'Rehacer', reset: 'Restablecer posiciones', moveHint: 'Arrastra para mover (o usa las flechas)',
             autohide: {
@@ -763,6 +841,7 @@ const i18n = {
             plates: 'Plate model: the map is computed for {ma} Ma and rounded to whole Ma; two dates less than 1 Ma apart show the same map.',
             noGeo: 'Geological events (earthquakes, impacts, eruptions): ChronosTerrae records none for this epoch.'
         },
+        menu: { layers: 'Layers', more: 'More', layersTip: 'Map layers', moreTip: 'Changes, settings, language and theme' },
         ui: {
             button: 'Settings', title: 'Settings', move: 'Move', hide: 'Hide', undo: 'Undo', redo: 'Redo', reset: 'Reset positions', moveHint: 'Drag to move (or use the arrow keys)',
             autohide: {
@@ -2206,6 +2285,8 @@ function applyStrings() {
     $('btn-roads').title = t('roads.tip');
     $('btn-center').title = $('btn-center').ariaLabel = t('center.tip');
     $('btn-changes').title = t('changes.tip');
+    $('menu-layers-btn').title = t('menu.layersTip');
+    $('menu-more-btn').title = t('menu.moreTip');
     if (typeof labelsUpdate === 'function' && LBL.ready) labelsUpdate();
     keyStepTexts();
     zoomControl.texts();
@@ -2445,7 +2526,10 @@ panelsUI = (function () {
         });
         if (typesReady) { typesRender(); animRender(); }
     }
-    function setSettingsOpen(open) { byId('settings').classList.toggle('open', open); byId('btn-settings').setAttribute('aria-pressed', String(open)); }
+    function setSettingsOpen(open) {
+        byId('settings').classList.toggle('open', open); byId('btn-settings').setAttribute('aria-pressed', String(open));
+        if (open && PHONE.matches) { if (events.open) setEventsOpen(false); if (sky.open) setSkyOpen(false); if (CHG.open) setChangesOpen(false); }   // en pantalla pequena solo una hoja a la vez
+    }
     byId('btn-settings').addEventListener('click', () => setSettingsOpen(!byId('settings').classList.contains('open')));
     byId('settings-close').addEventListener('click', () => setSettingsOpen(false));
     byId('st-types-all').addEventListener('click', () => { typesSet(0, true); typesRender(); });
@@ -2685,6 +2769,7 @@ function setSkyOpen(open) {
     if (!open) return;
     if (events.open) setEventsOpen(false);
     if (CHG.open) setChangesOpen(false);
+    if (PHONE.matches) panelsUI.setSettingsOpen(false);
     if (!sky.ready) { updateSky(); return; }
     syncPlace();
     sky.started = true;
@@ -3623,7 +3708,7 @@ function setEventsOpen(open) {
     events.open = open;
     $('events').classList.toggle('open', open);
     $('btn-events').setAttribute('aria-pressed', String(open));
-    if (open) { if (sky.open) setSkyOpen(false); if (CHG.open) setChangesOpen(false); eventsEnsureData(); renderEventsPanel(); }
+    if (open) { if (sky.open) setSkyOpen(false); if (CHG.open) setChangesOpen(false); if (PHONE.matches && panelsUI) panelsUI.setSettingsOpen(false); eventsEnsureData(); renderEventsPanel(); }
 }
 $('btn-events').addEventListener('click', () => setEventsOpen(!events.open));
 $('events-close').addEventListener('click', () => setEventsOpen(false));
@@ -3820,7 +3905,7 @@ function setChangesOpen(open) {
     CHG.open = open;
     $('changes').classList.toggle('open', open);
     $('btn-changes').setAttribute('aria-pressed', String(open));
-    if (open) { if (events.open) setEventsOpen(false); if (sky.open) setSkyOpen(false); CHG.key = chgKey(); chgRender(); }
+    if (open) { if (events.open) setEventsOpen(false); if (sky.open) setSkyOpen(false); if (PHONE.matches && panelsUI) panelsUI.setSettingsOpen(false); CHG.key = chgKey(); chgRender(); }
 }
 $('btn-changes').addEventListener('click', () => setChangesOpen(!CHG.open));
 $('changes-close').addEventListener('click', () => setChangesOpen(false));
@@ -3909,6 +3994,53 @@ async function loadLive() {
         console.warn('[LIVE]', err.message);
     }
 }
+
+/* ------------------------------------------------------------------ */
+/* Maquetacion: menus desplegables y medida de la barra y la linea de tiempo */
+/* ------------------------------------------------------------------ */
+const menus = (() => {
+    const list = [...document.querySelectorAll('.menu')].map((root) => ({ root, btn: root.querySelector('.menu-btn'), pop: root.querySelector('.menu-pop') }));
+    const items = (m) => [...m.pop.querySelectorAll('button')].filter((b) => !b.hidden && !b.disabled);
+    function setOpen(m, open, focusFirst) {
+        m.pop.hidden = !open; m.btn.setAttribute('aria-expanded', String(open));
+        if (open) { list.forEach((o) => { if (o !== m) setOpen(o, false); }); if (focusFirst) { const it = items(m)[0]; if (it) it.focus(); } }
+    }
+    const closeAll = () => list.forEach((m) => setOpen(m, false));
+    list.forEach((m) => {
+        m.btn.addEventListener('click', () => setOpen(m, m.pop.hidden));
+        m.btn.addEventListener('keydown', (e) => { if (e.key === 'ArrowDown') { e.preventDefault(); setOpen(m, true, true); } });
+        m.pop.addEventListener('click', (e) => { if (e.target.closest('button')) setTimeout(() => setOpen(m, false), 0); });
+        m.pop.addEventListener('keydown', (e) => {
+            const it = items(m); const i = it.indexOf(document.activeElement);
+            if (e.key === 'ArrowDown') { e.preventDefault(); it[(i + 1) % it.length].focus(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); it[(i - 1 + it.length) % it.length].focus(); }
+            else if (e.key === 'Escape') { e.stopPropagation(); setOpen(m, false); m.btn.focus(); }
+        });
+    });
+    document.addEventListener('pointerdown', (e) => { list.forEach((m) => { if (!m.pop.hidden && !m.root.contains(e.target)) setOpen(m, false); }); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
+    return { closeAll, list };
+})();
+
+/** Mide la barra superior y la linea de tiempo y se lo da al CSS (--top-h, --bot-h): las columnas de recuadros ocupan exactamente lo que queda entre ambas. */
+function layoutMeasure() {
+    const tb = $('topbar').getBoundingClientRect(); const tl = $('timeline').getBoundingClientRect();
+    const st = document.documentElement.style;
+    st.setProperty('--top-h', Math.ceil(tb.bottom + 8) + 'px');
+    st.setProperty('--bot-h', Math.ceil(window.innerHeight - tl.top + 8) + 'px');
+}
+/** Linea de tiempo plegable en pantallas pequenas: por defecto solo lo esencial (fecha, deslizador, reloj); el boton "..." muestra pasos, atajos y creditos. */
+function timelineCollapse(on) {
+    $('timeline').classList.toggle('tl-collapsed', on);
+    $('tl-toggle').setAttribute('aria-expanded', String(!on));
+    layoutMeasure();
+}
+$('tl-toggle').addEventListener('click', () => timelineCollapse(!$('timeline').classList.contains('tl-collapsed')));
+const onCompact = () => timelineCollapse(COMPACT.matches);
+if (COMPACT.addEventListener) COMPACT.addEventListener('change', onCompact);
+onCompact();
+window.addEventListener('resize', layoutMeasure);
+if (typeof ResizeObserver === 'function') { const ro = new ResizeObserver(layoutMeasure); ro.observe($('topbar')); ro.observe($('timeline')); }
 
 /* Inicio */
 initClock();

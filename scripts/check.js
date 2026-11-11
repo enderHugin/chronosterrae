@@ -438,6 +438,38 @@ check('esquema: rechaza margen de posicion negativo', () => {
     return runValidator(r) !== 0;
 });
 
+/* ---- Maquetacion: los recuadros viven en columnas en flujo (nada de coordenadas absolutas sueltas) y los botones, en menus ---- */
+check('maquetacion: los recuadros estan en #dock-l / #dock-r', () => {
+    const h = readIndex();
+    const i = h.indexOf('<div id="dock">'); const j = h.indexOf('<div id="timeline"');
+    if (i < 0 || j < i) return false;
+    const dock = h.slice(i, j);
+    const l = dock.indexOf('id="dock-l"'); const r = dock.indexOf('id="dock-r"');
+    if (l < 0 || r < l) return false;
+    const left = dock.slice(l, r), right = dock.slice(r);
+    return ['events', 'changes', 'sky', 'status', 'undo-bar'].every((id) => left.includes('id="' + id + '"'))
+        && ['toasts', 'settings', 'info', 'space-note'].every((id) => right.includes('id="' + id + '"'));
+});
+check('maquetacion: ningun recuadro se coloca con top/left/right absolutos', () => {
+    const h = readIndex();
+    return ['events', 'changes', 'sky', 'settings', 'info', 'status', 'undo-bar'].every((id) => {
+        const m = h.match(new RegExp('\\n\\s*#' + id + ' \\{[^}]*\\}'));
+        return m !== null && !/position:\s*absolute/.test(m[0]) && !/(?<![-\w])(top|left|right|bottom):\s*\d/.test(m[0]);
+    });
+});
+check('maquetacion: los botones de capas y de mas estan dentro de menus, con sus ids de siempre', () => {
+    const h = readIndex();
+    const pop = (id) => { const a = h.indexOf('id="' + id + '"'); return a < 0 ? '' : h.slice(a, h.indexOf('</div>', a + 20 + (id === 'menu-more-pop' ? 400 : 0))); };
+    const layers = pop('menu-layers-pop'), more = pop('menu-more-pop');
+    return ['btn-borders', 'btn-roads', 'btn-center', 'btn-space'].every((id) => layers.includes('id="' + id + '"'))
+        && ['btn-changes', 'btn-settings', 'btn-lang', 'btn-theme'].every((id) => more.includes('id="' + id + '"'))
+        && /id="btn-events"/.test(h) && /id="btn-sky"/.test(h);
+});
+check('maquetacion: objetivos tactiles de 44 px para puntero grueso y mediaquery de movil', () => {
+    const h = readIndex();
+    return /@media \(pointer: coarse\) \{[^@]*min-height: 44px/.test(h) && /@media \(max-width: 760px\)/.test(h) && /--top-h/.test(h) && /--bot-h/.test(h);
+});
+
 console.log('\nPASS ' + passes.length);
 passes.forEach(p => console.log('  ok  ' + p));
 if (failures.length) {
