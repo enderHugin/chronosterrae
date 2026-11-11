@@ -473,6 +473,16 @@ check('maquetacion: los botones de capas y de mas estan dentro de menus, con sus
         && ['btn-changes', 'btn-settings', 'btn-lang', 'btn-theme'].every((id) => more.includes('id="' + id + '"'))
         && /id="btn-events"/.test(h) && /id="btn-sky"/.test(h);
 });
+check('linea de tiempo estable: reloj, insignia y subtitulo conservan su sitio al ocultarse (visibility, no display)', () => {
+    const h = readIndex();
+    return /#clock\[hidden\]\s*\{[^}]*display:\s*flex\s*!important;[^}]*visibility:\s*hidden/.test(h)
+        && /#era-badge\[hidden\]\s*\{[^}]*display:\s*inline-block\s*!important;[^}]*visibility:\s*hidden/.test(h)
+        && /#time-sub\s*\{[^}]*min-height:\s*15px/.test(h);
+});
+check('recuadros: el borde de la epoca es un contorno hacia dentro (no cambia el tamano de los recuadros)', () => {
+    const h = readIndex(); const m = h.match(/\.panel \{[^}]*\}/);
+    return m !== null && /border:\s*1px solid var\(--accent\)/.test(m[0]) && /outline:\s*var\(--bw\)\s+var\(--bstyle\)/.test(m[0]) && /outline-offset:\s*calc\(var\(--bw\) \* -1\)/.test(m[0]);
+});
 check('maquetacion: objetivos tactiles de 44 px para puntero grueso y mediaquery de movil', () => {
     const h = readIndex();
     return /@media \(pointer: coarse\) \{[^@]*min-height: 44px/.test(h) && /@media \(max-width: 760px\)/.test(h) && /--top-h/.test(h) && /--bot-h/.test(h);

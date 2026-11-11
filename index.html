@@ -49,7 +49,9 @@
             background-color: var(--panel); color: var(--text);
             background-image: var(--orn-tl), var(--orn-br), var(--orn-texture);
             background-repeat: no-repeat, no-repeat, repeat; background-position: top 3px left 3px, bottom 3px right 3px, 0 0; background-size: 12px 12px, 12px 12px, 48px 48px;
-            border: var(--bw) var(--bstyle) var(--accent); border-radius: var(--radius);
+            border: 1px solid var(--accent); border-radius: var(--radius);
+            /* El borde ornamental de la epoca (doble, resaltado, grueso...) se pinta como contorno hacia dentro: no ocupa sitio, asi el tamano de los recuadros no depende de la epoca */
+            outline: var(--bw) var(--bstyle) var(--accent); outline-offset: calc(var(--bw) * -1);
             box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
             backdrop-filter: blur(8px);
         }
@@ -280,8 +282,7 @@
         #info h2::after, #events h2::after, #changes h2::after, #settings h2::after, #sky h2::after, #solar-info h2::after { content: ''; display: block; height: var(--orn-divider-h); margin-top: 4px; background: var(--orn-divider) repeat-x left center; }
         .maplibregl-canvas-container.maplibregl-interactive { cursor: var(--cursor-grab); }
         body #map .maplibregl-canvas-container.maplibregl-interactive:active { cursor: var(--cursor-drag); }
-        #era-badge { display: inline-block; margin-top: 3px; padding: 1px 9px; font: 600 11.5px var(--font-ui); letter-spacing: var(--h-spacing); text-transform: var(--h-transform); color: var(--accent); border: 1px solid var(--accent); border-radius: var(--btn-radius); background: var(--orn-texture), transparent; cursor: help; }
-        #era-badge[hidden] { display: none; }
+        #era-badge { display: inline-block; margin-top: 3px; padding: 0 9px; line-height: 17px; font: 600 11.5px/17px var(--font-ui); letter-spacing: var(--h-spacing); text-transform: var(--h-transform); color: var(--accent); border: 1px solid var(--accent); border-radius: var(--btn-radius); background: var(--orn-texture), transparent; cursor: help; }
         /* Telefono / tableta vertical: las dos columnas pasan a ser una sola pila entre la barra y la linea de tiempo. */
         @media (max-width: 760px) {
             #dock { flex-direction: column; justify-content: flex-start; gap: 8px; }
@@ -301,6 +302,36 @@
             #slider { height: 32px; }
             #key-step, #clock-rate, #time-input, .sky-grid select, .sky-grid input { min-height: 40px; }
             #settings label, #events-verif label, .sky-toggles label { padding: 6px 0; }
+        }
+        /* La linea de tiempo NO cambia de tamano: lo que aparece y desaparece (subtitulo, reloj, insignia de epoca) conserva su sitio, solo se vacia u oculta (visibility).
+           Alturas por line-height numerico y no por el tipo de letra, que cambia con la epoca. */
+        #timeline { line-height: 1.25; }
+        #timeline button, #timeline select, #timeline input { line-height: 1.25; }
+        #time-label { line-height: 1.25; white-space: nowrap; }
+        #time-sub { min-height: 15px; line-height: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #key-step { height: 24px; box-sizing: border-box; }
+        #credits { line-height: 14px; }
+        .kofi { display: inline-block; height: 28px; line-height: 28px; box-sizing: border-box; padding-top: 0; padding-bottom: 0; }
+        #presets .btn { height: 25px; box-sizing: border-box; padding-top: 0; padding-bottom: 0; }
+        #slider { height: 16px; }
+        #step-row { min-height: 26px; }
+        #clock[hidden] { display: flex !important; visibility: hidden; }
+        #era-badge { height: 20px; box-sizing: border-box; line-height: 17px; white-space: nowrap; vertical-align: top; }
+        #era-badge[hidden] { display: inline-block !important; visibility: hidden; }
+        #step-hint { display: inline-block; min-height: 15px; }
+        #clock-time { line-height: 20px; }
+        #clock-sub { min-height: 15px; line-height: 15px; }
+        #clock-controls .btn, #clock-controls select { height: 28px; box-sizing: border-box; padding-top: 0; padding-bottom: 0; }
+        #time-input { height: 32px; box-sizing: border-box; }
+        #era-badge { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+        /* Pantalla pequena: la fila de la fecha es una rejilla fija (fecha | reloj, luego casilla | boton), no un flujo que salta de linea segun el ancho de cada letra */
+        @media (max-width: 760px), (max-height: 520px) {
+            #time-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 6px 10px; }
+            #time-row > div:first-child { min-width: 0; grid-column: 1; grid-row: 1; }
+            #clock { grid-column: 2; grid-row: 1; }
+            #time-input { grid-column: 1; grid-row: 2; min-width: 0; width: 100%; }
+            #tl-toggle { grid-column: 2; grid-row: 2; }
+            #time-row > .kofi { grid-column: 1 / -1; grid-row: 3; text-align: center; }
         }
     </style>
 </head>
@@ -2078,7 +2109,7 @@ function setTime(ybp, { fromSlider = false, immediate = false, persist = true, f
     if (document.activeElement !== $('time-input')) $('time-input').value = '';
     const f = formatTime(state.ybp);
     $('time-label').textContent = f.main;
-    $('time-sub').textContent = f.sub;
+    $('time-sub').textContent = f.sub; $('time-sub').title = f.sub;
     eraUpdate(ybpToYear(state.ybp));
     if (immediate) { clearTimeout(sceneTimer); sceneTimer = null; lastScene = performance.now(); updateScene({ immediate: true }); } else scheduleScene();
     if (!fromClock) clockChanged();
