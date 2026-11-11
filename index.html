@@ -3496,22 +3496,22 @@ function evLayersAdd() {
     const es = evIconStyle(); EV_STYLE_KEY = evStyleKey(es);       // sprites, disco y anillo nacen ya con el estilo de la epoca
     const hit = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 15];
     // Disco de respaldo: el icono es rojo/ocre y el mapa politico tambien; sin fondo el mosquete o las espadas se pierden (visto en el render real, probe-shot)
-    const EI = ChronosEventIcons; const seen = ['*', ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], ['coalesce', ['get', 'fade'], 1], ['coalesce', ['get', 'ent'], 1]];
+    const EI = ChronosEventIcons; const seen = ['coalesce', ['get', 'ent'], 1];   // opacos: sin niveles de desvanecido ni atenuacion por revision (pedido del creador); solo la entrada
     // Con la Tierra lejos todo se encoge (EI.zoomScaled) y, muy lejos, los iconos ceden el sitio a puntos de su color (EI.iconFade / EI.dotFade).
     // Sin disco ni anillo alrededor de los iconos (pedido del creador, 2026-11-11): el contraste lo da el borde claro que sigue la silueta.
     map.addLayer({ id: 'events-dot', type: 'circle', source: 'events', paint: {
         'circle-radius': EI.DOT_RADIUS, 'circle-color': evDotColors(es), 'circle-stroke-width': 0.9, 'circle-stroke-color': es ? es.rim : '#ffffff',
-        'circle-opacity': EI.dotFade(seen), 'circle-stroke-opacity': EI.dotFade(['*', seen, 0.85]), 'circle-opacity-transition': { duration: 350, delay: 0 }
+        'circle-opacity': EI.dotFade(seen), 'circle-stroke-opacity': EI.dotFade(seen)
     } });
     map.addLayer({ id: 'events-pulse', type: 'circle', source: 'events', paint: {
-        'circle-radius': EI.zoomScaled(EV_PULSE_BASE), 'circle-color': es ? es.rim : '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': es ? es.rim : '#ffffff', 'circle-stroke-opacity': EI.dotFade(['*', ['coalesce', ['get', 'fade'], 1], 0.55]),   // el anillo que respira solo rodea los PUNTOS (Tierra lejos), nunca los iconos
+        'circle-radius': EI.zoomScaled(EV_PULSE_BASE), 'circle-color': es ? es.rim : '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': es ? es.rim : '#ffffff', 'circle-stroke-opacity': EI.dotFade(0.55),   // el anillo que respira solo rodea los PUNTOS (Tierra lejos), nunca los iconos
         'circle-radius-transition': { duration: 900, delay: 0 }, 'circle-stroke-opacity-transition': { duration: 900, delay: 0 }
     } });
-    // Iconos de linea: algo mayores que cuando llevaban disco (el trazo pesa menos que una silueta rellena); lo sin revisar, algo atenuado (0,85), sigue distinguiendose de lo revisado (1)
+    // Iconos de linea: algo mayores que cuando llevaban disco (el trazo pesa menos que una silueta rellena); siempre opacos. El estado de revision se ve en la lista y en la ficha.
     ['bob', 'shake'].forEach((g) => map.addLayer({
         id: 'events-icon-' + g, type: 'symbol', source: 'events', filter: ['==', ['get', 'anim'], g],
         layout: { 'icon-image': ['get', 'img'], 'icon-size': EI.zoomScaled(['interpolate', ['linear'], ['get', 'importance'], 0.3, 0.74, 1, 1.02]), 'icon-allow-overlap': true, 'icon-ignore-placement': true, 'symbol-sort-key': ['get', 'importance'] },
-        paint: { 'icon-opacity': EI.iconFade(['*', ['match', ['get', 'status'], 'raw', 0.85, 'community', 0.92, 1], ['coalesce', ['get', 'fade'], 1]]), 'icon-opacity-transition': { duration: 350, delay: 0 }, 'icon-translate': [0, 0], 'icon-translate-transition': { duration: g === 'shake' ? 520 : 800, delay: 0 } }
+        paint: { 'icon-opacity': EI.iconFade(1), 'icon-opacity-transition': { duration: 0, delay: 0 }, 'icon-translate': [0, 0], 'icon-translate-transition': { duration: g === 'shake' ? 520 : 800, delay: 0 } }
     }));
     // Zona de toque: invisible, pero es la que consultan el hover y el clic (queryRenderedFeatures)
     map.addLayer({ id: 'events-circle', type: 'circle', source: 'events', paint: { 'circle-radius': EI.zoomScaled(hit, 7), 'circle-color': '#000000', 'circle-opacity': 0, 'circle-stroke-opacity': 0 } });
@@ -3523,7 +3523,7 @@ function evAnimApply(phase) {
     EVA.phase = phase;
     if (!map.getLayer('events-pulse')) return;
     map.setPaintProperty('events-pulse', 'circle-radius', ChronosEventIcons.zoomScaled(['+', EV_PULSE_BASE, phase ? 5 : 0]));
-    map.setPaintProperty('events-pulse', 'circle-stroke-opacity', ChronosEventIcons.dotFade(['*', ['coalesce', ['get', 'fade'], 1], phase ? 0 : 0.55]));
+    map.setPaintProperty('events-pulse', 'circle-stroke-opacity', ChronosEventIcons.dotFade(phase ? 0 : 0.55));
     map.setPaintProperty('events-icon-bob', 'icon-translate', [0, phase ? -2 : 0]);
     map.setPaintProperty('events-icon-shake', 'icon-translate', [phase ? 1.6 : -1.6, 0]);
 }

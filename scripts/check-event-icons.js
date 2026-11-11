@@ -109,13 +109,15 @@ check('zoom: con la Tierra cerca (zoom >= 3,2) los iconos tienen su tamano de si
     let prev = -1; for (let z = 0; z <= 6; z += 0.05) { const k = I.zoomScale(z); if (k < prev - 1e-9) return 'baja en ' + z.toFixed(2); prev = k; }
     return I.zoomScale(3.2) === 1 && I.zoomScale(5) === 1 && I.zoomScale(0) < 0.4 && I.zoomScale(-3) === I.zoomScale(0);
 });
-check('zoom: en la vista inicial (2,1) se ven iconos algo menores; los puntos solo con la Tierra muy lejos', () => I.zoomScale(2.1) >= 0.75 && I.zoomScale(2.1) < 1 && I.iconShare(2.1) === 1 && I.iconShare(1.3) === 1 && I.iconShare(1.0) === 0 && I.iconShare(0.2) === 0 && I.iconShare(1.15) > 0 && I.iconShare(1.15) < 1 && I.DOT_ZOOM[1] < 2.1);
-check('zoom: las expresiones tienen el zoom arriba del todo (MapLibre lo exige) y paradas crecientes', () => {
+check('zoom: en la vista inicial (2,1) se ven iconos algo menores; los puntos solo con la Tierra muy lejos', () => I.zoomScale(2.1) >= 0.75 && I.zoomScale(2.1) < 1 && I.iconShare(2.1) === 1 && I.iconShare(1.3) === 1 && I.iconShare(1.0) === 0 && I.iconShare(0.2) === 0 && I.iconShare(I.DOT_SWITCH) === 1 && I.iconShare(I.DOT_SWITCH - 0.01) === 0 && I.DOT_SWITCH < 2.1);
+check('zoom: las expresiones tienen el zoom arriba del todo (MapLibre lo exige), paradas crecientes y cambio seco icono/punto', () => {
     const okStops = (e, from) => { const st = e.slice(from).filter((_, i) => i % 2 === 0); return st.every((z, i) => i === 0 || z > st[i - 1]); };
     const zs = I.zoomScaled(['get', 'importance']); const zm = I.zoomScaled(['get', 'importance'], 7);
     const f1 = I.iconFade(['get', 'fade']), f2 = I.dotFade(['get', 'fade']);
-    return [zs, zm, f1, f2, I.DOT_RADIUS].every((e) => e[0] === 'interpolate' && JSON.stringify(e[2]) === '["zoom"]' && okStops(e, 3) && !JSON.stringify(e.slice(3)).includes('"zoom"'))
-        && JSON.stringify(zm).includes('"max",7') && f1[4] === 0 && JSON.stringify(f1[6]) === '["get","fade"]' && f2[6] === 0 && JSON.stringify(f2[4]) === '["get","fade"]';
+    const top = (e) => JSON.stringify(e[e[0] === 'step' ? 1 : 2]) === '["zoom"]' && !JSON.stringify(e.slice(e[0] === 'step' ? 2 : 3)).includes('"zoom"');
+    return [zs, zm, I.DOT_RADIUS].every((e) => e[0] === 'interpolate' && top(e) && okStops(e, 3)) && JSON.stringify(zm).includes('"max",7')
+        // icono <-> punto: cambio SECO (step), sin opacidades intermedias
+        && [f1, f2].every((e) => e[0] === 'step' && top(e) && e[3] === I.DOT_SWITCH) && f1[2] === 0 && JSON.stringify(f1[4]) === '["get","fade"]' && f2[4] === 0 && JSON.stringify(f2[2]) === '["get","fade"]';
 });
 check('puntos: un color valido para cada tipo de icono (el suyo) y uno por defecto; con colorOf se aplica a todos', () => {
     const e = I.dotColorExpr(); const pairs = e.slice(2, -1); const keys = pairs.filter((_, i) => i % 2 === 0), cols = pairs.filter((_, i) => i % 2 === 1);

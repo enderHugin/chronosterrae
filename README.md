@@ -74,7 +74,7 @@ sale y cuánto se puede fiar de él.
   El alcance decide qué se ve (umbral de importancia según el zoom, un marcador por celda: nada se satura) y
   **la ventana temporal es proporcional a la velocidad del tiempo**: parado se ven ±6 meses; con el tiempo corriendo, un suceso
   permanece unos 6 s *de pantalla* (como mucho 100 años de ventana), así que a 1 año/s se ven los de unos 5 años atrás, sin exigir
-  día y hora. Cuanto más antiguo respecto al reloj, más transparente (cuatro niveles de fundido) y, cuanto más larga la ventana, más
+  día y hora. Los iconos son opacos (hasta 2026-11-11 se desvanecían en cuatro niveles según su antigüedad; ya no) y, cuanto más larga la ventana, más
   alto el umbral de importancia: a gran velocidad solo lo significativo. Al aparecer, cada icono entra con su gesto (las espadas se
   cruzan, el tanque avanza, el tratado se va escribiendo, la bandera se despliega…) en 1,1 s. Si la hora está documentada llega el aviso «dentro de 5 minutos…»,
   «acaba de…»; si solo se conoce el día, avisa al entrar en ese día («hora desconocida»). **Nunca se
@@ -122,8 +122,10 @@ sale y cuánto se puede fiar de él.
   violencia, naranja lava desastre natural, ámbar accidente, azules política y votaciones, verde tratados, rosa uniones, cian
   nacimientos, grafito muertes, morados obras, verde azulado descubrimientos, oro premios y deporte, pardo fósil extinciones y gris
   azulado lo genérico (`npm run check:event-icons` exige ≥ 60 de distancia RGB entre grupos). El anillo que respira solo rodea los puntos.
+  Los iconos son **siempre opacos**: sin niveles de fundido por antigüedad ni atenuación por revisión (el estado de revisión se ve
+  en la lista y en la ficha); un suceso que sale de la ventana desaparece en el acto.
 - **Iconos según la distancia (2026-11-11).** Con la Tierra lejos los iconos de sucesos encogen (tamaño normal con zoom ≥ 3,2;
-  80 % en la vista inicial; ~45 % a zoom 1,15) y, con la Tierra muy lejos (zoom < 1,3), se funden en **puntos de su color** (el del
+  80 % en la vista inicial; ~45 % a zoom 1,15) y, con la Tierra muy lejos (zoom < 1,15), pasan de golpe (sin transparencias) a **puntos de su color** (el del
   icono, con el matiz de la época) que conservan el anillo que respira. La zona de toque nunca baja de 7 px. Escala y fundido son
   funciones puras de `map/event-icons.js` (`zoomScale`, `iconShare`, `zoomScaled`, `iconFade`, `dotFade`) probadas en Node.
 - **Maquetación sin solapes (2026-11-11).** Los recuadros ya no se colocan con coordenadas sueltas: viven en dos columnas en

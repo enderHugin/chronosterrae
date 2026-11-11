@@ -107,27 +107,27 @@
     // (blanco o el de la epoca) sigue la silueta para que se lea sobre cualquier mapa. Cada dibujo dice lo que es: espadas, mosquete
     // humeante, tanque, papiro y pluma, anillos, bandera, urna, estallido, volcan, senal de peligro, cochecito de bebe (nacimiento), lapida,
     // libro abierto, notas musicales, lupa, dinosaurio (extincion), copa, medalla, chincheta (suceso) y calendario.
-    const W = 2.5;                       // grosor del trazo principal (unidades de la caja 24x24)
+    const W = 2.05;                      // grosor del trazo principal (unidades de la caja 24x24); 2,5 al principio, algo mas fino a peticion del creador
     const SWORD = [
         { d: 'M12 1.8 V14.6', t: 's', w: W }, { d: 'M7.6 14.6 H16.4', t: 's', w: W }, { d: 'M12 14.6 V20', t: 's', w: W }, { d: circle(12, 21.6, 1.7), t: 'f' }
     ];
     const rot = (parts, r) => parts.map((p) => Object.assign({ r }, p));
     const MUSKET = [
-        { d: 'M12 1.4 V13.8', t: 's', w: 2 }, { d: 'M10.4 13 H13.6 L15 21.6 C13.6 22.6 10.4 22.6 9 21.6 Z', t: 'f' }, { d: 'M13.6 15.6 C15.4 15.8 15.6 17.6 14.4 18.2', t: 's', w: 1.4 }
+        { d: 'M12 1.4 V13.8', t: 's', w: 1.64 }, { d: 'M10.4 13 H13.6 L15 21.6 C13.6 22.6 10.4 22.6 9 21.6 Z', t: 'f' }, { d: 'M13.6 15.6 C15.4 15.8 15.6 17.6 14.4 18.2', t: 's', w: 1.15 }
     ];
     const GLYPHS = {
         sword: rot(SWORD, -38).concat(rot(SWORD, 38)),
         // Mosquetes cruzados: canon largo y culata ancha (se distinguen de las espadas por la culata y la falta de guarda)
         musket: rot(MUSKET, -30).concat(rot(MUSKET, 30)),
         tank: [
-            { d: 'M15 11.6 H22.6', t: 's', w: 2.2 }, { d: 'M7.6 14.8 V11 a1.4 1.4 0 0 1 1.4 -1.4 H13.6 a1.4 1.4 0 0 1 1.4 1.4 V14.8', t: 's', w: W },
+            { d: 'M15 11.6 H22.6', t: 's', w: 1.8 }, { d: 'M7.6 14.8 V11 a1.4 1.4 0 0 1 1.4 -1.4 H13.6 a1.4 1.4 0 0 1 1.4 1.4 V14.8', t: 's', w: W },
             { d: 'M5.2 14.8 H18.8 a3 3 0 0 1 0 6 H5.2 a3 3 0 0 1 0 -6 Z', t: 's', w: W },
             { d: circle(7.4, 17.8, 1.1), t: 'f' }, { d: circle(12, 17.8, 1.1), t: 'f' }, { d: circle(16.6, 17.8, 1.1), t: 'f' }
         ],
         treaty: [
             { d: 'M6 4 H16.6 V18.4 H6 Z', t: 's', w: W }, { d: 'M4 18.6 H18.6', t: 's', w: W },
-            { d: 'M8.6 8 H13.8', t: 's', w: 1.5 }, { d: 'M8.6 11 H13.8', t: 's', w: 1.5 }, { d: 'M8.6 14 H11.8', t: 's', w: 1.5 },
-            { d: 'M22 1.8 C17 3.4 14.6 7.4 13.6 12.4 L15.2 11.8 C18.8 10 21 6.6 22 1.8 Z', t: 'f' }, { d: 'M13.6 12.4 L12 17', t: 's', w: 1.6 }
+            { d: 'M8.6 8 H13.8', t: 's', w: 1.23 }, { d: 'M8.6 11 H13.8', t: 's', w: 1.23 }, { d: 'M8.6 14 H11.8', t: 's', w: 1.23 },
+            { d: 'M22 1.8 C17 3.4 14.6 7.4 13.6 12.4 L15.2 11.8 C18.8 10 21 6.6 22 1.8 Z', t: 'f' }, { d: 'M13.6 12.4 L12 17', t: 's', w: 1.31 }
         ],
         union: [
             { d: circle(8.8, 12.6, 5.6), t: 's', w: W + 0.2 }, { d: circle(15.2, 12.6, 5.6), t: 's', w: W + 0.2 }
@@ -136,48 +136,48 @@
             { d: 'M5.4 2.6 V21.8', t: 's', w: W }, { d: 'M5.4 3.6 H19.6 L16.2 8.4 L19.6 13.2 H5.4 Z', t: 'f' }
         ],
         natural: [
-            { d: 'M1.8 21 L8.4 10.2 H15.6 L22.2 21 Z', t: 's', w: W }, { d: 'M12 8.4 V3.6 M8.8 7.6 L6.8 4.4 M15.2 7.6 L17.2 4.4', t: 's', w: 2.2 }
+            { d: 'M1.8 21 L8.4 10.2 H15.6 L22.2 21 Z', t: 's', w: W }, { d: 'M12 8.4 V3.6 M8.8 7.6 L6.8 4.4 M15.2 7.6 L17.2 4.4', t: 's', w: 1.8 }
         ],
-        violence: [{ d: star(12, 12, 10.4, 4.8, 8, -Math.PI / 2 + Math.PI / 16), t: 's', w: 2.2 }, { d: circle(12, 12, 2), t: 'f' }],
+        violence: [{ d: star(12, 12, 10.4, 4.8, 8, -Math.PI / 2 + Math.PI / 16), t: 's', w: 1.8 }, { d: circle(12, 12, 2), t: 'f' }],
         election: [
-            { d: 'M8.4 2.2 H15.6 V10.4 H8.4 Z', t: 's', w: 1.9 }, { d: 'M10.2 6.6 L11.6 8 L13.8 4.8', t: 's', w: 1.5 },
-            { d: 'M3.6 11.4 H20.4 V21 H3.6 Z', t: 's', w: W }, { d: 'M8.4 14.6 H15.6', t: 's', w: 2.2 }
+            { d: 'M8.4 2.2 H15.6 V10.4 H8.4 Z', t: 's', w: 1.56 }, { d: 'M10.2 6.6 L11.6 8 L13.8 4.8', t: 's', w: 1.23 },
+            { d: 'M3.6 11.4 H20.4 V21 H3.6 Z', t: 's', w: W }, { d: 'M8.4 14.6 H15.6', t: 's', w: 1.8 }
         ],
         sport: [
-            { d: 'M7 3.4 H17 V8.6 a5 5 0 0 1 -10 0 Z', t: 's', w: W }, { d: 'M7 5.4 H4.4 a2.6 2.6 0 0 0 2.8 4.8', t: 's', w: 1.8 }, { d: 'M17 5.4 H19.6 a2.6 2.6 0 0 1 -2.8 4.8', t: 's', w: 1.8 },
+            { d: 'M7 3.4 H17 V8.6 a5 5 0 0 1 -10 0 Z', t: 's', w: W }, { d: 'M7 5.4 H4.4 a2.6 2.6 0 0 0 2.8 4.8', t: 's', w: 1.48 }, { d: 'M17 5.4 H19.6 a2.6 2.6 0 0 1 -2.8 4.8', t: 's', w: 1.48 },
             { d: 'M12 13.8 V18', t: 's', w: W }, { d: 'M7.6 20.4 H16.4', t: 's', w: W + 0.4 }
         ],
         ceremony: [
-            { d: 'M7.4 1.8 L12 9.4 L16.6 1.8', t: 's', w: 2.2 }, { d: circle(12, 15.2, 5.6), t: 's', w: W }, { d: star(12, 15.2, 3.2, 1.35, 5), t: 'f' }
+            { d: 'M7.4 1.8 L12 9.4 L16.6 1.8', t: 's', w: 1.8 }, { d: circle(12, 15.2, 5.6), t: 's', w: W }, { d: star(12, 15.2, 3.2, 1.35, 5), t: 'f' }
         ],
-        accident: [{ d: 'M12 2.8 L22 20.4 H2 Z', t: 's', w: W }, { d: 'M12 9.4 V14', t: 's', w: 2.6 }, { d: circle(12, 17.2, 1.45), t: 'f' }],
+        accident: [{ d: 'M12 2.8 L22 20.4 H2 Z', t: 's', w: W }, { d: 'M12 9.4 V14', t: 's', w: 2.13 }, { d: circle(12, 17.2, 1.45), t: 'f' }],
         calendar: [
-            { d: 'M3.6 5.4 H20.4 V20.8 H3.6 Z', t: 's', w: W }, { d: 'M3.6 9.6 H20.4', t: 's', w: 2 }, { d: 'M8 2.6 V7', t: 's', w: 2.2 }, { d: 'M16 2.6 V7', t: 's', w: 2.2 },
+            { d: 'M3.6 5.4 H20.4 V20.8 H3.6 Z', t: 's', w: W }, { d: 'M3.6 9.6 H20.4', t: 's', w: 1.64 }, { d: 'M8 2.6 V7', t: 's', w: 1.8 }, { d: 'M16 2.6 V7', t: 's', w: 1.8 },
             { d: circle(8, 13.4, 1.1), t: 'f' }, { d: circle(12, 13.4, 1.1), t: 'f' }, { d: circle(16, 13.4, 1.1), t: 'f' }, { d: circle(8, 17.2, 1.1), t: 'f' }, { d: circle(12, 17.2, 1.1), t: 'f' }
         ],
         // Nacimiento: cochecito de bebe (capota, cuna, asa y ruedas). Antes era un brote: no decia «persona que nace».
         birth: [
             { d: 'M4.6 11.6 A7.2 7.2 0 0 1 11.8 4.4 V11.6 Z', t: 'f' },
-            { d: 'M4.6 11.6 H19.4 C19.4 15 16.4 17 12 17 C7.6 17 4.6 15 4.6 11.6 Z', t: 's', w: W }, { d: 'M19.4 11.6 L21.6 7.2', t: 's', w: 2.2 },
-            { d: circle(8, 20.2, 1.8), t: 's', w: 1.8 }, { d: circle(16, 20.2, 1.8), t: 's', w: 1.8 }
+            { d: 'M4.6 11.6 H19.4 C19.4 15 16.4 17 12 17 C7.6 17 4.6 15 4.6 11.6 Z', t: 's', w: W }, { d: 'M19.4 11.6 L21.6 7.2', t: 's', w: 1.8 },
+            { d: circle(8, 20.2, 1.8), t: 's', w: 1.48 }, { d: circle(16, 20.2, 1.8), t: 's', w: 1.48 }
         ],
         // Muerte: lapida sobre el suelo (sin simbolo religioso)
         death: [
-            { d: 'M6.2 20.6 V10.2 a5.8 5.8 0 0 1 11.6 0 V20.6', t: 's', w: W }, { d: 'M2.8 21 H21.2', t: 's', w: W }, { d: 'M9.6 12 H14.4 M9.6 15.4 H14.4', t: 's', w: 1.6 }
+            { d: 'M6.2 20.6 V10.2 a5.8 5.8 0 0 1 11.6 0 V20.6', t: 's', w: W }, { d: 'M2.8 21 H21.2', t: 's', w: W }, { d: 'M9.6 12 H14.4 M9.6 15.4 H14.4', t: 's', w: 1.31 }
         ],
         publication: [
             { d: 'M12 6.4 C9.6 4.6 6 4.2 2.4 5.2 V19.2 C6 18.2 9.6 18.6 12 20.4', t: 's', w: W },
-            { d: 'M12 6.4 C14.4 4.6 18 4.2 21.6 5.2 V19.2 C18 18.2 14.4 18.6 12 20.4', t: 's', w: W }, { d: 'M12 6.4 V20.4', t: 's', w: 2 }
+            { d: 'M12 6.4 C14.4 4.6 18 4.2 21.6 5.2 V19.2 C18 18.2 14.4 18.6 12 20.4', t: 's', w: W }, { d: 'M12 6.4 V20.4', t: 's', w: 1.64 }
         ],
         composition: [
-            { d: 'M9 17.4 V6.4', t: 's', w: 2.2 }, { d: 'M19 15.4 V4.4', t: 's', w: 2.2 }, { d: 'M9 6.2 L19 4 V7.8 L9 10 Z', t: 'f' },
+            { d: 'M9 17.4 V6.4', t: 's', w: 1.8 }, { d: 'M19 15.4 V4.4', t: 's', w: 1.8 }, { d: 'M9 6.2 L19 4 V7.8 L9 10 Z', t: 'f' },
             { d: ellipse(6.4, 17.6, 3.2, 2.5), t: 'f' }, { d: ellipse(16.4, 15.6, 3.2, 2.5), t: 'f' }
         ],
-        discovery: [{ d: circle(9.8, 9.8, 6.2), t: 's', w: W + 0.2 }, { d: 'M14.4 14.4 L21 21', t: 's', w: 3.6 }, { d: 'M7 8.6 a3.2 3.2 0 0 1 2.6 -2.2', t: 's', w: 1.4 }],
+        discovery: [{ d: circle(9.8, 9.8, 6.2), t: 's', w: W + 0.2 }, { d: 'M14.4 14.4 L21 21', t: 's', w: 2.95 }, { d: 'M7 8.6 a3.2 3.2 0 0 1 2.6 -2.2', t: 's', w: 1.15 }],
         // Extincion de especies: dinosaurio (saurópodo) de perfil
         extinction: [
             { d: 'M2 15.6 C5.4 15.6 6.6 11.8 10.6 11.8 H15 C16.6 11.8 17 9 17.4 6.2 C17.6 4.6 19 3.8 20.6 4.4 L21.6 5.6', t: 's', w: W },
-            { d: 'M7.4 15.6 H16 C17.4 15.6 18 14 17.8 12', t: 's', w: 2.2 }, { d: 'M9.6 15.6 V20.4 M15 15.6 V20.4', t: 's', w: W }
+            { d: 'M7.4 15.6 H16 C17.4 15.6 18 14 17.8 12', t: 's', w: 1.8 }, { d: 'M9.6 15.6 V20.4 M15 15.6 V20.4', t: 's', w: W }
         ],
         // Suceso sin tipo propio: chincheta de mapa
         event: [{ d: 'M12 21.6 C7.4 16 5.2 12.8 5.2 9.6 a6.8 6.8 0 0 1 13.6 0 C18.8 12.8 16.6 16 12 21.6 Z', t: 's', w: W }, { d: circle(12, 9.6, 2.3), t: 'f' }]
@@ -198,7 +198,7 @@
     const SHAKE = new Set(['sword', 'musket', 'tank', 'violence', 'political', 'natural', 'accident']);
     const animGroup = (icon) => (SHAKE.has(icon) ? 'shake' : 'bob');
 
-    const BORDER = 3.4;                // grosor del borde blanco (unidades de la caja 24x24; se ve la mitad por fuera)
+    const BORDER = 3.0;                // grosor del borde claro (unidades de la caja 24x24; se ve la mitad por fuera)
     const shade = (hex, k) => {        // oscurece (k<0) o aclara (k>0) un #rrggbb
         const n = parseInt(hex.slice(1), 16); const f = (v) => Math.max(0, Math.min(255, Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k)));
         return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => f(v).toString(16).padStart(2, '0')).join('');
@@ -407,24 +407,25 @@
      * entre ambos un fundido. Se construyen expresiones de MapLibre con 'zoom' en el nivel superior (obligatorio en MapLibre).
      */
     const ZOOM_SCALE = [[0, 0.3], [1.15, 0.45], [2.1, 0.8], [3.2, 1]];
-    const DOT_ZOOM = [1.0, 1.3];
+    const DOT_ZOOM = [1.0, 1.3];      // tramo en el que crece el radio de los puntos
+    const DOT_SWITCH = 1.15;          // por debajo de este zoom, puntos; por encima, iconos. Cambio seco: sin transparencias intermedias (pedido del creador)
     function zoomScale(z) {
         const S = ZOOM_SCALE; if (!(z > S[0][0])) return S[0][1]; if (z >= S[S.length - 1][0]) return S[S.length - 1][1];
         for (let i = 1; i < S.length; i++) if (z <= S[i][0]) { const t = (z - S[i - 1][0]) / (S[i][0] - S[i - 1][0]); return S[i - 1][1] + t * (S[i][1] - S[i - 1][1]); }
         return 1;
     }
-    /** Cuanto se ve de los iconos (1) frente a los puntos (0) a un zoom dado. */
-    function iconShare(z) { const [a, b] = DOT_ZOOM; return z <= a ? 0 : z >= b ? 1 : (z - a) / (b - a); }
+    /** Se ven los iconos (1) o los puntos (0) a un zoom dado. */
+    function iconShare(z) { return z >= DOT_SWITCH ? 1 : 0; }
     /** expr (tamano a escala 1) multiplicado por la escala del zoom: ['interpolate', ['linear'], ['zoom'], z, ['*', expr, k], ...]. */
     const zoomScaled = (expr, min) => ['interpolate', ['linear'], ['zoom']].concat(...ZOOM_SCALE.map(([z, k]) => [z, min === undefined ? ['*', expr, k] : ['max', min, ['*', expr, k]]]));
-    /** Opacidad de los iconos (y su disco): 0 con puntos, expr con iconos, fundido entre medias. */
-    const iconFade = (expr) => ['interpolate', ['linear'], ['zoom'], DOT_ZOOM[0], 0, DOT_ZOOM[1], expr];
+    /** Opacidad de los iconos: 0 con puntos (zoom < DOT_SWITCH), expr con iconos. */
+    const iconFade = (expr) => ['step', ['zoom'], 0, DOT_SWITCH, expr];
     /** Opacidad de los puntos: expr con la Tierra muy lejos, 0 cuando ya se ven los iconos. */
-    const dotFade = (expr) => ['interpolate', ['linear'], ['zoom'], DOT_ZOOM[0], expr, DOT_ZOOM[1], 0];
+    const dotFade = (expr) => ['step', ['zoom'], expr, DOT_SWITCH, 0];
     /** Radio del punto de color (px): crece un poco con la importancia y con el zoom. */
     const DOT_RADIUS = ['interpolate', ['linear'], ['zoom'], 0, ['interpolate', ['linear'], ['get', 'importance'], 0.3, 2, 1, 3.2], DOT_ZOOM[1], ['interpolate', ['linear'], ['get', 'importance'], 0.3, 2.8, 1, 4.4]];
     /** Color de cada punto: el del icono (o el que devuelva colorOf, p. ej. con el matiz de la epoca). Expresion 'match' sobre la propiedad icon. */
     const dotColorExpr = (colorOf) => ['match', ['get', 'icon']].concat(...KEYS.map((k) => [k, colorOf ? colorOf(COLORS[k], k) : COLORS[k]]), ['#888888']);
 
-    return { ZOOM_SCALE, DOT_ZOOM, zoomScale, iconShare, zoomScaled, iconFade, dotFade, DOT_RADIUS, dotColorExpr, ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
+    return { ZOOM_SCALE, DOT_ZOOM, DOT_SWITCH, zoomScale, iconShare, zoomScaled, iconFade, dotFade, DOT_RADIUS, dotColorExpr, ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
 });
