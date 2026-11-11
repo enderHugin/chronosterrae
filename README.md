@@ -119,6 +119,19 @@ sale y cuánto se puede fiar de él.
   en *Más ▾* cambios, ajustes, idioma y tema (mismos ids y manejadores). En pantalla estrecha (≤ 760 px) las columnas pasan a una
   pila, solo hay una hoja abierta a la vez y la línea de tiempo se pliega (botón «⋯»); con puntero táctil los objetivos miden ≥ 44 px.
   Comprobado con Playwright en 1280×800, 1024×768, 768×1024, 390×844 y 844×390 (ningún par de recuadros se cruza, todo cabe).
+- **Ambientación de época (2026-11-11).** El aspecto de toda la página cambia con la fecha del mapa, de modo que se sabe de un
+  vistazo en qué época se está. Una **plantilla rellenable** (`map/eras.js`, pura y probada en Node) define 14 épocas (tiempo profundo,
+  Paleolítico, Neolítico, Edad del Bronce, del Hierro, Antigüedad clásica, Alta Edad Media, Plena y Baja Edad Media, Renacimiento y
+  Barroco, Ilustración, era industrial, siglo XX, era digital y futuro), y cada una rellena las mismas ranuras: paleta clara y oscura,
+  tipografía (solo fuentes del sistema), forma de bordes y esquinas, adornos de esquina y filete bajo los títulos, trama de fondo,
+  **cursor** del mapa (punta de sílex, hacha, lanza, pluma, espada, compás…), estilo de los **iconos de sucesos** (borde, disco y un
+  matiz suave: cada icono sigue siendo reconocible pero se ve distinto en cada época) y colores del mapa. Una insignia bajo la fecha
+  dice la época. *Ajustes → Ambientación de época* elige la intensidad: sin ella, sutil (colores y tipografía) o completa (por
+  defecto). Los cambios de época seguidos (saltos largos, reloj rápido) se aplican como mucho cada 0,7 s y lo caro (mapa, sprites)
+  espera a que se calmen. **Las edades son convenciones regionales (sobre todo eurasiáticas) y la insignia lo avisa**; es solo estética,
+  nunca cambia datos. Para añadir una época o cambiar un look basta tocar `ERAS` en `map/eras.js`: las pruebas (`npm run check:eras`)
+  exigen rangos contiguos, plantilla completa, contraste WCAG AA (texto y acento ≥ 4,5:1 en claro y oscuro), épocas vecinas
+  claramente distintas, SVG sin recursos externos y variables CSS sin caracteres que rompan una declaración.
 - ES/EN, tema claro/oscuro; idioma, tema, instante y cámara se recuerdan en una cookie propia.
 
 ## Límites conocidos (dichos sin adornos)

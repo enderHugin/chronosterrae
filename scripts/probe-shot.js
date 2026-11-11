@@ -44,7 +44,24 @@ const SUITE = [
     // Filtro de tipos de Ajustes: sin nacimientos ni muertes (el panel de Ajustes queda abierto en la imagen)
     { id: 'tipos-sin-personas-europa-1939', events: true, tipos: ['birth', 'death'], year: 1939, lng: 15, lat: 50, zoom: 4 },
     // Salto animado: la flecha con paso de 10 años barre el tramo; se fotografia a mitad de camino y al llegar
-    { id: 'barrido-europa-1936-10-anos', events: true, barrido: true, year: 1936, lng: 15, lat: 50, zoom: 4 }
+    { id: 'barrido-europa-1936-10-anos', events: true, barrido: true, year: 1936, lng: 15, lat: 50, zoom: 4 },
+    // Ambientacion de epoca (map/eras.js) y maquetacion: modo `diseno` (solo estas). `abrir` = paneles abiertos; `vp` = tamano de ventana (movil/tableta). Se miden los solapes de los recuadros visibles.
+    { id: 'epoca-hoy-2026', diseno: true, events: true, abrir: ['ajustes'], year: 2026, lng: 10, lat: 48, zoom: 3.5 },
+    { id: 'epoca-siglo-xx-1939', diseno: true, events: true, year: 1939, lng: 15, lat: 50, zoom: 4 },
+    { id: 'epoca-industrial-1860', diseno: true, events: true, year: 1860, lng: 10, lat: 48, zoom: 4 },
+    { id: 'epoca-renacimiento-1520', diseno: true, events: true, year: 1520, lng: 10, lat: 48, zoom: 4 },
+    { id: 'epoca-medieval-1215', diseno: true, events: true, year: 1215, lng: 5, lat: 48, zoom: 4 },
+    { id: 'epoca-alta-edad-media-800', diseno: true, events: true, year: 800, lng: 10, lat: 48, zoom: 4 },
+    { id: 'epoca-clasica-100', diseno: true, events: true, year: 100, lng: 15, lat: 40, zoom: 3.6 },
+    { id: 'epoca-bronce-menos-1500', diseno: true, events: true, year: -1500, lng: 25, lat: 36, zoom: 4 },
+    { id: 'epoca-neolitico-menos-6000', diseno: true, events: true, year: -6000, lng: 35, lat: 35, zoom: 4 },
+    { id: 'epoca-paleolitico-menos-40000', diseno: true, events: true, year: -40000, lng: 10, lat: 40, zoom: 3.5 },
+    { id: 'epoca-tiempo-profundo-menos-200Ma', diseno: true, year: -200e6 + 1950, lng: 0, lat: 0, zoom: 1.4 },
+    { id: 'movil-390x844-sucesos-1939', diseno: true, events: true, vp: { width: 390, height: 844, touch: true }, year: 1939, lng: 15, lat: 50, zoom: 3 },
+    { id: 'movil-390x844-ajustes', diseno: true, abrir: ['ajustes'], vp: { width: 390, height: 844, touch: true }, year: 1939, lng: 15, lat: 50, zoom: 3 },
+    { id: 'movil-menu-capas', diseno: true, abrir: ['menu-capas'], vp: { width: 390, height: 844, touch: true }, year: 1939, lng: 15, lat: 50, zoom: 3 },
+    { id: 'tableta-768x1024-sucesos-ajustes', diseno: true, events: true, abrir: ['ajustes'], vp: { width: 768, height: 1024, touch: true }, year: 1215, lng: 5, lat: 48, zoom: 3.4 },
+    { id: 'portatil-1024x768-todo-abierto', diseno: true, events: true, abrir: ['ajustes', 'ficha'], vp: { width: 1024, height: 768 }, year: 1939, lng: 15, lat: 50, zoom: 4 }
 ];
 
 async function settle(page) {
@@ -127,7 +144,8 @@ async function runSuite(page, out, only) {
     const rows = [];
     for (const dark of [true, false]) {
         await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark);
-        for (const v of SUITE.filter((x) => !only || (only === 'iconos' ? x.events : x.names))) {
+        for (const v of SUITE.filter((x) => (only === 'diseno' ? x.diseno : (!x.diseno && (!only || (only === 'iconos' ? x.events : x.names)))))) {
+            if (v.vp) { await page.setViewportSize({ width: v.vp.width, height: v.vp.height }); await page.waitForTimeout(800); }
             await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
             await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
             if (v.hide) await page.evaluate(() => { if (!BR.off) document.getElementById('btn-borders').click(); });
@@ -149,6 +167,11 @@ async function runSuite(page, out, only) {
                 await page.evaluate(() => eventIconsAnimate(false));
                 barrido = { ini, medio, fin, llegoExacto: fin.jd === ini.destino };
             }
+            if (v.abrir) await page.evaluate((a) => {
+                if (a.includes('ajustes')) panelsUI.setSettingsOpen(true);
+                if (a.includes('ficha')) showInfo('Ficha de prueba con un titulo largo', Array.from({ length: 10 }, (_, i) => ({ label: 'Campo ' + i, value: 'valor de ejemplo '.repeat(4) })));
+                if (a.includes('menu-capas')) document.getElementById('menu-layers-btn').click();
+            }, v.abrir);
             if (v.run) await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});   // el cielo (efemerides) carga aparte
             if (v.run) {   // el reloj avanza por su punto de entrada real (clockSet) a v.yearsPerSec; se mide la ventana y se fotografia sin esperar (al parar, la ventana vuelve a la minima en ~2,5 s)
                 ventana = await page.evaluate(async (yps) => {
@@ -184,9 +207,19 @@ async function runSuite(page, out, only) {
                 feats.forEach((f) => { por[f.properties.icon] = (por[f.properties.icon] || 0) + 1; });
                 return { dibujados: events.shown.length, iconos: feats.length, por, capas: ['events-disc', 'events-pulse', 'events-icon-bob', 'events-icon-shake', 'events-circle'].map((l) => l + ':' + (map.getLayer(l) ? 'si' : 'NO')).join(' '), animacion: EVA.on };
             }) : undefined;
-            rows.push({ name, labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            const diseno = v.diseno ? await page.evaluate(() => {
+                const sel = ['#topbar', '#events', '#changes', '#sky', '#settings', '#info', '#status', '#space-note', '#timeline', '#toasts .toast', '#menu-layers-pop'];
+                const bx = {}; sel.forEach((q) => { const e = document.querySelector(q); if (!e) return; const cs = getComputedStyle(e); const r = e.getBoundingClientRect(); if (cs.display === 'none' || cs.visibility === 'hidden' || r.width < 2 || r.height < 2) return; bx[q] = [Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom)]; });
+                const nombres = Object.keys(bx); const solapes = [];
+                for (let i = 0; i < nombres.length; i++) for (let j = i + 1; j < nombres.length; j++) { const a = bx[nombres[i]], b = bx[nombres[j]]; if (nombres[i] === '#menu-layers-pop' || nombres[j] === '#menu-layers-pop') continue; if (Math.min(a[2], b[2]) - Math.max(a[0], b[0]) > 1 && Math.min(a[3], b[3]) - Math.max(a[1], b[1]) > 1) solapes.push(nombres[i] + ' x ' + nombres[j]); }
+                const cs = getComputedStyle(document.body);
+                return { epoca: document.body.getAttribute('data-era'), insignia: document.getElementById('era-badge').hidden ? null : document.getElementById('era-badge').textContent, acento: cs.getPropertyValue('--accent').trim(), borde: getComputedStyle(document.getElementById('timeline')).borderTopStyle, mar: map.getPaintProperty('ocean', 'background-color'), disco: map.getLayer('events-disc') ? map.getPaintProperty('events-disc', 'circle-color') : null, ventana: [innerWidth, innerHeight], cajas: bx, solapes };
+            }) : undefined;
+            rows.push({ name, ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
             if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
             if (v.tipos) await page.evaluate(() => { typesSet(0, false); typesRender(); panelsUI.setSettingsOpen(false); });
+            if (v.abrir) await page.evaluate(() => { panelsUI.setSettingsOpen(false); hideInfo(); menus.closeAll(); });
+            if (v.vp) { await page.setViewportSize({ width: 1280, height: 800 }); await page.waitForTimeout(500); }
             if (v.events) await page.evaluate(() => { if (events.open) document.getElementById('btn-events').click(); });
             fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));   // parcial: si el proceso muere, queda lo medido hasta aqui
             if (v.hide) await page.evaluate(() => { if (BR.off) document.getElementById('btn-borders').click(); });
@@ -233,7 +266,7 @@ async function runSuite(page, out, only) {
     await page.goto(url, { waitUntil: 'load' });
     await page.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
     await page.evaluate(() => { if (window.eventIconsAnimate) eventIconsAnimate(false); });   // la animacion de los iconos impide que el mapa llegue a idle: las capturas son de un fotograma fijo
-    if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
+    if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos' || process.argv[4] === 'diseno') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : process.argv[4] === 'diseno' ? 'diseno' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
     if (!diag) { await runSuite(page, out); await browser.close(); return; }
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
     await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [lng, lat, zoom]);

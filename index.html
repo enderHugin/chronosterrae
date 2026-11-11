@@ -22,6 +22,11 @@
             --err: #c62828;
             --font: 'Georgia', serif;
             --font-ui: system-ui, -apple-system, 'Segoe UI', sans-serif;
+            /* Plantilla de epoca (map/eras.js): estas variables las rellena el JS segun la fecha. Los valores de aqui son el aspecto neutro. */
+            --h-weight: 700; --h-transform: none; --h-spacing: 0; --h-style: normal;
+            --bw: 1px; --bstyle: solid; --radius: 8px; --btn-radius: 6px;
+            --orn-tl: none; --orn-br: none; --orn-divider: none; --orn-texture: none; --orn-divider-h: 0px;
+            --cursor-grab: grab; --cursor-point: pointer; --cursor-drag: grabbing;
         }
         body.dark {
             --bg: #101418;
@@ -41,8 +46,10 @@
         #map { position: absolute; inset: 0; width: 100%; height: 100%; }
 
         .panel {
-            background: var(--panel); color: var(--text);
-            border: 1px solid var(--accent); border-radius: 8px;
+            background-color: var(--panel); color: var(--text);
+            background-image: var(--orn-tl), var(--orn-br), var(--orn-texture);
+            background-repeat: no-repeat, no-repeat, repeat; background-position: top 3px left 3px, bottom 3px right 3px, 0 0; background-size: 12px 12px, 12px 12px, 48px 48px;
+            border: var(--bw) var(--bstyle) var(--accent); border-radius: var(--radius);
             box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
             backdrop-filter: blur(8px);
         }
@@ -76,7 +83,7 @@
         .menu-pop .menu-sep { height: 1px; margin: 3px 4px; background: rgba(128, 128, 128, 0.35); }
 
         .btn {
-            background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 6px;
+            background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: var(--btn-radius);
             padding: 8px 11px; cursor: pointer; font: 600 13px var(--font-ui);
         }
         .btn:hover { background: var(--accent); color: var(--bg); }
@@ -88,7 +95,7 @@
         }
 
         #status {
-            position: relative; margin-top: auto; max-height: 9em; overflow: auto; padding: 8px 12px;
+            position: relative; margin-top: auto; max-height: 9em; overflow: auto; padding: 9px 14px 8px 16px;
             font-size: 12px; line-height: 1.4; border-left: 4px solid var(--muted); display: none;
         }
         #status.visible { display: block; }
@@ -199,7 +206,7 @@
 
         /* Recuadros informativos: ocultacion automatica con fundido, asas para moverlos y panel de ajustes (map/panels.js).
            Se usan atributos data-* y no clases porque setStatus() reescribe className entera. */
-        .panel, #space-note { transition: opacity 0.45s ease; }
+        .panel, #space-note { transition: opacity 0.45s ease, background-color 0.6s ease, border-color 0.6s ease, color 0.6s ease; }
         [data-pfade] { opacity: 0 !important; pointer-events: none; }
         #solar-info[data-pfade] { pointer-events: auto; }   /* trae controles (zoom): al acercar el cursor reaparece */
         #solar-info[data-pfade]:hover { opacity: 1 !important; }
@@ -268,13 +275,20 @@
         #sky-list tr.down { opacity: 0.55; }
         #sky-note, #sky-accuracy, #sky-stars-note { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: 6px; }
 
+        /* Plantilla de epoca: tipografia de los titulos y filete ornamental bajo ellos */
+        #info h2, #events h2, #changes h2, #settings h2, #sky h2, #solar-info h2, #time-label, #changes h3, #settings h3 { font-weight: var(--h-weight); font-style: var(--h-style); text-transform: var(--h-transform); letter-spacing: var(--h-spacing); }
+        #info h2::after, #events h2::after, #changes h2::after, #settings h2::after, #sky h2::after, #solar-info h2::after { content: ''; display: block; height: var(--orn-divider-h); margin-top: 4px; background: var(--orn-divider) repeat-x left center; }
+        .maplibregl-canvas-container.maplibregl-interactive { cursor: var(--cursor-grab); }
+        body #map .maplibregl-canvas-container.maplibregl-interactive:active { cursor: var(--cursor-drag); }
+        #era-badge { display: inline-block; margin-top: 3px; padding: 1px 9px; font: 600 11.5px var(--font-ui); letter-spacing: var(--h-spacing); text-transform: var(--h-transform); color: var(--accent); border: 1px solid var(--accent); border-radius: var(--btn-radius); background: var(--orn-texture), transparent; cursor: help; }
+        #era-badge[hidden] { display: none; }
         /* Telefono / tableta vertical: las dos columnas pasan a ser una sola pila entre la barra y la linea de tiempo. */
         @media (max-width: 760px) {
             #dock { flex-direction: column; justify-content: flex-start; gap: 8px; }
             #dock-l, #dock-r { flex: 0 1 auto; width: 100%; align-items: stretch; }
             #dock-r { order: -1; }
             #dock-l { flex: 1 1 0; }
-            #dock-r { max-height: 70%; }
+            #dock-r { max-height: calc(100% - 152px); }   /* deja siempre sitio a la columna de abajo: hoja de sucesos (>= 90 px) + avisos */
             #dock-l > #status { margin-top: 0; }
             #top-left { max-width: none; flex-basis: 140px; }
             #time-label { font-size: 19px; min-width: 0; }
@@ -410,7 +424,10 @@
             <h3 id="st-anim-title" data-i18n="ui.icons.title"></h3>
             <div id="st-anim-modes" role="radiogroup" aria-labelledby="st-anim-title"></div>
             <div class="st-sub" data-i18n="ui.icons.note"></div>
-            <h3 data-i18n="ui.layout.title"></h3>
+            <h3 id="st-era-title" data-i18n="ui.era.title"></h3>
+        <div id="st-era-modes" role="radiogroup" aria-labelledby="st-era-title"></div>
+        <div class="st-sub" data-i18n="ui.era.note"></div>
+        <h3 data-i18n="ui.layout.title"></h3>
             <div class="st-actions">
                 <button class="btn" id="st-undo" type="button"></button>
                 <button class="btn" id="st-redo" type="button"></button>
@@ -433,6 +450,7 @@
             <div>
                 <div id="time-label">--</div>
                 <div id="time-sub"></div>
+                <span id="era-badge" hidden tabindex="0" role="note"></span>
             </div>
             <div id="clock" hidden>
                 <div id="clock-time"></div>
@@ -469,6 +487,7 @@
 <script src="./map/panels.js"></script>
 <script src="./map/event-icons.js"></script>
 <script src="./map/glide.js"></script>
+<script src="./map/eras.js"></script>
 <script src="./map/labels.js"></script>
 <script src="./map/sphere.js"></script>
 <script src="./sky/sky-view.js"></script>
@@ -534,6 +553,7 @@ const parsePrefs = (raw) => {
     if (Number.isInteger(p.ah) && p.ah >= 0 && p.ah <= 3) out.ah = p.ah;   // ocultar recuadros informativos solos: nivel 0 (nunca) a 3
     if (Number.isInteger(p.pp) && p.pp >= 0 && p.pp <= 31) out.pp = p.pp;   // recuadros «mostrar siempre» (mascara de bits)
     if (typeof p.pn === 'string' && p.pn.length <= 300 && /^[a-z0-9:,;-]*$/.test(p.pn)) out.pn = p.pn;   // posiciones de los recuadros (se valida pieza a pieza al usarlas)
+    if (p.ea === 0 || p.ea === 1 || p.ea === 2) out.ea = p.ea;   // ambientacion de epoca: 0 sin, 1 sutil, 2 completa (ChronosEras)
     if (p.ia === 0 || p.ia === 1 || p.ia === 2) out.ia = p.ia;   // animacion de iconos y saltos de tiempo: 0 apagada, 1 ahorro, 2 completa (antes 0/1: el 1 antiguo pasa a ahorro)
     if (Number.isInteger(p.et) && p.et >= 0 && p.et <= 16383) out.et = p.et;   // tipos de suceso OCULTOS por el usuario (mascara de bits, un bit por grupo de map/event-icons.js)
     if (Number.isInteger(p.vf) && p.vf >= 0 && p.vf <= 127) out.vf = p.vf;   // filtros de verificacion de sucesos (mascara de bits)
@@ -547,6 +567,8 @@ const readPrefs = () => {
     } catch (err) { return {}; }
 };
 const prefs = readPrefs();
+/** Ambientacion de epoca (map/eras.js): level 0 sin, 1 sutil, 2 completa. cur = epoca de la fecha mostrada. */
+const ERA = { level: prefs.ea === undefined ? 2 : prefs.ea, cur: null, names: [], pointer: '', last: 0, timer: 0, heavy: 0, heavyKey: '' };
 let panelsUI = null;     // recuadros informativos (ocultar solos, mover, deshacer): se crea mas abajo
 let lastInfo = null;     // ultima ficha mostrada (para poder deshacer su cierre)
 let glide = null;         // salto de tiempo animado (map/glide.js); se crea junto al reloj
@@ -556,7 +578,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, et: prefs.et || undefined };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -661,6 +683,7 @@ const i18n = {
             pins: { title: 'Mostrar siempre (no se oculta solo)', info: 'Ficha del elemento seleccionado', status: 'Avisos y notas de estado', 'space-note': 'Nota del fondo espacial', 'solar-note': 'Nota del sistema solar', 'solar-info': 'Ficha del cuerpo celeste' },
             types: { title: 'Tipos de suceso', all: 'Marcar todos', none: 'Desmarcar todos', note: 'Marca los tipos que quieres ver en el mapa, en el panel de sucesos y en los avisos. Es una elección tuya: no borra ningún dato.' },
             anim: { off: 'Apagada', saver: 'Ahorro (recomendada)', full: 'Completa', auto: 'La animación se ha reducido sola porque este equipo va justo. Puedes cambiarlo en Ajustes → Iconos y movimiento.' },
+            era: { title: 'Ambientación de época', l0: 'Sin ambientación (aspecto neutro)', l1: 'Sutil: colores y tipografía de la época', l2: 'Completa: además adornos, cursor, iconos y colores del mapa', note: 'La época se deduce de la fecha del mapa y cambia solo el aspecto, nunca los datos. Los nombres (Bronce, Hierro, Medieval…) son convenciones, sobre todo eurasiáticas: no marcan lo mismo en todas las regiones.', badgeTip: 'Época de la fecha mostrada' },
             icons: { title: 'Iconos y movimiento', note: 'Ahorro: los iconos se mueven un instante cada pocos segundos y los saltos de tiempo van a 25 fotogramas por segundo. Completa: movimiento continuo, gasta más batería y procesador. Apagada: no se mueve nada y los saltos son directos. Espada, mosquete o tanque según la época para guerras y batallas; pluma y papiro para tratados; anillos para alianzas y uniones. Son una convención de dibujo, no un dato del suceso.' },
             layout: { title: 'Posición de los recuadros', note: 'Ctrl+Z deshace y Ctrl+Mayús+Z (o Ctrl+Y) rehace ocultar y mover recuadros. En pantallas táctiles hay botones de deshacer y rehacer.' }
         },
@@ -852,6 +875,7 @@ const i18n = {
             pins: { title: 'Always show (never auto-hide)', info: 'Selected element card', status: 'Status notices and notes', 'space-note': 'Space background note', 'solar-note': 'Solar system note', 'solar-info': 'Celestial body card' },
             types: { title: 'Event types', all: 'Select all', none: 'Select none', note: 'Tick the types you want on the map, in the events panel and in the notices. It is your choice: no data is deleted.' },
             anim: { off: 'Off', saver: 'Saver (recommended)', full: 'Full', auto: 'Animation was reduced automatically because this device is struggling. You can change it in Settings → Icons and motion.' },
+            era: { title: 'Period look', l0: 'No period look (neutral)', l1: 'Subtle: period colours and typography', l2: 'Full: also ornaments, cursor, icons and map colours', note: 'The period is taken from the date on the map and only changes the look, never the data. The names (Bronze, Iron, Medieval…) are conventions, mostly Eurasian: they do not mean the same everywhere.', badgeTip: 'Period of the date shown' },
             icons: { title: 'Icons and motion', note: 'Saver: icons move for a moment every few seconds and time jumps run at 25 frames per second. Full: continuous motion, uses more battery and CPU. Off: nothing moves and jumps are direct. Sword, musket or tank by era for wars and battles; quill and scroll for treaties; rings for alliances and unions. This is a drawing convention, not a fact about the event.' },
             layout: { title: 'Box positions', note: 'Ctrl+Z undoes and Ctrl+Shift+Z (or Ctrl+Y) redoes hiding and moving boxes. Touch screens get undo and redo buttons.' }
         },
@@ -1233,7 +1257,8 @@ const NATURAL_URL = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarb
 const NATURAL_MAX_YBP = 6000;    // la imagen es de hoy: desde hace ~6000 anos el nivel del mar esta estabilizado; antes cambian costas y hielos y no se muestra
 // La imagen de franjas se pinta en este lienzo y MapLibre lo lee directo como textura: se evita codificar un PNG (2-10 s en el render real, medido).
 const GAP_CANVAS = document.createElement('canvas'); GAP_CANVAS.width = GAP_CANVAS.height = 1;
-const palette = () => state.dark
+const palette = () => ChronosEras.mapPalette(ERA.cur, state.dark, ERA.level) || basePalette();   // con ambientacion completa, los colores del mapa son los de la epoca
+const basePalette = () => state.dark
     ? { ocean: '#0b1a26', shelf: '#17303f', land: '#2d3338', landLine: '#59636b', line: '#e6e2d8' }
     : { ocean: '#c3dbe9', shelf: '#dbeaf2', land: '#ece4cf', landLine: '#b9ab87', line: '#3a2a1a' };
 
@@ -1626,6 +1651,10 @@ map.on('moveend', detailApply);
 function applyTheme() {
     document.body.classList.toggle('dark', state.dark);
     $('btn-theme').textContent = state.dark ? 'Light' : 'Dark';
+    eraVars();
+    applyThemeMap();
+}
+function applyThemeMap() {
     if (!map.getLayer('land-fill')) return;
     const p = palette();
     map.setPaintProperty('ocean', 'background-color', p.ocean);
@@ -2050,6 +2079,7 @@ function setTime(ybp, { fromSlider = false, immediate = false, persist = true, f
     const f = formatTime(state.ybp);
     $('time-label').textContent = f.main;
     $('time-sub').textContent = f.sub;
+    eraUpdate(ybpToYear(state.ybp));
     if (immediate) { clearTimeout(sceneTimer); sceneTimer = null; lastScene = performance.now(); updateScene({ immediate: true }); } else scheduleScene();
     if (!fromClock) clockChanged();
     detailApply();
@@ -2167,7 +2197,7 @@ map.on('click', (e) => {
     if (CENTER.on) map.easeTo({ center: e.lngLat, duration: 600 });
 });
 ['events-circle', 'live-points', 'borders-fill'].forEach((id) => {
-    map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseenter', id, () => { map.getCanvas().style.cursor = ERA.pointer || 'pointer'; });
     map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
 });
 
@@ -2292,6 +2322,7 @@ function applyStrings() {
     zoomControl.texts();
     solarView.texts();
     if (panelsUI) panelsUI.texts();
+    eraBadge();
     syncClockUI();
     toastsTick();
     eventsRefresh();
@@ -2524,7 +2555,7 @@ panelsUI = (function () {
             c.addEventListener('change', () => { ah.setPinned(id, c.checked); savePrefs({ pp: P.pinsToMask(ah.pinned()) }); });
             lab.append(c, document.createTextNode(t('ui.pins.' + id))); pins.appendChild(lab);
         });
-        if (typesReady) { typesRender(); animRender(); }
+        if (typesReady) { typesRender(); animRender(); eraRender(); }
     }
     function setSettingsOpen(open) {
         byId('settings').classList.toggle('open', open); byId('btn-settings').setAttribute('aria-pressed', String(open));
@@ -2920,7 +2951,7 @@ function flyToBody(id) {
         if (inSky(x, y)) { e.stopPropagation(); e.preventDefault(); clearHighlight(); hideInfo(); }     // cielo vacio: no es el mapa
     }, true);
     box.addEventListener('dblclick', (e) => { if (!solarView.isOpen && inSky(local(e).x, local(e).y)) { e.stopPropagation(); e.preventDefault(); } }, true);
-    box.addEventListener('mousemove', (e) => { map.getCanvasContainer().style.cursor = hitAt(e) ? 'pointer' : ''; });
+    box.addEventListener('mousemove', (e) => { map.getCanvasContainer().style.cursor = hitAt(e) ? (ERA.pointer || 'pointer') : ''; });
 }
 // Teclado: + y - (los mismos que usa el mapa)
 window.addEventListener('keydown', (e) => {
@@ -3376,7 +3407,8 @@ const evIconKey = (f) => {
 function evSpriteCanvas(key, size, pad, t) {
     const total = size + 2 * pad; const c = document.createElement('canvas'); c.width = c.height = total;
     // willReadFrequently: respaldo en CPU. Con el lienzo en GPU, getImageData sincroniza con ella (medido: 1,5 s para ~100 fotogramas en un mismo tramo).
-    ChronosEventIcons.draw(c.getContext('2d', { willReadFrequently: true }), key, size, { x: pad, y: pad, t });
+    const es = evIconStyle();
+    ChronosEventIcons.draw(c.getContext('2d', { willReadFrequently: true }), key, size, { x: pad, y: pad, t, rim: es ? es.rim : undefined, tint: es ? es.tint : undefined });
     return c;
 }
 const evUrlCache = new Map();
@@ -3405,14 +3437,15 @@ const EVA = { on: false, mode: 1, phase: 0, pulse: null, gaps: [], lastRender: 0
 const EV_PULSE_BASE = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 16];
 function evLayersAdd() {
     evIconsRegister();
+    const es = evIconStyle(); EV_STYLE_KEY = evStyleKey(es);       // sprites, disco y anillo nacen ya con el estilo de la epoca
     const hit = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 15];
     // Disco de respaldo: el icono es rojo/ocre y el mapa politico tambien; sin fondo el mosquete o las espadas se pierden (visto en el render real, probe-shot)
     map.addLayer({ id: 'events-disc', type: 'circle', source: 'events', paint: {
-        'circle-radius': ['-', EV_PULSE_BASE, 1.5], 'circle-color': '#0f1722', 'circle-stroke-width': 0,
+        'circle-radius': ['-', EV_PULSE_BASE, 1.5], 'circle-color': es ? es.disc : '#0f1722', 'circle-stroke-width': 0,
         'circle-opacity': ['*', ['match', ['get', 'status'], 'raw', 0.6, 'community', 0.8, 1], ['coalesce', ['get', 'fade'], 1], ['coalesce', ['get', 'ent'], 1], 0.55], 'circle-opacity-transition': { duration: 350, delay: 0 }
     } });
     map.addLayer({ id: 'events-pulse', type: 'circle', source: 'events', paint: {
-        'circle-radius': EV_PULSE_BASE, 'circle-color': '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': '#ffffff', 'circle-stroke-opacity': ['*', ['coalesce', ['get', 'fade'], 1], 0.55],
+        'circle-radius': EV_PULSE_BASE, 'circle-color': es ? es.rim : '#ffffff', 'circle-opacity': 0, 'circle-stroke-width': 1.6, 'circle-stroke-color': es ? es.rim : '#ffffff', 'circle-stroke-opacity': ['*', ['coalesce', ['get', 'fade'], 1], 0.55],
         'circle-radius-transition': { duration: 900, delay: 0 }, 'circle-stroke-opacity-transition': { duration: 900, delay: 0 }
     } });
     ['bob', 'shake'].forEach((g) => map.addLayer({
@@ -4042,8 +4075,87 @@ onCompact();
 window.addEventListener('resize', layoutMeasure);
 if (typeof ResizeObserver === 'function') { const ro = new ResizeObserver(layoutMeasure); ro.observe($('topbar')); ro.observe($('timeline')); }
 
+/* ------------------------------------------------------------------ */
+/* Ambientacion de epoca (plantilla en map/eras.js)                   */
+/* ------------------------------------------------------------------ */
+const ERA_MIN_MS = 700;       // los cambios de epoca seguidos (saltos largos, reloj rapido) se aplican como mucho cada 0,7 s
+const ERA_HEAVY_MS = 350;     // lo caro (colores del mapa, sprites de los iconos) espera a que la epoca deje de cambiar
+let EV_STYLE_KEY = '';        // estilo de iconos con el que se dibujaron los sprites actuales
+function evIconStyle() { return ChronosEras.iconStyle(ERA.cur, ERA.level); }
+const evStyleKey = (st) => (st ? [st.rim, st.disc, st.tint.color, st.tint.amt].join() : '');
+/** Variables CSS de la epoca sobre <body> (sus valores en linea ganan a .dark, asi que dependen del tema). Con intensidad 0 se quitan y vuelve el aspecto neutro. */
+function eraVars() {
+    const v = ChronosEras.cssVars(ERA.cur, state.dark, ERA.level); const st = document.body.style;
+    ERA.names.forEach((k) => { if (!v || !(k in v)) st.removeProperty(k); });
+    ERA.names = v ? Object.keys(v) : [];
+    if (v) Object.keys(v).forEach((k) => st.setProperty(k, v[k]));
+    ERA.pointer = v && v['--cursor-point'] !== 'pointer' ? v['--cursor-point'] : '';
+    if (v) document.body.setAttribute('data-era', ERA.cur.id); else document.body.removeAttribute('data-era');
+}
+function eraBadge() {
+    const b = $('era-badge'); if (!b) return;
+    if (!ERA.cur || ERA.level < 1) { b.hidden = true; return; }
+    b.hidden = false; b.textContent = ChronosEras.labelOf(ERA.cur, lang);
+    const tip = t('ui.era.badgeTip') + ': ' + ChronosEras.noteOf(ERA.cur, lang); b.title = tip; b.setAttribute('aria-label', ChronosEras.labelOf(ERA.cur, lang) + '. ' + tip);
+}
+/** Redibuja los sprites de los iconos de sucesos con el estilo de la epoca (updateImage: sin huecos) y recolorea disco y anillo. */
+function evIconsRestyle() {
+    const st = evIconStyle(); const key = evStyleKey(st);
+    if (key === EV_STYLE_KEY) return;
+    EV_STYLE_KEY = key; evUrlCache.clear();
+    if (map.getLayer('events-disc')) {
+        map.setPaintProperty('events-disc', 'circle-color', st ? st.disc : '#0f1722');
+        map.setPaintProperty('events-pulse', 'circle-color', st ? st.rim : '#ffffff'); map.setPaintProperty('events-pulse', 'circle-stroke-color', st ? st.rim : '#ffffff');
+    }
+    map.listImages().forEach((n) => {
+        const m = /^evi-([a-z]+)(?:~(\d+))?$/.exec(n); if (!m || !ChronosEventIcons.GLYPHS[m[1]]) return;
+        const c = evSpriteCanvas(m[1], EV_SPRITE.box, EV_SPRITE.pad, m[2] === undefined ? undefined : Number(m[2]) / (ChronosEventIcons.ENTER_FRAMES - 1));
+        map.updateImage(n, c.getContext('2d').getImageData(0, 0, c.width, c.height));
+    });
+    if (events.open) renderEventsPanel();
+}
+function eraHeavy() {
+    ERA.heavy = 0;
+    const k = (ERA.cur ? ERA.cur.id : '') + '|' + state.dark + '|' + ERA.level;
+    if (k === ERA.heavyKey) return;
+    if (!map.getLayer('land-fill')) { ERA.heavy = setTimeout(eraHeavy, 500); return; }       // el estilo aun no esta: se reintenta
+    ERA.heavyKey = k;
+    applyThemeMap(); evIconsRestyle();
+}
+function eraApply() {
+    ERA.last = performance.now();
+    eraVars(); eraBadge();
+    clearTimeout(ERA.heavy); ERA.heavy = setTimeout(eraHeavy, ERA_HEAVY_MS);
+}
+/** Se llama con cada cambio de fecha: solo actua si cambia la epoca, y no mas de una vez cada ERA_MIN_MS. */
+function eraUpdate(year) {
+    const e = ChronosEras.at(year);
+    if (e === ERA.cur) return;
+    ERA.cur = e;
+    if (ERA.timer) return;
+    ERA.timer = setTimeout(() => { ERA.timer = 0; eraApply(); }, Math.max(0, ERA.last + ERA_MIN_MS - performance.now()));
+}
+function eraLevel(n, persist) {
+    if (!(n === 0 || n === 1 || n === 2)) return;
+    ERA.level = n; if (persist) savePrefs({ ea: n });
+    eraApply(); eraRender();
+}
+function eraRender() {
+    const box = document.getElementById('st-era-modes'); if (!box) return;
+    if (!box.firstChild) {
+        [0, 1, 2].forEach((n) => {
+            const lab = document.createElement('label'); const r = document.createElement('input'); r.type = 'radio'; r.name = 'st-era'; r.value = String(n);
+            r.addEventListener('change', () => { if (r.checked) eraLevel(n, true); });
+            const sp = document.createElement('span'); sp.dataset.i18n = 'ui.era.l' + n; lab.append(r, sp); box.appendChild(lab);
+        });
+    }
+    box.querySelectorAll('input').forEach((r) => { r.checked = Number(r.value) === ERA.level; });
+    box.querySelectorAll('[data-i18n]').forEach((sp) => { sp.textContent = t(sp.dataset.i18n); });
+}
+
 /* Inicio */
 initClock();
+ERA.cur = ChronosEras.at(ybpToYear(state.ybp)); eraApply();       // al arrancar: variables, insignia y (cuando el mapa este listo) mapa e iconos
 $('btn-space').setAttribute('aria-pressed', String(space.on));
 $('btn-space').title = t('space.tip');
 applyStrings();

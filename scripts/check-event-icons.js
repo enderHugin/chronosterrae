@@ -98,6 +98,18 @@ check('draw pinta el borde blanco antes que el relleno y termina con save/restor
     const saves = c.calls.filter((s) => s === 'save').length; const restores = c.calls.filter((s) => s === 'restore').length;
     return firstFill > lastWhite && lastWhite >= 0 && saves === restores && c.calls.some((s) => s === 'fill:' + I.COLORS.sword) ? true : JSON.stringify(c.calls.slice(0, 12));
 });
+check('draw: con `rim` el borde y los detalles claros usan ese color en vez del blanco, y nunca un valor invalido', () => {
+    const c = fakeCtx(); I.draw(c, 'death', 48, { Path2D: FakePath, rim: '#e9e1d2' });
+    const bad = fakeCtx(); I.draw(bad, 'death', 48, { Path2D: FakePath, rim: 'red; background:url(x)' });
+    return c.calls.some((s) => s.startsWith('stroke:#e9e1d2')) && !c.calls.some((s) => s.startsWith('stroke:#ffffff')) && bad.calls.some((s) => s.startsWith('stroke:#ffffff')) && !bad.calls.some((s) => /red|url/.test(s)) ? true : JSON.stringify(c.calls.slice(0, 8));
+});
+check('draw: con `tint` el color se mezcla un poco hacia el matiz (reconocible) y sin tint o con amt 0 no cambia', () => {
+    const base = I.COLORS.sword; const a = fakeCtx(); I.draw(a, 'sword', 48, { Path2D: FakePath, tint: { color: '#2e8b78', amt: 0.24 } });
+    const z = fakeCtx(); I.draw(z, 'sword', 48, { Path2D: FakePath, tint: { color: '#2e8b78', amt: 0 } });
+    const f = a.calls.find((x) => x.startsWith('fill:')).slice(5); const n = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+    const d1 = Math.hypot(...n(f).map((v, i) => v - n(base)[i])); const d2 = Math.hypot(...n('#2e8b78').map((v, i) => v - n(base)[i]));
+    return f !== base && d1 < d2 * 0.4 && z.calls.some((x) => x === 'fill:' + base) ? true : f + ' ' + d1 + ' ' + d2;
+});
 check('draw funciona para TODOS los iconos con un color propio', () => I.KEYS.every((k) => { const c = fakeCtx(); I.draw(c, k, 32, { Path2D: FakePath, color: '#123456' }); return c.calls.some((s) => s === 'fill:#123456' || s === 'stroke:#123456:' + (c.calls.length >= 0 ? s.split(':')[2] : '')); }));
 check('draw con icono desconocido o sin Path2D lanza un error claro', () => {
     let a = false; let b = false;

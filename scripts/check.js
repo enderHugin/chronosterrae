@@ -438,6 +438,14 @@ check('esquema: rechaza margen de posicion negativo', () => {
     return runValidator(r) !== 0;
 });
 
+check('prefs: ea (ambientacion de epoca) acepta 0, 1 y 2 y rechaza el resto', () => {
+    const { parsePrefs } = prefsFns();
+    return [0, 1, 2].every((v) => parsePrefs(JSON.stringify({ ea: v })).ea === v) && [3, -1, 1.5, '2', true, null, {}].every((v) => !('ea' in parsePrefs(JSON.stringify({ ea: v }))));
+});
+check('epocas: index.html carga map/eras.js antes del script principal y usa ChronosEras', () => {
+    const h = readIndex();
+    return h.indexOf('./map/eras.js') > 0 && h.indexOf('./map/eras.js') < h.indexOf("'use strict';") && /ChronosEras\.cssVars/.test(h) && /ChronosEras\.at\(/.test(h);
+});
 /* ---- Maquetacion: los recuadros viven en columnas en flujo (nada de coordenadas absolutas sueltas) y los botones, en menus ---- */
 check('maquetacion: los recuadros estan en #dock-l / #dock-r', () => {
     const h = readIndex();

@@ -184,6 +184,13 @@
         return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => f(v).toString(16).padStart(2, '0')).join('');
     };
 
+    const HEX6 = /^#[0-9a-fA-F]{6}$/;
+    const hexOr = (h, d) => (typeof h === 'string' && HEX6.test(h) ? h : d);
+    const mixHex = (a, b, t) => {      // mezcla a (1-t) con b (t); ambos #rrggbb
+        const x = parseInt(a.slice(1), 16), y = parseInt(hexOr(b, a).slice(1), 16); const m = (sh) => Math.round(((x >> sh) & 255) * (1 - t) + ((y >> sh) & 255) * t);
+        return '#' + [m(16), m(8), m(0)].map((v) => v.toString(16).padStart(2, '0')).join('');
+    };
+
     /* ---------------------------- Entrada animada ---------------------------- */
     // Al aparecer, cada icono hace un gesto corto y sobrio que dice lo que es (≈1 s, aceleracion suave, sin rebotes ni efectos): dos espadas que
     // se cruzan, una lapida que emerge de la tierra, un tanque que entra rodando, una pluma que escribe, dos anillos que se juntan, un brote que
@@ -239,7 +246,9 @@
     function draw(ctx, key, size, o) {
         const parts = GLYPHS[key]; if (!parts) throw new Error('icono desconocido: ' + key);
         const P2D = (o && o.Path2D) || (typeof Path2D !== 'undefined' ? Path2D : null); if (!P2D) throw new Error('falta Path2D');
-        const color = (o && o.color) || COLORS[key]; const dark = shade(color, -0.4); const light = '#ffffff';
+        const tint = o && o.tint && o.tint.amt > 0 ? o.tint : null;      // matiz de la epoca (ChronosEras): mezcla suave, el icono sigue siendo reconocible
+        const color = (o && o.color) || (tint ? mixHex(COLORS[key], tint.color, Math.min(tint.amt, 0.35)) : COLORS[key]); const dark = shade(color, -0.4);
+        const light = hexOr(o && o.rim, '#ffffff');          // borde y detalles claros: blanco, o el de la epoca
         const x = (o && o.x) || 0; const y = (o && o.y) || 0; const k = size / 24;
         const t = o && o.t !== undefined ? o.t : 1;
         const trs = parts.map((p, i) => enterParams(key, t, i));
@@ -252,7 +261,7 @@
         ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
         parts.forEach((p, i) => {                                  // 1. borde blanco de todo lo que no es detalle claro
             const tr = trs[i]; if (p.t === 'l' || p.t === 'c' || tr.a <= 0 || tr.sx === 0 || tr.sy === 0) return;
-            ctx.save(); place(p, tr); ctx.globalAlpha = tr.a; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = BORDER + ((p.t === 's' || p.t === 'd') ? (p.w || 2) : 0); ctx.stroke(new P2D(p.d)); ctx.restore();
+            ctx.save(); place(p, tr); ctx.globalAlpha = tr.a; ctx.strokeStyle = light; ctx.lineWidth = BORDER + ((p.t === 's' || p.t === 'd') ? (p.w || 2) : 0); ctx.stroke(new P2D(p.d)); ctx.restore();
         });
         parts.forEach((p, i) => {                                  // 2. relleno y trazos
             const tr = trs[i]; if (tr.a <= 0 || tr.sx === 0 || tr.sy === 0) return;
