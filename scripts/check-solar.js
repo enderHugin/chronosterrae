@@ -109,6 +109,19 @@ check('trayectoria de la Luna: respecto a la Tierra, radio 356.000-407.000 km', 
     const t = Solar.trail('Moon', jdOfYear(2026), 120); const r = t.points.map(len); return t.relativeTo === 'Earth' && Math.min(...r) > 350000 && Math.max(...r) < 410000 ? true : Math.min(...r) + '..' + Math.max(...r);
 });
 
+check('trayectorias de las lunas de Jupiter: respecto a Jupiter, cierran una vuelta y pasan por la posicion actual de cada luna', () => {
+    const jd = jdOfYear(2026); const P = Solar.positions(jd); const bad = [];
+    for (const id of Solar.JOVIAN_MOONS) {
+        const t = Solar.trail(id, jd, 120); const now = sub(P[id], P.Jupiter); const mid = t.points[60]; const r = len(now);
+        if (t.relativeTo !== 'Jupiter') bad.push(id + ' relativeTo'); if (len(sub(mid, now)) > 1e-6 * r + 1) bad.push(id + ' no pasa por la luna ' + len(sub(mid, now)).toFixed(0));
+        if (len(sub(t.points[0], t.points[120])) > 0.06 * r) bad.push(id + ' no cierra ' + (len(sub(t.points[0], t.points[120])) / r).toFixed(3));
+    }
+    return bad.length === 0 ? true : bad.join(' | ');
+});
+check('periodos de las lunas de Jupiter medidos con el motor: Io < Europa < Ganimedes < Calisto, y la resonancia 1:2:4 de las tres primeras (±1 %)', () => {
+    const p = Solar.JOVIAN_MOONS.map((id) => Solar.periodDays(id));
+    return p[0] < p[1] && p[1] < p[2] && p[2] < p[3] && Math.abs(p[1] / p[0] - 2) < 0.02 && Math.abs(p[2] / p[1] - 2) < 0.02 ? true : p.map((x) => x.toFixed(3)).join(', ');
+});
 // ---- La Tierra del mapa dentro de la escena: marco ecliptico -> globo, y la camara del globo como camara en perspectiva
 const Space = require('../sky/space.js');
 const DEG = Math.PI / 180;

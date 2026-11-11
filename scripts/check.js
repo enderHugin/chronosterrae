@@ -276,7 +276,8 @@ check('pages.yml publica todo recurso local que index.html carga (./map, ./sky, 
 
 check('index.html centra con doble clic en vez de hacer zoom', () => {
     const html = readIndex();
-    return /map\.doubleClickZoom\.disable\(\)/.test(html) && /map\.easeTo\(\{\s*center:\s*e\.lngLat/.test(html);
+    // centra en el punto del clic, o en el suceso si el doble clic cae sobre uno
+    return /map\.doubleClickZoom\.disable\(\)/.test(html) && /map\.easeTo\(\{\s*center:\s*ev && ev\.geometry \? ev\.geometry\.coordinates : e\.lngLat/.test(html);
 });
 
 check('index.html carga el motor astronomico y el cielo desde el propio repositorio, no desde un CDN', () => {
@@ -441,6 +442,18 @@ check('esquema: rechaza margen de posicion negativo', () => {
 check('prefs: ea (ambientacion de epoca) acepta 0, 1 y 2 y rechaza el resto', () => {
     const { parsePrefs } = prefsFns();
     return [0, 1, 2].every((v) => parsePrefs(JSON.stringify({ ea: v })).ea === v) && [3, -1, 1.5, '2', true, null, {}].every((v) => !('ea' in parsePrefs(JSON.stringify({ ea: v }))));
+});
+check('prefs: sel (ultimo elemento elegido) acepta pais o suceso con texto corto y rechaza lo demas', () => {
+    const { parsePrefs } = prefsFns(); const P = (v) => parsePrefs(JSON.stringify({ sel: v })).sel;
+    const ok1 = P({ k: 'p', v: 'Holy Roman Empire' }); const ok2 = P({ k: 'e', v: 'Q12345' });
+    return ok1 && ok1.k === 'p' && ok1.v === 'Holy Roman Empire' && ok2 && ok2.k === 'e'
+        && [{ k: 'x', v: 'a' }, { k: 'p', v: '' }, { k: 'p', v: 'a'.repeat(161) }, { k: 'p', v: 'a\nb' }, { k: 'e', v: 5 }, 'p:Spain', null, []].every((v) => P(v) === undefined)
+        && !('extra' in (P({ k: 'p', v: 'Spain', extra: 1 }) || {}));
+});
+check('prefs: ks/kp admiten pasos personalizados (x15n) y kp admite auto; lo raro se rechaza', () => {
+    const { parsePrefs } = prefsFns(); const P = (o) => parsePrefs(JSON.stringify(o));
+    return P({ ks: 'x15n' }).ks === 'x15n' && P({ kp: 'auto' }).kp === 'auto' && P({ kp: 'x3o' }).kp === 'x3o' && P({ ks: '1y' }).ks === '1y'
+        && !('kp' in P({ kp: 'x1234567890y' })) && !('ks' in P({ ks: 'x15nn123456' })) && !('ks' in P({ ks: '<script>' }));
 });
 check('epocas: index.html carga map/eras.js antes del script principal y usa ChronosEras', () => {
     const h = readIndex();

@@ -277,3 +277,5 @@ Decisiones:
   Segundo ajuste: borde negro pegado a la línea y solo el filo exterior blanco ("que solo el borde exterior sea el blanco"), y colores más saturados y luminosos (siguen distinguiéndose entre grupos, probado).
   Tercer ajuste: el creador elige solo borde negro, sin filo blanco.
   Cuarto ajuste: colores con el brillo igualado (OKLCH, luminosidad 0,65-0,86 y máximo croma; todos ≥ 5,5:1 frente al negro), porque violencia, votaciones, muertes y libros quedaban apagados junto a los demás.
+
+- **Ayudas de uso (2026-11-11).** Pedidas por el creador: órbitas de las lunas alrededor de sus planetas (la Luna y las cuatro galileanas, que es lo que da el motor), órbitas con grosor y opacidad según la profundidad (sensación 3D), valores personalizados en la velocidad del reloj y en el paso de ← →, paso propio para RePág/AvPág, recordar en la cookie el último elemento elegido (su ficha vuelve al entrar), una regla bajo el deslizador para que se vea que la escala no es lineal, y una marca del color del tipo al pasar el ratón por un suceso, sin que el clic mueva el mapa.

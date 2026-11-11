@@ -33,7 +33,50 @@
         { id: '100M', kind: 'year', n: 1e8, es: '100 millones de años', en: '100 million years' }
     ];
     const DEFAULT_ID = '1y';
-    const byId = (id) => STEPS.find((s) => s.id === id) || null;
+
+    /* ---- Pasos PERSONALIZADOS: el usuario elige cantidad y unidad. Id 'x<n><u>' (p. ej. 'x15n' = 15 minutos, 'x250y' = 250 anos), que cabe
+       en la cookie y se valida al leerla. u: n minutos, h horas, d dias, w semanas, o meses, y anos. */
+    const UNITS = [
+        { u: 'n', kind: 'sec', mult: 60, max: 9999999, es: ['minuto', 'minutos'], en: ['minute', 'minutes'] },
+        { u: 'h', kind: 'sec', mult: 3600, max: 9999999, es: ['hora', 'horas'], en: ['hour', 'hours'] },
+        { u: 'd', kind: 'sec', mult: 86400, max: 9999999, es: ['día', 'días'], en: ['day', 'days'] },
+        { u: 'w', kind: 'sec', mult: 604800, max: 999999, es: ['semana', 'semanas'], en: ['week', 'weeks'] },
+        { u: 'o', kind: 'month', mult: 1, max: 9999999, es: ['mes', 'meses'], en: ['month', 'months'] },
+        { u: 'y', kind: 'year', mult: 1, max: 999999999, es: ['año', 'años'], en: ['year', 'years'] }
+    ];
+    const UNIT = Object.fromEntries(UNITS.map((x) => [x.u, x]));
+    const CUSTOM_RE = /^x([1-9][0-9]{0,8})([nhdwoy])$/;
+    const fmtN = (n, lang) => n.toLocaleString(lang === 'en' ? 'en-US' : 'es-ES');
+    /** Id de un paso personalizado (n entero >= 1 de la unidad u) o null si no es valido. */
+    function customId(n, u) {
+        const U = UNIT[u]; if (!U || !Number.isInteger(n) || n < 1 || n > U.max) return null;
+        return 'x' + n + u;
+    }
+    /** Paso personalizado a partir de su id ('x15n'), con la misma forma que los de STEPS; null si el id no es valido. */
+    function parseCustom(id) {
+        const m = typeof id === 'string' ? CUSTOM_RE.exec(id) : null; if (!m) return null;
+        const n = parseInt(m[1], 10); const U = UNIT[m[2]]; if (n > U.max) return null;
+        return { id, kind: U.kind, n: n * U.mult, custom: true, count: n, unit: m[2],
+            es: fmtN(n, 'es') + ' ' + U.es[n === 1 ? 0 : 1], en: fmtN(n, 'en') + ' ' + U.en[n === 1 ? 0 : 1] };
+    }
+    const byId = (id) => STEPS.find((s) => s.id === id) || parseCustom(id);
+
+    /* ---- Velocidad PERSONALIZADA del reloj: segundos simulados por segundo real (con signo: negativo = hacia atras). */
+    const RATE_UNITS = [
+        { u: 's', v: 1, es: 's', en: 's' }, { u: 'n', v: 60, es: 'min', en: 'min' }, { u: 'h', v: 3600, es: 'h', en: 'h' },
+        { u: 'd', v: 86400, es: 'días', en: 'days' }, { u: 'o', v: 2629800, es: 'meses', en: 'months' }, { u: 'y', v: YEAR_S, es: 'años', en: 'years' }
+    ];
+    const RATE_MIN = 0.1;                      // 0,1 s por segundo (camara lenta)
+    const RATE_MAX = 100 * YEAR_S;             // 100 anos por segundo
+    /** Velocidad personalizada: x (> 0, admite decimales) de la unidad u por segundo, dir +1/-1. Devuelve { v, es, en } o null si no es valida. */
+    function customRate(x, u, dir) {
+        const U = RATE_UNITS.find((r) => r.u === u); const d = dir === -1 ? -1 : dir === 1 ? 1 : 0;
+        if (!U || !d || typeof x !== 'number' || !Number.isFinite(x) || x <= 0) return null;
+        const v = x * U.v; if (v < RATE_MIN || v > RATE_MAX) return null;
+        const num = (lang) => x.toLocaleString(lang === 'en' ? 'en-US' : 'es-ES', { maximumFractionDigits: 3 });
+        const sign = d < 0 ? '− ' : '';
+        return { v: d * v, es: sign + num('es') + ' ' + U.es + '/s', en: sign + num('en') + ' ' + U.en + '/s' };
+    }
 
     const fail = (code, message) => { const e = new Error(message); e.code = code; return e; };
     const stepYears = (s) => (s.kind === 'sec' ? s.n / YEAR_S : s.kind === 'month' ? s.n / 12 : s.n);
@@ -87,5 +130,5 @@
         return out;
     }
 
-    return { STEPS, DEFAULT_ID, byId, move, stepYears };
+    return { STEPS, DEFAULT_ID, byId, move, stepYears, UNITS, customId, parseCustom, RATE_UNITS, RATE_MIN, RATE_MAX, customRate };
 });

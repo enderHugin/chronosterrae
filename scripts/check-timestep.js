@@ -48,5 +48,20 @@ check('paso desconocido: se RECHAZA con BAD_STEP (no es un TypeError)', () => re
 check('numero de pasos 0, fraccionario o no numerico: se RECHAZA con BAD_COUNT', () => rejects(() => T.move(Sky, ctx(), '1d', 0), 'BAD_COUNT') === true && rejects(() => T.move(Sky, ctx(), '1d', 1.5), 'BAD_COUNT') === true && rejects(() => T.move(Sky, ctx(), '1d', NaN), 'BAD_COUNT') === true);
 check('un paso valido NO se rechaza (distingue «rechazado» de «roto»)', () => Number.isFinite(T.move(Sky, ctx(), '1d', 1).jd));
 
+// ---- Pasos y velocidades PERSONALIZADOS
+check('personalizado: customId valida cantidad y unidad (y el id cabe en la cookie)', () => T.customId(15, 'n') === 'x15n' && T.customId(250, 'y') === 'x250y' && T.customId(0, 'd') === null && T.customId(1.5, 'h') === null && T.customId(3, 'z') === null && T.customId(1e10, 'y') === null && T.customId(-2, 'w') === null);
+check('personalizado: parseCustom da la misma forma que los pasos fijos (kind, n) y textos en singular/plural', () => {
+    const a = T.byId('x15n'), b = T.byId('x3o'), c = T.byId('x1y'), d = T.byId('x25000y');
+    return a.kind === 'sec' && a.n === 900 && a.es === '15 minutos' && b.kind === 'month' && b.n === 3 && b.en === '3 months' && c.es === '1 año' && c.en === '1 year' && d.kind === 'year' && d.n === 25000 && /^25.000 años$/.test(d.es) ? true : JSON.stringify([a, b, c, d]);
+});
+check('personalizado: ids raros se rechazan (null), no rompen', () => ['x0y', 'x15', 'xx', 'x15q', 'x01d', '15n', '', null, undefined, 42, 'x1234567890y'].every((id) => T.byId(id) === null));
+check('personalizado: 15 minutos con reloj mueve 15 min exactos; 3 meses usa calendario (31-ene + 3 meses = 30-abr)', () => {
+    const c = ctx(); const a = T.move(Sky, c, 'x15n', 1); const b = T.move(Sky, ctx({ jd: jd(2023, 1, 31, 8, 30) }), 'x3o', 1);
+    return Math.abs((a.jd - c.jd) * 1440 - 15) < 1e-6 && ymd(b.jd) === '2023-4-30 8:30' ? true : ymd(b.jd);
+});
+check('personalizado: 250 anos sin reloj mueve 250 anos; 6 horas sin reloj se redondea a 1 ano y avisa', () => { const r = T.move(Sky, ctx({ jd: NaN, ybp: 5e6 }), 'x250y', -1); const q = T.move(Sky, ctx({ jd: NaN, ybp: 5e6 }), 'x6h', -1); return r.ybp === 5e6 + 250 && q.ybp === 5e6 + 1 && q.note === 'minYear'; });
+check('velocidad personalizada: 2,5 h/s hacia delante = 9000 s/s; 3 anos/s hacia atras = -3 anos; textos', () => { const a = T.customRate(2.5, 'h', 1), b = T.customRate(3, 'y', -1); return a.v === 9000 && a.es === '2,5 h/s' && b.v === -3 * 31557600 && b.es === '− 3 años/s' && b.en === '− 3 years/s' ? true : JSON.stringify([a, b]); });
+check('velocidad personalizada: fuera de [0,1 s/s, 100 anos/s], cero, negativa, NaN o unidad rara se rechazan (null)', () => [[0.05, 's', 1], [101, 'y', 1], [0, 'h', 1], [-2, 'h', 1], [NaN, 'h', 1], [2, 'z', 1], [2, 'h', 0], ['2', 'h', 1]].every((a) => T.customRate(...a) === null) && T.customRate(100, 'y', -1) !== null && T.customRate(0.1, 's', 1) !== null);
+
 console.log(fails ? '\n' + fails + ' prueba(s) con fallo.' : '\nPaso de las flechas: todo verde.');
 process.exit(fails ? 1 : 0);

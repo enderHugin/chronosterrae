@@ -208,8 +208,8 @@
         /* ---------------- trayectorias ---------------- */
         function trailOf(id, jd) {
             const c = st.trails[id]; const period = Solar.periodDays(id);
-            if (c && Math.abs(jd - c.jd) < period / (id === 'Moon' ? 27 : 80)) return c;
-            st.trails[id] = { jd, ...Solar.trail(id, jd, id === 'Moon' ? 120 : 240) };
+            if (c && Math.abs(jd - c.jd) < period / (id === 'Moon' || JOVIAN.includes(id) ? 27 : 80)) return c;
+            st.trails[id] = { jd, ...Solar.trail(id, jd, id === 'Moon' || JOVIAN.includes(id) ? 120 : 240) };
             return st.trails[id];
         }
 
@@ -419,21 +419,45 @@
                 }
             }
 
-            // trayectorias reales (una revolucion centrada en la fecha). La de la Luna, con el mapa puesto, se parte en lo que pasa detras y delante de la Tierra.
+            // trayectorias reales (una revolucion centrada en la fecha): planetas alrededor del Sol, la Luna alrededor de la Tierra y las lunas de
+            // Jupiter alrededor de Jupiter. La de la Luna, con el mapa puesto, se parte en lo que pasa detras y delante de la Tierra.
+            // Sensacion 3D: el tramo mas cercano a la camara es mas grueso y opaco y el lejano mas fino y tenue, tanto mas cuanto mas de canto
+            // se ve la orbita (vista de frente, uniforme). Se agrupa en ORBIT_BANDS bandas de profundidad: pocas pinceladas por orbita.
             const clampPx = (v) => clamp(v, -1e6, 1e6);
-            for (const id of [...Solar.PLANETS, 'Moon']) {
-                const tr = trailOf(id, jd); const base = tr.relativeTo === 'Earth' ? P.Earth : [0, 0, 0];
-                const col = rgba(hexRgb(Solar.byId[id].color), id === st.focus ? 0.8 : 0.32); const lw = id === st.focus ? 1.4 : 1;
+            const ORBIT_BANDS = 6;
+            const trailIds = [...Solar.PLANETS, 'Moon', ...(Solar.JOVIAN_MOONS || [])];
+            for (const id of trailIds) {
+                const jovian = JOVIAN.includes(id);
+                if (jovian && !P.Jupiter) continue;
+                const tr = trailOf(id, jd); const base = tr.relativeTo === 'Earth' ? P.Earth : tr.relativeTo === 'Jupiter' ? P.Jupiter : [0, 0, 0];
+                const qs = tr.points.map((p) => cam.project([p[0] + base[0], p[1] + base[1], p[2] + base[2]]));
+                let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity, z0 = Infinity, z1 = -Infinity, r3 = 0;
+                qs.forEach((q, i) => { if (!q) return; x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); z0 = Math.min(z0, q[2]); z1 = Math.max(z1, q[2]); r3 = Math.max(r3, Math.hypot(tr.points[i][0], tr.points[i][1], tr.points[i][2])); });
+                if (!Number.isFinite(x0)) continue;
+                if ((id === 'Moon' || jovian) && Math.max(x1 - x0, y1 - y0) < 14) continue;      // de lejos la orbita de una luna seria un borron sobre su planeta
+                const focus = id === st.focus || (jovian && st.focus === 'Jupiter');
+                const rgb = hexRgb(Solar.byId[id].color); const a0 = focus ? 0.8 : jovian ? 0.55 : 0.36; const lw0 = focus ? 1.5 : 1.1;
+                const tilt = r3 > 0 ? clamp(2.2 * (z1 - z0) / (2 * r3), 0, 1) : 0; const zr = z1 - z0 || 1;   // tilt x2,2: con una inclinacion moderada (vista habitual, ~25°) el efecto ya es claro
                 const split = mapOn && id === 'Moon';
                 for (const pass of split ? [0, 1] : [2]) {
-                    const ctx = pass === 1 ? ctxF : ctxB; ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath();
-                    let pen = false;
-                    for (const p of tr.points) {
-                        const q = cam.project([p[0] + base[0], p[1] + base[1], p[2] + base[2]]);
-                        if (!q || (pass === 0 && q[2] < earthZ) || (pass === 1 && q[2] >= earthZ)) { pen = false; continue; }
-                        if (pen) ctx.lineTo(clampPx(q[0]), clampPx(q[1])); else ctx.moveTo(clampPx(q[0]), clampPx(q[1])); pen = true;
+                    const ctx = pass === 1 ? ctxF : ctxB;
+                    const bands = Array.from({ length: ORBIT_BANDS }, () => []);
+                    for (let i = 1; i < qs.length; i++) {
+                        const a = qs[i - 1], b = qs[i]; if (!a || !b) continue;
+                        if (pass === 0 && (a[2] < earthZ || b[2] < earthZ)) continue;
+                        if (pass === 1 && (a[2] >= earthZ && b[2] >= earthZ)) continue;
+                        const near = 1 - ((a[2] + b[2]) / 2 - z0) / zr;                                // 1 = lo mas cercano a la camara
+                        bands[Math.min(ORBIT_BANDS - 1, Math.floor(near * ORBIT_BANDS))].push(a, b);
                     }
-                    ctx.stroke();
+                    bands.forEach((segs, k) => {
+                        if (!segs.length) return;
+                        const f = (k + 0.5) / ORBIT_BANDS;
+                        ctx.lineWidth = lw0 * lerp(1, lerp(0.45, 2.3, f), tilt);
+                        ctx.strokeStyle = rgba(rgb, Math.min(1, a0 * lerp(1, lerp(0.3, 1.35, f), tilt)));
+                        ctx.lineCap = 'round'; ctx.beginPath();
+                        for (let j = 0; j < segs.length; j += 2) { ctx.moveTo(clampPx(segs[j][0]), clampPx(segs[j][1])); ctx.lineTo(clampPx(segs[j + 1][0]), clampPx(segs[j + 1][1])); }
+                        ctx.stroke(); ctx.lineCap = 'butt';
+                    });
                 }
             }
 

@@ -112,6 +112,17 @@ sale y cuánto se puede fiar de él.
 - **Detalle al acercar**: desde zoom 4,6 se superpone el mapa vectorial actual de OpenFreeMap
   (OpenStreetMap, ODbL): estilo completo desde 1950, solo agua y vegetación hasta hace 11 000 años (como
   aproximación, y así se rotula) y nada antes, porque el nivel del mar era otro.
+- **Más ayudas de uso (2026-11-11).** (1) En la vista del sistema solar se dibujan también las **órbitas de las lunas**: la de la
+  Luna y las de Ío, Europa, Ganímedes y Calisto alrededor de Júpiter (periodos medidos con el propio motor de efemérides; el motor no
+  da lunas de otros planetas). (2) Las órbitas tienen **grosor y opacidad según la profundidad**: el tramo cercano a la cámara, más
+  grueso y opaco; el lejano, más fino y tenue (vista de frente, uniforme). (3) La velocidad del reloj y el paso de ← → admiten un
+  **valor personalizado** («Personalizado…»: cantidad y unidad, con sentido en la velocidad), y **RePág/AvPág** tienen su propio paso
+  (por defecto ×10 el de las flechas); el paso personalizado se recuerda en la cookie. (4) Se recuerda el **último elemento elegido**
+  (país o suceso) y su ficha vuelve al entrar, sin mover la cámara. (5) Bajo el deslizador hay una **regla logarítmica** (marcas
+  1–9 por cada potencia de diez de «hace X años»), que deja ver que la barra no es lineal. (6) Al pasar el ratón por un suceso, ese
+  icono crece con un resplandor de su color y aparece su nombre en una etiqueta del mismo color: se sabe sobre qué caerá el clic.
+  Un clic en un suceso **no mueve el mapa** (salvo con «Centrar al hacer clic», que ahora centra en el suceso y no en el punto del
+  clic), y un temblor de la mano al hacer clic ya no arrastra el mapa.
 - **Iconos de línea (2026-11-11).** Los iconos de sucesos son ahora de **línea de color muy intenso**, sin disco ni anillo
   alrededor: la línea va perfilada por un **borde negro** que sigue la silueta (se probó con filo exterior blanco y el creador eligió solo negro). Cada dibujo dice lo que es: espadas
   cruzadas (guerra antes de 1500), mosquetes cruzados (1500–1913), tanque (desde 1914), papiro y pluma (tratado), anillos (alianza o

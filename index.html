@@ -70,7 +70,7 @@
         #dock-r > #toasts { pointer-events: none; flex: none; }
         #dock-l > #status { min-height: 3.2em; }
         #events, #changes, #sky, #settings, #info { min-height: 110px; }   /* al repartirse el hueco no se aplastan hasta desaparecer */
-        @media (max-height: 520px) { #events, #changes, #sky, #settings, #info { min-height: 48px; } }
+        @media (max-height: 520px) { #events, #changes, #sky, #settings, #info { min-height: 40px; } #slider-ruler { height: 9px; } #slider-ruler .lb { display: none; } }
         #dock-l > #undo-bar { flex: none; }
         /* Botones de zoom y brujula del mapa: justo encima de la linea de tiempo, a la derecha; la columna derecha les deja su sitio (--ctrl-h lo mide el JS) */
         .maplibregl-ctrl-bottom-right { bottom: var(--bot-h, 180px) !important; }
@@ -131,9 +131,27 @@
         #time-sub { font-size: 12px; color: var(--muted); }
         #time-input { width: 130px; padding: 6px 9px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); font: 600 13px var(--font-ui); }
         #slider { width: 100%; margin: 8px 0 2px; accent-color: var(--accent); }
+        /* Regla bajo el deslizador: marcas como las de una regla de calculo (1, 2 ... 9 por cada potencia de 10 de «hace X años»). Los pasos
+           iguales de tiempo se apelotonan hacia la derecha: se ve que la barra NO es lineal. */
+        #slider-ruler { position: relative; height: 22px; margin: -2px 0 2px; pointer-events: none; overflow: hidden; }
+        #slider-ruler .tk { position: absolute; top: 0; width: 1px; height: 4px; background: var(--muted); opacity: 0.55; }
+        #slider-ruler .tk.mj { height: 8px; width: 1.5px; opacity: 0.95; background: var(--text); }
+        #slider-ruler .lb { position: absolute; top: 9px; transform: translateX(-50%); font: 600 9.5px/12px var(--font-ui); color: var(--muted); white-space: nowrap; }
+        #slider-ruler .lb.edge-l { transform: none; } #slider-ruler .lb.edge-r { transform: translateX(-100%); }
         #step-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
         #key-step { padding: 2px 6px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); font: 600 12px var(--font-ui); }
-        #key-step option { color: #222; }
+        #key-step option, #page-step option { color: #222; }
+        #page-step { padding: 2px 6px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); font: 600 12px var(--font-ui); height: 24px; box-sizing: border-box; }
+        #page-label { margin-left: 14px; }
+        /* Editor de valor personalizado: flota sobre la linea de tiempo (no cambia su tamano) */
+        .custom-wrap { position: relative; display: inline-block; }
+        .custom-pop { position: absolute; bottom: calc(100% + 6px); left: 0; z-index: 40; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; padding: 8px; width: max-content; max-width: min(320px, 90vw); background: var(--bg); }
+        .custom-pop[hidden] { display: none; }
+        .custom-pop input, .custom-pop select { padding: 3px 6px; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); font: 600 12px var(--font-ui); }
+        .custom-pop input { width: 7em; }
+        .custom-pop input[aria-invalid="true"] { border-color: var(--err); }
+        .custom-pop .custom-msg { flex-basis: 100%; font-size: 11px; color: var(--muted); }
+        .custom-pop .custom-msg.warn { color: var(--err); }
         #step-hint.warn { color: var(--warn); }
         #presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
         #presets .btn { padding: 4px 9px; font-size: 12px; }
@@ -148,8 +166,11 @@
             #timeline.tl-collapsed #step-row, #timeline.tl-collapsed #presets, #timeline.tl-collapsed #credits, #timeline.tl-collapsed .kofi { display: none; }
             #time-label { font-size: 19px; min-width: 0; }
         }
+        @media (max-height: 820px) { .toast:nth-child(n+3) { display: none; } }   /* con poca altura, como mucho dos avisos a la vez */
         @media (max-height: 520px) { .toast:nth-child(n+2) { display: none; } #status { max-height: 4.2em; } #time-sub, #clock-sub { display: none; } #time-label { font-size: 17px; } #clock-controls { margin-top: 0; } #slider { margin: 4px 0 0; } }
         @media (max-width: 760px) { .toast { padding: 6px 10px; font-size: 13px; } .toast:nth-child(n+2) { display: none; } #status { max-height: 5.6em; } #events, #changes, #sky, #settings, #info { min-height: 90px; } }
+        #ev-hover { position: absolute; left: 0; top: 0; z-index: 4; pointer-events: none; padding: 1px 9px; border-radius: 11px; border: 1.5px solid #000; background: var(--ev, #888); color: #000;
+            font: 700 12px/18px var(--font-ui); white-space: nowrap; max-width: 280px; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); }
         [hidden] { display: none !important; }
         #space { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
         /* Sistema solar: continuacion del zoom del globo. El lienzo de detras es #space; el mapa (la Tierra) queda entre ese y este */
@@ -514,7 +535,7 @@
                 <div id="clock-sub"></div>
                 <div id="clock-controls">
                     <button class="btn" id="clock-play" type="button"></button>
-                    <select id="clock-rate"></select>
+                    <span class="custom-wrap"><select id="clock-rate"></select></span>
                     <button class="btn" id="clock-now" type="button" data-i18n="clock.now"></button>
                 </div>
             </div>
@@ -523,7 +544,8 @@
             <a class="kofi" href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" rel="noopener" data-i18n="donate"></a>
         </div>
         <input id="slider" type="range" min="0" max="10000" value="0" step="1" aria-label="Time" dir="ltr" aria-describedby="step-row">
-        <div id="step-row"><label for="key-step" id="step-label"></label><select id="key-step"></select><span id="step-hint"></span></div>
+        <div id="slider-ruler" aria-hidden="true"></div>
+        <div id="step-row"><label for="key-step" id="step-label"></label><span class="custom-wrap"><select id="key-step"></select></span><span id="step-hint"></span><label for="page-step" id="page-label"></label><span class="custom-wrap"><select id="page-step"></select></span></div>
         <div id="presets"></div>
         <div id="credits"></div>
     </div>
@@ -606,7 +628,10 @@ const parsePrefs = (raw) => {
     if (p.cc === 0 || p.cc === 1) out.cc = p.cc === 1;   // centrar al hacer clic
     if (p.bh === 0 || p.bh === 1) out.bh = p.bh === 1;   // fronteras historicas ocultas por el usuario (de cerca)
     if (p.rd === 0 || p.rd === 1) out.rd = p.rd === 1;   // capa de carreteras y ferrocarriles de hoy (apagada por defecto)
-    if (typeof p.ks === 'string' && /^[0-9A-Za-z]{1,5}$/.test(p.ks)) out.ks = p.ks;   // paso de las flechas (id; se valida al usarlo)
+    if (typeof p.ks === 'string' && /^(?:[0-9A-Za-z]{1,5}|x[1-9][0-9]{0,8}[nhdwoy])$/.test(p.ks)) out.ks = p.ks;   // paso de las flechas (id, o personalizado 'x15n'; se valida al usarlo)
+    // ultimo elemento elegido (ficha): pais/entidad por su nombre ('p') o suceso por su id ('e'); texto corto y sin caracteres de control
+    if (p.sel && typeof p.sel === 'object' && (p.sel.k === 'p' || p.sel.k === 'e') && typeof p.sel.v === 'string' && p.sel.v.length > 0 && p.sel.v.length <= 160 && !/[\u0000-\u001f\u007f]/.test(p.sel.v)) out.sel = { k: p.sel.k, v: p.sel.v };
+    if (typeof p.kp === 'string' && /^(?:auto|[0-9A-Za-z]{1,5}|x[1-9][0-9]{0,8}[nhdwoy])$/.test(p.kp)) out.kp = p.kp;   // paso de RePag/AvPag ('auto' = x10 el de las flechas)
     if (Number.isInteger(p.ah) && p.ah >= 0 && p.ah <= 3) out.ah = p.ah;   // ocultar recuadros informativos solos: nivel 0 (nunca) a 3
     if (Number.isInteger(p.pp) && p.pp >= 0 && p.pp <= 31) out.pp = p.pp;   // recuadros «mostrar siempre» (mascara de bits)
     if (typeof p.pn === 'string' && p.pn.length <= 300 && /^[a-z0-9:,;-]*$/.test(p.pn)) out.pn = p.pn;   // posiciones de los recuadros (se valida pieza a pieza al usarlas)
@@ -635,7 +660,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -762,7 +787,8 @@ const i18n = {
             }
         },
         clock: { now: 'Ahora', play: 'Reproducir', pause: 'Pausa', rate: 'Velocidad', solar: 'hora solar local {t} (lon. {lon}°)', device: 'hora de tu equipo {t}', julian: 'juliano', back: 'hacia atrás' },
-        step: { label: 'Cada pulsación de ← → mueve:', hint: 'con el deslizador seleccionado · Mayús = ×10', minYear: 'En esta época el instante tiene resolución de 1 año: el paso se redondea a 1 año.', clipped: 'Límite alcanzado.' },
+        custom: { option: 'Personalizado…', amount: 'Cantidad', unit: 'Unidad', dir: 'Sentido', fwd: 'hacia delante', back: 'hacia atrás', ok: 'Aplicar', cancel: 'Cancelar', perSec: 'por segundo', stepHelp: 'Un número entero y su unidad.', rateHelp: 'Entre 0,1 s y 100 años por segundo.', bad: 'Valor no válido.' },
+        step: { page: 'RePág/AvPág:', pageAuto: '×10 el de ← →', label: 'Cada pulsación de ← → mueve:', hint: 'con el deslizador seleccionado · Mayús = ×10', minYear: 'En esta época el instante tiene resolución de 1 año: el paso se redondea a 1 año.', clipped: 'Límite alcanzado.' },
         solar: {
             title: 'Sistema solar', system: 'Todo el sistema', back: '← Volver a la Tierra', zoom: 'Distancia al cuerpo',
             earthIsMap: 'La Tierra es el mapa de esta fecha, orientado con la cámara (tiempo sidéreo real) y a su tamaño real.',
@@ -954,7 +980,8 @@ const i18n = {
             }
         },
         clock: { now: 'Now', play: 'Play', pause: 'Pause', rate: 'Speed', solar: 'local solar time {t} (lon. {lon}°)', device: 'your device time {t}', julian: 'Julian', back: 'backwards' },
-        step: { label: 'Each press of ← → moves:', hint: 'with the slider focused · Shift = ×10', minYear: 'In this era time has 1-year resolution: the step is rounded up to 1 year.', clipped: 'Limit reached.' },
+        custom: { option: 'Custom…', amount: 'Amount', unit: 'Unit', dir: 'Direction', fwd: 'forwards', back: 'backwards', ok: 'Apply', cancel: 'Cancel', perSec: 'per second', stepHelp: 'A whole number and its unit.', rateHelp: 'Between 0.1 s and 100 years per second.', bad: 'Invalid value.' },
+        step: { page: 'PgUp/PgDn:', pageAuto: '×10 the ← → step', label: 'Each press of ← → moves:', hint: 'with the slider focused · Shift = ×10', minYear: 'In this era time has 1-year resolution: the step is rounded up to 1 year.', clipped: 'Limit reached.' },
         solar: {
             title: 'Solar system', system: 'Whole system', back: '← Back to Earth', zoom: 'Distance to the body',
             earthIsMap: 'The Earth is the map of this date, oriented with the camera (real sidereal time) and at its true size.',
@@ -1046,6 +1073,37 @@ const ybpToSlider = (ybp) => {
     return CFG.sliderMax - Math.round(Math.log(clamped + OFFSET) / Math.log(CFG.maxYbp + OFFSET) * CFG.sliderMax);
 };
 const ybpToYear = (ybp) => CFG.present - ybp;   // año astronómico (el 0 existe)
+/** Posicion (0 = izquierda, 1 = derecha) en el deslizador de un instante a `ago` años antes del año actual (la misma escala logaritmica). */
+const sliderFracOfAgo = (ago) => 1 - Math.log(Math.max(0, ago) + 1) / Math.log(CFG.maxYbp + OFFSET);
+/** Texto corto de «hace X años» para la regla. */
+function rulerLabel(ago) {
+    if (ago >= 1e6) return (ago / 1e6) + ' Ma';
+    return (lang === 'es' ? ago.toLocaleString('es-ES').replace(/\./g, '\u202f') + ' a' : ago.toLocaleString('en-US') + ' y');
+}
+function rulerRender() {
+    const box = document.getElementById('slider-ruler'); const sl = document.getElementById('slider'); if (!box || !sl) return;
+    const w = sl.clientWidth; if (!w) return;
+    const thumb = 16; const x = (f) => thumb / 2 + (w - thumb) * f;
+    const frag = document.createDocumentFragment(); let lastRight = -Infinity; const labels = [];
+    for (let n = 0; n <= 8; n++) for (let k = 1; k <= 9; k++) {
+        const ago = k * Math.pow(10, n); if (ago > CFG.maxYbp) continue;
+        const px = x(sliderFracOfAgo(ago)); const tk = document.createElement('span'); tk.className = 'tk' + (k === 1 ? ' mj' : ''); tk.style.left = px.toFixed(1) + 'px'; frag.appendChild(tk);
+        if (k === 1 && n >= 1) labels.push({ px, txt: rulerLabel(ago) });
+    }
+    const now = document.createElement('span'); now.className = 'tk mj'; now.style.left = x(1).toFixed(1) + 'px'; frag.appendChild(now);
+    labels.push({ px: x(1), txt: lang === 'es' ? 'hoy' : 'now', edge: 'r' });
+    labels.unshift({ px: x(0), txt: rulerLabel(CFG.maxYbp), edge: 'l' });
+    // de derecha a izquierda (lo reciente importa mas): se omite un rotulo si se pisaria con el anterior
+    labels.sort((a, b) => b.px - a.px);
+    let lastLeft = Infinity; const ctx = document.createElement('canvas').getContext('2d'); ctx.font = '600 9.5px ' + getComputedStyle(document.body).getPropertyValue('--font-ui');
+    for (const l of labels) {
+        const tw = ctx.measureText(l.txt).width; const left = l.edge === 'l' ? l.px : l.edge === 'r' ? l.px - tw : l.px - tw / 2; const right = left + tw;
+        if (right > lastLeft - 8) continue;
+        lastLeft = left; const lb = document.createElement('span'); lb.className = 'lb' + (l.edge ? ' edge-' + l.edge : ''); lb.textContent = l.txt; lb.style.left = l.px.toFixed(1) + 'px'; frag.appendChild(lb);
+    }
+    box.textContent = ''; box.appendChild(frag);
+    box.title = lang === 'es' ? 'Años antes de hoy (escala logarítmica)' : 'Years before today (logarithmic scale)';
+}
 const yearToYbp = (year) => CFG.present - year;
 const effectiveMa = (ybp) => Math.min(CFG.maxYbp / 1e6, Math.max(1, Math.round(ybp / 1e6)));
 
@@ -1324,6 +1382,7 @@ const map = new maplibregl.Map({
     center: prefs.c || [15, 12],     // por defecto, Pangea (250 Ma) queda centrada en el hemisferio visible
     zoom: prefs.z !== undefined ? prefs.z : 2.1,
     attributionControl: false,
+    clickTolerance: 6,            // un temblor de la mano al hacer clic (p. ej. sobre un suceso) no arrastra el mapa
     style: {
         version: 8,
         projection: { type: 'globe' },
@@ -1333,7 +1392,22 @@ const map = new maplibregl.Map({
 });
 
 const mapReady = new Promise((resolve) => map.on('load', resolve));
+{ const chip = document.createElement('div'); chip.id = 'ev-hover'; chip.hidden = true; chip.setAttribute('aria-hidden', 'true'); map.getContainer().appendChild(chip); }
 let currentFocus = null;
+/** Ultimo elemento elegido (su ficha): se guarda en la cookie y se recupera al volver, sin mover la camara (que ya se recuerda aparte). */
+const SEL = { pending: prefs.sel || null };
+function selRemember(k, v) { SEL.pending = null; SEL.keepYbp = null; savePrefs({ sel: k && v ? { k, v: String(v).slice(0, 160) } : null }); }
+function selRestorePolity() {
+    const s = SEL.pending; if (!s || s.k !== 'p' || !state.borders) return;
+    SEL.pending = null;
+    const f = state.borders.data.features.find((x) => x.properties.NAME === s.v);
+    if (f) { setHighlightKey(polityKey(f.properties)); showPolity(f.properties); SEL.keepYbp = state.ybp; }
+}
+function selRestoreEvent() {
+    const s = SEL.pending; if (!s || s.k !== 'e' || !events.byId) return;
+    const f = events.byId.get(s.v) || events.byId.get(Number(s.v)); if (!f) return;          // aun no cargado: se reintenta con la siguiente carga
+    SEL.pending = null; showEvent(f); SEL.keepYbp = state.ybp;     // la carga del mapa de esa misma fecha no debe cerrarla
+}
 
 mapReady.then(() => {
     const p = palette();
@@ -1380,7 +1454,9 @@ map.on('click', (e) => {
     const now = performance.now();
     const again = lastTap && now - lastTap.t < 350 && Math.hypot(e.point.x - lastTap.x, e.point.y - lastTap.y) < 24;
     lastTap = again ? null : { t: now, x: e.point.x, y: e.point.y };
-    if (again) map.easeTo({ center: e.lngLat, duration: 600 });
+    if (!again) return;
+    const ev = map.getLayer('events-circle') ? map.queryRenderedFeatures(e.point, { layers: ['events-circle'] })[0] : null;
+    map.easeTo({ center: ev && ev.geometry ? ev.geometry.coordinates : e.lngLat, duration: 600 });   // doble clic sobre un suceso: centrado en el suceso
 });
 
 map.on('moveend', () => {
@@ -2025,7 +2101,7 @@ async function updateScene({ immediate = false } = {}) {
         clearTimeout(slow);
     }
     map.setLayoutProperty('live-points', 'visibility', liveVisible(ybp) ? 'visible' : 'none');
-    if (!currentFocus) hideInfo();   // el panel describía otra época
+    if (!currentFocus && SEL.keepYbp !== ybp) hideInfo();   // el panel describía otra época (salvo la ficha recuperada al entrar, que es de esta)
     renderStatus();
     prefetchPaleo();
 }
@@ -2071,7 +2147,7 @@ async function runBorders() {
     }
     state.bordersLoading = false;
     naturalView();   // si no llegaron fronteras (error, sin datos), la imagen que se retuvo vuelve
-    if (currentFocus) { const f = currentFocus; currentFocus = null; focusPolity(f); }
+    if (currentFocus) { const f = currentFocus; currentFocus = null; focusPolity(f); } else selRestorePolity();
     renderStatus();
     prefetchNeighbours(state.borders);
 }
@@ -2233,8 +2309,32 @@ function hoverUpdate() {
     const key = hit && hit.layer.id === 'borders-fill' ? polityKey(hit.properties) : null;
     setHoverKey(key && key !== GAP.sel ? key : null);
 }
-map.on('mousemove', (e) => { hoverPt = e.point; if (!hoverRaf) hoverRaf = requestAnimationFrame(hoverUpdate); });
-map.getCanvas().addEventListener('mouseleave', () => { hoverPt = null; setHoverKey(null); });
+map.on('mousemove', (e) => { hoverPt = e.point; if (!hoverRaf) hoverRaf = requestAnimationFrame(hoverUpdate); if (!EVH.raf) EVH.raf = requestAnimationFrame(evHoverUpdate); });
+/* Suceso bajo el raton (solo con raton: en pantallas tactiles no hay «pasar por encima») */
+const EVH = { id: null, raf: 0, coords: null };
+const evColor = (icon) => { const c = ChronosEventIcons.COLORS[icon] || '#888888'; const st = evIconStyle(); return st && st.tint.amt > 0 ? ChronosEras.mix(c, st.tint.color, Math.min(st.tint.amt, 0.35)) : c; };
+function evHoverSet(f) {
+    const id = f ? f.properties.id : null; if (id === EVH.id) return;
+    EVH.id = id; EVH.coords = f && f.geometry ? f.geometry.coordinates.slice() : null;
+    const src = map.getSource('events-hover');
+    if (src) src.setData(f ? { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: f.geometry, properties: f.properties }] } : emptyFC());
+    const chip = $('ev-hover');
+    if (!f) { chip.hidden = true; return; }
+    chip.textContent = f.properties.name || ''; chip.style.setProperty('--ev', evColor(f.properties.icon)); chip.hidden = !chip.textContent;
+    evHoverPlace();
+}
+function evHoverPlace() {
+    if (!EVH.coords) return; const p = map.project(EVH.coords); const chip = $('ev-hover');
+    chip.style.transform = 'translate(' + Math.round(p.x + 18) + 'px,' + Math.round(p.y - 11) + 'px)';
+}
+function evHoverUpdate() {
+    EVH.raf = 0;
+    const e = hoverPt;
+    if (!e || !map.getLayer('events-circle') || solarView.isOpen) { evHoverSet(null); return; }
+    evHoverSet(map.queryRenderedFeatures(e, { layers: ['events-circle'] })[0] || null);
+}
+map.on('move', evHoverPlace);
+map.getCanvas().addEventListener('mouseleave', () => { hoverPt = null; setHoverKey(null); evHoverSet(null); });
 map.on('dragstart', () => { hoverPt = null; setHoverKey(null); });
 // Centrar al hacer clic (ajuste): un clic sobre un elemento del mapa lleva el centro a ese punto, sin cambiar el zoom
 const CENTER = { on: prefs.cc === true };
@@ -2245,13 +2345,13 @@ map.on('click', (e) => {
     const hit = map.queryRenderedFeatures(e.point, { layers: ['events-circle', 'live-points', 'borders-fill', 'land-fill', 'margin-fill'] })[0];
     if (bordersStale() && hit && hit.layer.id === 'borders-fill') return;   // se ve el mapa de la instantanea anterior hasta que llegue la nueva
     clearHighlight(); setHoverKey(null);
-    if (!hit) { hideInfo(); return; }
-    if (hit.layer.id === 'events-circle') { const f = events.byId.get(hit.properties.id); if (f) showEvent(f); }
-    else if (hit.layer.id === 'live-points') showLive(hit.properties);
-    else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { setHighlightKey(polityKey(hit.properties)); showPolity(hit.properties); }
-    else if (hit.layer.id === 'borders-fill') showPolity(hit.properties);
-    else showCoast(hit.properties);
-    if (CENTER.on) map.easeTo({ center: e.lngLat, duration: 600 });
+    if (!hit) { hideInfo(); selRemember(null); return; }
+    if (hit.layer.id === 'events-circle') { const f = events.byId.get(hit.properties.id); if (f) { showEvent(f); selRemember('e', hit.properties.id); } }
+    else if (hit.layer.id === 'live-points') { showLive(hit.properties); selRemember(null); }
+    else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { setHighlightKey(polityKey(hit.properties)); showPolity(hit.properties); selRemember('p', hit.properties.NAME); }
+    else if (hit.layer.id === 'borders-fill') { showPolity(hit.properties); selRemember(null); }
+    else { showCoast(hit.properties); selRemember(null); }
+    if (CENTER.on) map.easeTo({ center: hit.layer.id === 'events-circle' && hit.geometry ? hit.geometry.coordinates : e.lngLat, duration: 600 });   // sobre un suceso, se centra en EL (no en el punto del clic)
 });
 ['events-circle', 'live-points', 'borders-fill'].forEach((id) => {
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = ERA.pointer || 'pointer'; });
@@ -2276,7 +2376,7 @@ async function runSearch(raw) {
             const here = ybpToYear(state.ybp);
             const best = candidates.reduce((a, b) => (Math.abs(a.year - here) <= Math.abs(b.year - here) ? a : b));
             setStatus('ok', fmt('found', { n: name, c: candidates.length, y: formatYear(best.year) }));
-            currentFocus = name;
+            currentFocus = name; selRemember('p', name);
             setTime(yearToYbp(best.year), { immediate: true });
             return;
         }
@@ -2376,10 +2476,12 @@ function applyStrings() {
     $('menu-more-btn').title = t('menu.moreTip');
     if (typeof labelsUpdate === 'function' && LBL.ready) labelsUpdate();
     keyStepTexts();
+    rulerRender();
     zoomControl.texts();
     solarView.texts();
     if (panelsUI) panelsUI.texts();
     eraBadge();
+    if ($('clock-rate').options.length) clockRateOptions();   // textos de las velocidades en el idioma nuevo (tras initClock)
     syncClockUI();
     toastsTick();
     eventsRefresh();
@@ -2391,23 +2493,87 @@ function applyStrings() {
 /* ------------------------------------------------------------------ */
 $('slider').addEventListener('input', (e) => { if (glide) glide.cancel(); setTime(sliderToYbp(parseInt(e.target.value, 10)), { fromSlider: true }); });
 
-/* Teclas de direccion con el deslizador en foco: cada pulsacion mueve el tiempo el paso que elija el usuario (1 minuto ... 100 Ma). */
+/* Valor PERSONALIZADO en un desplegable: la opcion «Personalizado…» abre un editor que flota encima (no cambia el tamano de la linea de
+   tiempo). units: [{u, label}]; withDir: elegir sentido (velocidad); decimals: admite decimales. apply(n, u, dir) -> {value, label} o null. */
+const CUSTOM = '__custom';
+function customEditor(sel, cfg) {
+    const pop = document.createElement('div'); pop.className = 'custom-pop panel'; pop.hidden = true; pop.setAttribute('role', 'dialog');
+    // Con decimales, campo de texto (type=number no admite la coma decimal en muchos navegadores, y en español se escribe «2,5»)
+    const num = document.createElement('input'); if (cfg.decimals) { num.type = 'text'; num.inputMode = 'decimal'; num.autocomplete = 'off'; } else { num.type = 'number'; num.min = '1'; num.step = '1'; num.inputMode = 'numeric'; }
+    const unit = document.createElement('select'); const dir = document.createElement('select');
+    const ok = document.createElement('button'); ok.type = 'button'; ok.className = 'btn';
+    const no = document.createElement('button'); no.type = 'button'; no.className = 'btn';
+    const msg = document.createElement('div'); msg.className = 'custom-msg';
+    pop.append(num, unit); if (cfg.withDir) pop.append(dir); pop.append(ok, no, msg);
+    sel.parentNode.appendChild(pop);
+    let prev = sel.value;
+    const texts = () => {
+        num.setAttribute('aria-label', t('custom.amount')); unit.setAttribute('aria-label', t('custom.unit')); dir.setAttribute('aria-label', t('custom.dir'));
+        unit.innerHTML = ''; cfg.units().forEach((x) => unit.appendChild(el('option', { value: x.u, text: x.label })));
+        dir.innerHTML = ''; dir.appendChild(el('option', { value: '1', text: t('custom.fwd') })); dir.appendChild(el('option', { value: '-1', text: t('custom.back') }));
+        ok.textContent = t('custom.ok'); no.textContent = t('custom.cancel'); msg.textContent = t(cfg.help); msg.classList.remove('warn');
+    };
+    const close = (restore) => { pop.hidden = true; if (restore) sel.value = prev; };
+    const open = () => {
+        texts(); if (cfg.defaults) { const d = cfg.defaults(); num.value = d.n; unit.value = d.u; dir.value = String(d.dir || 1); }
+        num.removeAttribute('aria-invalid'); pop.hidden = false; num.focus(); num.select();
+    };
+    const apply = () => {
+        const raw = String(num.value).trim().replace(',', '.');
+        const n = cfg.decimals ? (/^\d+(\.\d+)?$|^\.\d+$/.test(raw) ? parseFloat(raw) : NaN) : Number(raw);
+        const r = cfg.apply(n, unit.value, parseInt(dir.value, 10));
+        if (!r) { num.setAttribute('aria-invalid', 'true'); msg.textContent = t('custom.bad') + ' ' + t(cfg.help); msg.classList.add('warn'); return; }
+        let o = sel.querySelector('option[data-custom]');
+        if (!o) { o = el('option', {}); o.dataset.custom = '1'; sel.insertBefore(o, sel.querySelector('option[value="' + CUSTOM + '"]')); }
+        o.value = String(r.value); o.textContent = r.label; sel.value = o.value; prev = o.value; close(false);
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    sel.addEventListener('focus', () => { if (sel.value !== CUSTOM) prev = sel.value; });
+    sel.addEventListener('change', (e) => { if (sel.value === CUSTOM) { e.stopImmediatePropagation(); open(); } else prev = sel.value; }, true);
+    ok.addEventListener('click', apply); no.addEventListener('click', () => close(true));
+    pop.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); apply(); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(true); sel.focus(); } });
+    document.addEventListener('pointerdown', (e) => { if (!pop.hidden && !pop.contains(e.target) && e.target !== sel) close(true); });
+    return { open, close, texts, setPrev: (v) => { prev = v; } };
+}
+/** Pone al final del desplegable la opcion personalizada (si la hay) y «Personalizado…». */
+function customOptions(sel, cur) {
+    if (cur) { const o = el('option', { value: cur.value, text: cur.label }); o.dataset.custom = '1'; sel.appendChild(o); }
+    sel.appendChild(el('option', { value: CUSTOM, text: t('custom.option') }));
+}
+const stepUnits = () => ChronosTimeStep.UNITS.map((x) => ({ u: x.u, label: x[lang][1] }));
+const stepApply = (n, u) => { const id = ChronosTimeStep.customId(n, u); const st = id && ChronosTimeStep.byId(id); return st ? { value: id, label: st[lang] } : null; };
+const stepDefaults = (id) => () => { const st = ChronosTimeStep.byId(id); return st && st.custom ? { n: st.count, u: st.unit } : { n: 15, u: 'n' }; };
+
+/* Teclas de direccion con el deslizador en foco: cada pulsacion mueve el tiempo el paso que elija el usuario (1 minuto ... 100 Ma, o uno
+   personalizado). RePag/AvPag tienen su propio paso; por defecto ('auto'), x10 el de las flechas. */
 let keyStepId = ChronosTimeStep.byId(prefs.ks) ? prefs.ks : ChronosTimeStep.DEFAULT_ID;
+let pageStepId = prefs.kp === 'auto' || !prefs.kp || !ChronosTimeStep.byId(prefs.kp) ? 'auto' : prefs.kp;
+const stepCustomOf = (id) => { const st = ChronosTimeStep.byId(id); return st && st.custom ? { value: id, label: st[lang] } : null; };
 function keyStepTexts() {
     $('step-label').textContent = t('step.label');
     const sel = $('key-step'); sel.innerHTML = '';
     ChronosTimeStep.STEPS.forEach((st) => sel.appendChild(el('option', { value: st.id, text: st[lang] })));
+    customOptions(sel, stepCustomOf(keyStepId));
     sel.value = keyStepId;
+    $('page-label').textContent = t('step.page');
+    const ps = $('page-step'); ps.innerHTML = '';
+    ps.appendChild(el('option', { value: 'auto', text: t('step.pageAuto') }));
+    ChronosTimeStep.STEPS.forEach((st) => ps.appendChild(el('option', { value: st.id, text: st[lang] })));
+    customOptions(ps, stepCustomOf(pageStepId));
+    ps.value = pageStepId;
     $('step-hint').textContent = t('step.hint'); $('step-hint').classList.remove('warn');
 }
+const keyStepEd = customEditor($('key-step'), { units: stepUnits, apply: stepApply, help: 'custom.stepHelp', defaults: () => stepDefaults(keyStepId)() });
+const pageStepEd = customEditor($('page-step'), { units: stepUnits, apply: stepApply, help: 'custom.stepHelp', defaults: () => stepDefaults(pageStepId)() });
 $('key-step').addEventListener('change', (e) => { keyStepId = e.target.value; savePrefs({ ks: keyStepId }); $('step-hint').textContent = t('step.hint'); $('step-hint').classList.remove('warn'); });
+$('page-step').addEventListener('change', (e) => { pageStepId = e.target.value; savePrefs({ kp: pageStepId }); });
 const KEY_DIR = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 1, PageDown: -1 };
-function keyStepTime(dir, count) {
+function keyStepTime(dir, count, id) {
     const ctx = {
         jd: clockUsable() ? (glideOn() ? glide.target() : clock.jd) : NaN, ybp: state.ybp, minYear: skyRange().minYear, nowYear: CFG.nowYear, present: CFG.present,
         minJD: clockMinJD(), maxJD: realNowJD(), minYbp: 1 - OFFSET, maxYbp: CFG.maxYbp
     };
-    const r = ChronosTimeStep.move(ChronosSky, ctx, keyStepId, dir * count);
+    const r = ChronosTimeStep.move(ChronosSky, ctx, id || keyStepId, dir * count);
     if (r.jd !== undefined) { if (!glideJump(r.jd)) clockSet(r.jd, { user: true }); } else { if (glide) glide.cancel(); setTime(r.ybp, { immediate: false }); }
     const hint = $('step-hint');
     hint.textContent = r.note === 'minYear' ? t('step.minYear') : r.clipped ? t('step.clipped') : t('step.hint');
@@ -2417,7 +2583,9 @@ $('slider').addEventListener('keydown', (e) => {
     const dir = KEY_DIR[e.key];
     if (!dir || e.ctrlKey || e.altKey || e.metaKey) return;      // Inicio/Fin y las combinaciones del navegador siguen como siempre
     e.preventDefault();
-    keyStepTime(dir, e.shiftKey || e.key.startsWith('Page') ? 10 : 1);
+    const page = e.key.startsWith('Page');
+    if (page && pageStepId !== 'auto') keyStepTime(dir, e.shiftKey ? 10 : 1, pageStepId);
+    else keyStepTime(dir, e.shiftKey || page ? 10 : 1);
 });
 $('time-input').addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
@@ -2430,7 +2598,7 @@ $('time-input').addEventListener('keydown', (e) => {
 $('search').addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(e.target.value); });
 $('btn-lang').addEventListener('click', () => { lang = lang === 'es' ? 'en' : 'es'; applyStrings(); savePrefs({ lang }); });
 $('btn-theme').addEventListener('click', () => { state.dark = !state.dark; applyTheme(); savePrefs({ dark: state.dark }); });
-$('info-close').addEventListener('click', () => { if (panelsUI) panelsUI.closeInfo(); else hideInfo(); });
+$('info-close').addEventListener('click', () => { if (panelsUI) panelsUI.closeInfo(); else hideInfo(); selRemember(null); });
 
 /* ------------------------------------------------------------------ */
 /* Recuadros informativos: ocultar solos, mover, deshacer (map/panels.js) */
@@ -3245,14 +3413,23 @@ function clockTick() {
     }
 }
 
+let clockRateCustom = null;      // { value, label, x, u, dir } de la velocidad personalizada (no se guarda en la cookie, como las demas)
+function clockRateOptions() {
+    const sel = $('clock-rate'); sel.innerHTML = '';
+    CLOCK_RATES.forEach((r) => { [1, -1].forEach((dir) => { sel.appendChild(el('option', { value: String(dir * r.v), text: (dir < 0 ? '− ' : '') + r[lang] })); }); });
+    if (clockRateCustom) { const c = ChronosTimeStep.customRate(clockRateCustom.x, clockRateCustom.u, clockRateCustom.dir); clockRateCustom.label = c[lang]; }
+    customOptions(sel, clockRateCustom);
+    sel.value = String(clock.dir * clock.rate);
+}
 function initClock() {
-    CLOCK_RATES.forEach((r) => {
-        [1, -1].forEach((dir) => {
-            $('clock-rate').appendChild(el('option', { value: String(dir * r.v), text: (dir < 0 ? '− ' : '') + r[lang] }));
-        });
+    clockRateOptions();
+    customEditor($('clock-rate'), {
+        units: () => ChronosTimeStep.RATE_UNITS.map((x) => ({ u: x.u, label: x[lang] + '/s' })), withDir: true, decimals: true, help: 'custom.rateHelp',
+        defaults: () => (clockRateCustom ? { n: clockRateCustom.x, u: clockRateCustom.u, dir: clockRateCustom.dir } : { n: 10, u: 'y', dir: 1 }),
+        apply: (x, u, dir) => { const c = ChronosTimeStep.customRate(x, u, dir); if (!c) return null; clockRateCustom = { value: c.v, label: c[lang], x, u, dir }; return { value: c.v, label: c[lang] }; }
     });
     $('clock-rate').addEventListener('change', (e) => {
-        const v = parseInt(e.target.value, 10);
+        const v = Number(e.target.value); if (!Number.isFinite(v) || v === 0) return;
         clock.rate = Math.abs(v); clock.dir = v < 0 ? -1 : 1;
         if (clock.live && (clock.rate !== 1 || clock.dir !== 1)) clock.live = false;
     });
@@ -3513,6 +3690,14 @@ function evLayersAdd() {
         layout: { 'icon-image': ['get', 'img'], 'icon-size': EI.zoomScaled(['interpolate', ['linear'], ['get', 'importance'], 0.3, 0.74, 1, 1.02]), 'icon-allow-overlap': true, 'icon-ignore-placement': true, 'symbol-sort-key': ['get', 'importance'] },
         paint: { 'icon-opacity': EI.iconFade(1), 'icon-opacity-transition': { duration: 0, delay: 0 }, 'icon-translate': [0, 0], 'icon-translate-transition': { duration: g === 'shake' ? 520 : 800, delay: 0 } }
     }));
+    // Suceso bajo el raton: un resplandor de su color detras y el mismo icono algo mayor encima (y una etiqueta con su nombre, en HTML: #ev-hover).
+    // Asi se sabe sobre QUE suceso caera el clic, y no sobre otro o sobre el mapa.
+    if (!map.getSource('events-hover')) map.addSource('events-hover', { type: 'geojson', data: emptyFC() });
+    map.addLayer({ id: 'events-hover-glow', type: 'circle', source: 'events-hover', paint: { 'circle-radius': EI.zoomScaled(18), 'circle-color': evDotColors(es), 'circle-opacity': 0.55, 'circle-blur': 0.55 } }, 'events-icon-bob');
+    map.addLayer({ id: 'events-hover-icon', type: 'symbol', source: 'events-hover',
+        layout: { 'icon-image': ['get', 'img'], 'icon-size': EI.zoomScaled(['interpolate', ['linear'], ['get', 'importance'], 0.3, 0.74 * 1.3, 1, 1.02 * 1.3]), 'icon-allow-overlap': true, 'icon-ignore-placement': true },
+        paint: { 'icon-opacity': EI.iconFade(1) } });
+    map.addLayer({ id: 'events-hover-dot', type: 'circle', source: 'events-hover', paint: { 'circle-radius': EI.DOT_RADIUS.map((x, i) => (i >= 4 && i % 2 === 0 ? ['*', x, 1.6] : x)), 'circle-color': evDotColors(es), 'circle-stroke-width': 1.2, 'circle-stroke-color': ChronosEventIcons.HALO, 'circle-opacity': EI.dotFade(1), 'circle-stroke-opacity': EI.dotFade(1) } });
     // Zona de toque: invisible, pero es la que consultan el hover y el clic (queryRenderedFeatures)
     map.addLayer({ id: 'events-circle', type: 'circle', source: 'events', paint: { 'circle-radius': EI.zoomScaled(hit, 7), 'circle-color': '#000000', 'circle-opacity': 0, 'circle-stroke-opacity': 0 } });
     evAnimApply(EVA.phase);
@@ -3650,6 +3835,7 @@ async function eventsEnsureData() {
     const year = ChronosSky.jdToCalendar(clock.jd, 'auto').year;
     await eventsLoadRange(year - 1, year + 1);
     eventsRefresh();
+    selRestoreEvent();
 }
 
 // Anchura de la vista en metros (al paralelo del centro): es la "escala" con la que se decide que mostrar.
@@ -4136,6 +4322,7 @@ const onCompact = () => timelineCollapse(COMPACT.matches);
 if (COMPACT.addEventListener) COMPACT.addEventListener('change', onCompact);
 onCompact();
 window.addEventListener('resize', layoutMeasure);
+if (typeof ResizeObserver === 'function') { new ResizeObserver(() => rulerRender()).observe($('slider')); }
 if (typeof ResizeObserver === 'function') { const ro = new ResizeObserver(layoutMeasure); ro.observe($('topbar')); ro.observe($('timeline')); const cb = document.querySelector('.maplibregl-ctrl-bottom-right'); if (cb) ro.observe(cb); }
 
 /* ------------------------------------------------------------------ */
@@ -4170,7 +4357,8 @@ function evIconsRestyle() {
     EV_STYLE_KEY = key; evUrlCache.clear();
     if (map.getLayer('events-dot')) {
         map.setPaintProperty('events-pulse', 'circle-color', st ? st.rim : '#ffffff'); map.setPaintProperty('events-pulse', 'circle-stroke-color', st ? st.rim : '#ffffff');
-        map.setPaintProperty('events-dot', 'circle-color', evDotColors(st)); map.setPaintProperty('events-dot', 'circle-stroke-color', ChronosEventIcons.HALO);
+        map.setPaintProperty('events-dot', 'circle-color', evDotColors(st));
+        if (map.getLayer('events-hover-glow')) { map.setPaintProperty('events-hover-glow', 'circle-color', evDotColors(st)); map.setPaintProperty('events-hover-dot', 'circle-color', evDotColors(st)); } map.setPaintProperty('events-dot', 'circle-stroke-color', ChronosEventIcons.HALO);
     }
     map.listImages().forEach((n) => {
         const m = /^evi-([a-z]+)(?:~(\d+))?$/.exec(n); if (!m || !ChronosEventIcons.GLYPHS[m[1]]) return;

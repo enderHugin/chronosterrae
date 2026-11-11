@@ -8,8 +8,8 @@
  * pedido (sin tiempo de luz, que a estas escalas es de minutos u horas y no cambia lo que se ve). Marte y los gigantes: el
  * motor da el planeta; Horizons, al validar, da el baricentro de su sistema (la diferencia se declara).
  *
- * Que NO hace (la interfaz lo dice): orientacion de los ejes de rotacion, relieve y texturas, anillos de Saturno, lunas de otros
- * planetas, el Sol como esfera con granulacion. Los radios son los de referencia de NASA (ficha NSSDCA) y IAU 2015 (Sol).
+ * Que NO hace (la interfaz lo dice): relieve, lunas de Saturno, Urano, Neptuno o Marte (el motor solo da las de Jupiter), el Sol como
+ * esfera con granulacion. Las trayectorias de las lunas de Jupiter usan periodos MEDIDOS con el propio motor, no escritos a mano. Los radios son los de referencia de NASA (ficha NSSDCA) y IAU 2015 (Sol).
  */
 (function (root, factory) {
     if (typeof module === 'object' && module.exports) module.exports = factory(require('astronomy-engine'));
@@ -89,21 +89,40 @@
         return out;
     }
 
+    // Lunas de Jupiter respecto al centro del planeta (ecliptico, km), del propio motor.
+    const jovianRel = (id, t) => { const m = Astronomy.JupiterMoons(t)[id.toLowerCase()]; const p = toEcl(m.x, m.y, m.z); return [p[0] * AU_KM, p[1] * AU_KM, p[2] * AU_KM]; };
+    // Periodo de cada luna de Jupiter MEDIDO con el propio motor (lo que tarda en dar una vuelta completa alrededor del planeta), no escrito a mano.
+    // Solo decide cuanto trayecto se dibuja. Se mide una vez (los periodos apenas cambian) desde J2000.
+    const JOVIAN_PERIOD = {};
+    function jovianPeriod(id) {
+        if (JOVIAN_PERIOD[id]) return JOVIAN_PERIOD[id];
+        const step = 0.02; let ang = 0; let prev = jovianRel(id, new Astronomy.AstroTime(0)); let d = 0;
+        while (d < 60) {
+            d += step; const p = jovianRel(id, new Astronomy.AstroTime(d));
+            const c = Math.max(-1, Math.min(1, (prev[0] * p[0] + prev[1] * p[1] + prev[2] * p[2]) / (Math.hypot(...prev) * Math.hypot(...p))));
+            const a = Math.acos(c);
+            if (ang + a >= 2 * Math.PI) { JOVIAN_PERIOD[id] = d - step + step * (2 * Math.PI - ang) / a; return JOVIAN_PERIOD[id]; }
+            ang += a; prev = p;
+        }
+        throw fail('NO_PERIOD', 'sin periodo para ' + id);
+    }
+
     /**
-     * Trayectoria real de una revolucion centrada en la fecha (n puntos): planetas respecto al Sol; la Luna respecto a la Tierra.
-     * Devuelve { points: [[x,y,z],...], relativeTo, spanDays }.
+     * Trayectoria real de una revolucion centrada en la fecha (n puntos): planetas respecto al Sol; la Luna respecto a la Tierra; las lunas
+     * de Jupiter respecto a Jupiter. Devuelve { points: [[x,y,z],...], relativeTo, spanDays }.
      */
     function trail(id, jdUT, n = 240) {
-        const moon = id === 'Moon';
-        if (!moon && !PLANETS.includes(id)) throw fail('BAD_BODY', 'sin trayectoria para ' + id);
-        const period = moon ? MOON_PERIOD_DAYS : Astronomy.PlanetOrbitalPeriod(id);
+        const moon = id === 'Moon'; const jov = JOVIAN_MOONS.includes(id);
+        if (!moon && !jov && !PLANETS.includes(id)) throw fail('BAD_BODY', 'sin trayectoria para ' + id);
+        const period = periodDays(id);
         const points = [];
         for (let k = 0; k <= n; k++) {
             const t = new Astronomy.AstroTime(jdUT - J2000_JD + (k / n - 0.5) * period);
             if (moon) { const m = Astronomy.GeoVector('Moon', t, false); const p = toEcl(m.x, m.y, m.z); points.push([p[0] * AU_KM, p[1] * AU_KM, p[2] * AU_KM]); }
+            else if (jov) points.push(jovianRel(id, t));
             else points.push(helio(id, t));
         }
-        return { points, relativeTo: moon ? 'Earth' : 'Sun', spanDays: period };
+        return { points, relativeTo: moon ? 'Earth' : jov ? 'Jupiter' : 'Sun', spanDays: period };
     }
 
     /* ---------------------------------------------------------------- */
@@ -254,7 +273,7 @@
 
     const lightMinutes = (km) => km / C_KM_S / 60;
     /** Periodo (dias) usado solo para decidir cuanto trayecto se dibuja. */
-    const periodDays = (id) => (id === 'Moon' ? MOON_PERIOD_DAYS : Astronomy.PlanetOrbitalPeriod(id));
+    function periodDays(id) { return id === 'Moon' ? MOON_PERIOD_DAYS : JOVIAN_MOONS.includes(id) ? jovianPeriod(id) : Astronomy.PlanetOrbitalPeriod(id); }
     /** Direccion ecuatorial J2000 (x, y, z) -> ecliptica J2000, para dibujar las estrellas en el mismo marco que los cuerpos. */
     const eclFromEq = (x, y, z) => toEcl(x, y, z);
     // Inversa (ecliptico J2000 -> ecuatorial J2000): ECL es ortonormal, asi que es la matriz sin transponer.
@@ -264,7 +283,7 @@
         ECL[2][0] * x + ECL[2][1] * y + ECL[2][2] * z
     ];
 
-    return { BODIES, PLANETS, byId, WINDOW, AU_KM, positions, trail, timeFromJD, makeCamera, lighting, accuracy, bandOf, lightMinutes, periodDays, eclFromEq, eqFromEcl,
+    return { BODIES, PLANETS, JOVIAN_MOONS, byId, WINDOW, AU_KM, positions, trail, timeFromJD, makeCamera, lighting, accuracy, bandOf, lightMinutes, periodDays, eclFromEq, eqFromEcl,
         earthFrame, eclToGlobe, globeToEcl, mapBasis, mapFromBasis, globe, zoomForDistance,
         /** Vector ecuatorial J2000 -> ecliptico J2000 (el marco de las posiciones de BODIES). */
         eqjToEcl: (v) => toEcl(v[0], v[1], v[2]) };
