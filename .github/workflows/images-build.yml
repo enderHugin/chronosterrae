@@ -1,0 +1,57 @@
+name: Imagenes (nombres de archivo P18)
+
+# Nombre del archivo de Commons de la imagen principal (Wikidata P18) de cada suceso, persona y construccion (scripts/build-images.js).
+# Solo nombres (CC0): las imagenes se piden a Commons al enseñarlas, con autor y licencia. mode=publish copia a data/images/p18.json.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'run | publish'
+        default: 'run'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: images-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      MODE: ${{ github.event.inputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Construir
+        run: node scripts/build-images.js --out /tmp/images-out 2> /tmp/build.log; tail -n 20 /tmp/build.log
+      - name: Publicar en main (data/images)
+        if: env.MODE == 'publish'
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          mkdir -p data/images
+          cp /tmp/images-out/p18.json data/images/
+          git add data/images
+          if git diff --staged --quiet; then echo "Sin cambios."; else
+            git commit -m "Datos: nombres de archivo de imagen (Wikidata P18, CC0)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Informe en la rama images-build
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan images-build
+          cp /tmp/build.log build.log || true
+          if [ -d /tmp/images-out ]; then cp -r /tmp/images-out out; git add out; fi
+          git add build.log
+          git commit -m "Imagenes $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin images-build
