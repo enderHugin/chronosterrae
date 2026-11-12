@@ -47,6 +47,16 @@ ITEMS = [
          url='https://planetarymaps.usgs.gov/mosaic/Callisto_Voyager_GalileoSSI_global_mosaic_1km.tif',
          lbl=U + 'a80abd68-7ed9-440e-829a-76376779164f/resource/0b2f0b5f-36d9-4b02-8901-026cffa44393/download/callisto_voyager_galileossi_global_mosaic_1km_pds3.lbl',
          page='https://astrogeology.usgs.gov/search/map/callisto_galileo_voyager_global_mosaic_1km', credit='NASA/JPL/USGS'),
+    # La Tierra vista de lejos (2026-11-12): Blue Marble Next Generation de NASA servida por GIBS (el mismo servicio que ya da el relieve del
+    # mapa). La sonda textures-probe comprobo con GET que el WMS devuelve una imagen 2048x1024 de verdad (firma JPEG, CORS *), y sus
+    # capacidades dicen AccessConstraints "none" y Fees "none". Se pide en GeoTIFF para que GDAL lea las esquinas (-180..180, -90..90).
+    # download=True: el WMS es un CGI (no sirve rangos); se baja entero (unos MB) y se trabaja en local.
+    dict(id='earth', body='Earth', download=True,
+         kind='Blue Marble Next Generation (NASA, composicion de MODIS sin nubes): suelo y oceano en color natural; NO lleva nubes, hielo marino del momento ni noche',
+         url='https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=BlueMarble_NextGeneration&CRS=EPSG:4326&BBOX=-90,-180,90,180&WIDTH=2048&HEIGHT=1024&STYLES=&FORMAT=image/tiff',
+         fallbackUrl='https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=BlueMarble_NextGeneration&CRS=EPSG:4326&BBOX=-90,-180,90,180&WIDTH=2048&HEIGHT=1024&STYLES=&FORMAT=image/jpeg',
+         lbl=None, page='https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/',
+         credit="NASA Earth Observatory (Reto Stöckli); servido por NASA GIBS"),
 ]
 WIDTH, HEIGHT = 2048, 1024
 
@@ -79,15 +89,35 @@ LBL_KEYS = re.compile(r'^\s*(PROJECTION_TYPE|MAP_PROJECTION_TYPE|POSITIVE_LONGIT
 
 def build(it, out):
     r = dict(id=it['id'], body=it['body'], kind=it['kind'], sourceUrl=it['url'], sourcePage=it['page'], credit=it['credit'])
-    try: r['sourceHead'] = head(it['url'])
-    except Exception as e: r['sourceHead'] = {'error': str(e)}
+    local = None
+    if it.get('download'):
+        # Se baja entero y se guardan las cabeceras del GET (HEAD a un CGI no dice lo mismo que el GET: lo enseno la sonda)
+        local = os.path.join(out, it['id'] + '.src')
+        for u in [it['url']] + ([it['fallbackUrl']] if it.get('fallbackUrl') else []):
+            try:
+                req = urllib.request.Request(u, headers={'User-Agent': UA})
+                with urllib.request.urlopen(req, timeout=300) as resp, open(local, 'wb') as f:
+                    r['sourceHead'] = {k: resp.headers.get(k) for k in ('Content-Length', 'Content-Type', 'Last-Modified', 'ETag', 'Access-Control-Allow-Origin')}
+                    f.write(resp.read())
+                b = open(local, 'rb').read(8)
+                r['sourceMagic'] = b[:4].hex()
+                if b[:2] == b'\xff\xd8' or b[:4] in (b'II*\x00', b'MM\x00*'):
+                    r['sourceUrl'] = u; r['sourceBytes'] = os.path.getsize(local); break
+                r.setdefault('sourceRejected', []).append(dict(url=u, magic=b[:4].hex(), text=open(local, 'rb').read(300).decode('utf8', 'replace')))
+            except Exception as e:
+                r.setdefault('sourceRejected', []).append(dict(url=u, error=str(e)))
+        else:
+            r['error'] = 'ninguna URL dio una imagen'; return r
+    else:
+        try: r['sourceHead'] = head(it['url'])
+        except Exception as e: r['sourceHead'] = {'error': str(e)}
     if it.get('lbl'):
         try:
             p = os.path.join(out, it['id'] + '.lbl'); fetch(it['lbl'], p)
             txt = open(p, errors='replace').read(); r['labelUrl'] = it['lbl']; r['label'] = [l.strip() for l in LBL_KEYS.findall(txt) if False] or [m.group(0).strip() for m in LBL_KEYS.finditer(txt)]
             os.remove(p)
         except Exception as e: r['label'] = {'error': str(e)}
-    src = '/vsicurl/' + it['url']
+    src = local or ('/vsicurl/' + it['url'])
     rc, o, e, s = sh(['gdalinfo', '-json', '-nomd', src], 900)
     info = None
     if rc == 0:
@@ -124,6 +154,9 @@ def build(it, out):
         rc, o, e, s2 = sh(['gdal_translate', '-q', '-of', 'JPEG', '-co', 'QUALITY=88', tmp, dst])
         r['lonLayout'] = 'sin girar (etiqueta/figura de origen: -180 E a la izquierda, 0 al centro; Io y Jupiter vienen en oeste positivo con el extremo oeste a la izquierda, equivalente)'
     os.remove(tmp)
+    if local:
+        try: os.remove(local)
+        except OSError: pass
     if rc != 0: r['jpegError'] = e; return r
     for ext in ('.jpg.aux.xml',):
         try: os.remove(dst + ext[4:])
