@@ -1,0 +1,46 @@
+name: Sonda de imagenes (Wikidata P18 y Commons)
+
+# Comprueba, sin suponer (regla 6), si se pueden enseñar imagenes: P18 por lotes desde QLever y, en un navegador real desde el
+# origen de la web publicada, CORS y licencias de la API de Commons y carga de miniaturas (solo construcciones).
+# Informe en la rama `images-probe`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: images-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar Playwright (sin guardar en el repo)
+        run: |
+          npm install --no-save --no-package-lock playwright@1.49.1
+          for i in 1 2 3; do
+            if npx playwright install --with-deps chromium; then exit 0; fi
+            echo "Intento $i fallido; reintento en $((i * 45)) s"; sleep $((i * 45)); sudo apt-get update || true
+          done
+          exit 1
+      - name: Sondear
+        run: node scripts/probe-images.js > /tmp/report.json 2> /tmp/report.log || true
+      - name: Informe en la rama images-probe
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Probe"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan images-probe
+          cp /tmp/report.json report.json || echo '{}' > report.json
+          cp /tmp/report.log report.log || true
+          git add report.json report.log
+          git commit -m "Sonda de imagenes $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin images-probe
