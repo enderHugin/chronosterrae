@@ -33,6 +33,24 @@ check('indice: cada persona sale UNA vez (nacimiento y muerte juntos)', () => { 
 const ein = rows.find((r) => r[F.qid] === 'Q937' && r[F.kind] === 'person');
 check('Albert Einstein: lleva al nacimiento (Ulm, 1879-03-14) y trae la muerte (1955-04-18)', () => (ein && S.idOf({ qid: 'Q937', kind: 'person', icon: ein[F.icon] }) === 'wd.q937.birth' && ein[F.iso] === '1879-03-14' && Math.abs(ein[F.lng] - 9.99) < 0.05 && Math.abs(ein[F.lat] - 48.4) < 0.05 && ein[F.d] === '1955-04-18') || ein);
 check('Albert Einstein: el JD del nacimiento es el de ese dia (mediodia UT)', () => { const S2 = require('../sky/sky.js'); const jd0 = S2.calendarToJD({ year: 1879, month: 3, day: 14 }, 'gregorian').jd; return Math.abs(ein[F.jd] - (jd0 + 0.5)) < 0.6 || [ein[F.jd], jd0]; });
+// Visto en el render real (2026-11-12): el Manifiesto Russell-Einstein (9-7-1955) dejaba el reloj en el dia 8. Los años-antes-de-1950 van
+// redondeados y un floor caia en el dia anterior en ~la mitad de los registros con dia. Ahora manda la fecha ISO del propio registro.
+check('dia exacto: el JD es el mediodia UT de la fecha ISO del registro en todos los sucesos gregorianos con dia (Manifiesto Russell-Einstein: 9-7-1955, no el 8)', () => {
+    const fs = require('fs'); const path = require('path'); const S2 = require('../sky/sky.js'); const bad = [];
+    const byId = new Map(S.prepare(idx).map((e) => [e.id, e])); let n = 0;
+    for (const f of fs.readdirSync(path.join(__dirname, '..', 'data', 'events')).filter((x) => /^c\d+\.json$/.test(x))) {
+        for (const ft of JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'events', f), 'utf8')).features) {
+            const tm = ft.properties.time; const m = /^(-?\d+)-(\d{2})-(\d{2})$/.exec(tm.iso || '');
+            if (!m || tm.precision !== 'day' || tm.calendar !== 'gregorian' || tm.instant || parseInt(m[1], 10) < 1600) continue;
+            const e = byId.get(ft.properties.id); if (!e) continue;   // personas: una entrada (la del nacimiento)
+            const want = S2.calendarToJD({ year: parseInt(m[1], 10), month: parseInt(m[2], 10), day: parseInt(m[3], 10) }, 'gregorian').jd + 0.5; n++;
+            if (Math.abs(e.jd - want) > 0.01) bad.push([ft.properties.id, tm.iso, e.jd, want]);
+        }
+    }
+    const man = byId.get('wd.q331878.publication');
+    return (bad.length === 0 && n > 5000 && man && man.jd === S2.calendarToJD({ year: 1955, month: 7, day: 9 }, 'gregorian').jd + 0.5) || { n, bad: bad.slice(0, 5), man: man && man.jd };
+});
+check('JD de una fecha ISO (Meeus): J2000, cambio de calendario de 1582 y el origen del dia juliano', () => B.jdNoonOfIso('2000-01-01', 'gregorian') === 2451545 && B.jdNoonOfIso('1582-10-04', 'julian') === 2299160 && B.jdNoonOfIso('1582-10-15', 'gregorian') === 2299161 && B.jdNoonOfIso('-4712-01-01', 'julian') === 0 && Number.isNaN(B.jdNoonOfIso('1099-08-18/1099-08-24', 'julian')));
 check('buscar «einstein» en el indice real: Albert Einstein el primero', () => { const r = S.query(S.prepare(idx), 'einstein', { limit: 5 }); return (r[0] && r[0].qid === 'Q937' && r[0].kind === 'person') || r.map((e) => e.en); });
 check('construcciones en el indice: Notre-Dame de Paris con su fecha (1163)', () => { const r = rows.find((x) => x[F.qid] === 'Q2981' && x[F.kind] === 'built'); return (r && r[F.kind] === 'built' && r[F.iso] === '1163') || r; });
 check('sucesos sin lugar tambien se encuentran (lng null) y no rompen el indice', () => rows.some((r) => r[F.kind] === 'event' && r[F.lng] === null) && rows.every((r) => r[F.lng] === null || (Math.abs(r[F.lng]) <= 180 && Math.abs(r[F.lat]) <= 90)));

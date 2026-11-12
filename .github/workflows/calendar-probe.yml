@@ -1,0 +1,33 @@
+name: Sonda de calendario (Wikidata vs QLever)
+
+# Compara la fecha GUARDADA en Wikidata (calendario juliano o gregoriano) con la que da QLever, para saber si el literal de timeValue
+# ya viene pasado al gregoriano (scripts/probe-calendar.js). Resultado en la rama `calendar-probe`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear
+        run: node scripts/probe-calendar.js > /tmp/calendar.json 2> /tmp/probe.log || true
+      - name: Informe en la rama calendar-probe
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Probe"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan calendar-probe
+          cp /tmp/calendar.json calendar.json || true
+          cp /tmp/probe.log probe.log || true
+          git add calendar.json probe.log
+          git commit -m "Sonda de calendario $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin calendar-probe

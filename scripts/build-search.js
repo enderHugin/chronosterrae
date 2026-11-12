@@ -18,13 +18,28 @@ const JD_1950 = 2433282.5;
 const r2 = (x) => Math.round(x * 100) / 100;
 const r5 = (x) => Math.round(x * 1e5) / 1e5;
 
+/** JD del mediodia UT de una fecha ISO (AAAA-MM-DD, año astronomico) en el calendario dado (Meeus, cap. 7). NaN si no es una fecha completa. */
+function jdNoonOfIso(iso, calendar) {
+    const m = /^(-?\d{1,6})-(\d{2})-(\d{2})$/.exec(iso || ''); if (!m) return NaN;
+    let Y = parseInt(m[1], 10); let M = parseInt(m[2], 10); const D = parseInt(m[3], 10);
+    if (!(M >= 1 && M <= 12 && D >= 1 && D <= 31)) return NaN;
+    if (M <= 2) { Y -= 1; M += 12; }
+    const A = Math.floor(Y / 100); const B = calendar === 'julian' ? 0 : 2 - A + Math.floor(A / 4);
+    return Math.floor(365.25 * (Y + 4716)) + Math.floor(30.6001 * (M + 1)) + D + B - 1524.5 + 0.5;
+}
 /** JD del suceso: el instante si lo hay; si no, mediodia UT del dia (o el centro del intervalo segun la precision). */
 function jdOf(tm) {
     if (tm.instant && typeof tm.instant.jd_ut === "number") return tm.instant.jd_ut;
     const mid = (tm.start_ybp + tm.end_ybp) / 2;
     const jd = JD_1950 - mid * 365.25;
-    // un dia sin hora: mediodia UT de ese dia (el comienzo del dia es la medianoche, y en medio mundo seria aun el dia anterior)
-    return tm.precision === 'day' ? Math.floor(jd - 0.5) + 1 : jd;
+    if (tm.precision !== 'day') return jd;
+    // un dia sin hora: mediodia UT de ese dia (el comienzo del dia es la medianoche, y en medio mundo seria aun el dia anterior). El dia
+    // se toma de la fecha ISO del registro: los años-antes-de-1950 van redondeados a 6 decimales (≈ 30 s) y un floor sobre ellos podia
+    // caer en el dia anterior (visto en el render real: el Manifiesto Russell-Einstein, 9-7-1955, salia el dia 8). Si la ISO no
+    // cuadra con el intervalo (mas de 1,5 dias), manda el intervalo, redondeado al dia mas cercano.
+    const iso = jdNoonOfIso(tm.iso, tm.calendar);
+    if (Number.isFinite(iso) && Math.abs(iso - jd) <= 1.5) return iso;
+    return Math.round(jd - 0.5) + 1;
 }
 const yearOfIso = (iso) => { const m = /^(-?\d+)/.exec(iso || ''); return m ? parseInt(m[1], 10) : NaN; };
 
@@ -69,7 +84,7 @@ function build() {
     rows.sort((a, b) => b[9] - a[9] || (a[10] < b[10] ? -1 : a[10] > b[10] ? 1 : 0));
     return { note: 'Indice del buscador generado al publicar (scripts/build-search.js) a partir de data/events, data/built y data/images. Fuente de los datos: Wikidata (CC0). Las imagenes no estan aqui: solo el nombre del archivo de Commons.', fields, rows };
 }
-module.exports = { build, jdOf };
+module.exports = { build, jdOf, jdNoonOfIso };
 if (require.main === module) {
     const out = process.argv[2]; if (!out) { console.error('uso: node scripts/build-search.js <carpeta>'); process.exit(1); }
     const idx = build(); fs.mkdirSync(out, { recursive: true });
