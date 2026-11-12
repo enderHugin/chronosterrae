@@ -1,0 +1,986 @@
+{
+ "generated_at": "2026-11-12T21:47:09.005Z",
+ "bce": [
+  {
+   "id": "Q1048",
+   "label": "Julius Caesar",
+   "prop": "P569",
+   "time": "-0100-07-12T00:00:00Z",
+   "precision": 10,
+   "calendar": "Q1985786",
+   "text": "July 100 BCE"
+  },
+  {
+   "id": "Q1048",
+   "label": "Julius Caesar",
+   "prop": "P569",
+   "time": "-0100-07-13T00:00:00Z",
+   "precision": 11,
+   "calendar": "Q1985786",
+   "text": "13 July 100 BCE"
+  },
+  {
+   "id": "Q1048",
+   "label": "Julius Caesar",
+   "prop": "P569",
+   "time": "-0102-00-00T00:00:00Z",
+   "precision": 9,
+   "calendar": "Q1985786",
+   "text": "102 BCE"
+  },
+  {
+   "id": "Q1048",
+   "label": "Julius Caesar",
+   "prop": "P569",
+   "time": "-0100-00-00T00:00:00Z",
+   "precision": 9,
+   "calendar": "Q1985727",
+   "text": "100 BCE"
+  },
+  {
+   "id": "Q1048",
+   "label": "Julius Caesar",
+   "prop": "P570",
+   "time": "-0044-03-15T00:00:00Z",
+   "precision": 11,
+   "calendar": "Q1985786",
+   "text": "15 March 44 BCE"
+  },
+  {
+   "id": "Q1048",
+   "label": "Julius Caesar",
+   "prop": "P570",
+   "time": "-0044-00-00T00:00:00Z",
+   "precision": 9,
+   "calendar": "Q1985727",
+   "text": "44 BCE"
+  },
+  {
+   "id": "Q1405",
+   "label": "Augustus",
+   "prop": "P569",
+   "time": "-0063-00-00T00:00:00Z",
+   "precision": 9,
+   "calendar": "Q1985786",
+   "text": "63 BCE"
+  },
+  {
+   "id": "Q1405",
+   "label": "Augustus",
+   "prop": "P569",
+   "time": "-0063-09-23T00:00:00Z",
+   "precision": 11,
+   "calendar": "Q1985786",
+   "text": "23 September 63 BCE"
+  },
+  {
+   "id": "Q1405",
+   "label": "Augustus",
+   "prop": "P570",
+   "time": "+0014-08-19T00:00:00Z",
+   "precision": 11,
+   "calendar": "Q1985786",
+   "text": "19 August 14 CE"
+  },
+  {
+   "id": "Q1405",
+   "label": "Augustus",
+   "prop": "P570",
+   "time": "+0014-00-00T00:00:00Z",
+   "precision": 9,
+   "calendar": "Q1985786",
+   "text": "14 CE"
+  },
+  {
+   "id": "Q8409",
+   "label": "Alexander the Great",
+   "prop": "P569",
+   "time": "-0356-07-20T00:00:00Z",
+   "precision": 11,
+   "calendar": "Q1985786",
+   "text": "20 July 356 BCE"
+  },
+  {
+   "id": "Q8409",
+   "label": "Alexander the Great",
+   "prop": "P570",
+   "time": "-0323-06-10T00:00:00Z",
+   "precision": 11,
+   "calendar": "Q1985786",
+   "text": "10 June 323 BCE"
+  }
+ ],
+ "live": {
+  "wbsearchentities:es:Jaime": {
+   "status": 200,
+   "ms": 102,
+   "acao": "*",
+   "bytes": 4641,
+   "results": [
+    [
+     "Q2605834",
+     "Jaime",
+     "nombre masculino"
+    ],
+    [
+     "Q36957548",
+     "Jaime",
+     "apellido"
+    ],
+    [
+     "Q43999",
+     "Santiago el Mayor",
+     "apóstol de Jesús"
+    ],
+    [
+     "Q54575103",
+     "Jaime Valencia Aristizábal",
+     null
+    ],
+    [
+     "Q10304910",
+     "Jaime",
+     "película de 1999 dirigida por António-Pedro Vasconcelos"
+    ],
+    [
+     "Q29179",
+     "Francisco Franco Bahamonde",
+     "militar y dictador español (1892-1975)"
+    ],
+    [
+     "Q20740576",
+     "Jaime Aparicio",
+     "Embajador"
+    ],
+    [
+     "Q525631",
+     "Jaime de Borbón y Borbón-Parma",
+     "II Duque de Madrid"
+    ],
+    [
+     "Q75317760",
+     "Jaime de Borbón-Dos Sicilias y Landaluce",
+     "príncipe de Borbón-Dos Sicilias, duque de Noto"
+    ],
+    [
+     "Q36587016",
+     "Jaime Bernardo Blanco-Dios",
+     "botanist"
+    ]
+   ]
+  },
+  "wbsearchentities:es:Jaime I de Aragón": {
+   "status": 200,
+   "ms": 85,
+   "acao": "*",
+   "bytes": 1051,
+   "results": [
+    [
+     "Q212052",
+     "Jaime I de Aragón",
+     "rey de Aragón (1213-1276)"
+    ],
+    [
+     "Q2512868",
+     "Jaime I de Urgel",
+     "infante de Aragón"
+    ]
+   ]
+  },
+  "wbsearchentities:en:James I of Aragon": {
+   "status": 200,
+   "ms": 100,
+   "acao": "*",
+   "bytes": 521,
+   "results": [
+    [
+     "Q212052",
+     "James I of Aragon",
+     "King of Aragon (1208–1276)"
+    ]
+   ]
+  },
+  "wbsearchentities:es:einstenio": {
+   "status": 200,
+   "ms": 100,
+   "acao": "*",
+   "bytes": 517,
+   "results": [
+    [
+     "Q1892",
+     "einstenio",
+     "elemento sintético de la tabla periódica"
+    ]
+   ]
+  },
+  "search:Jaime haswbstatement:P31=Q5": {
+   "status": 200,
+   "ms": 214,
+   "acao": "*",
+   "bytes": 1525,
+   "results": [
+    [
+     "Q43999",
+     "apóstol de Jesús"
+    ],
+    [
+     "Q212052",
+     "rey de Aragón (1213-1276)"
+    ],
+    [
+     "Q312735",
+     "(1267-1327) Rey de Aragón entre 1291 y 1327"
+    ],
+    [
+     "Q202108",
+     "arzobispo filipino"
+    ],
+    [
+     "Q231197",
+     "actriz estadounidense"
+    ],
+    [
+     "Q20740576",
+     "Embajador"
+    ],
+    [
+     "Q1075796",
+     "actor estadounidense"
+    ],
+    [
+     "Q240180",
+     "actriz inglesa"
+    ],
+    [
+     "Q233038",
+     "actriz estadounidense"
+    ],
+    [
+     "Q167116",
+     "futbolista salvadoreño"
+    ]
+   ]
+  },
+  "search:Jaime haswbstatement:P31=Q5 haswbstatement:P569": {
+   "status": 200,
+   "ms": 151,
+   "acao": "*",
+   "bytes": 1525,
+   "results": [
+    [
+     "Q43999",
+     "apóstol de Jesús"
+    ],
+    [
+     "Q212052",
+     "rey de Aragón (1213-1276)"
+    ],
+    [
+     "Q312735",
+     "(1267-1327) Rey de Aragón entre 1291 y 1327"
+    ],
+    [
+     "Q202108",
+     "arzobispo filipino"
+    ],
+    [
+     "Q231197",
+     "actriz estadounidense"
+    ],
+    [
+     "Q20740576",
+     "Embajador"
+    ],
+    [
+     "Q1075796",
+     "actor estadounidense"
+    ],
+    [
+     "Q240180",
+     "actriz inglesa"
+    ],
+    [
+     "Q233038",
+     "actriz estadounidense"
+    ],
+    [
+     "Q167116",
+     "futbolista salvadoreño"
+    ]
+   ]
+  },
+  "details": {
+   "status": 200,
+   "ms": 185,
+   "acao": "*",
+   "bytes": 596235,
+   "people": [
+    {
+     "id": "Q43999",
+     "es": "Santiago el Mayor",
+     "desc": "apóstol de Jesús",
+     "sitelinks": 99,
+     "P569": [
+      [
+       "+0001-00-00T00:00:00Z",
+       7,
+       "Q1985786"
+      ]
+     ],
+     "P570": [
+      [
+       "+0044-00-00T00:00:00Z",
+       9
+      ]
+     ],
+     "P19": [
+      "Q501773"
+     ],
+     "P20": [
+      "Q1218"
+     ],
+     "P18": [
+      "Dijon fine arts museum mg 1626.jpg"
+     ]
+    },
+    {
+     "id": "Q212052",
+     "es": "Jaime I de Aragón",
+     "desc": "rey de Aragón (1213-1276)",
+     "sitelinks": 56,
+     "P569": [
+      [
+       "+1208-02-02T00:00:00Z",
+       11,
+       "Q1985786"
+      ]
+     ],
+     "P570": [
+      [
+       "+1276-07-27T00:00:00Z",
+       11
+      ]
+     ],
+     "P19": [
+      "Q6441"
+     ],
+     "P20": [
+      "Q8818"
+     ],
+     "P18": [
+      "Jaume Mateu - James I the Conqueror - Google Art Project.jpg"
+     ]
+    },
+    {
+     "id": "Q312735",
+     "es": "Jaime II de Aragón",
+     "desc": "(1267-1327) Rey de Aragón entre 1291 y 1327",
+     "sitelinks": 46,
+     "P569": [
+      [
+       "+1267-08-10T00:00:00Z",
+       11,
+       "Q1985786"
+      ]
+     ],
+     "P570": [
+      [
+       "+1327-11-02T00:00:00Z",
+       11
+      ]
+     ],
+     "P19": [
+      "Q8818"
+     ],
+     "P20": [
+      "Q1492"
+     ],
+     "P18": [
+      "Chaime II d'Aragón.jpg"
+     ]
+    },
+    {
+     "id": "Q202108",
+     "es": "Jaime Sin",
+     "desc": "arzobispo filipino",
+     "sitelinks": 31,
+     "P569": [
+      [
+       "+1928-08-31T00:00:00Z",
+       11,
+       "Q1985727"
+      ]
+     ],
+     "P570": [
+      [
+       "+2005-06-21T00:00:00Z",
+       11
+      ]
+     ],
+     "P19": [
+      "Q626992"
+     ],
+     "P20": [
+      "Q1461"
+     ],
+     "P18": [
+      "Cardinal Jaime Sin in 1988.jpg"
+     ]
+    },
+    {
+     "id": "Q231197",
+     "es": "Jaime Pressly",
+     "desc": "actriz estadounidense",
+     "sitelinks": 42,
+     "P569": [
+      [
+       "+1977-07-30T00:00:00Z",
+       11,
+       "Q1985727"
+      ]
+     ],
+     "P570": [],
+     "P19": [
+      "Q2048581"
+     ],
+     "P20": [],
+     "P18": [
+      "Jaime Pressly LF.JPG"
+     ]
+    },
+    {
+     "id": "Q20740576",
+     "es": "Jaime Aparicio",
+     "desc": "Embajador",
+     "sitelinks": 4,
+     "P569": [
+      [
+       "+1955-08-28T00:00:00Z",
+       11,
+       "Q1985727"
+      ],
+      [
+       "+1955-00-00T00:00:00Z",
+       9,
+       "Q1985727"
+      ]
+     ],
+     "P570": [],
+     "P19": [
+      "Q1491"
+     ],
+     "P20": [],
+     "P18": [
+      "Jaime Aparicio.JPG"
+     ]
+    },
+    {
+     "id": "Q1075796",
+     "es": "Carlos Alazraqui",
+     "desc": "actor estadounidense",
+     "sitelinks": 88,
+     "P569": [
+      [
+       "+1962-07-20T00:00:00Z",
+       11,
+       "Q1985727"
+      ]
+     ],
+     "P570": [],
+     "P19": [
+      "Q128114"
+     ],
+     "P20": [],
+     "P18": [
+      "Carlos Alazraqui at Flappers in Burbank 20190706 (cropped).jpg"
+     ]
+    },
+    {
+     "id": "Q240180",
+     "es": "Jaime Murray",
+     "desc": "actriz inglesa",
+     "sitelinks": 32,
+     "P569": [
+      [
+       "+1976-07-21T00:00:00Z",
+       11,
+       "Q1985727"
+      ]
+     ],
+     "P570": [],
+     "P19": [
+      "Q23240"
+     ],
+     "P20": [],
+     "P18": [
+      "Jaime Murray Comic-Con 2012.jpg"
+     ]
+    }
+   ]
+  },
+  "places": {
+   "status": 200,
+   "ms": 670,
+   "acao": "*",
+   "bytes": 1837669,
+   "list": [
+    [
+     "Q501773",
+     "Betsaida",
+     [
+      35.63053611,
+      32.90995
+     ]
+    ],
+    [
+     "Q1218",
+     "Jerusalén",
+     [
+      35.234156,
+      31.776679
+     ]
+    ],
+    [
+     "Q6441",
+     "Montpellier",
+     [
+      3.8772305555556,
+      43.610919444444
+     ]
+    ],
+    [
+     "Q8818",
+     "Valencia",
+     [
+      -0.3763888888888889,
+      39.47
+     ]
+    ],
+    [
+     "Q1492",
+     "Barcelona",
+     [
+      2.1769444444444,
+      41.3825
+     ]
+    ],
+    [
+     "Q626992",
+     null,
+     [
+      122.43388888888889,
+      11.648333333333333
+     ]
+    ],
+    [
+     "Q1461",
+     "Manila",
+     [
+      120.97722222222222,
+      14.595833333333333
+     ]
+    ],
+    [
+     "Q2048581",
+     "Kinston",
+     [
+      -77.585,
+      35.270555555556
+     ]
+    ],
+    [
+     "Q1491",
+     "La Paz",
+     [
+      -68.13333333333334,
+      -16.495833333333334
+     ]
+    ],
+    [
+     "Q128114",
+     "Yonkers",
+     [
+      -73.864444444444,
+      40.941388888889
+     ]
+    ],
+    [
+     "Q23240",
+     "Essex",
+     [
+      0.58333333333333,
+      51.75
+     ]
+    ]
+   ]
+  }
+ },
+ "discoveries": {
+  "einsteinium": {
+   "label": "einsteinium",
+   "P31": [
+    "Q11344",
+    "Q755992"
+   ],
+   "P575": [
+    "+1952-01-01T00:00:00Z"
+   ],
+   "P189": [],
+   "P61": [
+    "Q468345",
+    "Q48973"
+   ],
+   "P138": [
+    "Q937"
+   ],
+   "props": 80,
+   "linked": [
+    {
+     "id": "Q11344",
+     "en": "chemical element",
+     "es": "elemento químico",
+     "P937": [],
+     "P108": [],
+     "P625": []
+    },
+    {
+     "id": "Q755992",
+     "en": "synthetic element",
+     "es": "elemento sintético",
+     "P937": [],
+     "P108": [],
+     "P625": []
+    },
+    {
+     "id": "Q468345",
+     "en": "Albert Ghiorso",
+     "es": "Albert Ghiorso",
+     "P937": [],
+     "P108": [
+      "Q168756"
+     ],
+     "P625": []
+    },
+    {
+     "id": "Q48973",
+     "en": "Glenn Theodore Seaborg",
+     "es": "Glenn T. Seaborg",
+     "P937": [],
+     "P108": [
+      "Q127050",
+      "Q939090",
+      "Q168756"
+     ],
+     "P625": []
+    },
+    {
+     "id": "Q937",
+     "en": "Albert Einstein",
+     "es": "Albert Einstein",
+     "P937": [
+      "Q70",
+      "Q1085",
+      "Q72",
+      "Q64",
+      "Q464344",
+      "Q138518",
+      "Q72"
+     ],
+     "P108": [
+      "Q685539",
+      "Q31519",
+      "Q206702",
+      "Q1729754",
+      "Q11942",
+      "Q708038",
+      "Q21578",
+      "Q156598",
+      "Q659080",
+      "Q819187",
+      "Q152087",
+      "Q329464",
+      "Q635642",
+      "Q156598",
+      "Q70",
+      "Q168756"
+     ],
+     "P625": []
+    }
+   ]
+  },
+  "placeless": 6883,
+  "coverage": {
+   "sample": 2500,
+   "with_discoverer": 2207,
+   "discoverer_work_location_coord": 1646,
+   "discoverer_employer_coord": 1687,
+   "classes": [
+    [
+     "Q2488",
+     "galaxia espiral",
+     772
+    ],
+    [
+     "Q192078",
+     "galaxia lenticular",
+     464
+    ],
+    [
+     "Q184348",
+     "galaxia elíptica",
+     206
+    ],
+    [
+     "Q2557101",
+     "región nuclear de líneas de emisión de baja ionización",
+     187
+    ],
+    [
+     "Q318",
+     "galaxia",
+     143
+    ],
+    [
+     "Q67206691",
+     "fuente de infrarrojos",
+     132
+    ],
+    [
+     "Q23442",
+     "isla",
+     113
+    ],
+    [
+     "Q72802508",
+     "galaxia de línea de emisión",
+     111
+    ],
+    [
+     "Q11387",
+     "cúmulo abierto",
+     93
+    ],
+    [
+     "Q195577",
+     "Galaxia espiral intermedia",
+     68
+    ],
+    [
+     "Q67201586",
+     null,
+     66
+    ],
+    [
+     "Q71965638",
+     "galaxia Seyfert tipo II",
+     63
+    ],
+    [
+     "Q139595919",
+     null,
+     61
+    ],
+    [
+     "Q42523",
+     "atolón",
+     58
+    ],
+    [
+     "Q217012",
+     "radiogalaxia",
+     58
+    ],
+    [
+     "Q1931185",
+     "radiofuente",
+     52
+    ],
+    [
+     "Q2154519",
+     "fuente astrofísica de rayos X",
+     51
+    ],
+    [
+     "Q46587",
+     "núcleo galáctico activo",
+     42
+    ],
+    [
+     "Q644507",
+     "interacción de galaxias",
+     39
+    ],
+    [
+     "Q11276",
+     "cúmulo globular",
+     34
+    ],
+    [
+     "Q8928",
+     "constelación",
+     32
+    ],
+    [
+     "Q168845",
+     "cúmulo estelar",
+     30
+    ],
+    [
+     "Q1161185",
+     "isla volcánica",
+     27
+    ],
+    [
+     "Q1402592",
+     "grupo de islas",
+     23
+    ],
+    [
+     "Q28738741",
+     "galaxias en interacción",
+     23
+    ]
+   ],
+   "examples": [
+    [
+     "Q843239",
+     "Gersonides",
+     "Orange",
+     "POINT(4.808889 44.137500)"
+    ],
+    [
+     "Q843239",
+     "Gersonides",
+     "Avignon",
+     "POINT(4.808333 43.948611)"
+    ],
+    [
+     "Q104394",
+     "Aldus Manutius",
+     "Venice",
+     "POINT(12.331944 45.439722)"
+    ],
+    [
+     "Q843239",
+     null,
+     "Montpellier",
+     "POINT(3.877231 43.610919)"
+    ],
+    [
+     "Q843239",
+     "Gersonides",
+     "Perpignan",
+     "POINT(2.894722 42.697500)"
+    ],
+    [
+     "Q828",
+     null,
+     null,
+     null
+    ],
+    [
+     "Q191667",
+     "Chi, Chün-tao",
+     null,
+     null
+    ],
+    [
+     "Q579051",
+     "Hadrian",
+     null,
+     null
+    ],
+    [
+     "Q1035674",
+     "Nasir al-Din al-Tusi",
+     null,
+     null
+    ],
+    [
+     "Q1851445",
+     "Alonso de Ojeda",
+     null,
+     null
+    ],
+    [
+     "Q11234",
+     "Ptolemy",
+     null,
+     null
+    ],
+    [
+     "Q194506",
+     "Luis Ramírez de Lucena",
+     null,
+     null
+    ],
+    [
+     "Q769253",
+     "Luis Ramírez de Lucena",
+     null,
+     null
+    ],
+    [
+     "Q192823",
+     "Leif Erikson",
+     null,
+     null
+    ],
+    [
+     "Q182432",
+     "Lancelotto Malocello",
+     null,
+     null
+    ],
+    [
+     "Q1330151",
+     "Christopher Columbus",
+     null,
+     null
+    ],
+    [
+     "Q1668558",
+     "Christopher Columbus",
+     null,
+     null
+    ],
+    [
+     "Q25596",
+     "Christopher Columbus",
+     null,
+     null
+    ],
+    [
+     "Q292647",
+     "Christopher Columbus",
+     null,
+     null
+    ],
+    [
+     "Q34765",
+     "Christopher Columbus",
+     null,
+     null
+    ],
+    [
+     "Q457261",
+     "Christopher Columbus",
+     null,
+     null
+    ],
+    [
+     "Q828",
+     "Christopher Columbus",
+     null,
+     null
+    ],
+    [
+     "Q1333681",
+     "Fibonacci",
+     null,
+     null
+    ]
+   ]
+  }
+ }
+}
