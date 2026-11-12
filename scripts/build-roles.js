@@ -34,14 +34,19 @@ const ROLES = [
     ['monarch', [['Q116', 'monarch']], ['king', 'queen', 'emperor', 'empress', 'monarch', 'sultan', 'tsar', 'tsarina', 'shah', 'pharaoh', 'caliph', 'khan', 'regnant']],
     ['composer', [['Q36834', 'composer']], ['composer']],
     ['painter', [['Q1028181', 'painter'], ['Q1281618', 'sculptor']], ['painter', 'sculptor', 'artist', 'engraver', 'illustrator']],
-    ['writer', [['Q36180', 'writer'], ['Q49757', 'poet']], ['writer', 'poet', 'novelist', 'playwright', 'author', 'essayist', 'dramatist', 'journalist']],
-    ['scientist', [['Q901', 'scientist'], ['Q170790', 'mathematician']], ['scientist', 'physicist', 'chemist', 'biologist', 'astronomer', 'mathematician', 'naturalist', 'geologist', 'botanist', 'zoologist', 'physician', 'economist',
+    ['writer', [['Q36180', 'writer'], ['Q49757', 'poet'], ['Q201788', 'historian']], ['writer', 'poet', 'novelist', 'playwright', 'author', 'essayist', 'dramatist', 'journalist',
+        'historian', 'historiographer', 'chronicler', 'philologist', 'scholar', 'humanist', 'rhetorician', 'translator', 'educator', 'pedagogue']],
+    // Ciencia: «scientist» SOLO tal cual (sin subclases: su arbol, 2.770 clases, mete historiadores, fillogos, pedagogos... y Guru Nanak salia
+    // con matraz) y las ciencias naturales, la medicina y la economia con sus subclases. Revisado con review.tsv el 2026-11-13.
+    ['scientist', [['Q901', 'scientist', 'exact'], ['Q169470', 'physicist'], ['Q593644', 'chemist'], ['Q864503', 'biologist'], ['Q11063', 'astronomer'], ['Q170790', 'mathematician'],
+        ['Q520549', 'geologist'], ['Q18805', 'naturalist'], ['Q2374149', 'botanist'], ['Q350979', 'zoologist'], ['Q39631', 'physician'], ['Q188094', 'economist'], ['Q212980', 'psychologist'],
+        ['Q82594', 'computer scientist']], ['scientist', 'physicist', 'chemist', 'biologist', 'astronomer', 'mathematician', 'naturalist', 'geologist', 'botanist', 'zoologist', 'physician', 'economist',
         'cosmologist', 'astrophysicist', 'psychologist', 'psychiatrist', 'neurologist', 'neuroscientist', 'archaeologist', 'anthropologist', 'sociologist', 'linguist', 'geographer', 'biochemist', 'microbiologist', 'geneticist',
-        'meteorologist', 'paleontologist', 'ornithologist', 'entomologist', 'pharmacologist', 'immunologist', 'virologist', 'bacteriologist', 'surgeon']],
+        'meteorologist', 'paleontologist', 'palaeontologist', 'ornithologist', 'entomologist', 'pharmacologist', 'immunologist', 'virologist', 'bacteriologist', 'surgeon', 'polymath']],
     ['philosopher', [['Q4964182', 'philosopher']], ['philosopher']],
     ['religious', [['Q42603', 'priest'], ['Q29182', 'bishop'], ['Q733786', 'monk'], ['Q133485', 'rabbi'], ['Q1234713', 'theologian'], ['Q2259532', 'cleric']], ['priest', 'bishop', 'archbishop', 'cardinal', 'monk', 'nun', 'friar', 'abbot', 'abbess', 'rabbi', 'imam', 'missionary', 'theologian', 'saint', 'prophet', 'preacher', 'pastor', 'cleric', 'clergyman',
         'evangelist', 'apostle', 'martyr', 'disciple', 'deacon', 'patriarch', 'hermit', 'mystic', 'ayatollah', 'mullah', 'mufti', 'lama', 'guru', 'reverend',
-        'religious leader', 'islamic scholar', 'spiritual leader']],
+        'religious leader', 'islamic scholar', 'spiritual leader', 'reformation', 'reformer']],
     ['explorer', [['Q11900058', 'explorer']], ['explorer', 'navigator', 'conquistador', 'astronaut', 'cosmonaut']],
     ['architect', [['Q42973', 'architect']], ['architect']],
     ['inventor', [['Q205375', 'inventor'], ['Q81096', 'engineer']], ['inventor', 'engineer']],
@@ -59,7 +64,7 @@ const KNOWN = [
     ['Q989', 'John Paul II', 'pope'], ['Q5593', 'Pablo Picasso', 'painter'], ['Q692', 'William Shakespeare', 'writer'], ['Q9682', 'Elizabeth II', 'monarch'],
     ['Q517', 'Napoleon', 'monarch'], ['Q8016', 'Winston Churchill', 'politician'], ['Q7186', 'Marie Curie', 'scientist'], ['Q762', 'Leonardo da Vinci', 'painter'],
     ['Q255', 'Ludwig van Beethoven', 'composer'], ['Q1035', 'Charles Darwin', 'scientist'], ['Q868', 'Aristotle', 'philosopher'],
-    ['Q57336', 'Ali Khamenei', 'politician']   // salio «ciencia» (el creador, 2026-11-13): descripcion sin oficio y reserva que ponia ciencia antes que politica
+    ['Q57336', 'Ali Khamenei', 'politician'], ['Q2039', 'Livy', 'writer'], ['Q83322', 'Guru Nanak', 'religious']   // salio «ciencia» (el creador, 2026-11-13): descripcion sin oficio y reserva que ponia ciencia antes que politica
 ];
 
 // Reserva cuando nada lo decide (ni la descripcion ni el orden de sus ocupaciones en Wikidata): los papeles publicos (gobernar, una iglesia,
@@ -73,6 +78,8 @@ const DOMINANT = ['pope'];
 const MONARCH_WORDS = ROLES.find((r) => r[0] === 'monarch')[2];
 // Realeza que no reino (consortes, principes): su descripcion la nombra aunque no tengan cargo de monarca. El papel se llama «Realeza».
 const ROYAL_WORDS = MONARCH_WORDS.concat(['prince', 'princess', 'consort']);
+// Religion por la descripcion aunque no tenga cargo u oficio religioso en Wikidata (Guru Nanak: «First Sikh Guru and founder of Sikhism»)
+const RELIGIOUS_DESC = ['guru', 'prophet', 'apostle', 'saint', 'ayatollah', 'imam', 'rabbi', 'bishop', 'archbishop', 'cardinal', 'monk', 'nun', 'priest', 'theologian', 'religious leader', 'spiritual leader', 'mystic', 'reformation'];
 // «drag queen», «beauty queen»: no es realeza
 const words = (description) => (' ' + String(description || '').toLowerCase().replace(/[^a-z\u00c0-\u024f ]+/g, ' ') + ' ').replace(/ (drag|beauty|dancing|homecoming) queens? /g, ' ');
 const hasWord = (d, w) => d.indexOf(' ' + w + ' ') >= 0 || d.indexOf(' ' + w + 's ') >= 0;
@@ -85,6 +92,7 @@ function pickRole(candidates0, description, firstOcc) {
     const d = words(description);
     const own = new Set(candidates0 || []); const candidates = new Set(own);
     if (ROYAL_WORDS.some((w) => hasWord(d, w))) candidates.add('monarch');
+    if (RELIGIOUS_DESC.some((w) => hasWord(d, w))) candidates.add('religious');
     const cand = ROLES.filter(([r]) => candidates.has(r));
     if (!cand.length) return null;
     const dom = DOMINANT.find((r) => candidates.has(r)); if (dom) return { role: dom, via: 'cargo' };
@@ -139,8 +147,8 @@ async function main() {
     //     QLever (429 «Operation timed out ... Sort on ?root», build del 2026-11-12). Aqui solo se recorre el arbol de clases.
     const classRole = new Map(); man.closure = {};
     for (const [r] of ROLES) {
-        for (const [id] of ok[r]) {
-            const rows = await post(`SELECT DISTINCT ?c WHERE { ?c wdt:P279* wd:${id} }`);
+        for (const [id, , how] of ok[r]) {
+            const rows = how === 'exact' ? [{ c: 'http://www.wikidata.org/entity/' + id }] : await post(`SELECT DISTINCT ?c WHERE { ?c wdt:P279* wd:${id} }`);
             man.closure[id] = rows.length;
             rows.forEach((b) => { const c = b.c.split('/').pop(); if (!classRole.has(c)) classRole.set(c, new Set()); classRole.get(c).add(r); });
         }
