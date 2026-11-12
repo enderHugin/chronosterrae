@@ -21,22 +21,24 @@ const log = (...a) => process.stderr.write(a.join(' ') + '\n');
 const describe = (e) => e.message + (e.cause ? ' [' + (e.cause.code || e.cause.name || '') + ']' : '');
 
 // Candidatos ESCRITOS DE MEMORIA: por eso se verifican antes de usarlos (la etiqueta inglesa esperada va al lado).
+// 1a pasada (2026-11-12): 28 de 30 clases y 11 de 12 propiedades coincidieron; Q193475 es "menhir" (no "megalith"), Q811979 se llama hoy
+// "built structure" y P576 "dissolved, abolished or demolished" (sin "date"). Se corrigen las etiquetas esperadas con lo leido.
 const CLASSES = [
     ['Q2977', 'cathedral'], ['Q12516', 'pyramid'], ['Q23413', 'castle'], ['Q44539', 'temple'], ['Q32815', 'mosque'],
     ['Q16970', 'church building'], ['Q16560', 'palace'], ['Q57821', 'fortification'], ['Q39715', 'lighthouse'], ['Q12280', 'bridge'],
     ['Q54831', 'amphitheatre'], ['Q4989906', 'monument'], ['Q839954', 'archaeological site'], ['Q162875', 'mausoleum'],
-    ['Q180987', 'stupa'], ['Q34627', 'synagogue'], ['Q842402', 'Hindu temple'], ['Q5393308', 'Buddhist temple'], ['Q193475', 'megalith'],
-    ['Q12518', 'tower'], ['Q11303', 'skyscraper'], ['Q12323', 'dam'], ['Q41176', 'building'], ['Q811979', 'architectural structure'],
+    ['Q180987', 'stupa'], ['Q34627', 'synagogue'], ['Q842402', 'Hindu temple'], ['Q5393308', 'Buddhist temple'], ['Q193475', 'menhir'],
+    ['Q12518', 'tower'], ['Q11303', 'skyscraper'], ['Q12323', 'dam'], ['Q41176', 'building'], ['Q811979', 'built structure'],
     // nombres de lugar
     ['Q515', 'city'], ['Q486972', 'human settlement'], ['Q46831', 'mountain range'], ['Q8514', 'desert'], ['Q185113', 'cape'],
     // patrimonio (para P1435)
     ['Q9259', 'World Heritage Site']
 ];
-const PROPS = [['P31', 'instance of'], ['P279', 'subclass of'], ['P571', 'inception'], ['P576', 'dissolved, abolished or demolished date'],
+const PROPS = [['P31', 'instance of'], ['P279', 'subclass of'], ['P571', 'inception'], ['P576', 'dissolved, abolished or demolished'],
     ['P625', 'coordinate location'], ['P1435', 'heritage designation'], ['P1448', 'official name'], ['P2561', 'name'], ['P580', 'start time'],
     ['P582', 'end time'], ['P793', 'significant event'], ['P1082', 'population']];
 // Terminos que se buscan tambien por texto, por si el QID de memoria es otro (el informe ensena los 3 primeros resultados).
-const SEARCH = ['cathedral', 'pyramid', 'Egyptian pyramid', 'Mesoamerican pyramid', 'castle', 'amphitheatre', 'ziggurat', 'stone circle', 'aqueduct', 'mountain range', 'cape', 'World Heritage Site'];
+const SEARCH = ['megalith', 'cathedral', 'pyramid', 'Egyptian pyramid', 'Mesoamerican pyramid', 'castle', 'amphitheatre', 'ziggurat', 'stone circle', 'aqueduct', 'mountain range', 'cape', 'World Heritage Site'];
 
 async function sparql(q, timeoutMs = 120000) {
     const t0 = Date.now();
