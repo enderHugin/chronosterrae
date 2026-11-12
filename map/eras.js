@@ -281,7 +281,8 @@
         const tl = full ? cornerOf(o.corner, c, false) : null; const br = full ? cornerOf(o.corner, c, true) : null;
         const dv = full ? dividerOf(o.divider, c) : null; const tx = full ? textureOf(o.texture, p.text) : null;
         v['--orn-tl'] = tl ? dataUrl(tl) : 'none'; v['--orn-br'] = br ? dataUrl(br) : 'none';
-        v['--orn-divider'] = dv ? dataUrl(dv) : 'none'; v['--orn-texture'] = tx ? dataUrl(tx) : 'none';
+        // Sin texturas de fondo (puntos, cuadricula...): el creador, 2026-11-13: «mejor que no: ensucia». textureOf sigue para quien la quiera.
+        v['--orn-divider'] = dv ? dataUrl(dv) : 'none'; v['--orn-texture'] = 'none'; void tx;
         v['--orn-divider-h'] = dv ? '6px' : '0px';
         const cur = full && era.cursor ? cursorOf(era.cursor, p.accent, dark ? '#0b0b0b' : '#ffffff') : null;
         v['--cursor-grab'] = cur ? cursorCss(cur.svg, cur.x, cur.y, 'grab') : 'grab';

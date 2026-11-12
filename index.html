@@ -68,14 +68,20 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); z-index: 30; font: 13px/1.3 var(--font-ui); }
         #search-list li { display: grid; grid-template-columns: 44px 1fr; gap: 9px; align-items: center; padding: 5px 7px; border-radius: 6px; cursor: pointer; min-height: 44px; }
         #search-list li[aria-selected="true"] { background: color-mix(in srgb, var(--accent) 22%, transparent); }
-        /* cada resultado con el color de SU epoca: franja a la izquierda y la epoca escrita en una etiqueta */
-        #search-list li[role=option] { border-left: 4px solid var(--era-c, transparent); }
+        /* Cada resultado con el diseño ENTERO de SU epoca (el creador, 2026-11-13: "deben estar siempre cada uno con el color, tipografia, etc.
+           que les corresponda", no los de la epoca que marque la barra de tiempo). Sus variables (--bg, --text, --accent, --font...) se ponen en
+           la propia fila (srchRender); sin epoca conocida, hereda las de la lista. */
+        #search-list li[role=option] { background: var(--bg); color: var(--text); font-family: var(--font-ui); border-left: 4px solid var(--accent); border-radius: var(--btn-radius, 6px); margin: 3px 2px; }
+        #search-list li[role=option]:hover { background: color-mix(in srgb, var(--accent) 14%, var(--bg)); }
+        #search-list li[role=option][aria-selected="true"] { background: color-mix(in srgb, var(--accent) 24%, var(--bg)); box-shadow: 0 0 0 2px var(--accent); }
+        #search-list li[role=option] .sr-name { font-family: var(--font); font-weight: var(--h-weight, 700); font-style: var(--h-style, normal); letter-spacing: var(--h-spacing, 0); text-transform: var(--h-transform, none); }
         #search-list .sr-row { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+        #search-list li > div { min-width: 0; }      /* que el nombre se recorte (…) y la etiqueta de la epoca no se salga */
         #search-list .sr-row .sr-name { flex: 1 1 auto; min-width: 0; }
-        #search-list .sr-era { flex: none; font: 600 10.5px/1.5 var(--font-ui); padding: 0 6px; border-radius: 9px; background: var(--era-c); color: var(--era-bg); white-space: nowrap; max-width: 46%; overflow: hidden; text-overflow: ellipsis; }
+        #search-list .sr-era { flex: none; font: 600 10.5px/1.5 var(--font-ui); padding: 0 6px; border-radius: 9px; background: var(--accent); color: var(--bg); white-space: nowrap; max-width: 46%; overflow: hidden; text-overflow: ellipsis; text-transform: none; letter-spacing: 0; }
         #search-list .sr-alt { font-weight: 400; opacity: 0.8; }
         #search-list .sr-head { display: block; min-height: 0; padding: 6px 8px 2px; font: 600 11px var(--font-ui); text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.75; cursor: default; border-top: 1px solid color-mix(in srgb, var(--text) 15%, transparent); margin-top: 4px; }
-        #search-list li:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+        #search-list li:not([role=option]):hover { background: none; }
         #search-list .sr-pic { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; background: color-mix(in srgb, var(--text) 8%, transparent); display: block; }
         #search-list .sr-ico { width: 30px; height: 30px; margin: 7px; display: block; object-fit: contain; }
         #search-list .sr-name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -2843,7 +2849,11 @@ function srchRender(msg, onlyTail) {
         row.appendChild(nm);
         // color de su epoca: una franja a la izquierda y la epoca escrita (pedido del creador: entender de un vistazo de cuando es cada cosa)
         const era = srchEra(e);
-        if (era) { const pal = state.dark ? era.dark : era.light; li.style.setProperty('--era-c', pal.accent); li.style.setProperty('--era-bg', pal.bg); row.appendChild(el('span', { class: 'sr-era', text: ChronosEras.labelOf(era, lang) })); }
+        if (era) {
+            const v = ChronosEras.cssVars(era, state.dark, 2) || {};
+            ['--bg', '--text', '--muted', '--accent', '--font', '--font-ui', '--h-weight', '--h-transform', '--h-spacing', '--h-style', '--btn-radius'].forEach((k) => { if (v[k]) li.style.setProperty(k, v[k]); });
+            row.appendChild(el('span', { class: 'sr-era', text: ChronosEras.labelOf(era, lang) }));
+        }
         txt.appendChild(row); txt.appendChild(el('div', { class: 'sr-sub', text: srchSub(e) }));
         li.appendChild(txt);
         li.addEventListener('mousedown', (ev) => ev.preventDefault());        // no quitar el foco a la caja
