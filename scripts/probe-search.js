@@ -46,12 +46,14 @@ const [url, out] = process.argv.slice(2);
     });
     await page.unroute(IMG_URL, block);
     await step('lista notre-dame con imagenes', async () => {
+        await page.evaluate(() => map.jumpTo({ zoom: 1.3 }));     // muy lejos: sin icono dibujado, la señal del destino debe ir igual
         await page.fill('#search', ''); await page.click('#search'); await page.keyboard.type('notre-dame de paris', { delay: 40 });
         await page.waitForFunction(() => document.querySelectorAll('#search-list li[role=option]').length > 0, null, { timeout: 60000 });
-        await page.waitForTimeout(4000);
+        await page.keyboard.press('ArrowDown'); await page.waitForTimeout(5000);
+        const far = await page.evaluate(() => ({ zoom: map.getZoom(), chip: $('ev-hover').hidden ? null : $('ev-hover').textContent }));
         const pics = await page.evaluate(() => [...document.querySelectorAll('#search-list .sr-pic')].map((im) => ({ ok: im.complete && im.naturalWidth > 0, w: im.naturalWidth })));
         await page.screenshot({ path: path.join(out, '4-lista-notredame.png') });
-        return { pics };
+        return { pics, far };
     });
     await step('intro: ficha con imagen y licencia', async () => {
         await page.keyboard.press('Enter'); await page.waitForTimeout(7000);
