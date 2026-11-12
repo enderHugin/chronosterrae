@@ -1544,6 +1544,7 @@ mapReady.then(() => {
     map.addSource('events', { type: 'geojson', data: emptyFC() });
     evLayersAdd();
     builtLayersAdd();
+    spotPickLayerAdd();
     eventsRefresh();
     detailApply();
 });
@@ -2427,22 +2428,35 @@ function evHoverSet(f) {
     chip.textContent = f.properties.name || ''; chip.style.setProperty('--ev', evColor(f.properties.icon)); chip.hidden = !chip.textContent;
     evHoverPlace();
 }
+// La etiqueta va a la derecha del icono; si no cabe (movil, icono cerca del borde), a su izquierda; si tampoco (nombre largo en pantalla
+// estrecha), debajo y centrada. Nunca encima del icono ni fuera de la pantalla (antes se salia por la derecha).
+function chipPlace(chip, p, dx) {
+    const w = chip.offsetWidth || 0; const W = map.getContainer().clientWidth;
+    let x = p.x + dx; let y = p.y - 11;
+    if (x + w > W - 6) {
+        if (p.x - dx - w >= 6) x = p.x - dx - w;
+        else { x = Math.max(6, Math.min(p.x - w / 2, W - 6 - w)); y = p.y + 16; }
+    }
+    chip.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px)';
+}
 function evHoverPlace() {
-    if (!EVH.coords) return; const p = map.project(EVH.coords); const chip = $('ev-hover');
-    chip.style.transform = 'translate(' + Math.round(p.x + 18) + 'px,' + Math.round(p.y - 11) + 'px)';
+    if (!EVH.coords) return; chipPlace($('ev-hover'), map.project(EVH.coords), 18);
 }
 function evHoverUpdate() {
     EVH.raf = 0;
     const e = hoverPt;
-    if (!e || !map.getLayer('events-circle') || solarView.isOpen) { evHoverSet(null); if (typeof buHoverSet === 'function') buHoverSet(null); return; }
+    if (!e || !map.getLayer('events-circle') || solarView.isOpen) { evHoverSet(null); if (typeof buHoverSet === 'function') buHoverSet(null); spotHover(null); return; }
     const ev = map.queryRenderedFeatures(e, { layers: ['events-circle'] })[0] || null;
     evHoverSet(ev);
-    if (typeof buHoverSet === 'function') buHoverSet(!ev && BUILT.on && map.getLayer('built-icons') ? map.queryRenderedFeatures(e, { layers: ChronosBuilt.LAYER_IDS })[0] || null : null);
+    const bu = !ev && BUILT.on && map.getLayer('built-icons') ? map.queryRenderedFeatures(e, { layers: ChronosBuilt.LAYER_IDS })[0] || null : null;
+    if (typeof buHoverSet === 'function') buHoverSet(bu);
+    // pasar por un icono tambien atenua los demas (como al recorrer la lista del buscador)
+    spotHover(ev ? ev.properties.id : bu ? bu.properties.id : null);
 }
 map.on('move', evHoverPlace);
 // Al salir el raton del mapa se apaga lo que señalaba EL RATON. Si el raton no estaba en el mapa (p. ej. sobre la lista del buscador), la señal
 // es la del destino del buscador y se queda: Chrome manda 'mouseleave' sueltos cuando cambia lo que hay bajo el puntero (fundido de epoca).
-map.getCanvas().addEventListener('mouseleave', () => { const was = hoverPt; hoverPt = null; setHoverKey(null); if (!was) return; evHoverSet(null); if (typeof buHoverSet === 'function') buHoverSet(null); });
+map.getCanvas().addEventListener('mouseleave', () => { const was = hoverPt; hoverPt = null; setHoverKey(null); spotHover(null); if (!was) return; evHoverSet(null); if (typeof buHoverSet === 'function') buHoverSet(null); });
 map.on('dragstart', () => { hoverPt = null; setHoverKey(null); });
 
 /* ------------------------------------------------------------------ */
@@ -2451,13 +2465,15 @@ map.on('dragstart', () => { hoverPt = null; setHoverKey(null); });
 // Al elegir (o pasar el raton por) un resultado del buscador, el resto de iconos de sucesos y construcciones baja de opacidad para que el
 // elegido se vea solo. Cada capa registra aqui su opacidad base (spotSet) y el foco la multiplica: ['case', id == foco, 1, SPOT.dim].
 // Con zoom, MapLibre exige ['zoom'] arriba del todo: el factor se mete en cada salida del step/interpolate, no alrededor.
-var SPOT = { id: null, dim: 0.16, base: new Map(), sticky: false };     // var: hideInfo (definida antes) puede llamar a spotlight durante el arranque
+// dim: opacidad de los demas iconos con foco (relativa a la suya). 0,16 los hacia casi invisibles; el creador pidio "bajar menos" (2026-11-12).
+// hover: foco pasajero del raton sobre un icono del mapa (manda sobre id mientras dura).
+var SPOT = { id: null, hover: null, dim: 0.42, base: new Map(), sticky: false };     // var: hideInfo (definida antes) puede llamar a spotlight durante el arranque
 // full: el elegido a opacidad 100 % exacta (iconos; el creador: "dejando el seleccionado con opacidad 100%"), aunque su opacidad normal
 // sea menor (construcciones a 0,95; las que ya no existen, a 0,6). Sin full (puntos), el elegido conserva la suya: el punto que de cerca
 // cede el sitio al icono no debe reaparecer.
 function spotWrap(expr, full) {
-    if (!SPOT || !SPOT.id) return expr;
-    const sel = ['==', ['get', 'id'], SPOT.id];
+    const on = SPOT && (SPOT.hover || SPOT.id); if (!on) return expr;
+    const sel = ['==', ['get', 'id'], on];
     // (con full, lo que de lejos esta oculto —opacidad 0 en ese tramo de zoom— sigue oculto tambien para el elegido)
     const out = (x) => (full ? (x === 0 ? 0 : ['case', sel, 1, ['*', x, SPOT.dim]]) : ['*', x, ['case', sel, 1, SPOT.dim]]);
     if (Array.isArray(expr) && expr[0] === 'step' && Array.isArray(expr[1]) && expr[1][0] === 'zoom') return expr.map((x, i) => (i >= 2 && i % 2 === 0 ? out(x) : x));
@@ -2478,9 +2494,35 @@ function spotlight(id, sticky) {
     SPOT.sticky = !!(id && sticky);
     if (id === SPOT.id) return;
     SPOT.id = id;
+    spotApply(); spotPickPush();
+}
+function spotApply() {
     SPOT.base.forEach((b) => { if (map.getLayer(b.layer)) map.setPaintProperty(b.layer, b.prop, spotWrap(b.expr, b.full)); });
     if (typeof evAnimApply === 'function' && typeof EVA !== 'undefined') evAnimApply(EVA.phase);     // el anillo que late, apagado con foco
 }
+/** Foco pasajero al pasar el raton por un icono del mapa (o una fila de sucesos): los demas se atenuan igual; al salir, vuelve el de antes. */
+function spotHover(id) {
+    id = id || null; if (!SPOT || id === SPOT.hover) return;
+    SPOT.hover = id; spotApply();
+}
+// Lo elegido en el buscador (o la ficha abierta desde el) se dibuja SIEMPRE, encima y al 100 %: aunque a esa distancia su capa no lo pinte
+// (las construcciones van por tramos de notoriedad y de lejos solo salen las mas conocidas; sucesos poco notables) o le choque otro icono.
+// Antes, de lejos, de una construccion elegida solo se veia su nombre (lo vio el creador en el movil, 2026-11-12).
+const SPOTPICK = { f: null };
+function spotPickSet(f) { SPOTPICK.f = f || null; spotPickPush(); }
+function spotPickPush() {
+    const src = map.getSource && map.getSource('spot-pick'); if (!src) return;
+    const f = SPOTPICK.f && SPOT.id && SPOTPICK.f.properties.id === SPOT.id ? SPOTPICK.f : null;
+    if (f && /^evi-/.test(f.properties.img)) evEnsureImage(f.properties.img);
+    src.setData(f ? { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: f.geometry, properties: f.properties }] } : emptyFC());
+}
+function spotPickLayerAdd() {
+    if (!map.getSource('spot-pick')) map.addSource('spot-pick', { type: 'geojson', data: emptyFC() });
+    if (!map.getLayer('spot-pick')) map.addLayer({ id: 'spot-pick', type: 'symbol', source: 'spot-pick',
+        layout: { 'icon-image': ['get', 'img'], 'icon-size': ChronosEventIcons.zoomScaled(['get', 'size'], 0.85), 'icon-allow-overlap': true, 'icon-ignore-placement': true } });   // de lejos no encoge por debajo de 0,85: es lo que se busca
+    spotPickPush();
+}
+map.on('styleimagemissing', (e) => { if (e && typeof e.id === 'string' && e.id.startsWith('bui-') && window.ChronosBuilt) builtImagesRegister(); });
 // Tras elegir, el foco sigue mientras se mira la ficha; se quita al tocar el mapa o cerrar la ficha
 map.on('click', () => spotlight(null));
 map.on('dragstart', () => spotlight(null));
@@ -2598,9 +2640,9 @@ function buHoverSet(f) {
     if (!f) { chip.hidden = true; return; }
     const y = f.properties.d ? ChronosBuilt.dateText({ iso: f.properties.d, precision: f.properties.p }, formatYear) : '';
     chip.textContent = (f.properties.n || '') + (y ? ' · ' + y : ''); chip.style.setProperty('--ev', ChronosBuilt.CHIP); chip.hidden = !chip.textContent;
-    const pt = map.project(BUH.coords); chip.style.transform = 'translate(' + Math.round(pt.x + 16) + 'px,' + Math.round(pt.y - 11) + 'px)';
+    chipPlace(chip, map.project(BUH.coords), 16);
 }
-map.on('move', () => { if (BUH.coords && !EVH.id) { const pt = map.project(BUH.coords); $('ev-hover').style.transform = 'translate(' + Math.round(pt.x + 16) + 'px,' + Math.round(pt.y - 11) + 'px)'; } });
+map.on('move', () => { if (BUH.coords && !EVH.id) chipPlace($('ev-hover'), map.project(BUH.coords), 16); });
 // Centrar al hacer clic (ajuste): un clic sobre un elemento del mapa lleva el centro a ese punto, sin cambiar el zoom
 const CENTER = { on: prefs.cc === true };
 $('btn-center').setAttribute('aria-pressed', String(CENTER.on));
@@ -2745,13 +2787,20 @@ function srchRender(msg) {
         // «pasar por encima» solo con raton de verdad: en iPad un toque genera tambien mouseenter (de compatibilidad) y el temporizador que
         // ponia hacia que Safari retrasara el clic hasta despues de srchMove; el clic cancelaba entonces el giro pendiente y daba por hecho
         // que ya se estaba alli: la Tierra no se movia (lo vio el creador en su iPad, 2026-11-12).
-        li.addEventListener('pointerenter', (ev) => { if (ev.pointerType !== 'mouse') return; spotlight(e.id); clearTimeout(SRCH.hoverT); SRCH.hoverT = setTimeout(() => srchMove(i), 220); });   // foco al momento; volar, tras una pausa breve
+        li.addEventListener('pointerenter', (ev) => { if (ev.pointerType !== 'mouse') return; spotlight(e.id); spotPickSet((srchTarget(e).mark || {}).feature); clearTimeout(SRCH.hoverT); SRCH.hoverT = setTimeout(() => srchMove(i), 220); });   // foco al momento; volar, tras una pausa breve
         li.addEventListener('pointerleave', (ev) => { if (ev.pointerType !== 'mouse') return; clearTimeout(SRCH.hoverT); const a = SRCH.items[SRCH.active]; spotlight(a ? a.id : null); });
         ul.appendChild(li);
     });
     if (SRCH.items.length) ul.appendChild(el('li', { class: 'sr-msg', role: 'presentation', text: t(srchTouchy() ? 'search.hintTouch' : 'search.hint') }));
     const open = !!(msg || SRCH.items.length);
     ul.hidden = !open; $('search').setAttribute('aria-expanded', String(open));
+    // En pantallas estrechas la lista cae encima del centro del mapa, que es donde el giro deja el destino: se acorta (con scroll) para que
+    // termine por encima del icono y su etiqueta. En pantallas anchas la lista queda a un lado y no se toca.
+    ul.style.maxHeight = '';
+    if (open) {
+        const r = ul.getBoundingClientRect(); const m = map.getContainer().getBoundingClientRect(); const cx = m.left + m.width / 2; const cy = m.top + m.height / 2;
+        if (r.left < cx + 30 && r.right > cx - 30) ul.style.maxHeight = Math.max(96, Math.round(cy - 48 - r.top)) + 'px';
+    }
     $('search').setAttribute('aria-activedescendant', SRCH.active >= 0 ? 'sr-' + SRCH.active : '');
 }
 async function srchRun() {
@@ -2790,8 +2839,8 @@ function srchTarget(e) {
     const center = e.lng !== undefined && e.lng !== null ? [e.lng, e.lat] : null;
     const y = parseInt(String(e.iso || '').match(/^-?\d+/), 10);
     const geom = center ? { type: 'Point', coordinates: center } : null;
-    const feature = !center ? null : e.kind === 'built' ? { geometry: geom, properties: { id: e.id, n: srchName(e), d: e.iso, p: null } }
-        : (() => { const key = ChronosEventIcons.KEYS.includes(e.icon) ? e.icon : 'event'; const dk = e.kind === 'person' && e.qid ? ChronosEventIcons.drawKey(key, PEOPLE.roles.get(e.qid)) : key; return { geometry: geom, properties: { id: e.id, name: srchName(e), icon: key, img: 'evi-' + dk, importance: e.imp || 0.5 } }; })();
+    const feature = !center ? null : e.kind === 'built' ? { geometry: geom, properties: { id: e.id, n: srchName(e), d: e.iso, p: null, img: 'bui-' + (ChronosBuilt.IDS.includes(e.icon) ? e.icon : 'other'), size: 1.05 } }
+        : (() => { const key = ChronosEventIcons.KEYS.includes(e.icon) ? e.icon : 'event'; const dk = e.kind === 'person' && e.qid ? ChronosEventIcons.drawKey(key, PEOPLE.roles.get(e.qid)) : key; return { geometry: geom, properties: { id: e.id, name: srchName(e), icon: key, img: 'evi-' + dk, importance: e.imp || 0.5, size: 1.08 } }; })();
     return { id: e.id, center, year: Number.isFinite(y) ? y : undefined, mark: center ? { layers: e.kind === 'built' ? ChronosBuilt.LAYER_IDS : ['events-circle'], built: e.kind === 'built', id: e.id, at: center, feature } : null, apply: () => {
         // primero el año (desde tiempo profundo el reloj aun no existe: lo crea setTime) y despues el dia exacto si el reloj lo alcanza
         if (Number.isFinite(y) && (!clockUsable() || ybpToYear(state.ybp) !== y)) setTime(yearToYbp(y), { immediate: true });
@@ -2893,7 +2942,7 @@ function srchMarkOnLanding(mark, now) {
 function srchMove(i) {
     if (!SRCH.items.length) return;
     const next = (i + SRCH.items.length) % SRCH.items.length; if (next === SRCH.active && SRCH.origin) return;   // ya esta ahi
-    SRCH.active = next; spotlight(SRCH.items[next].id);
+    SRCH.active = next; spotlight(SRCH.items[next].id); spotPickSet((srchTarget(SRCH.items[next]).mark || {}).feature);
     // solo se marca (rehacer la lista pondria otro elemento bajo el raton y volveria a dispararse el «pasar por encima»)
     document.querySelectorAll('#search-list li[role=option]').forEach((li, k) => li.setAttribute('aria-selected', String(k === SRCH.active)));
     $('search').setAttribute('aria-activedescendant', 'sr-' + SRCH.active);
@@ -2915,7 +2964,7 @@ function srchCommit(e) {
     // ¿ya se fue (o se esta yendo) hacia este al recorrer la lista? Antes bastaba con que estuviera marcado, aunque el giro aun no hubiera
     // salido (se cancelaba aqui mismo): en iPad la Tierra no se movia.
     const w = SRCH.went; const going = !!(w && w.id === e.id && w.seq === SRCH.goSeq);
-    SRCH.origin = null; SRCH.keepOpen = false; $('search').value = srchName(e); srchClose(true); spotlight(e.id, true); $('search').blur();
+    SRCH.origin = null; SRCH.keepOpen = false; $('search').value = srchName(e); srchClose(true); spotPickSet((srchTarget(e).mark || {}).feature); spotlight(e.id, true); $('search').blur();
     // La ficha, ya en la fecha nueva; SEL.keepYbp: la carga del mapa de esa fecha no debe cerrarla (como con la seleccion recordada)
     const show = () => {
         SEL.keepYbp = state.ybp; spotlight(e.id, true);      // ya en la fecha nueva: que la carga de su mapa no cierre la ficha ni quite el foco
@@ -4630,6 +4679,8 @@ function renderEventsPanel() {
         ]);
         const go = () => eventFocus(f);
         li.addEventListener('click', go);
+        li.addEventListener('pointerenter', (ev) => { if (ev.pointerType === 'mouse') spotHover(f.properties.id); });
+        li.addEventListener('pointerleave', (ev) => { if (ev.pointerType === 'mouse') spotHover(null); });
         li.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
         list.appendChild(li);
     });
