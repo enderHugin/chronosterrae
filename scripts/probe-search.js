@@ -39,11 +39,15 @@ const [url, out] = process.argv.slice(2);
     });
     await step('flecha abajo: Ulm, 14-3-1879', async () => {
         const r0 = await page.evaluate(() => (earthDisk() || {}).r);
+        // fundido cruzado de epoca: la foto de la escena (no un velo oscuro); se muestrea al aparecer y se mira que el mapa no se oscurece
+        await page.evaluate(() => { window.__snap = []; const s = $('era-snap');
+            new MutationObserver(() => { let px = null; if (s.style.opacity === '1' && s.width) px = [...s.getContext('2d').getImageData(s.width >> 1, s.height >> 1, 1, 1).data];
+                __snap.push({ op: s.style.opacity, fading: s.classList.contains('fading'), px, mapOp: getComputedStyle(map.getContainer()).opacity }); }).observe(s, { attributes: true }); });
         await page.keyboard.press('ArrowDown'); await page.waitForTimeout(170);
-        const veil = await page.evaluate(() => ({ on: $('era-veil').classList.contains('on'), spot: SPOT.id }));
+        const veil = await page.evaluate(() => ({ noDarkVeil: !document.getElementById('era-veil'), spot: SPOT.id }));
         await page.screenshot({ path: path.join(out, '2a-velo.png') });
         await page.waitForTimeout(4800);
-        const r = await page.evaluate((r0) => ({ veilAfter: $('era-veil').classList.contains('on'), spotAfter: SPOT.id, dimmed: /0\.16/.test(JSON.stringify(map.getPaintProperty('events-icon-bob', 'icon-opacity'))), diskBefore: r0, diskAfter: (earthDisk() || {}).r, center: map.getCenter().toArray(), date: ChronosSky.jdToCalendar(clock.jd, 'auto'), chip: $('ev-hover').hidden ? null : $('ev-hover').textContent, opacity: getComputedStyle(map.getContainer()).opacity }), r0);
+        const r = await page.evaluate((r0) => ({ snap: { log: __snap.slice(0, 6), end: $('era-snap').style.opacity }, spotAfter: SPOT.id, dimmed: /0\.16/.test(JSON.stringify(map.getPaintProperty('events-icon-bob', 'icon-opacity'))), diskBefore: r0, diskAfter: (earthDisk() || {}).r, center: map.getCenter().toArray(), date: ChronosSky.jdToCalendar(clock.jd, 'auto'), chip: $('ev-hover').hidden ? null : $('ev-hover').textContent, opacity: getComputedStyle(map.getContainer()).opacity }), r0);
         // iconos de personaje que se ven alrededor (claves de dibujo de los sucesos pintados)
         const roles = await page.evaluate(() => { const k = EV_ENTER.sel.map((f) => evDrawKey(f)); return { shown: k.length, withRole: k.filter((x) => x.indexOf('.') > 0).length, sample: [...new Set(k.filter((x) => x.indexOf('.') > 0))].slice(0, 10) }; });
         await page.screenshot({ path: path.join(out, '2-ulm-1879.png') });

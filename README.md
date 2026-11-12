@@ -124,6 +124,9 @@ sale y cuánto se puede fiar de él.
   icono crece con un resplandor de su color y aparece su nombre en una etiqueta del mismo color: se sabe sobre qué caerá el clic.
   Un clic en un suceso **no mueve el mapa** (salvo con «Centrar al hacer clic», que ahora centra en el suceso y no en el punto del
   clic), y un temblor de la mano al hacer clic ya no arrastra el mapa.
+- **Foco y cambio de época sin oscurecer (2026-11-12).** Al elegir o recorrer un resultado, su icono queda al 100 % de opacidad y los
+  demás iconos (sucesos y construcciones) pasan a ser casi transparentes; el mapa no se toca. El cambio de época ya no pasa por un velo
+  oscuro: una foto de la escena de antes se desvanece sobre la nueva (fundido cruzado).
 - **Buscador en pantallas táctiles (2026-11-12).** Sin ratón no hay «pasar por encima»: el **primer toque** en un resultado hace lo
   mismo (la Tierra gira hasta allí, cambia la fecha, se resalta y se esconde el teclado para ver el mapa) y el **segundo toque** en el
   mismo lo abre; tocar fuera de la lista la cierra y deja el mapa donde está. Se decide por el puntero de cada toque (un iPad con

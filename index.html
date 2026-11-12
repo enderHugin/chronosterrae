@@ -75,12 +75,11 @@
         #search-list .sr-name mark { background: none; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
         #search-list .sr-sub { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         #search-list .sr-msg { display: block; min-height: 0; padding: 8px 10px; color: var(--muted); cursor: default; }
-        /* Fundido entre epocas: un velo cubre TODA la escena (cielo, mapa, noche, iconos) mientras cambia la fecha y el globo gira;
-           los recuadros no se tapan: cambian de color con su propia transicion (abajo). */
-        /* oscuro con un matiz de la epoca: es un fundido "a negro" de cine, el que pide una escena con cielo (un velo claro destella) */
-        #era-veil { position: absolute; inset: 0; z-index: 9; pointer-events: none; opacity: 0; background: #06080d; background: color-mix(in srgb, var(--bg) 22%, #04060b);
-            transition: opacity 420ms cubic-bezier(0.22, 0.61, 0.36, 1); }
-        #era-veil.on { opacity: 0.82; transition: opacity 200ms cubic-bezier(0.55, 0.06, 0.68, 0.19); }
+        /* Fundido entre epocas: una FOTO de la escena tal como estaba (cielo + Tierra) tapa el cambio de fecha y se desvanece sobre la escena
+           nueva. Es un fundido cruzado: nada se oscurece (el creador, 2026-11-12: "no me referia a opacar todo el mapa"; antes habia un velo
+           oscuro). Los recuadros no van en la foto: cambian de color con su propia transicion (abajo). */
+        #era-snap { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 9; pointer-events: none; opacity: 0; visibility: hidden; }
+        #era-snap.fading { transition: opacity 520ms cubic-bezier(0.33, 0, 0.2, 1); }
         /* Los colores de la epoca (recuadros, botones, textos) pasan de una a otra en vez de saltar */
         .panel, .btn, #search, #search-list, .menu-pop, #era-badge, #timeline, #slider, .custom-pop {
             transition: background-color 450ms ease, color 450ms ease, border-color 450ms ease, outline-color 450ms ease, box-shadow 450ms ease; }
@@ -95,7 +94,7 @@
         body.vt #dock-r { view-transition-name: vt-dock-r; }
         ::view-transition-group(*) { animation-duration: 600ms; animation-timing-function: ease-in-out; }
         ::view-transition-old(*), ::view-transition-new(*) { animation-duration: 600ms; animation-timing-function: ease-in-out; }
-        @media (prefers-reduced-motion: reduce) { #era-veil, #era-veil.on { transition: none; opacity: 0; }
+        @media (prefers-reduced-motion: reduce) { #era-snap { display: none; }
             .panel, .btn, #search, #search-list, .menu-pop, #era-badge, #timeline, #slider, .custom-pop { transition: none; } }
         #info figure.info-pic { margin: 2px 0 8px; }
         #info figure.info-pic img { display: block; max-width: 100%; max-height: 220px; border-radius: 6px; margin: 0 auto; background: color-mix(in srgb, var(--text) 8%, transparent); }
@@ -428,7 +427,7 @@
 
     <canvas id="space" aria-hidden="true"></canvas>
     <div id="map"></div>
-    <div id="era-veil" aria-hidden="true"></div>
+    <canvas id="era-snap" aria-hidden="true"></canvas>
     <div id="solar" hidden></div>
 
     <div id="topbar">
@@ -2441,7 +2440,9 @@ function evHoverUpdate() {
     if (typeof buHoverSet === 'function') buHoverSet(!ev && BUILT.on && map.getLayer('built-icons') ? map.queryRenderedFeatures(e, { layers: ChronosBuilt.LAYER_IDS })[0] || null : null);
 }
 map.on('move', evHoverPlace);
-map.getCanvas().addEventListener('mouseleave', () => { hoverPt = null; setHoverKey(null); evHoverSet(null); if (typeof buHoverSet === 'function') buHoverSet(null); });
+// Al salir el raton del mapa se apaga lo que señalaba EL RATON. Si el raton no estaba en el mapa (p. ej. sobre la lista del buscador), la señal
+// es la del destino del buscador y se queda: Chrome manda 'mouseleave' sueltos cuando cambia lo que hay bajo el puntero (fundido de epoca).
+map.getCanvas().addEventListener('mouseleave', () => { const was = hoverPt; hoverPt = null; setHoverKey(null); if (!was) return; evHoverSet(null); if (typeof buHoverSet === 'function') buHoverSet(null); });
 map.on('dragstart', () => { hoverPt = null; setHoverKey(null); });
 
 /* ------------------------------------------------------------------ */
@@ -2451,19 +2452,25 @@ map.on('dragstart', () => { hoverPt = null; setHoverKey(null); });
 // elegido se vea solo. Cada capa registra aqui su opacidad base (spotSet) y el foco la multiplica: ['case', id == foco, 1, SPOT.dim].
 // Con zoom, MapLibre exige ['zoom'] arriba del todo: el factor se mete en cada salida del step/interpolate, no alrededor.
 var SPOT = { id: null, dim: 0.16, base: new Map(), sticky: false };     // var: hideInfo (definida antes) puede llamar a spotlight durante el arranque
-function spotWrap(expr) {
+// full: el elegido a opacidad 100 % exacta (iconos; el creador: "dejando el seleccionado con opacidad 100%"), aunque su opacidad normal
+// sea menor (construcciones a 0,95; las que ya no existen, a 0,6). Sin full (puntos), el elegido conserva la suya: el punto que de cerca
+// cede el sitio al icono no debe reaparecer.
+function spotWrap(expr, full) {
     if (!SPOT || !SPOT.id) return expr;
-    const f = ['case', ['==', ['get', 'id'], SPOT.id], 1, SPOT.dim];
-    if (Array.isArray(expr) && expr[0] === 'step' && Array.isArray(expr[1]) && expr[1][0] === 'zoom') return expr.map((x, i) => (i >= 2 && i % 2 === 0 ? ['*', x, f] : x));
-    if (Array.isArray(expr) && expr[0] === 'interpolate' && Array.isArray(expr[2]) && expr[2][0] === 'zoom') return expr.map((x, i) => (i >= 4 && i % 2 === 0 ? ['*', x, f] : x));
-    return ['*', expr, f];
+    const sel = ['==', ['get', 'id'], SPOT.id];
+    // (con full, lo que de lejos esta oculto —opacidad 0 en ese tramo de zoom— sigue oculto tambien para el elegido)
+    const out = (x) => (full ? (x === 0 ? 0 : ['case', sel, 1, ['*', x, SPOT.dim]]) : ['*', x, ['case', sel, 1, SPOT.dim]]);
+    if (Array.isArray(expr) && expr[0] === 'step' && Array.isArray(expr[1]) && expr[1][0] === 'zoom') return expr.map((x, i) => (i >= 2 && i % 2 === 0 ? out(x) : x));
+    if (Array.isArray(expr) && expr[0] === 'interpolate' && Array.isArray(expr[2]) && expr[2][0] === 'zoom') return expr.map((x, i) => (i >= 4 && i % 2 === 0 ? out(x) : x));
+    return out(expr);
 }
 /** Opacidad base de una capa (la que tendria sin foco); se pinta ya con el foco que haya. */
 function spotSet(layer, prop, expr) {
-    SPOT.base.set(layer + '|' + prop, { layer, prop, expr });
+    const full = prop === 'icon-opacity';
+    SPOT.base.set(layer + '|' + prop, { layer, prop, expr, full });
     if (!map.getLayer(layer)) return;
     map.setPaintProperty(layer, prop + '-transition', { duration: 260, delay: 0 });   // atenuar y volver, con transicion (no de golpe)
-    map.setPaintProperty(layer, prop, spotWrap(expr));
+    map.setPaintProperty(layer, prop, spotWrap(expr, full));
 }
 /** Pone (id) o quita (null) el foco. sticky: elegido (sigue con la ficha abierta); si no, es de la lista y lo quita cerrarla. */
 function spotlight(id, sticky) {
@@ -2471,7 +2478,7 @@ function spotlight(id, sticky) {
     SPOT.sticky = !!(id && sticky);
     if (id === SPOT.id) return;
     SPOT.id = id;
-    SPOT.base.forEach((b) => { if (map.getLayer(b.layer)) map.setPaintProperty(b.layer, b.prop, spotWrap(b.expr)); });
+    SPOT.base.forEach((b) => { if (map.getLayer(b.layer)) map.setPaintProperty(b.layer, b.prop, spotWrap(b.expr, b.full)); });
     if (typeof evAnimApply === 'function' && typeof EVA !== 'undefined') evAnimApply(EVA.phase);     // el anillo que late, apagado con foco
 }
 // Tras elegir, el foco sigue mientras se mira la ficha; se quita al tocar el mapa o cerrar la ficha
@@ -2795,20 +2802,44 @@ function srchTarget(e) {
  * Fundido entre epocas: el velo sube (200 ms), con la escena tapada cambia la fecha (fn) y baja despacio (420 ms) mientras el globo
  * termina de girar. Si llega otro antes de acabar (recorrer la lista deprisa), el velo no parpadea: sigue arriba y vale el ultimo.
  */
-const VEIL = { t: 0, fn: null, seq: 0 };
+const VEIL = { t: 0, safety: 0, seq: 0 };
+/** Foto de la escena (cielo 2D + Tierra WebGL) en #era-snap. Solo vale dentro de un 'render' del mapa (sin preserveDrawingBuffer, el
+ *  lienzo WebGL se vacia al presentarse el fotograma). Devuelve false si no se pudo. */
+function eraSnapTake() {
+    const snap = $('era-snap'); const mc = map.getCanvas(); const sp = $('space');
+    const w = mc.width; const h = mc.height; if (!snap || !w || !h) return false;
+    if (snap.width !== w || snap.height !== h) { snap.width = w; snap.height = h; }
+    const ctx = snap.getContext('2d'); ctx.clearRect(0, 0, w, h);
+    try { if (sp && sp.width && getComputedStyle(sp).display !== 'none') ctx.drawImage(sp, 0, 0, w, h); ctx.drawImage(mc, 0, 0, w, h); } catch (e) { return false; }
+    return true;
+}
+/**
+ * Cambio de epoca con fundido CRUZADO: se fotografia la escena, la foto tapa el cambio de fecha (fronteras, sucesos y estilo de otra epoca
+ * llegan debajo) y se desvanece cuando la escena nueva ya esta pintada ('idle', o como mucho a los 900 ms). Nada se oscurece.
+ */
 function eraVeil(fn) {
-    const v = $('era-veil');
-    if (SRCH_REDUCED() || !v) { fn(); return; }
-    VEIL.fn = fn; clearTimeout(VEIL.t);
-    v.classList.add('on');
-    VEIL.t = setTimeout(() => {
-        const f = VEIL.fn; VEIL.fn = null; if (f) f();
-        // se destapa cuando el mapa de la nueva fecha ya esta pintado (fronteras, sucesos), no a medias: al quedar quieto
-        // ('idle') o, como mucho, a los 700 ms (si algo tarda mas, mejor ver como llega que esperar a ciegas)
-        const seq = ++VEIL.seq; let off = false;
-        const reveal = () => { if (off || seq !== VEIL.seq || VEIL.fn) return; off = true; v.classList.remove('on'); };
-        requestAnimationFrame(() => { map.once('idle', reveal); setTimeout(reveal, 700); });
-    }, 210);
+    const snap = $('era-snap');
+    if (SRCH_REDUCED() || !snap) { fn(); return; }
+    const seq = ++VEIL.seq; clearTimeout(VEIL.t); clearTimeout(VEIL.safety);
+    let started = false;
+    const run = (captured) => {
+        if (started) return; started = true; clearTimeout(VEIL.safety);
+        if (seq !== VEIL.seq) return;                          // ya se pidio otro cambio: este no se hace
+        snap.classList.remove('fading');
+        if (captured) { snap.style.visibility = 'visible'; snap.style.opacity = '1'; }
+        fn();                                                    // la fecha cambia DEBAJO de la foto
+        if (!captured) return;
+        let off = false;
+        const reveal = () => {
+            if (off || seq !== VEIL.seq) return; off = true;
+            void snap.offsetWidth; snap.classList.add('fading'); snap.style.opacity = '0';
+            VEIL.t = setTimeout(() => { if (seq !== VEIL.seq) return; snap.classList.remove('fading'); snap.style.visibility = 'hidden'; snap.width = snap.height = 0; }, 600);   // libera la memoria de la foto
+        };
+        requestAnimationFrame(() => { map.once('idle', reveal); VEIL.t = setTimeout(reveal, 900); });
+    };
+    map.once('render', () => run(eraSnapTake()));
+    map.triggerRepaint();
+    VEIL.safety = setTimeout(() => run(false), 150);          // sin fotograma (pestaña oculta...): el cambio sin fundido
 }
 const SRCH_EASE = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 /**
@@ -2824,7 +2855,7 @@ function srchGo(tg) {
     const moveTo = (c) => { if (!c) return false; const p = map.getCenter(); return Math.abs(p.lng - c[0]) > 1e-6 || Math.abs(p.lat - c[1]) > 1e-6; };
     const moving = moveTo(tg.center);
     if (SRCH_REDUCED()) { tg.apply(); done(); if (moving) map.jumpTo({ center: tg.center }); if (tg.mark) srchMarkOnLanding(tg.mark, true); return; }
-    // 2) Ya en el sitio: cambiar la fecha. Con otra epoca, bajo el velo (fundido); en el mismo año, directamente.
+    // 2) Ya en el sitio: cambiar la fecha. Con otra epoca, fundido cruzado (la foto de antes se desvanece sobre la nueva); en el mismo año, directamente.
     const arrive = () => {
         if (seq !== SRCH.goSeq) return;                         // ya se pidio otro destino
         const fade = tg.year !== undefined && tg.year !== ybpToYear(state.ybp);
