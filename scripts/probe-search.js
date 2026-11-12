@@ -28,8 +28,14 @@ const [url, out] = process.argv.slice(2);
         await page.click('#search'); const t0 = Date.now(); await page.keyboard.type('einstein', { delay: 60 });
         await page.waitForFunction(() => document.querySelectorAll('#search-list li[role=option]').length > 0, null, { timeout: 60000 });
         const items = await page.evaluate(() => [...document.querySelectorAll('#search-list li[role=option]')].map((li) => li.textContent));
+        // orden por defecto (recientes primero) y el icono de personaje de Einstein (matraz de ciencia, no el cochecito)
+        const order = await page.evaluate(() => ({ sort: $('search-sort').value, whens: SRCH.items.map((e) => srchWhen(e)) }));
+        const role = await page.evaluate(() => { const i = SRCH.items.findIndex((e) => e.qid === 'Q937'); const im = document.querySelector('#sr-' + i + ' img');
+            return { loaded: PEOPLE.ver, role: PEOPLE.roles.get('Q937') || null, flask: !!im && im.src === evIconUrl('birth.scientist'), pram: !!im && im.src === evIconUrl('birth') }; });
         await page.screenshot({ path: path.join(out, '1-lista-einstein.png') });
-        return { ms: Date.now() - t0, items };
+        // para el resto de la sonda, por relevancia: Albert Einstein el primero
+        await page.selectOption('#search-sort', 'rel'); await page.waitForTimeout(300); await page.click('#search');
+        return { ms: Date.now() - t0, items, order: { sort: order.sort, newestFirst: order.whens.every((x, i) => i === 0 || x <= order.whens[i - 1]) }, role };
     });
     await step('flecha abajo: Ulm, 14-3-1879', async () => {
         const r0 = await page.evaluate(() => (earthDisk() || {}).r);
@@ -38,8 +44,10 @@ const [url, out] = process.argv.slice(2);
         await page.screenshot({ path: path.join(out, '2a-velo.png') });
         await page.waitForTimeout(4800);
         const r = await page.evaluate((r0) => ({ veilAfter: $('era-veil').classList.contains('on'), spotAfter: SPOT.id, dimmed: /0\.16/.test(JSON.stringify(map.getPaintProperty('events-icon-bob', 'icon-opacity'))), diskBefore: r0, diskAfter: (earthDisk() || {}).r, center: map.getCenter().toArray(), date: ChronosSky.jdToCalendar(clock.jd, 'auto'), chip: $('ev-hover').hidden ? null : $('ev-hover').textContent, opacity: getComputedStyle(map.getContainer()).opacity }), r0);
+        // iconos de personaje que se ven alrededor (claves de dibujo de los sucesos pintados)
+        const roles = await page.evaluate(() => { const k = EV_ENTER.sel.map((f) => evDrawKey(f)); return { shown: k.length, withRole: k.filter((x) => x.indexOf('.') > 0).length, sample: [...new Set(k.filter((x) => x.indexOf('.') > 0))].slice(0, 10) }; });
         await page.screenshot({ path: path.join(out, '2-ulm-1879.png') });
-        return Object.assign({ veil }, r);
+        return Object.assign({ veil, roles }, r);
     });
     await step('intro: ficha', async () => {
         await page.keyboard.press('Enter'); await page.waitForTimeout(4000);
