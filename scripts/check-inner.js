@@ -37,6 +37,22 @@ check('tolerancia: un vecino a 1 km (dentro de 1,5 km) cuenta; a 3 km no', () =>
 const ne = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'borders', 'ne-10m-countries.json'), 'utf8'));
 const neKey = (f) => f.properties.SUBJECTO || f.properties.NAME;
 const real = innerBorders(ne, neKey);
+// Entidad «costa» sin interior que repite el borde de otra (historical-basemaps 1500: "Denmark-Norway" va y vuelve por la costa de la Union de
+// Kalmar): ninguna de las dos lineas es frontera. Antes salian trazos rojos sueltos por la costa al resaltar Kalmar (el creador, 2026-11-12).
+const sliverAlong = (x0, y0, x1, y1) => [[x0, y0], [x1, y1], [x1 + 1e-7, y1 + 1e-7], [x0 + 1e-7, y0 + 1e-7], [x0, y0]];   // ida y vuelta, area ~0
+check('una entidad sin interior pegada a la costa de otra: ni la costa de A ni la «entidad» B son frontera', () => {
+    const r = innerBorders(fc(feat('A', sq(0, 0, 1)), feat('B', sliverAlong(0, 1, 1, 1))), keyOf);
+    return (r.features.length === 0 && r.stats.sliver > 0) || JSON.stringify(r.stats);
+});
+check('... y una frontera de verdad al lado de esa entidad sin interior se sigue dibujando (rechazado, no roto)', () => {
+    const r = innerBorders(fc(feat('A', sq(0, 0, 1)), feat('B', sliverAlong(0, 1, 1, 1)), feat('C', sq(1, 0, 1))), keyOf);
+    return (r.features.length === 2 && r.features.every((f) => f.geometry.coordinates.every(([x]) => x === 1))) || JSON.stringify(r.features.map((f) => [f.properties.key, f.geometry.coordinates]));
+});
+check('vecinos que se pisan 1 km (poligonos toscos, Francia y Suiza en 1945): sigue siendo frontera', () => {
+    const r = innerBorders(fc(feat('A', sq(0, 0, 1)), feat('B', [[0.991, 0], [1.991, 0], [1.991, 1], [0.991, 1], [0.991, 0]])), keyOf);
+    return r.features.length === 2 || JSON.stringify(r.stats);
+});
+check('sin la comprobacion de lados (opts.sides=false) se comporta como antes: la entidad sin interior cuenta como vecina', () => innerBorders(fc(feat('A', sq(0, 0, 1)), feat('B', sliverAlong(0, 1, 1, 1))), keyOf, 1.5, { sides: false }).features.length > 0);
 check('Natural Earth: entre el 15 y el 40 % de los tramos son frontera compartida; el resto, costa', () => {
     const r = real.stats.shared / real.stats.segments; return r > 0.15 && r < 0.4 ? true : 'proporcion ' + r.toFixed(3);
 });
