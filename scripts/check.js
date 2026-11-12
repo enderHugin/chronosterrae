@@ -450,6 +450,10 @@ check('prefs: sel (ultimo elemento elegido) acepta pais o suceso con texto corto
         && [{ k: 'x', v: 'a' }, { k: 'p', v: '' }, { k: 'p', v: 'a'.repeat(161) }, { k: 'p', v: 'a\nb' }, { k: 'e', v: 5 }, 'p:Spain', null, []].every((v) => P(v) === undefined)
         && !('extra' in (P({ k: 'p', v: 'Spain', extra: 1 }) || {}));
 });
+check('prefs: sl (capas del cielo) acepta 0..7 y rechaza el resto', () => {
+    const { parsePrefs } = prefsFns(); const P = (v) => parsePrefs(JSON.stringify({ sl: v })).sl;
+    return [0, 1, 5, 7].every((v) => P(v) === v) && [8, -1, 1.5, '3', true, null].every((v) => P(v) === undefined);
+});
 check('prefs: ks/kp admiten pasos personalizados (x15n) y kp admite auto; lo raro se rechaza', () => {
     const { parsePrefs } = prefsFns(); const P = (o) => parsePrefs(JSON.stringify(o));
     return P({ ks: 'x15n' }).ks === 'x15n' && P({ kp: 'auto' }).kp === 'auto' && P({ kp: 'x3o' }).kp === 'x3o' && P({ ks: '1y' }).ks === '1y'

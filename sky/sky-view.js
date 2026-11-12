@@ -107,6 +107,13 @@
             });
         }
 
+        // Nombres de constelaciones (si se piden): en el centro de sus estrellas sobre el horizonte
+        if (cat && st && opts.showStars && opts.showConNames) {
+            const px = new Float64Array(cat.n).fill(NaN), py = new Float64Array(cat.n).fill(NaN);
+            for (let i = 0; i < cat.n; i++) if (st.alt[i] > 0) { const [x, y] = toXY(st.alt[i], st.az[i]); px[i] = x; py[i] = y; }
+            drawSkyLabels(ctx, cat, px, py, { conNames: true, starNames: false, lang: opts.lang, w: css, h: css });
+        }
+
         // Estrellas
         if (cat && st && opts.showStars) {
             for (let i = 0; i < cat.n; i++) {
@@ -178,5 +185,68 @@
     /** Tamano y opacidad con que se dibuja una estrella de esa magnitud (los comparten el cielo detras del globo y el sistema solar). */
     function starStyle(mag) { return { r: Math.max(0.7, Math.min(2.7, 2.5 - 0.36 * mag)), alpha: Math.max(0.6, Math.min(1, 1.15 - 0.13 * mag)) }; }
 
-    root.ChronosSkyView = { draw, drawMoon, starColor, starStyle, LIMIT_MAG, PLANET_COLOR };
+    /* ---------------- Rotulos del cielo: nombres de estrellas y de constelaciones (los comparten el cielo tras el globo, el sistema solar y la carta) ----------------
+     * Se colocan por prioridad (constelaciones primero, luego estrellas de la mas brillante a la mas debil) y se omite el que pisaria a otro ya puesto.
+     * cat: catalogo (names {hip: [nombre, alias es]}, constellations [{id, es, en, la, lines}], mag, hip); px/py: posicion en pantalla de cada estrella (NaN = no visible).
+     */
+    function byMagOrder(cat) {
+        if (cat._byMag && cat._byMag.length === cat.n) return cat._byMag;
+        const idx = Array.from({ length: cat.n }, (_, i) => i).filter((i) => cat.names && cat.names[cat.hip[i]]);
+        idx.sort((a, b) => cat.mag[a] - cat.mag[b]); cat._byMag = idx; return idx;
+    }
+    /** Punto de anclaje de cada constelacion: centro de sus estrellas en pantalla (solo si todas se ven y no estan repartidas por media pantalla). */
+    function constellationAnchors(cat, px, py, w, h) {
+        const out = [];
+        (cat.constellations || []).forEach((c) => {
+            const ids = new Set(); c.lines.forEach(([a, b]) => { ids.add(a); ids.add(b); });
+            if (!ids.size) return;
+            let sx = 0, sy = 0, n = 0, ok = true;
+            ids.forEach((i) => { if (!ok) return; const x = px[i], y = py[i]; if (!Number.isFinite(x) || !Number.isFinite(y)) { ok = false; return; } sx += x; sy += y; n++; });
+            if (!ok || !n) return;
+            const cx = sx / n, cy = sy / n; let spread = 0;
+            ids.forEach((i) => { spread = Math.max(spread, Math.hypot(px[i] - cx, py[i] - cy)); });
+            if (spread > 0.4 * Math.max(w, h) || cx < 0 || cy < 0 || cx > w || cy > h) return;
+            out.push({ id: c.id, x: cx, y: cy, c });
+        });
+        return out;
+    }
+    const overlaps = (r, placed) => placed.some((q) => r.x < q.x + q.w && q.x < r.x + r.w && r.y < q.y + q.h && q.y < r.y + r.h);
+    /** El rectangulo toca algun circulo de avoid [{x, y, r}] (p. ej. el disco de la Tierra, que tapa las estrellas que hay detras). */
+    const hidden = (r, avoid) => (avoid || []).some((c) => {
+        const dx = c.x - Math.max(r.x, Math.min(c.x, r.x + r.w)); const dy = c.y - Math.max(r.y, Math.min(c.y, r.y + r.h));
+        return dx * dx + dy * dy < c.r * c.r;
+    });
+    /**
+     * Dibuja los rotulos. opts: { starNames, conNames, lang, starMag (magnitud limite de los nombres), w, h, placed (rectangulos ya ocupados, opcional),
+     *   avoid (circulos [{x, y, r}] que tapan el cielo, opcional: un rotulo que los pise no se pone) }.
+     * Devuelve los rotulos puestos [{kind, text, x, y}].
+     */
+    function drawSkyLabels(ctx, cat, px, py, opts) {
+        const placed = opts.placed || []; const out = []; const w = opts.w, h = opts.h; const es = opts.lang === 'es';
+        if (opts.conNames) {
+            ctx.save(); ctx.font = '600 10.5px system-ui, sans-serif'; if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px';
+            ctx.fillStyle = 'rgba(150,178,240,0.62)'; ctx.textAlign = 'center';
+            constellationAnchors(cat, px, py, w, h).forEach((a) => {
+                // en espanol, el nombre espanol (Escorpio); en ingles, el nombre latino de la IAU (Scorpius), que es el que se usa, no el ingles comun (Scorpion)
+                const text = String((es ? a.c.es : a.c.la) || a.c.en || a.id).toUpperCase(); const tw = ctx.measureText(text).width + 4;
+                const r = { x: a.x - tw / 2, y: a.y - 8, w: tw, h: 12 }; if (r.x < 2 || r.x + r.w > w - 2 || r.y < 2 || r.y + r.h > h - 2 || overlaps(r, placed) || hidden(r, opts.avoid)) return;
+                placed.push(r); ctx.fillText(text, a.x, a.y + 2); out.push({ kind: 'con', text, x: a.x, y: a.y });
+            });
+            ctx.restore();
+        }
+        if (opts.starNames) {
+            ctx.save(); ctx.font = '11px system-ui, sans-serif'; ctx.fillStyle = 'rgba(214,224,248,0.78)';
+            for (const i of byMagOrder(cat)) {
+                if (cat.mag[i] > opts.starMag) break;
+                const x = px[i], y = py[i]; if (!Number.isFinite(x) || x < 0 || y < 0 || x > w || y > h) continue;
+                const nm = cat.names[cat.hip[i]]; const text = (es && nm[1]) || nm[0]; const tw = ctx.measureText(text).width;
+                const r = { x: x + 5, y: y - 15, w: tw + 2, h: 13 }; if (r.x + r.w > w - 2 || r.y < 2 || overlaps(r, placed) || hidden({ x: x - 3, y: r.y, w: r.x + r.w - x + 3, h: y - r.y + 3 }, opts.avoid)) continue;
+                placed.push(r); ctx.fillText(text, x + 6, y - 5); out.push({ kind: 'star', text, x, y });
+            }
+            ctx.restore();
+        }
+        return out;
+    }
+
+    root.ChronosSkyView = { draw, drawMoon, starColor, starStyle, LIMIT_MAG, PLANET_COLOR, constellationAnchors, drawSkyLabels, byMagOrder };
 })(typeof self !== 'undefined' ? self : this);

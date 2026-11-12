@@ -123,6 +123,12 @@ sale y cuánto se puede fiar de él.
   icono crece con un resplandor de su color y aparece su nombre en una etiqueta del mismo color: se sabe sobre qué caerá el clic.
   Un clic en un suceso **no mueve el mapa** (salvo con «Centrar al hacer clic», que ahora centra en el suceso y no en el punto del
   clic), y un temblor de la mano al hacer clic ya no arrastra el mapa.
+- **Capas del cielo (2026-11-12).** En *Capas* (y en el panel del cielo) se encienden y apagan por separado las **líneas de las
+  constelaciones**, los **nombres de las constelaciones** (en español; en inglés, el nombre latino de la IAU) y los **nombres de
+  estrellas** (las de magnitud ≤ 2,6, de la más brillante a la más débil, sin pisarse; con el alias español si lo tiene). Valen en
+  el cielo detrás del globo, en la vista del sistema solar y en la carta del cielo; no se rotula nada encima de la Tierra (lo que
+  hay detrás queda tapado). La elección se recuerda en la cookie de preferencias (`sl`). Los nombres vienen del catálogo HYG y de
+  d3-celestial, los mismos que ya se usaban.
 - **Iconos de línea (2026-11-11).** Los iconos de sucesos son ahora de **línea de color muy intenso**, sin disco ni anillo
   alrededor: la línea va perfilada por un **borde negro** que sigue la silueta (se probó con filo exterior blanco y el creador eligió solo negro). Cada dibujo dice lo que es: espadas
   cruzadas (guerra antes de 1500), mosquetes cruzados (1500–1913), tanque (desde 1914), papiro y pluma (tratado), anillos (alianza o

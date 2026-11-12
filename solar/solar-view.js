@@ -411,12 +411,9 @@
                     if (sty.r < 1.1) ctxB.fillRect(x - sty.r, y - sty.r, 2 * sty.r, 2 * sty.r); else { ctxB.beginPath(); ctxB.arc(x, y, sty.r, 0, 2 * Math.PI); ctxB.fill(); }
                 }
                 ctxB.globalAlpha = 1;
-                ctxF.font = '11px system-ui, sans-serif';
-                for (let i = 0; i < n; i++) {
-                    if (S.cat.mag[i] >= 1.0) continue;
-                    const nm = S.cat.names && S.cat.names[S.cat.hip[i]];
-                    if (nm && !Number.isNaN(px[i]) && px[i] > 0 && py[i] > 0 && px[i] < w && py[i] < h) { ctxF.fillStyle = 'rgba(214,224,248,0.7)'; ctxF.fillText((o.lang() === 'es' && nm[1]) || nm[0], px[i] + 6, py[i] - 5); }
-                }
+                // nombres de constelaciones y de estrellas (capas del cielo, las mismas que en el globo)
+                const so = o.skyOptions();
+                if (o.skyLabels && (so.names || so.conNames)) o.skyLabels(ctxF, S.cat, px, py, { starNames: so.names, conNames: so.conNames, lang: o.lang(), starMag: so.nameMag || 2.6, w, h });
             }
 
             // trayectorias reales (una revolucion centrada en la fecha): planetas alrededor del Sol, la Luna alrededor de la Tierra y las lunas de

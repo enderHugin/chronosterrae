@@ -402,6 +402,10 @@
                     <button class="btn" id="btn-roads" type="button" aria-pressed="false" hidden data-i18n="roads.button"></button>
                     <button class="btn" id="btn-center" type="button" aria-pressed="false" data-i18n="center.button"></button>
                     <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
+                    <div class="menu-sep" role="separator"></div>
+                    <button class="btn" id="btn-sky-lines" type="button" aria-pressed="true" data-i18n="sky.lines"></button>
+                    <button class="btn" id="btn-sky-cnames" type="button" aria-pressed="true" data-i18n="sky.conNames"></button>
+                    <button class="btn" id="btn-sky-names" type="button" aria-pressed="true" data-i18n="sky.starNames"></button>
                 </div>
             </div>
             <div class="menu" id="menu-more">
@@ -461,6 +465,7 @@
                         <label><input id="sky-t-stars" type="checkbox" checked> <span data-i18n="sky.stars"></span></label>
                         <label><input id="sky-t-names" type="checkbox" checked> <span data-i18n="sky.names"></span></label>
                         <label><input id="sky-t-lines" type="checkbox" checked> <span data-i18n="sky.lines"></span></label>
+                        <label><input id="sky-t-cnames" type="checkbox" checked> <span data-i18n="sky.conNames"></span></label>
                         <label><input id="sky-t-day" type="checkbox"> <span data-i18n="sky.dayStars"></span></label>
                     </span>
                 </div>
@@ -635,6 +640,7 @@ const parsePrefs = (raw) => {
     if (Number.isInteger(p.ah) && p.ah >= 0 && p.ah <= 3) out.ah = p.ah;   // ocultar recuadros informativos solos: nivel 0 (nunca) a 3
     if (Number.isInteger(p.pp) && p.pp >= 0 && p.pp <= 31) out.pp = p.pp;   // recuadros «mostrar siempre» (mascara de bits)
     if (typeof p.pn === 'string' && p.pn.length <= 300 && /^[a-z0-9:,;-]*$/.test(p.pn)) out.pn = p.pn;   // posiciones de los recuadros (se valida pieza a pieza al usarlas)
+    if (Number.isInteger(p.sl) && p.sl >= 0 && p.sl <= 7) out.sl = p.sl;   // capas del cielo: 1 lineas de constelaciones, 2 nombres de estrellas, 4 nombres de constelaciones
     if (p.ea === 0 || p.ea === 1 || p.ea === 2) out.ea = p.ea;   // ambientacion de epoca: 0 sin, 1 sutil, 2 completa (ChronosEras)
     if (p.ia === 0 || p.ia === 1 || p.ia === 2) out.ia = p.ia;   // animacion de iconos y saltos de tiempo: 0 apagada, 1 ahorro, 2 completa (antes 0/1: el 1 antiguo pasa a ahorro)
     if (Number.isInteger(p.et) && p.et >= 0 && p.et <= 16383) out.et = p.et;   // tipos de suceso OCULTOS por el usuario (mascara de bits, un bit por grupo de map/event-icons.js)
@@ -660,7 +666,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -838,7 +844,7 @@ const i18n = {
             month: 'Mes', day: 'Día', time: 'Hora solar local', calendar: 'Calendario', follow: 'Seguir el centro del mapa',
             lat: 'Latitud', lon: 'Longitud', now: 'Ahora',
             cal: { auto: 'Automático (juliano hasta el 4-10-1582)', julian: 'Juliano', gregorian: 'Gregoriano' },
-            stars: 'Estrellas', names: 'Nombres', lines: 'Constelaciones', dayStars: 'Estrellas de día',
+            stars: 'Estrellas', names: 'Nombres de estrellas', starNames: 'Nombres de estrellas', lines: 'Líneas de constelaciones', conNames: 'Nombres de constelaciones', dayStars: 'Estrellas de día',
             caption: 'Se mira hacia arriba: N arriba y E a la izquierda. Los símbolos del Sol, la Luna y los planetas no están a escala.',
             when: '{date} ({cal}) · {ut} UT · ΔT {dt} s',
             down: 'bajo el horizonte', outOfRange: 'El cielo se calcula entre {a} y {b}. Esta época queda fuera de ese intervalo.',
@@ -1031,7 +1037,7 @@ const i18n = {
             month: 'Month', day: 'Day', time: 'Local solar time', calendar: 'Calendar', follow: 'Follow the map centre',
             lat: 'Latitude', lon: 'Longitude', now: 'Now',
             cal: { auto: 'Automatic (Julian up to 4 Oct 1582)', julian: 'Julian', gregorian: 'Gregorian' },
-            stars: 'Stars', names: 'Names', lines: 'Constellations', dayStars: 'Stars by day',
+            stars: 'Stars', names: 'Star names', starNames: 'Star names', lines: 'Constellation lines', conNames: 'Constellation names', dayStars: 'Stars by day',
             caption: 'Looking up: N at the top and E on the left. The symbols for the Sun, Moon and planets are not to scale.',
             when: '{date} ({cal}) · {ut} UT · ΔT {dt} s',
             down: 'below the horizon', outOfRange: 'The sky is computed between {a} and {b}. This era is outside that range.',
@@ -2805,10 +2811,12 @@ panelsUI.texts(); panelsUI.scan();
 const sky = {
     open: false, ready: Boolean(window.ChronosSky && window.ChronosSkyView && window.Astronomy),
     month: 1, day: 1, minutes: 720, calendar: 'auto', follow: true, lat: 0, lon: 0,
-    stars: true, names: true, lines: true, dayStars: false,
+    stars: true, names: prefs.sl === undefined ? true : Boolean(prefs.sl & 2), lines: prefs.sl === undefined ? true : Boolean(prefs.sl & 1), conNames: prefs.sl === undefined ? true : Boolean(prefs.sl & 4), dayStars: false,
     catalog: null, catalogState: 'idle', validation: undefined, drawn: [], raf: 0, started: false
 };
 
+/** Magnitud limite de los nombres de estrellas en el cielo tras el globo y en el sistema solar (las ~90 mas brillantes con nombre). */
+const SKY_NAME_MAG = 2.6;
 const compass = (az) => (lang === 'es' ? ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'] : ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])[Math.round(az / 45) % 8];
 const pad2 = (n) => String(n).padStart(2, '0');
 const hhmm = (minutes) => pad2(Math.floor(minutes / 60)) + ':' + pad2(minutes % 60);
@@ -2886,7 +2894,7 @@ async function preLoad() {
         const inst = ChronosPrehistory.create({ ltpTables: ltpDoc.tables, cat });
         const byHip = new Map(); for (let i = 0; i < cat.n; i++) byHip.set(cat.hip[i], i);
         const constellations = con && Array.isArray(con.constellations)
-            ? con.constellations.map((c) => ({ id: c.id, lines: c.lines.map(([a, b]) => [byHip.get(a), byHip.get(b)]).filter(([a, b]) => a !== undefined && b !== undefined) })) : [];
+            ? con.constellations.map((c) => ({ id: c.id, la: c.la, en: c.en, es: c.es, lines: c.lines.map(([a, b]) => [byHip.get(a), byHip.get(b)]).filter(([a, b]) => a !== undefined && b !== undefined) })) : [];
         pre.view = { n: cat.n, hip: cat.hip, bv: cat.bv, names: stars.names || {}, constellations, mag: new Float64Array(cat.n) };
         pre.inst = inst; pre.rvRms = s3.rv_rms_kms; pre.extraN = s3.extra.length; pre.catN = stars.stars.length;
         pre.unknown = []; for (let i = 0; i < cat.n; i++) if (inst.prep.hasPlx[i] && !inst.prep.rvKnown[i]) pre.unknown.push(i);
@@ -2998,7 +3006,7 @@ function updateSky() {
     ChronosSky.BODIES.forEach((id) => { names[id] = t('sky.body.' + id); });
     sky.drawn = ChronosSkyView.draw($('sky-chart'), res, {
         catalog: sky.stars ? sky.catalog : null, names, cardinals: t('sky.cardinals'),
-        showStars: sky.stars, showNames: sky.names, showLines: sky.lines, dayStars: sky.dayStars, lang
+        showStars: sky.stars, showNames: sky.names, showLines: sky.lines, showConNames: sky.conNames, dayStars: sky.dayStars, lang
     });
 
     $('sky-twilight').textContent = t('sky.tw.' + res.twilight);
@@ -3075,7 +3083,8 @@ const solarView = ChronosSolarView.create({
     getCatalog: () => (space.on ? sky.catalog || null : null),
     starColor: (bv) => ChronosSkyView.starColor(bv),
     starStyle: (mag) => ChronosSkyView.starStyle(mag),
-    skyOptions: () => ({ lines: !!sky.lines }),
+    skyOptions: () => ({ lines: !!sky.lines, names: !!sky.names, conNames: !!sky.conNames, nameMag: SKY_NAME_MAG }),
+    skyLabels: (...a) => ChronosSkyView.drawSkyLabels(...a),
     onSkyReady: () => renderCredits(),
     t, fmt, lang: () => lang, nf,
     loadAccuracy: () => {
@@ -3251,9 +3260,25 @@ const readPlace = () => {
 $('sky-lat').addEventListener('input', readPlace);
 $('sky-lon').addEventListener('input', readPlace);
 $('sky-now').addEventListener('click', () => { if (sky.ready) clockNow(); });
-[['sky-t-stars', 'stars'], ['sky-t-names', 'names'], ['sky-t-lines', 'lines'], ['sky-t-day', 'dayStars']].forEach(([id, key]) => {
+[['sky-t-stars', 'stars'], ['sky-t-day', 'dayStars']].forEach(([id, key]) => {
     $(id).addEventListener('change', (e) => { sky[key] = e.target.checked; updateSky(); });
 });
+/* Capas del cielo (lineas de constelaciones, nombres de estrellas, nombres de constelaciones): casillas del panel del cielo y botones del menu Capas,
+   sincronizados y guardados en la cookie (sl). Valen para la carta, el cielo tras el globo y el sistema solar. */
+const SKY_LAYERS = [['lines', 1, 'sky-t-lines', 'btn-sky-lines'], ['names', 2, 'sky-t-names', 'btn-sky-names'], ['conNames', 4, 'sky-t-cnames', 'btn-sky-cnames']];
+function skyLayersSync() {
+    SKY_LAYERS.forEach(([key, , box, btn]) => { $(box).checked = !!sky[key]; $(btn).setAttribute('aria-pressed', String(!!sky[key])); });
+}
+function skyLayerSet(key, on) {
+    sky[key] = !!on; skyLayersSync();
+    savePrefs({ sl: SKY_LAYERS.reduce((m, [k, bit]) => m | (sky[k] ? bit : 0), 0) });
+    updateSky(); scheduleSpace(); if (solarView.isOpen) solarView.invalidate();
+}
+SKY_LAYERS.forEach(([key, , box, btn]) => {
+    $(box).addEventListener('change', (e) => skyLayerSet(key, e.target.checked));
+    $(btn).addEventListener('click', () => skyLayerSet(key, !sky[key]));
+});
+skyLayersSync();
 $('sky-chart').addEventListener('mousemove', (e) => {
     const r = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - r.left; const y = e.clientY - r.top;
@@ -3550,11 +3575,10 @@ function drawSpace() {
             else { ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); }
         }
         ctx.globalAlpha = 1;
-        for (let i = 0; i < cat.n; i++) {
-            if (cat.mag[i] >= 1.0) continue;
-            const nm = cat.names[cat.hip[i]];
-            if (nm && !Number.isNaN(px[i]) && px[i] > 0 && py[i] > 0 && px[i] < w && py[i] < h) label((lang === 'es' && nm[1]) || nm[0], px[i] + 6, py[i] - 5, 0.7);
-        }
+        // Rotulos: nombres de constelaciones y de estrellas (capas que se encienden y apagan en Capas y en el panel del cielo)
+        // (sin rotulos encima del globo: la estrella que nombrarian queda detras de la Tierra)
+        const gC = pr.near(0, 0, 0); const gR = pr.cameraDistancePx / Math.sqrt(Math.pow((pr.cameraDistancePx + pr.globeRadiusPx) / pr.globeRadiusPx, 2) - 1);
+        ChronosSkyView.drawSkyLabels(ctx, cat, px, py, { starNames: sky.names, conNames: sky.conNames, lang, starMag: SKY_NAME_MAG, w, h, avoid: gC && Number.isFinite(gR) ? [{ x: gC.x, y: gC.y, r: gR + 3 }] : [] });
     }
 
     if (!frame.bodies.length) return;     // prehistoria: solo estrellas

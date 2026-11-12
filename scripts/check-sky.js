@@ -319,6 +319,29 @@ if (fs.existsSync(starsFile)) {
     });
 }
 
+// ---- Rotulos del cielo (nombres de estrellas y de constelaciones)
+{
+    global.self = global; require('../sky/sky-view.js'); const V = global.ChronosSkyView;
+    const fakeCtx = () => { const c = { calls: [], font: '', fillStyle: '', textAlign: 'left', save() {}, restore() {}, measureText: (t) => ({ width: t.length * 6 }), fillText(t, x, y) { c.calls.push([t, x, y]); } }; return c; };
+    const cat = { n: 5, hip: [1, 2, 3, 4, 5], mag: [0.5, 1.5, 2.0, 3.5, 4.0], names: { 1: ['Alfa', null], 2: ['Beta', 'Beta es'], 4: ['Delta', null] },
+        constellations: [{ id: 'Aaa', es: 'Primera', en: 'First', la: 'Prima', lines: [[0, 1], [1, 2]] }, { id: 'Bbb', es: 'Segunda', en: 'Second', la: 'Secunda', lines: [[3, 4]] }] };
+    check('rotulos: el ancla de una constelacion es el centro de sus estrellas visibles', () => { const a = V.constellationAnchors(cat, [100, 200, 300, 50, 60], [100, 100, 100, 50, 60], 800, 600); return a.length === 2 && a[0].x === 200 && a[0].y === 100; });
+    check('rotulos: sin ancla si falta una estrella o si esta repartida por media pantalla (cruce del borde)', () => V.constellationAnchors(cat, [100, NaN, 300, 50, 60], [100, 100, 100, 50, 60], 800, 600).length === 1 && V.constellationAnchors(cat, [10, 790, 400, 50, 60], [100, 100, 100, 50, 60], 800, 600).length === 1);
+    check('rotulos: nombres de estrellas de la mas brillante a la mas debil, hasta la magnitud pedida, y el alias en espanol', () => {
+        const c = fakeCtx(); const out = V.drawSkyLabels(c, cat, [100, 300, 500, 700, 50], [100, 100, 100, 100, 100], { starNames: true, conNames: false, lang: 'es', starMag: 2.0, w: 800, h: 600 });
+        return out.map((o) => o.text).join(',') === 'Alfa,Beta es' ? true : JSON.stringify(out);
+    });
+    check('rotulos: nombres de constelaciones en mayusculas (es: espanol; en: latin IAU); uno que pisaria a otro se omite', () => {
+        const c = fakeCtx(); const out = V.drawSkyLabels(c, cat, [100, 200, 300, 190, 210], [100, 100, 100, 100, 100], { starNames: false, conNames: true, lang: 'en', w: 800, h: 600 });
+        return out.length === 1 && out[0].text === 'PRIMA' ? true : JSON.stringify(out);   // en ingles, el nombre latino (IAU)
+    });
+    check('rotulos: no se pone un rotulo encima del disco de la Tierra (su estrella queda detras); el resto si', () => {
+        const c = fakeCtx(); const out = V.drawSkyLabels(c, cat, [100, 300, 500, 700, 50], [100, 100, 100, 100, 100], { starNames: true, conNames: false, lang: 'es', starMag: 2.0, w: 800, h: 600, avoid: [{ x: 300, y: 100, r: 30 }] });
+        return out.map((o) => o.text).join(',') === 'Alfa' ? true : JSON.stringify(out);
+    });
+    check('rotulos: con las dos capas apagadas no se dibuja nada', () => { const c = fakeCtx(); return V.drawSkyLabels(c, cat, [100, 200, 300, 50, 60], [100, 100, 100, 50, 60], { starNames: false, conNames: false, lang: 'es', starMag: 6, w: 800, h: 600 }).length === 0 && c.calls.length === 0; });
+}
+
 console.log('\nPASS ' + passes.length);
 passes.forEach((p) => console.log('  ok  ' + p));
 if (failures.length) {
