@@ -1,0 +1,23 @@
+  consulta 6022 ms, 14 filas
+  consulta 5950 ms, 14 filas
+  consulta 5817 ms, 14 filas
+  consulta 4510 ms, 14 filas
+  consulta 6540 ms, 14 filas
+  consulta 4491 ms, 14 filas
+  consulta 7898 ms, 6 filas
+  consulta 3914 ms, 5 filas
+calibracion {"year+|bce":"astro","year+|ce":"astro","decade|bce":"astro","decade|ce":"astro","century|bce":"hist","century|ce":"astro","millennium|bce":"hist","millennium|ce":"astro"}
+  consulta 17940 ms, 8845 filas
+  consulta 6501 ms, 432 filas
+  consulta 1547 ms, 14 filas
+  consulta 1236 ms, 1056 filas
+  consulta 1741 ms, 231 filas
+  consulta 1780 ms, 311 filas
+  consulta 1033 ms, 324 filas
+  consulta 1423 ms, 825 filas
+  consulta 1438 ms, 338 filas
+  consulta 4217 ms, 707 filas
+  consulta 2350 ms, 210 filas
+  consulta 1346 ms, 538 filas
+  consulta 2317 ms, 21585 filas
+hecho: {"rows":8845,"end_rows":432,"features":5137,"with_end":222,"bce":129,"by_family":{"fortification":281,"palace":567,"tower":314,"infrastructure":695,"monument":253,"venue":815,"religious":1055,"pyramid":14,"other":1068,"archaeological":75},"by_precision":{"decade":51,"day":893,"year":3704,"century":372,"month":108,"millennium":9}}

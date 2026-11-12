@@ -1,0 +1,625 @@
+{
+ "generated_at": "2026-11-12T14:43:32Z",
+ "source": "Wikidata (CC0) via QLever (https://qlever.cs.uni-freiburg.de/api/wikidata)",
+ "min_sitelinks": 20,
+ "verify": {
+  "Q811979": {
+   "want": "built structure",
+   "got": "built structure",
+   "ok": true
+  },
+  "Q839954": {
+   "want": "archaeological site",
+   "got": "archaeological site",
+   "ok": true
+  },
+  "Q486972": {
+   "want": "human settlement",
+   "got": "human settlement",
+   "ok": true
+  },
+  "Q12516": {
+   "want": "pyramid",
+   "got": "pyramid",
+   "ok": true
+  },
+  "Q2270185": {
+   "want": "Mesoamerican pyramid",
+   "got": "Mesoamerican pyramid",
+   "ok": true
+  },
+  "Q170153": {
+   "want": "ziggurat",
+   "got": "ziggurat",
+   "ok": true
+  },
+  "Q2977": {
+   "want": "cathedral",
+   "got": "cathedral",
+   "ok": true
+  },
+  "Q16970": {
+   "want": "church building",
+   "got": "church building",
+   "ok": true
+  },
+  "Q44539": {
+   "want": "temple",
+   "got": "temple",
+   "ok": true
+  },
+  "Q32815": {
+   "want": "mosque",
+   "got": "mosque",
+   "ok": true
+  },
+  "Q34627": {
+   "want": "synagogue",
+   "got": "synagogue",
+   "ok": true
+  },
+  "Q842402": {
+   "want": "Hindu temple",
+   "got": "Hindu temple",
+   "ok": true
+  },
+  "Q5393308": {
+   "want": "Buddhist temple",
+   "got": "Buddhist temple",
+   "ok": true
+  },
+  "Q180987": {
+   "want": "stupa",
+   "got": "stupa",
+   "ok": true
+  },
+  "Q44613": {
+   "want": "monastery",
+   "got": "monastery",
+   "ok": true
+  },
+  "Q16560": {
+   "want": "palace",
+   "got": "palace",
+   "ok": true
+  },
+  "Q751876": {
+   "want": "château",
+   "got": "château",
+   "ok": true
+  },
+  "Q23413": {
+   "want": "castle",
+   "got": "castle",
+   "ok": true
+  },
+  "Q57821": {
+   "want": "fortification",
+   "got": "fortification",
+   "ok": true
+  },
+  "Q4989906": {
+   "want": "monument",
+   "got": "monument",
+   "ok": true
+  },
+  "Q162875": {
+   "want": "mausoleum",
+   "got": "mausoleum",
+   "ok": true
+  },
+  "Q193475": {
+   "want": "menhir",
+   "got": "menhir",
+   "ok": true
+  },
+  "Q164240": {
+   "want": "megalith",
+   "got": "megalith",
+   "ok": true
+  },
+  "Q1935728": {
+   "want": "stone circle",
+   "got": "stone circle",
+   "ok": true
+  },
+  "Q54831": {
+   "want": "amphitheatre",
+   "got": "amphitheatre",
+   "ok": true
+  },
+  "Q483110": {
+   "want": "stadium",
+   "got": "stadium",
+   "ok": true
+  },
+  "Q641226": {
+   "want": "arena",
+   "got": "arena",
+   "ok": true
+  },
+  "Q24354": {
+   "want": "theatre building",
+   "got": "theatre building",
+   "ok": true
+  },
+  "Q153562": {
+   "want": "opera house",
+   "got": "opera house",
+   "ok": true
+  },
+  "Q1060829": {
+   "want": "concert hall",
+   "got": "concert hall",
+   "ok": true
+  },
+  "Q12518": {
+   "want": "tower",
+   "got": "tower",
+   "ok": true
+  },
+  "Q11303": {
+   "want": "skyscraper",
+   "got": "skyscraper",
+   "ok": true
+  },
+  "Q39715": {
+   "want": "lighthouse",
+   "got": "lighthouse",
+   "ok": true
+  },
+  "Q12280": {
+   "want": "bridge",
+   "got": "bridge",
+   "ok": true
+  },
+  "Q12323": {
+   "want": "dam",
+   "got": "dam",
+   "ok": true
+  },
+  "Q474": {
+   "want": "aqueduct",
+   "got": "aqueduct",
+   "ok": true
+  },
+  "Q1248784": {
+   "want": "airport",
+   "got": "airport",
+   "ok": true
+  },
+  "Q55488": {
+   "want": "railway station",
+   "got": "railway station",
+   "ok": true
+  },
+  "Q928830": {
+   "want": "metro station",
+   "got": "metro station",
+   "ok": true
+  },
+  "Q33506": {
+   "want": "museum",
+   "got": "museum",
+   "ok": true
+  },
+  "P571": {
+   "want": "inception",
+   "got": "inception",
+   "ok": true
+  },
+  "P576": {
+   "want": "dissolved, abolished or demolished",
+   "got": "dissolved, abolished or demolished",
+   "ok": true
+  },
+  "P625": {
+   "want": "coordinate location",
+   "got": "coordinate location",
+   "ok": true
+  },
+  "P31": {
+   "want": "instance of",
+   "got": "instance of",
+   "ok": true
+  },
+  "P279": {
+   "want": "subclass of",
+   "got": "subclass of",
+   "ok": true
+  }
+ },
+ "calibration": {
+  "samples": 95,
+  "rules": {
+   "year+|bce": "astro",
+   "year+|ce": "astro",
+   "decade|bce": "astro",
+   "decade|ce": "astro",
+   "century|bce": "hist",
+   "century|ce": "astro",
+   "millennium|bce": "hist",
+   "millennium|ce": "astro"
+  },
+  "groups": {
+   "year+|bce": {
+    "n": 14,
+    "astro": 14,
+    "hist": 0,
+    "unreadable": 0,
+    "examples": [
+     {
+      "rdf": -2559,
+      "prec": 9,
+      "text": "2560 BCE"
+     },
+     {
+      "rdf": -2559,
+      "prec": 9,
+      "text": "2560 BCE"
+     },
+     {
+      "rdf": -2559,
+      "prec": 9,
+      "text": "2560 BCE"
+     },
+     {
+      "rdf": -2559,
+      "prec": 9,
+      "text": "2560 BCE"
+     }
+    ],
+    "rule": "astro"
+   },
+   "year+|ce": {
+    "n": 14,
+    "astro": 14,
+    "hist": 14,
+    "unreadable": 0,
+    "examples": [
+     {
+      "rdf": 1887,
+      "prec": 11,
+      "text": "28 January 1887"
+     },
+     {
+      "rdf": 1887,
+      "prec": 11,
+      "text": "28 January 1887"
+     },
+     {
+      "rdf": 1887,
+      "prec": 11,
+      "text": "28 January 1887"
+     },
+     {
+      "rdf": 1793,
+      "prec": 11,
+      "text": "10 August 1793"
+     }
+    ],
+    "rule": "astro"
+   },
+   "decade|bce": {
+    "n": 14,
+    "astro": 14,
+    "hist": 14,
+    "unreadable": 0,
+    "examples": [
+     {
+      "rdf": -700,
+      "prec": 8,
+      "text": "700s BCE"
+     },
+     {
+      "rdf": -430,
+      "prec": 8,
+      "text": "430s BCE"
+     },
+     {
+      "rdf": -7350,
+      "prec": 8,
+      "text": "7350s BCE"
+     },
+     {
+      "rdf": -7350,
+      "prec": 8,
+      "text": "7350s BCE"
+     }
+    ],
+    "rule": "astro"
+   },
+   "decade|ce": {
+    "n": 14,
+    "astro": 14,
+    "hist": 14,
+    "unreadable": 0,
+    "examples": [
+     {
+      "rdf": 1970,
+      "prec": 8,
+      "text": "1970s"
+     },
+     {
+      "rdf": 1970,
+      "prec": 8,
+      "text": "1970s"
+     },
+     {
+      "rdf": 1970,
+      "prec": 8,
+      "text": "1970s"
+     },
+     {
+      "rdf": 1970,
+      "prec": 8,
+      "text": "1970s"
+     }
+    ],
+    "rule": "astro"
+   },
+   "century|bce": {
+    "n": 14,
+    "astro": 5,
+    "hist": 14,
+    "unreadable": 0,
+    "examples": [
+     {
+      "rdf": -500,
+      "prec": 7,
+      "text": "5. century BCE"
+     },
+     {
+      "rdf": -500,
+      "prec": 7,
+      "text": "5. century BCE"
+     },
+     {
+      "rdf": -500,
+      "prec": 7,
+      "text": "5. century BCE"
+     },
+     {
+      "rdf": -500,
+      "prec": 7,
+      "text": "5. century BCE"
+     }
+    ],
+    "rule": "hist"
+   },
+   "century|ce": {
+    "n": 14,
+    "astro": 14,
+    "hist": 14,
+    "unreadable": 0,
+    "examples": [
+     {
+      "rdf": 1800,
+      "prec": 7,
+      "text": "18. century"
+     },
+     {
+      "rdf": 1800,
+      "prec": 7,
+      "text": "18. century"
+     },
+     {
+      "rdf": 1800,
+      "prec": 7,
+      "text": "18. century"
+     },
+     {
+      "rdf": 1200,
+      "prec": 7,
+      "text": "12. century"
+     }
+    ],
+    "rule": "astro"
+   },
+   "millennium|bce": {
+    "n": 6,
+    "astro": 0,
+    "hist": 6,
+    "unreadable": 0,
+    "examples": [
+     {
+      "rdf": -7000,
+      "prec": 6,
+      "text": "7. millennium BCE"
+     },
+     {
+      "rdf": -1000,
+      "prec": 6,
+      "text": "1. millennium BCE"
+     },
+     {
+      "rdf": -7000,
+      "prec": 6,
+      "text": "7. millennium BCE"
+     },
+     {
+      "rdf": -7000,
+      "prec": 6,
+      "text": "7. millennium BCE"
+     }
+    ],
+    "rule": "hist"
+   },
+   "millennium|ce": {
+    "n": 5,
+    "astro": 5,
+    "hist": 5,
+    "unreadable": 0,
+    "examples": [
+     {
+      "rdf": 2000,
+      "prec": 6,
+      "text": "2. millennium"
+     },
+     {
+      "rdf": 2000,
+      "prec": 6,
+      "text": "2. millennium"
+     },
+     {
+      "rdf": 1001,
+      "prec": 6,
+      "text": "2. millennium"
+     },
+     {
+      "rdf": 1001,
+      "prec": 6,
+      "text": "2. millennium"
+     }
+    ],
+    "rule": "astro"
+   }
+  },
+  "method": "valor del RDF (QLever) frente al texto de wbformatvalue de la misma declaracion (por su id); una regla vale si cuadra con TODAS las muestras del grupo"
+ },
+ "families": {
+  "pyramid": {
+   "roots": [
+    "Q12516 pyramid",
+    "Q2270185 Mesoamerican pyramid",
+    "Q170153 ziggurat"
+   ],
+   "rejected": [],
+   "n": 14
+  },
+  "religious": {
+   "roots": [
+    "Q2977 cathedral",
+    "Q16970 church building",
+    "Q44539 temple",
+    "Q32815 mosque",
+    "Q34627 synagogue",
+    "Q842402 Hindu temple",
+    "Q5393308 Buddhist temple",
+    "Q180987 stupa",
+    "Q44613 monastery"
+   ],
+   "rejected": [],
+   "n": 1055
+  },
+  "palace": {
+   "roots": [
+    "Q16560 palace",
+    "Q751876 château"
+   ],
+   "rejected": [],
+   "n": 226
+  },
+  "fortification": {
+   "roots": [
+    "Q23413 castle",
+    "Q57821 fortification"
+   ],
+   "rejected": [],
+   "n": 282
+  },
+  "monument": {
+   "roots": [
+    "Q4989906 monument",
+    "Q162875 mausoleum",
+    "Q193475 menhir",
+    "Q164240 megalith",
+    "Q1935728 stone circle"
+   ],
+   "rejected": [],
+   "n": 255
+  },
+  "venue": {
+   "roots": [
+    "Q54831 amphitheatre",
+    "Q483110 stadium",
+    "Q641226 arena",
+    "Q24354 theatre building",
+    "Q153562 opera house",
+    "Q1060829 concert hall"
+   ],
+   "rejected": [],
+   "n": 819
+  },
+  "tower": {
+   "roots": [
+    "Q12518 tower",
+    "Q11303 skyscraper",
+    "Q39715 lighthouse"
+   ],
+   "rejected": [],
+   "n": 314
+  },
+  "infrastructure": {
+   "roots": [
+    "Q12280 bridge",
+    "Q12323 dam",
+    "Q474 aqueduct",
+    "Q1248784 airport",
+    "Q55488 railway station",
+    "Q928830 metro station"
+   ],
+   "rejected": [],
+   "n": 701
+  },
+  "archaeological": {
+   "roots": [
+    "Q839954 archaeological site"
+   ],
+   "rejected": [],
+   "n": 77
+  },
+  "palace+": {
+   "roots": [
+    "Q33506 museum"
+   ],
+   "rejected": [],
+   "n": 346
+  }
+ },
+ "counts": {
+  "rows": 8845,
+  "end_rows": 432,
+  "features": 5137,
+  "with_end": 222,
+  "bce": 129,
+  "by_family": {
+   "fortification": 281,
+   "palace": 567,
+   "tower": 314,
+   "infrastructure": 695,
+   "monument": 253,
+   "venue": 815,
+   "religious": 1055,
+   "pyramid": 14,
+   "other": 1068,
+   "archaeological": 75
+  },
+  "by_precision": {
+   "decade": 51,
+   "day": 893,
+   "year": 3704,
+   "century": 372,
+   "month": 108,
+   "millennium": 9
+  }
+ },
+ "skipped": {
+  "fin anterior a la ultima construccion (se ignora el fin)": 14,
+  "sin coordenadas legibles": 1,
+  "inicio: precision menor que el milenio": 3,
+  "sin fecha de construccion utilizable": 4,
+  "inicio: fecha ilegible": 1
+ },
+ "file": {
+  "name": "built.json",
+  "bytes": 4210516,
+  "sha256": "c2a5a5fbf2fab1e3a4e4c18dfa0e9e8d6a1835b3ad8691c5dbdcf2f5665ace5a"
+ },
+ "mapFile": {
+  "name": "built-map.json",
+  "bytes": 622830,
+  "sha256": "be36c0ed06a11e0ed4a91f8813bcfb834196821e35609d26bc38c057ca4d15b3",
+  "rows": 5137
+ }
+}
