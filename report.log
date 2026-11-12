@@ -1,0 +1,38 @@
+verificados 30 de 30 clases; 12 de 12 propiedades
+recuento Q2977 cathedral {"geo":4946,"geo:ms":1621,"geo+P571":2294,"geo+P571:ms":384,"geo+P576":95,"geo+P576:ms":683,"geo+P571+sl10":1065,"geo+P571+sl10:ms":968}
+recuento Q12516 pyramid {"geo":180,"geo:ms":427,"geo+P571":35,"geo+P571:ms":343,"geo+P576":0,"geo+P576:ms":986,"geo+P571+sl10":20,"geo+P571+sl10:ms":1276}
+recuento Q23413 castle {"geo":33555,"geo:ms":346,"geo+P571":5304,"geo+P571:ms":541,"geo+P576":644,"geo+P576:ms":1305,"geo+P571+sl10":721,"geo+P571+sl10:ms":958}
+recuento Q44539 temple {"geo":431760,"geo:ms":772,"geo+P571":86233,"geo+P571:ms":557,"geo+P576":3378,"geo+P576:ms":774,"geo+P571+sl10":2860,"geo+P571+sl10:ms":819}
+recuento Q32815 mosque {"geo":233849,"geo:ms":486,"geo+P571":2585,"geo+P571:ms":548,"geo+P576":63,"geo+P576:ms":790,"geo+P571+sl10":749,"geo+P571+sl10:ms":1596}
+recuento Q16970 church building {"geo":395785,"geo:ms":753,"geo+P571":80070,"geo+P571:ms":630,"geo+P576":3097,"geo+P576:ms":719,"geo+P571+sl10":2585,"geo+P571+sl10:ms":904}
+recuento Q16560 palace {"geo":18204,"geo:ms":500,"geo+P571":5891,"geo+P571:ms":372,"geo+P576":186,"geo+P576:ms":753,"geo+P571+sl10":456,"geo+P571+sl10:ms":946}
+recuento Q57821 fortification {"geo":84460,"geo:ms":1388,"geo+P571":10979,"geo+P571:ms":402,"geo+P576":1306,"geo+P576:ms":1019,"geo+P571+sl10":1121,"geo+P571+sl10:ms":846}
+recuento Q39715 lighthouse {"geo":9812,"geo:ms":331,"geo+P571":6561,"geo+P571:ms":448,"geo+P576":268,"geo+P576:ms":638,"geo+P571+sl10":79,"geo+P571+sl10:ms":713}
+recuento Q12280 bridge {"geo":71853,"geo:ms":612,"geo+P571":15343,"geo+P571:ms":392,"geo+P576":1265,"geo+P576:ms":684,"geo+P571+sl10":537,"geo+P571+sl10:ms":811}
+recuento Q54831 amphitheatre {"geo":1272,"geo:ms":312,"geo+P571":599,"geo+P571:ms":570,"geo+P576":11,"geo+P576:ms":846,"geo+P571+sl10":25,"geo+P571+sl10:ms":1752}
+recuento Q4989906 monument {"geo":539420,"geo:ms":930,"geo+P571":61941,"geo+P571:ms":436,"geo+P576":736,"geo+P576:ms":1421,"geo+P571+sl10":1010,"geo+P571+sl10:ms":967}
+recuento Q839954 archaeological site {"geo":325344,"geo:ms":620,"geo+P571":3758,"geo+P571:ms":404,"geo+P576":1195,"geo+P576:ms":769,"geo+P571+sl10":661,"geo+P571+sl10:ms":2662}
+recuento Q162875 mausoleum {"geo":5247,"geo:ms":726,"geo+P571":719,"geo+P571:ms":320,"geo+P576":43,"geo+P576:ms":634,"geo+P571+sl10":108,"geo+P571+sl10:ms":1105}
+recuento Q180987 stupa {"geo":276,"geo:ms":475,"geo+P571":22,"geo+P571:ms":357,"geo+P576":0,"geo+P576:ms":786,"geo+P571+sl10":7,"geo+P571+sl10:ms":1405}
+recuento Q34627 synagogue {"geo":4695,"geo:ms":403,"geo+P571":2044,"geo+P571:ms":578,"geo+P576":571,"geo+P576:ms":1054,"geo+P571+sl10":183,"geo+P571+sl10:ms":894}
+recuento Q842402 Hindu temple {"geo":4281,"geo:ms":585,"geo+P571":171,"geo+P571:ms":540,"geo+P576":1,"geo+P576:ms":1954,"geo+P571+sl10":42,"geo+P571+sl10:ms":1632}
+recuento Q5393308 Buddhist temple {"geo":21718,"geo:ms":464,"geo+P571":3184,"geo+P571:ms":407,"geo+P576":28,"geo+P576:ms":932,"geo+P571+sl10":143,"geo+P571+sl10:ms":859}
+recuento Q193475 menhir {"geo":2035,"geo:ms":309,"geo+P571":17,"geo+P571:ms":347,"geo+P576":1,"geo+P576:ms":748,"geo+P571+sl10":1,"geo+P571+sl10:ms":1067}
+recuento Q12518 tower {"geo":33469,"geo:ms":409,"geo+P571":6508,"geo+P571:ms":505,"geo+P576":292,"geo+P576:ms":677,"geo+P571+sl10":230,"geo+P571+sl10:ms":745}
+recuento Q11303 skyscraper {"geo":4514,"geo:ms":433,"geo+P571":2886,"geo+P571:ms":897,"geo+P576":51,"geo+P576:ms":1004,"geo+P571+sl10":692,"geo+P571+sl10:ms":737}
+recuento Q12323 dam {"geo":82364,"geo:ms":461,"geo+P571":3131,"geo+P571:ms":390,"geo+P576":56,"geo+P576:ms":659,"geo+P571+sl10":195,"geo+P571+sl10:ms":780}
+recuento Q41176 building {"geo":2486932,"geo:ms":2697,"geo+P571":417609,"geo+P571:ms":1901,"geo+P576":19407,"geo+P576:ms":1570,"geo+P571+sl10":11222,"geo+P571+sl10:ms":1765}
+recuento Q811979 built structure {"geo":4611403,"geo:ms":3860,"geo+P571":723483,"geo+P571:ms":2017,"geo+P576":46364,"geo+P576:ms":1609,"geo+P571+sl10":18014,"geo+P571+sl10:ms":1438}
+recuento Q515 city {"geo":23241,"geo:ms":924,"geo+P571":5474,"geo+P571:ms":425,"geo+P576":336,"geo+P576:ms":705,"geo+P571+sl10":5025,"geo+P571+sl10:ms":742}
+recuento Q486972 human settlement {"geo":1825882,"geo:ms":2100,"geo+P571":76615,"geo+P571:ms":1108,"geo+P576":10143,"geo+P576:ms":698,"geo+P571+sl10":34061,"geo+P571+sl10:ms":775}
+recuento Q46831 mountain range {"geo":23305,"geo:ms":512,"geo+P571":43,"geo+P571:ms":324,"geo+P576":0,"geo+P576:ms":867,"geo+P571+sl10":22,"geo+P571+sl10:ms":1462}
+recuento Q8514 desert {"geo":2681,"geo:ms":304,"geo+P571":4,"geo+P571:ms":361,"geo+P576":0,"geo+P576:ms":816,"geo+P571+sl10":4,"geo+P571+sl10:ms":941}
+recuento Q185113 cape {"geo":14839,"geo:ms":413,"geo+P571":28,"geo+P571:ms":420,"geo+P576":0,"geo+P576:ms":945,"geo+P571+sl10":9,"geo+P571+sl10:ms":814}
+recuento Q9259 World Heritage Site {"geo":163,"geo:ms":303,"geo+P571":49,"geo+P571:ms":372,"geo+P576":7,"geo+P576:ms":1125,"geo+P571+sl10":33,"geo+P571+sl10:ms":958}
+banda 5 52426
+banda 10 18014
+banda 20 5344
+banda 40 1061
+banda 80 102
+nombres Q515 {"withOfficialName":7269,"withDatedName":1096,"withEndedName_sl20":1003}
+nombres Q486972 {"withOfficialName":282945,"withDatedName":10323,"withEndedName_sl20":2357}

@@ -1,0 +1,3531 @@
+{
+ "probed_at": "2026-11-12T00:16:55.840Z",
+ "endpoint": "https://qlever.cs.uni-freiburg.de/api/wikidata",
+ "verify": {
+  "classes": [
+   {
+    "id": "Q2977",
+    "want": "cathedral",
+    "en": "cathedral",
+    "es": "catedral",
+    "desc": "Christian church, which is seat of a bishop",
+    "match": true
+   },
+   {
+    "id": "Q12516",
+    "want": "pyramid",
+    "en": "pyramid",
+    "es": "pirámide",
+    "desc": "structure whose shape is roughly that of a pyramid in the geometric sense",
+    "match": true
+   },
+   {
+    "id": "Q23413",
+    "want": "castle",
+    "en": "castle",
+    "es": "castillo",
+    "desc": "type of fortified structure built in Europe, Asia and the Middle East during the Middle Ages by nobility",
+    "match": true
+   },
+   {
+    "id": "Q44539",
+    "want": "temple",
+    "en": "temple",
+    "es": "templo",
+    "desc": "structure reserved for religious or spiritual activities",
+    "match": true
+   },
+   {
+    "id": "Q32815",
+    "want": "mosque",
+    "en": "mosque",
+    "es": "mezquita",
+    "desc": "place of worship for followers of Islam",
+    "match": true
+   },
+   {
+    "id": "Q16970",
+    "want": "church building",
+    "en": "church building",
+    "es": "iglesia",
+    "desc": "building for Christian worship",
+    "match": true
+   },
+   {
+    "id": "Q16560",
+    "want": "palace",
+    "en": "palace",
+    "es": "palacio",
+    "desc": "grand residence, especially a royal or episcopal residence",
+    "match": true
+   },
+   {
+    "id": "Q57821",
+    "want": "fortification",
+    "en": "fortification",
+    "es": "fortificación",
+    "desc": "military constructions and buildings designed for defense in warfare and military bases",
+    "match": true
+   },
+   {
+    "id": "Q39715",
+    "want": "lighthouse",
+    "en": "lighthouse",
+    "es": "faro",
+    "desc": "structure designed to emit light to aid navigation",
+    "match": true
+   },
+   {
+    "id": "Q12280",
+    "want": "bridge",
+    "en": "bridge",
+    "es": "puente",
+    "desc": "structure that spans and provides a passage over a road, railway, river, or some other obstacle",
+    "match": true
+   },
+   {
+    "id": "Q54831",
+    "want": "amphitheatre",
+    "en": "amphitheatre",
+    "es": "anfiteatro",
+    "desc": "open-air venue used for entertainment and performances",
+    "match": true
+   },
+   {
+    "id": "Q4989906",
+    "want": "monument",
+    "en": "monument",
+    "es": "monumento",
+    "desc": "imposing structure created to commemorate a person or event, or used for that purpose",
+    "match": true
+   },
+   {
+    "id": "Q839954",
+    "want": "archaeological site",
+    "en": "archaeological site",
+    "es": "yacimiento arqueológico",
+    "desc": "place (or group of physical sites) in which evidence of past activity is preserved",
+    "match": true
+   },
+   {
+    "id": "Q162875",
+    "want": "mausoleum",
+    "en": "mausoleum",
+    "es": "mausoleo",
+    "desc": "monument enclosing the interment space or burial chamber of a deceased person or people",
+    "match": true
+   },
+   {
+    "id": "Q180987",
+    "want": "stupa",
+    "en": "stupa",
+    "es": "estupa",
+    "desc": "mound-like structure containing Buddhist relics, typically the ashes of Buddhist monks, used by Buddhists as a place of meditation",
+    "match": true
+   },
+   {
+    "id": "Q34627",
+    "want": "synagogue",
+    "en": "synagogue",
+    "es": "sinagoga",
+    "desc": "religious building at the center of a local organization where a Jewish (or rarely Samaritan) community gathers for prayer, education, social assistance or ceremonies",
+    "match": true
+   },
+   {
+    "id": "Q842402",
+    "want": "Hindu temple",
+    "en": "Hindu temple",
+    "es": "mandir",
+    "desc": "house of worship in Hinduism",
+    "match": true
+   },
+   {
+    "id": "Q5393308",
+    "want": "Buddhist temple",
+    "en": "Buddhist temple",
+    "es": "templo budista",
+    "desc": "place of worship for Buddhists",
+    "match": true
+   },
+   {
+    "id": "Q193475",
+    "want": "menhir",
+    "en": "menhir",
+    "es": "menhir",
+    "desc": "upright megalithic stone monument erected by humans",
+    "match": true
+   },
+   {
+    "id": "Q12518",
+    "want": "tower",
+    "en": "tower",
+    "es": "torre",
+    "desc": "structure with height greater than width",
+    "match": true
+   },
+   {
+    "id": "Q11303",
+    "want": "skyscraper",
+    "en": "skyscraper",
+    "es": "rascacielos",
+    "desc": "very tall building",
+    "match": true
+   },
+   {
+    "id": "Q12323",
+    "want": "dam",
+    "en": "dam",
+    "es": "represa",
+    "desc": "barrier that impounds water or underground streams",
+    "match": true
+   },
+   {
+    "id": "Q41176",
+    "want": "building",
+    "en": "building",
+    "es": "edificio",
+    "desc": "structure, typically enclosed with a roof and walls, standing more or less permanently in one place",
+    "match": true
+   },
+   {
+    "id": "Q811979",
+    "want": "built structure",
+    "en": "built structure",
+    "es": "construcción",
+    "desc": "human-designed and -made structure",
+    "match": true
+   },
+   {
+    "id": "Q515",
+    "want": "city",
+    "en": "city",
+    "es": "ciudad",
+    "desc": "large human settlement",
+    "match": true
+   },
+   {
+    "id": "Q486972",
+    "want": "human settlement",
+    "en": "human settlement",
+    "es": "asentamiento",
+    "desc": "place of any size, in which people permanently live",
+    "match": true
+   },
+   {
+    "id": "Q46831",
+    "want": "mountain range",
+    "en": "mountain range",
+    "es": "cordillera",
+    "desc": "geographic area containing several geologically related mountains",
+    "match": true
+   },
+   {
+    "id": "Q8514",
+    "want": "desert",
+    "en": "desert",
+    "es": "desierto",
+    "desc": "barren area of land where little precipitation occurs",
+    "match": true
+   },
+   {
+    "id": "Q185113",
+    "want": "cape",
+    "en": "cape",
+    "es": "cabo",
+    "desc": "headland of large size extending into a body of water, usually the sea",
+    "match": true
+   },
+   {
+    "id": "Q9259",
+    "want": "World Heritage Site",
+    "en": "World Heritage Site",
+    "es": "Patrimonio de la Humanidad",
+    "desc": "place of significance listed by UNESCO",
+    "match": true
+   }
+  ],
+  "props": [
+   {
+    "id": "P31",
+    "want": "instance of",
+    "en": "instance of",
+    "es": "instancia de",
+    "match": true
+   },
+   {
+    "id": "P279",
+    "want": "subclass of",
+    "en": "subclass of",
+    "es": "subclase de",
+    "match": true
+   },
+   {
+    "id": "P571",
+    "want": "inception",
+    "en": "inception",
+    "es": "fecha de fundación o creación",
+    "match": true
+   },
+   {
+    "id": "P576",
+    "want": "dissolved, abolished or demolished",
+    "en": "dissolved, abolished or demolished",
+    "es": "fecha de disolución, retirada o demolición",
+    "match": true
+   },
+   {
+    "id": "P625",
+    "want": "coordinate location",
+    "en": "coordinate location",
+    "es": "coordenadas",
+    "match": true
+   },
+   {
+    "id": "P1435",
+    "want": "heritage designation",
+    "en": "heritage designation",
+    "es": "estatus patrimonial",
+    "match": true
+   },
+   {
+    "id": "P1448",
+    "want": "official name",
+    "en": "official name",
+    "es": "nombre oficial",
+    "match": true
+   },
+   {
+    "id": "P2561",
+    "want": "name",
+    "en": "name",
+    "es": "nombre",
+    "match": true
+   },
+   {
+    "id": "P580",
+    "want": "start time",
+    "en": "start time",
+    "es": "fecha de inicio",
+    "match": true
+   },
+   {
+    "id": "P582",
+    "want": "end time",
+    "en": "end time",
+    "es": "fecha de fin",
+    "match": true
+   },
+   {
+    "id": "P793",
+    "want": "significant event",
+    "en": "significant event",
+    "es": "evento significativo",
+    "match": true
+   },
+   {
+    "id": "P1082",
+    "want": "population",
+    "en": "population",
+    "es": "población",
+    "match": true
+   }
+  ],
+  "via": "wbgetentities"
+ },
+ "search": {
+  "megalith": [
+   {
+    "id": "Q164240",
+    "label": "megalith",
+    "desc": "prehistoric monument or structure built with one or more large stones"
+   },
+   {
+    "id": "Q122378160",
+    "label": "Megalith",
+    "desc": "2020 video game"
+   },
+   {
+    "id": "Q10521078",
+    "label": "megalithic tomb",
+    "desc": "European neolithic burial place made of large stones"
+   }
+  ],
+  "cathedral": [
+   {
+    "id": "Q2977",
+    "label": "cathedral",
+    "desc": "Christian church, which is seat of a bishop"
+   },
+   {
+    "id": "Q56242215",
+    "label": "Catholic cathedral",
+    "desc": "church that is the seat of the bishop of a diocese of the Catholic Church"
+   },
+   {
+    "id": "Q63271768",
+    "label": "Cathedral",
+    "desc": "album by Oddarrang"
+   }
+  ],
+  "pyramid": [
+   {
+    "id": "Q23045574",
+    "label": "Pyramid",
+    "desc": "Finnish record label; imprint of Johanna Kustannus Oy"
+   },
+   {
+    "id": "Q567018",
+    "label": "Pyramid",
+    "desc": "American television game show"
+   },
+   {
+    "id": "Q761535",
+    "label": "Pyramid Lake",
+    "desc": "lake in Nevada, United States"
+   }
+  ],
+  "Egyptian pyramid": [
+   {
+    "id": "Q175582",
+    "label": "Egyptian pyramids",
+    "desc": "ancient masonry structures constructed by ancient Egyptians"
+   },
+   {
+    "id": "Q1540169",
+    "label": "Egyptian pyramid construction techniques",
+    "desc": "overview about the Egyptian pyramid construction techniques"
+   },
+   {
+    "id": "Q133641388",
+    "label": "Egyptian pyramid hospital sokoto",
+    "desc": "Hospital in sokoto state"
+   }
+  ],
+  "Mesoamerican pyramid": [
+   {
+    "id": "Q2270185",
+    "label": "Mesoamerican pyramid",
+    "desc": "pyramid-shaped structure in ancient Mesoamerica"
+   }
+  ],
+  "castle": [
+   {
+    "id": "Q23413",
+    "label": "castle",
+    "desc": "type of fortified structure built in Europe, Asia and the Middle East during the Middle Ages by nobility"
+   },
+   {
+    "id": "Q751876",
+    "label": "château",
+    "desc": "type of manor house mostly built by noble families for representative purposes"
+   },
+   {
+    "id": "Q16865438",
+    "label": "Castle",
+    "desc": "family name"
+   }
+  ],
+  "amphitheatre": [
+   {
+    "id": "Q54831",
+    "label": "amphitheatre",
+    "desc": "open-air venue used for entertainment and performances"
+   },
+   {
+    "id": "Q17675790",
+    "label": "Roman amphitheatre, Guildhall Yard",
+    "desc": "former amphitheatre in London, United Kingdom"
+   },
+   {
+    "id": "Q2418420",
+    "label": "Amphitheatre",
+    "desc": "town in Victoria, Australia"
+   }
+  ],
+  "ziggurat": [
+   {
+    "id": "Q20874454",
+    "label": "Ziggurat",
+    "desc": "2014 video game"
+   },
+   {
+    "id": "Q16915345",
+    "label": "Ziggurat",
+    "desc": "2012 video game"
+   },
+   {
+    "id": "Q170153",
+    "label": "ziggurat",
+    "desc": "massive structure built in the ancient Mesopotamian valley and western Iranian plateau, having the form of a terraced step pyramid"
+   }
+  ],
+  "stone circle": [
+   {
+    "id": "Q1935728",
+    "label": "stone circle",
+    "desc": "prehistoric monument consisting of standing stones arranged in a circle"
+   },
+   {
+    "id": "Q1236830",
+    "label": "stone circle",
+    "desc": "Iron Age burial site in Scandinavia"
+   },
+   {
+    "id": "Q7619059",
+    "label": "Stone circles of Junapani",
+    "desc": "historic site in Dist. Nagpur, Maharashtra"
+   }
+  ],
+  "aqueduct": [
+   {
+    "id": "Q474",
+    "label": "aqueduct",
+    "desc": "structure constructed to convey water"
+   },
+   {
+    "id": "Q18870689",
+    "label": "aqueduct",
+    "desc": "bridge for transporting water"
+   },
+   {
+    "id": "Q20488706",
+    "label": "Aqueduct",
+    "desc": "painting by Cass Gilbert"
+   }
+  ],
+  "mountain range": [
+   {
+    "id": "Q46831",
+    "label": "mountain range",
+    "desc": "geographic area containing several geologically related mountains"
+   },
+   {
+    "id": "Q6924990",
+    "label": "Mountain Home Range",
+    "desc": "mountain range in Beaver and Millard counties in Utah, United States"
+   },
+   {
+    "id": "Q56298568",
+    "label": "mountain range",
+    "desc": "Wikimedia duplicated page"
+   }
+  ],
+  "cape": [
+   {
+    "id": "Q5465",
+    "label": "Cape Town",
+    "desc": "city in the Western Cape, South Africa"
+   },
+   {
+    "id": "Q185113",
+    "label": "cape",
+    "desc": "headland of large size extending into a body of water, usually the sea"
+   },
+   {
+    "id": "Q1245089",
+    "label": "promontory",
+    "desc": "prominent mass of land that overlooks lower-lying land or a body of water"
+   }
+  ],
+  "World Heritage Site": [
+   {
+    "id": "Q9259",
+    "label": "World Heritage Site",
+    "desc": "place of significance listed by UNESCO"
+   },
+   {
+    "id": "Q107681760",
+    "label": "World Heritage Site",
+    "desc": "unofficial website and database of UNESCO World Heritage Sites"
+   },
+   {
+    "id": "Q2962473",
+    "label": "Way of Saint James UNESCO World Heritage Sites in France",
+    "desc": "UNESCO World Heritage Site in France. of the Way of St. James in France part of the World Heritage Site in France"
+   }
+  ]
+ },
+ "counts": {
+  "Q2977 cathedral": {
+   "geo": 4946,
+   "geo:ms": 1621,
+   "geo+P571": 2294,
+   "geo+P571:ms": 384,
+   "geo+P576": 95,
+   "geo+P576:ms": 683,
+   "geo+P571+sl10": 1065,
+   "geo+P571+sl10:ms": 968
+  },
+  "Q12516 pyramid": {
+   "geo": 180,
+   "geo:ms": 427,
+   "geo+P571": 35,
+   "geo+P571:ms": 343,
+   "geo+P576": 0,
+   "geo+P576:ms": 986,
+   "geo+P571+sl10": 20,
+   "geo+P571+sl10:ms": 1276
+  },
+  "Q23413 castle": {
+   "geo": 33555,
+   "geo:ms": 346,
+   "geo+P571": 5304,
+   "geo+P571:ms": 541,
+   "geo+P576": 644,
+   "geo+P576:ms": 1305,
+   "geo+P571+sl10": 721,
+   "geo+P571+sl10:ms": 958
+  },
+  "Q44539 temple": {
+   "geo": 431760,
+   "geo:ms": 772,
+   "geo+P571": 86233,
+   "geo+P571:ms": 557,
+   "geo+P576": 3378,
+   "geo+P576:ms": 774,
+   "geo+P571+sl10": 2860,
+   "geo+P571+sl10:ms": 819
+  },
+  "Q32815 mosque": {
+   "geo": 233849,
+   "geo:ms": 486,
+   "geo+P571": 2585,
+   "geo+P571:ms": 548,
+   "geo+P576": 63,
+   "geo+P576:ms": 790,
+   "geo+P571+sl10": 749,
+   "geo+P571+sl10:ms": 1596
+  },
+  "Q16970 church building": {
+   "geo": 395785,
+   "geo:ms": 753,
+   "geo+P571": 80070,
+   "geo+P571:ms": 630,
+   "geo+P576": 3097,
+   "geo+P576:ms": 719,
+   "geo+P571+sl10": 2585,
+   "geo+P571+sl10:ms": 904
+  },
+  "Q16560 palace": {
+   "geo": 18204,
+   "geo:ms": 500,
+   "geo+P571": 5891,
+   "geo+P571:ms": 372,
+   "geo+P576": 186,
+   "geo+P576:ms": 753,
+   "geo+P571+sl10": 456,
+   "geo+P571+sl10:ms": 946
+  },
+  "Q57821 fortification": {
+   "geo": 84460,
+   "geo:ms": 1388,
+   "geo+P571": 10979,
+   "geo+P571:ms": 402,
+   "geo+P576": 1306,
+   "geo+P576:ms": 1019,
+   "geo+P571+sl10": 1121,
+   "geo+P571+sl10:ms": 846
+  },
+  "Q39715 lighthouse": {
+   "geo": 9812,
+   "geo:ms": 331,
+   "geo+P571": 6561,
+   "geo+P571:ms": 448,
+   "geo+P576": 268,
+   "geo+P576:ms": 638,
+   "geo+P571+sl10": 79,
+   "geo+P571+sl10:ms": 713
+  },
+  "Q12280 bridge": {
+   "geo": 71853,
+   "geo:ms": 612,
+   "geo+P571": 15343,
+   "geo+P571:ms": 392,
+   "geo+P576": 1265,
+   "geo+P576:ms": 684,
+   "geo+P571+sl10": 537,
+   "geo+P571+sl10:ms": 811
+  },
+  "Q54831 amphitheatre": {
+   "geo": 1272,
+   "geo:ms": 312,
+   "geo+P571": 599,
+   "geo+P571:ms": 570,
+   "geo+P576": 11,
+   "geo+P576:ms": 846,
+   "geo+P571+sl10": 25,
+   "geo+P571+sl10:ms": 1752
+  },
+  "Q4989906 monument": {
+   "geo": 539420,
+   "geo:ms": 930,
+   "geo+P571": 61941,
+   "geo+P571:ms": 436,
+   "geo+P576": 736,
+   "geo+P576:ms": 1421,
+   "geo+P571+sl10": 1010,
+   "geo+P571+sl10:ms": 967
+  },
+  "Q839954 archaeological site": {
+   "geo": 325344,
+   "geo:ms": 620,
+   "geo+P571": 3758,
+   "geo+P571:ms": 404,
+   "geo+P576": 1195,
+   "geo+P576:ms": 769,
+   "geo+P571+sl10": 661,
+   "geo+P571+sl10:ms": 2662
+  },
+  "Q162875 mausoleum": {
+   "geo": 5247,
+   "geo:ms": 726,
+   "geo+P571": 719,
+   "geo+P571:ms": 320,
+   "geo+P576": 43,
+   "geo+P576:ms": 634,
+   "geo+P571+sl10": 108,
+   "geo+P571+sl10:ms": 1105
+  },
+  "Q180987 stupa": {
+   "geo": 276,
+   "geo:ms": 475,
+   "geo+P571": 22,
+   "geo+P571:ms": 357,
+   "geo+P576": 0,
+   "geo+P576:ms": 786,
+   "geo+P571+sl10": 7,
+   "geo+P571+sl10:ms": 1405
+  },
+  "Q34627 synagogue": {
+   "geo": 4695,
+   "geo:ms": 403,
+   "geo+P571": 2044,
+   "geo+P571:ms": 578,
+   "geo+P576": 571,
+   "geo+P576:ms": 1054,
+   "geo+P571+sl10": 183,
+   "geo+P571+sl10:ms": 894
+  },
+  "Q842402 Hindu temple": {
+   "geo": 4281,
+   "geo:ms": 585,
+   "geo+P571": 171,
+   "geo+P571:ms": 540,
+   "geo+P576": 1,
+   "geo+P576:ms": 1954,
+   "geo+P571+sl10": 42,
+   "geo+P571+sl10:ms": 1632
+  },
+  "Q5393308 Buddhist temple": {
+   "geo": 21718,
+   "geo:ms": 464,
+   "geo+P571": 3184,
+   "geo+P571:ms": 407,
+   "geo+P576": 28,
+   "geo+P576:ms": 932,
+   "geo+P571+sl10": 143,
+   "geo+P571+sl10:ms": 859
+  },
+  "Q193475 menhir": {
+   "geo": 2035,
+   "geo:ms": 309,
+   "geo+P571": 17,
+   "geo+P571:ms": 347,
+   "geo+P576": 1,
+   "geo+P576:ms": 748,
+   "geo+P571+sl10": 1,
+   "geo+P571+sl10:ms": 1067
+  },
+  "Q12518 tower": {
+   "geo": 33469,
+   "geo:ms": 409,
+   "geo+P571": 6508,
+   "geo+P571:ms": 505,
+   "geo+P576": 292,
+   "geo+P576:ms": 677,
+   "geo+P571+sl10": 230,
+   "geo+P571+sl10:ms": 745
+  },
+  "Q11303 skyscraper": {
+   "geo": 4514,
+   "geo:ms": 433,
+   "geo+P571": 2886,
+   "geo+P571:ms": 897,
+   "geo+P576": 51,
+   "geo+P576:ms": 1004,
+   "geo+P571+sl10": 692,
+   "geo+P571+sl10:ms": 737
+  },
+  "Q12323 dam": {
+   "geo": 82364,
+   "geo:ms": 461,
+   "geo+P571": 3131,
+   "geo+P571:ms": 390,
+   "geo+P576": 56,
+   "geo+P576:ms": 659,
+   "geo+P571+sl10": 195,
+   "geo+P571+sl10:ms": 780
+  },
+  "Q41176 building": {
+   "geo": 2486932,
+   "geo:ms": 2697,
+   "geo+P571": 417609,
+   "geo+P571:ms": 1901,
+   "geo+P576": 19407,
+   "geo+P576:ms": 1570,
+   "geo+P571+sl10": 11222,
+   "geo+P571+sl10:ms": 1765
+  },
+  "Q811979 built structure": {
+   "geo": 4611403,
+   "geo:ms": 3860,
+   "geo+P571": 723483,
+   "geo+P571:ms": 2017,
+   "geo+P576": 46364,
+   "geo+P576:ms": 1609,
+   "geo+P571+sl10": 18014,
+   "geo+P571+sl10:ms": 1438
+  },
+  "Q515 city": {
+   "geo": 23241,
+   "geo:ms": 924,
+   "geo+P571": 5474,
+   "geo+P571:ms": 425,
+   "geo+P576": 336,
+   "geo+P576:ms": 705,
+   "geo+P571+sl10": 5025,
+   "geo+P571+sl10:ms": 742
+  },
+  "Q486972 human settlement": {
+   "geo": 1825882,
+   "geo:ms": 2100,
+   "geo+P571": 76615,
+   "geo+P571:ms": 1108,
+   "geo+P576": 10143,
+   "geo+P576:ms": 698,
+   "geo+P571+sl10": 34061,
+   "geo+P571+sl10:ms": 775
+  },
+  "Q46831 mountain range": {
+   "geo": 23305,
+   "geo:ms": 512,
+   "geo+P571": 43,
+   "geo+P571:ms": 324,
+   "geo+P576": 0,
+   "geo+P576:ms": 867,
+   "geo+P571+sl10": 22,
+   "geo+P571+sl10:ms": 1462
+  },
+  "Q8514 desert": {
+   "geo": 2681,
+   "geo:ms": 304,
+   "geo+P571": 4,
+   "geo+P571:ms": 361,
+   "geo+P576": 0,
+   "geo+P576:ms": 816,
+   "geo+P571+sl10": 4,
+   "geo+P571+sl10:ms": 941
+  },
+  "Q185113 cape": {
+   "geo": 14839,
+   "geo:ms": 413,
+   "geo+P571": 28,
+   "geo+P571:ms": 420,
+   "geo+P576": 0,
+   "geo+P576:ms": 945,
+   "geo+P571+sl10": 9,
+   "geo+P571+sl10:ms": 814
+  },
+  "Q9259 World Heritage Site": {
+   "geo": 163,
+   "geo:ms": 303,
+   "geo+P571": 49,
+   "geo+P571:ms": 372,
+   "geo+P576": 7,
+   "geo+P576:ms": 1125,
+   "geo+P571+sl10": 33,
+   "geo+P571+sl10:ms": 958
+  },
+  "P1435=Q9259": {
+   "n": "3350",
+   "dated": "625"
+  }
+ },
+ "samples": {
+  "Q2977 cathedral": [
+   {
+    "i": "Q2981",
+    "en": "Notre-Dame de Paris",
+    "es": "Catedral de Notre-Dame de París",
+    "sl": "125",
+    "t": "1163-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(2.349800 48.853000)"
+   },
+   {
+    "i": "Q5933",
+    "en": "Westminster Abbey",
+    "es": "Abadía de Westminster",
+    "sl": "91",
+    "t": "1540-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-0.127367 51.499400)"
+   },
+   {
+    "i": "Q5933",
+    "en": "Westminster Abbey",
+    "es": "Abadía de Westminster",
+    "sl": "91",
+    "t": "0901-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985727",
+    "co": "POINT(-0.127367 51.499400)"
+   },
+   {
+    "i": "Q4176",
+    "en": "Cologne Cathedral",
+    "es": "Catedral de Colonia",
+    "sl": "86",
+    "t": "1248-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(6.958333 50.941389)"
+   },
+   {
+    "i": "Q18068",
+    "en": "Milan Cathedral",
+    "es": "Catedral de Milán",
+    "sl": "78",
+    "t": "1386-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(9.190578 45.463968)"
+   },
+   {
+    "i": "Q187702",
+    "en": "Church of the Holy Sepulchre",
+    "es": "Basílica del Santo Sepulcro",
+    "sl": "76",
+    "t": "0335-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(35.229750 31.778444)"
+   },
+   {
+    "i": "Q173882",
+    "en": "St Paul's Cathedral",
+    "es": "Catedral de San Pablo de Londres",
+    "sl": "74",
+    "t": "1675-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-0.098305 51.513778)"
+   },
+   {
+    "i": "Q180274",
+    "en": "Notre-Dame de Chartres",
+    "es": "catedral de Chartres",
+    "sl": "73",
+    "t": "1145-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(1.487778 48.447778)"
+   }
+  ],
+  "Q12516 pyramid": [
+   {
+    "i": "Q37200",
+    "en": "Great Pyramid of Giza",
+    "es": "Gran pirámide de Giza",
+    "sl": "126",
+    "t": "-2559-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(31.134220 29.979150)"
+   },
+   {
+    "i": "Q37200",
+    "en": "Great Pyramid of Giza",
+    "es": "Gran pirámide de Giza",
+    "sl": "126",
+    "t": "-2559-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(31.134220 29.979150)"
+   },
+   {
+    "i": "Q192418",
+    "en": "Pyramid of Djoser",
+    "es": "pirámide escalonada de Zoser",
+    "sl": "56",
+    "t": "-2639-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(31.216667 29.871111)"
+   },
+   {
+    "i": "Q192418",
+    "en": "Pyramid of Djoser",
+    "es": "pirámide escalonada de Zoser",
+    "sl": "56",
+    "t": "-2639-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(31.216667 29.871111)"
+   },
+   {
+    "i": "Q503823",
+    "en": "Tomb of Askia",
+    "es": "Tumba de los Askia",
+    "sl": "55",
+    "t": "1495-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-0.044444 16.289722)"
+   },
+   {
+    "i": "Q238623",
+    "en": "Pyramid of Menkaure",
+    "es": "Pirámide de Micerino",
+    "sl": "46",
+    "t": "-2510-01-01T00:00:00Z",
+    "prec": "8",
+    "cal": "Q1985786",
+    "co": "POINT(31.128333 29.972500)"
+   },
+   {
+    "i": "Q238623",
+    "en": "Pyramid of Menkaure",
+    "es": "Pirámide de Micerino",
+    "sl": "46",
+    "t": "-2510-01-01T00:00:00Z",
+    "prec": "8",
+    "cal": "Q1985786",
+    "co": "POINT(31.128333 29.972500)"
+   },
+   {
+    "i": "Q202927",
+    "en": "Ziggurat of Ur",
+    "es": "Zigurat de Ur",
+    "sl": "43",
+    "t": "-2100-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(46.102500 30.962500)"
+   }
+  ],
+  "Q23413 castle": [
+   {
+    "i": "Q1143049",
+    "en": "Château de Montsoreau",
+    "es": "Castillo de Montsoreau",
+    "sl": "100",
+    "t": "0990-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(0.062200 47.215600)"
+   },
+   {
+    "i": "Q4152",
+    "en": "Neuschwanstein Castle",
+    "es": "Neuschwanstein",
+    "sl": "93",
+    "t": "1869-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(10.749442 47.557489)"
+   },
+   {
+    "i": "Q62378",
+    "en": "Tower of London",
+    "es": "Torre de Londres",
+    "sl": "88",
+    "t": "1066-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-0.076198 51.508200)"
+   },
+   {
+    "i": "Q1865480",
+    "en": "Bastille",
+    "es": "Bastilla",
+    "sl": "86",
+    "t": "1370-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(2.369167 48.853333)",
+    "end": "1789-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q42646",
+    "en": "Windsor Castle",
+    "es": "Castillo de Windsor",
+    "sl": "85",
+    "t": "1070-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-0.604444 51.483889)"
+   },
+   {
+    "i": "Q177549",
+    "en": "Krak des Chevaliers",
+    "es": "Crac de los Caballeros",
+    "sl": "77",
+    "t": "1031-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(36.294722 34.756944)"
+   },
+   {
+    "i": "Q177549",
+    "en": "Krak des Chevaliers",
+    "es": "Crac de los Caballeros",
+    "sl": "77",
+    "t": "1031-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(36.294722 34.756944)"
+   },
+   {
+    "i": "Q188754",
+    "en": "Himeji Castle",
+    "es": "Castillo Himeji",
+    "sl": "76",
+    "t": "1347-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(134.693611 34.839445)"
+   }
+  ],
+  "Q44539 temple": [
+   {
+    "i": "Q10288",
+    "en": "Parthenon",
+    "es": "Partenón",
+    "sl": "139",
+    "t": "-0500-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(23.726601 37.971527)"
+   },
+   {
+    "i": "Q43473",
+    "en": "Angkor Wat",
+    "es": "Angkor Wat",
+    "sl": "138",
+    "t": "1200-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(103.866667 13.412500)"
+   },
+   {
+    "i": "Q43473",
+    "en": "Angkor Wat",
+    "es": "Angkor Wat",
+    "sl": "138",
+    "t": "0802-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(103.866667 13.412500)"
+   },
+   {
+    "i": "Q43473",
+    "en": "Angkor Wat",
+    "es": "Angkor Wat",
+    "sl": "138",
+    "t": "0802-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(103.866667 13.412500)"
+   },
+   {
+    "i": "Q43473",
+    "en": "Angkor Wat",
+    "es": "Angkor Wat",
+    "sl": "138",
+    "t": "1200-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(103.866667 13.412500)"
+   },
+   {
+    "i": "Q43473",
+    "en": "Angkor Wat",
+    "es": "Angkor Wat",
+    "sl": "138",
+    "t": "0802-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(103.866667 13.412500)"
+   },
+   {
+    "i": "Q43473",
+    "en": "Angkor Wat",
+    "es": "Angkor Wat",
+    "sl": "138",
+    "t": "1200-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(103.866667 13.412500)"
+   },
+   {
+    "i": "Q12512",
+    "en": "St. Peter's Basilica",
+    "es": "basílica de San Pedro",
+    "sl": "133",
+    "t": "1506-04-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(12.453417 41.902222)"
+   }
+  ],
+  "Q32815 mosque": [
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0537-12-29T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0404-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0360-02-16T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0532-01-16T00:00:00Z"
+   },
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0415-10-11T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0404-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0415-10-11T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0532-01-16T00:00:00Z"
+   },
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0360-02-16T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0404-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0532-02-25T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0404-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0532-02-25T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0532-01-16T00:00:00Z"
+   },
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0537-12-29T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0532-01-16T00:00:00Z"
+   }
+  ],
+  "Q16970 church building": [
+   {
+    "i": "Q12512",
+    "en": "St. Peter's Basilica",
+    "es": "basílica de San Pedro",
+    "sl": "133",
+    "t": "1506-04-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(12.453417 41.902222)"
+   },
+   {
+    "i": "Q12512",
+    "en": "St. Peter's Basilica",
+    "es": "basílica de San Pedro",
+    "sl": "133",
+    "t": "1506-04-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(12.453417 41.902222)"
+   },
+   {
+    "i": "Q12512",
+    "en": "St. Peter's Basilica",
+    "es": "basílica de San Pedro",
+    "sl": "133",
+    "t": "1506-04-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(12.453417 41.902222)"
+   },
+   {
+    "i": "Q12512",
+    "en": "St. Peter's Basilica",
+    "es": "basílica de San Pedro",
+    "sl": "133",
+    "t": "1506-04-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(12.453417 41.902222)"
+   },
+   {
+    "i": "Q2981",
+    "en": "Notre-Dame de Paris",
+    "es": "Catedral de Notre-Dame de París",
+    "sl": "125",
+    "t": "1163-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(2.349800 48.853000)"
+   },
+   {
+    "i": "Q2981",
+    "en": "Notre-Dame de Paris",
+    "es": "Catedral de Notre-Dame de París",
+    "sl": "125",
+    "t": "1163-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(2.349800 48.853000)"
+   },
+   {
+    "i": "Q48435",
+    "en": "Basilica and Expiatory Church of the Holy Family",
+    "es": "Templo Expiatorio de la Sagrada Familia",
+    "sl": "109",
+    "t": "1882-03-19T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.174330 41.403690)"
+   },
+   {
+    "i": "Q48435",
+    "en": "Basilica and Expiatory Church of the Holy Family",
+    "es": "Templo Expiatorio de la Sagrada Familia",
+    "sl": "109",
+    "t": "1882-03-19T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.174330 41.403690)"
+   }
+  ],
+  "Q16560 palace": [
+   {
+    "i": "Q35525",
+    "en": "White House",
+    "es": "Casa Blanca",
+    "sl": "143",
+    "t": "1800-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985727",
+    "co": "POINT(-77.036667 38.897778)"
+   },
+   {
+    "i": "Q2946",
+    "en": "Palace of Versailles",
+    "es": "Palacio de Versalles",
+    "sl": "109",
+    "t": "1661-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(2.120278 48.804722)"
+   },
+   {
+    "i": "Q2946",
+    "en": "Palace of Versailles",
+    "es": "Palacio de Versalles",
+    "sl": "109",
+    "t": "1661-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(2.120278 48.804722)"
+   },
+   {
+    "i": "Q80290",
+    "en": "Forbidden City",
+    "es": "Ciudad Prohibida",
+    "sl": "106",
+    "t": "1420-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(116.390833 39.915833)"
+   },
+   {
+    "i": "Q1143049",
+    "en": "Château de Montsoreau",
+    "es": "Castillo de Montsoreau",
+    "sl": "100",
+    "t": "0990-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(0.062200 47.215600)"
+   },
+   {
+    "i": "Q47476",
+    "en": "Alhambra",
+    "es": "Alhambra",
+    "sl": "96",
+    "t": "1239-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-3.588210 37.176340)"
+   },
+   {
+    "i": "Q42182",
+    "en": "Buckingham Palace",
+    "es": "Palacio de Buckingham",
+    "sl": "95",
+    "t": "1703-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-0.142000 51.501000)"
+   },
+   {
+    "i": "Q4152",
+    "en": "Neuschwanstein Castle",
+    "es": "Neuschwanstein",
+    "sl": "93",
+    "t": "1869-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(10.749442 47.557489)"
+   }
+  ],
+  "Q57821 fortification": [
+   {
+    "i": "Q12501",
+    "en": "Great Wall of China",
+    "es": "Gran Muralla china",
+    "sl": "195",
+    "t": "-0700-01-01T00:00:00Z",
+    "prec": "8",
+    "cal": "Q1985786",
+    "co": "POINT(116.564444 40.431389)"
+   },
+   {
+    "i": "Q5086",
+    "en": "Berlin Wall",
+    "es": "Muro de Berlín",
+    "sl": "140",
+    "t": "1961-08-13T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(13.441111 52.504444)",
+    "end": "1989-11-09T00:00:00Z"
+   },
+   {
+    "i": "Q5086",
+    "en": "Berlin Wall",
+    "es": "Muro de Berlín",
+    "sl": "140",
+    "t": "1961-08-13T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(13.441111 52.504444)",
+    "end": "1989-11-09T00:00:00Z"
+   },
+   {
+    "i": "Q1143049",
+    "en": "Château de Montsoreau",
+    "es": "Castillo de Montsoreau",
+    "sl": "100",
+    "t": "0990-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(0.062200 47.215600)"
+   },
+   {
+    "i": "Q133274",
+    "en": "Kremlin",
+    "es": "Kremlin",
+    "sl": "99",
+    "t": "1420-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(37.617778 55.751667)"
+   },
+   {
+    "i": "Q131013",
+    "en": "Acropolis of Athens",
+    "es": "Acrópolis de Atenas",
+    "sl": "97",
+    "t": "-0500-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(23.726111 37.971667)"
+   },
+   {
+    "i": "Q4152",
+    "en": "Neuschwanstein Castle",
+    "es": "Neuschwanstein",
+    "sl": "93",
+    "t": "1869-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(10.749442 47.557489)"
+   },
+   {
+    "i": "Q199889",
+    "en": "Kumamoto",
+    "es": "Kumamoto",
+    "sl": "90",
+    "t": "1889-04-01T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(130.707861 32.803000)"
+   }
+  ],
+  "Q39715 lighthouse": [
+   {
+    "i": "Q43244",
+    "en": "Lighthouse of Alexandria",
+    "es": "Faro de Alejandría",
+    "sl": "96",
+    "t": "-0278-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(29.885000 31.214167)",
+    "end": "1480-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q245151",
+    "en": "Tower of Hercules",
+    "es": "Torre de Hércules",
+    "sl": "53",
+    "t": "0100-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(-8.406389 43.385833)"
+   },
+   {
+    "i": "Q245151",
+    "en": "Tower of Hercules",
+    "es": "Torre de Hércules",
+    "sl": "53",
+    "t": "0100-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(-8.406389 43.385833)"
+   },
+   {
+    "i": "Q848397",
+    "en": "Maiden's Tower",
+    "es": "Torre de la Doncella",
+    "sl": "45",
+    "t": "1110-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(29.004167 41.021111)"
+   },
+   {
+    "i": "Q199234",
+    "en": "Cordouan Lighthouse",
+    "es": "Faro de Cordouan",
+    "sl": "32",
+    "t": "1615-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-1.173325 45.586320)"
+   },
+   {
+    "i": "Q2984041",
+    "en": "Keri Lighthouse",
+    "es": "Faro de Keri",
+    "sl": "26",
+    "t": "1724-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(25.022739 59.698708)"
+   },
+   {
+    "i": "Q776666",
+    "en": "Lighthouse of Genoa",
+    "es": "Faro Linterna de Génova",
+    "sl": "23",
+    "t": "1543-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(8.904636 44.404540)"
+   },
+   {
+    "i": "Q1795607",
+    "en": "Kõpu Lighthouse",
+    "es": "Faro de Kõpu",
+    "sl": "23",
+    "t": "1531-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(22.199683 58.915967)"
+   }
+  ],
+  "Q12280 bridge": [
+   {
+    "i": "Q44440",
+    "en": "Golden Gate Bridge",
+    "es": "puente Golden Gate",
+    "sl": "111",
+    "t": "1937-05-27T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-122.478611 37.819722)"
+   },
+   {
+    "i": "Q44440",
+    "en": "Golden Gate Bridge",
+    "es": "puente Golden Gate",
+    "sl": "111",
+    "t": "1937-05-27T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-122.478611 37.819722)"
+   },
+   {
+    "i": "Q44440",
+    "en": "Golden Gate Bridge",
+    "es": "puente Golden Gate",
+    "sl": "111",
+    "t": "1937-05-27T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-122.478611 37.819722)"
+   },
+   {
+    "i": "Q44440",
+    "en": "Golden Gate Bridge",
+    "es": "puente Golden Gate",
+    "sl": "111",
+    "t": "1937-05-27T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-122.478611 37.819722)"
+   },
+   {
+    "i": "Q83125",
+    "en": "Tower Bridge",
+    "es": "puente de la Torre",
+    "sl": "86",
+    "t": "1886-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-0.075278 51.505556)"
+   },
+   {
+    "i": "Q83125",
+    "en": "Tower Bridge",
+    "es": "puente de la Torre",
+    "sl": "86",
+    "t": "1886-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-0.075278 51.505556)"
+   },
+   {
+    "i": "Q83125",
+    "en": "Tower Bridge",
+    "es": "puente de la Torre",
+    "sl": "86",
+    "t": "1886-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-0.075278 51.505556)"
+   },
+   {
+    "i": "Q83125",
+    "en": "Tower Bridge",
+    "es": "puente de la Torre",
+    "sl": "86",
+    "t": "1886-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-0.075278 51.505556)"
+   }
+  ],
+  "Q54831 amphitheatre": [
+   {
+    "i": "Q10285",
+    "en": "Colosseum",
+    "es": "Coliseo",
+    "sl": "148",
+    "t": "0082-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(12.492222 41.890278)"
+   },
+   {
+    "i": "Q641556",
+    "en": "Verona Arena",
+    "es": "Arena de Verona",
+    "sl": "44",
+    "t": "0030-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(10.994444 45.438889)"
+   },
+   {
+    "i": "Q2914326",
+    "en": "Roman amphitheatre of El Jem",
+    "es": "Anfiteatro de El Djem",
+    "sl": "41",
+    "t": "0238-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(10.706944 35.296389)"
+   },
+   {
+    "i": "Q474998",
+    "en": "Pula Arena",
+    "es": "Anfiteatro de Pula",
+    "sl": "37",
+    "t": "-0026-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(13.850000 44.873000)"
+   },
+   {
+    "i": "Q756621",
+    "en": "Las Ventas",
+    "es": "Las Ventas",
+    "sl": "29",
+    "t": "1931-06-17T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-3.663278 40.432083)"
+   },
+   {
+    "i": "Q756621",
+    "en": "Las Ventas",
+    "es": "Las Ventas",
+    "sl": "29",
+    "t": "1922-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-3.663278 40.432083)"
+   },
+   {
+    "i": "Q179656",
+    "en": "Amphitheater of Nîmes",
+    "es": "Arena de Nimes",
+    "sl": "27",
+    "t": "0090-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(4.359630 43.834890)"
+   },
+   {
+    "i": "Q179656",
+    "en": "Amphitheater of Nîmes",
+    "es": "Arena de Nimes",
+    "sl": "27",
+    "t": "0090-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(4.359630 43.834890)"
+   }
+  ],
+  "Q4989906 monument": [
+   {
+    "i": "Q9202",
+    "en": "Statue of Liberty",
+    "es": "Estatua de la Libertad",
+    "sl": "159",
+    "t": "1886-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-74.044425 40.689209)"
+   },
+   {
+    "i": "Q39671",
+    "en": "Stonehenge",
+    "es": "Stonehenge",
+    "sl": "136",
+    "t": "-3000-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(-1.826111 51.178889)",
+    "end": "-1399-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q39671",
+    "en": "Stonehenge",
+    "es": "Stonehenge",
+    "sl": "136",
+    "t": "-1848-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(-1.826111 51.178889)",
+    "end": "-1399-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q39671",
+    "en": "Stonehenge",
+    "es": "Stonehenge",
+    "sl": "136",
+    "t": "-3000-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(-1.826111 51.178889)",
+    "end": "-1399-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q39671",
+    "en": "Stonehenge",
+    "es": "Stonehenge",
+    "sl": "136",
+    "t": "-1848-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(-1.826111 51.178889)",
+    "end": "-1399-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q37200",
+    "en": "Great Pyramid of Giza",
+    "es": "Gran pirámide de Giza",
+    "sl": "126",
+    "t": "-2559-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(31.134220 29.979150)"
+   },
+   {
+    "i": "Q131301",
+    "en": "Homs",
+    "es": "Homs",
+    "sl": "110",
+    "t": "-1999-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(36.716667 34.733333)"
+   },
+   {
+    "i": "Q5687",
+    "en": "Jericho",
+    "es": "Jericó",
+    "sl": "99",
+    "t": "-9600-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(35.463056 31.856111)"
+   }
+  ],
+  "Q839954 archaeological site": [
+   {
+    "i": "Q1524",
+    "en": "Athens",
+    "es": "Atenas",
+    "sl": "289",
+    "t": "-7000-01-01T00:00:00Z",
+    "prec": "6",
+    "cal": "Q1985786",
+    "co": "POINT(23.728056 37.984167)"
+   },
+   {
+    "i": "Q85",
+    "en": "Cairo",
+    "es": "El Cairo",
+    "sl": "262",
+    "t": "0969-07-11T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(31.235833 30.044444)"
+   },
+   {
+    "i": "Q3766",
+    "en": "Damascus",
+    "es": "Damasco",
+    "sl": "243",
+    "t": "-2000-01-01T00:00:00Z",
+    "prec": "6",
+    "cal": "Q1985786",
+    "co": "POINT(36.291944 33.513056)"
+   },
+   {
+    "i": "Q3766",
+    "en": "Damascus",
+    "es": "Damasco",
+    "sl": "243",
+    "t": "-2000-01-01T00:00:00Z",
+    "prec": "6",
+    "cal": "Q1985786",
+    "co": "POINT(36.292000 33.513000)"
+   },
+   {
+    "i": "Q87",
+    "en": "Alexandria",
+    "es": "Alejandría",
+    "sl": "177",
+    "t": "-0330-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(29.892500 31.197500)"
+   },
+   {
+    "i": "Q676203",
+    "en": "Machu Picchu",
+    "es": "Machu Picchu",
+    "sl": "151",
+    "t": "1450-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-72.545556 -13.163333)",
+    "end": "1572-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q676203",
+    "en": "Machu Picchu",
+    "es": "Machu Picchu",
+    "sl": "151",
+    "t": "1450-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-72.545556 -13.163333)",
+    "end": "1572-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q10285",
+    "en": "Colosseum",
+    "es": "Coliseo",
+    "sl": "148",
+    "t": "0082-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(12.492222 41.890278)"
+   }
+  ],
+  "Q162875 mausoleum": [
+   {
+    "i": "Q47672",
+    "en": "Terracotta Army",
+    "es": "Guerreros de Terracota",
+    "sl": "90",
+    "t": "-0247-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(109.273055 34.385000)"
+   },
+   {
+    "i": "Q45368",
+    "en": "Mausoleum at Halicarnassus",
+    "es": "Mausoleo de Halicarnaso",
+    "sl": "90",
+    "t": "-0350-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(27.424097 37.037942)",
+    "end": "1494-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q191414",
+    "en": "Lenin's Mausoleum",
+    "es": "Mausoleo de Lenin",
+    "sl": "62",
+    "t": "1930-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(37.619722 55.753611)"
+   },
+   {
+    "i": "Q188856",
+    "en": "Panthéon",
+    "es": "Panteón de París",
+    "sl": "61",
+    "t": "1758-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(2.346105 48.846198)"
+   },
+   {
+    "i": "Q486382",
+    "en": "Castel Sant'Angelo",
+    "es": "Castillo Sant'Angelo",
+    "sl": "58",
+    "t": "0139-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(12.466307 41.903044)"
+   },
+   {
+    "i": "Q486382",
+    "en": "Castel Sant'Angelo",
+    "es": "Castillo Sant'Angelo",
+    "sl": "58",
+    "t": "0139-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(12.466307 41.903044)"
+   },
+   {
+    "i": "Q615404",
+    "en": "Anıtkabir",
+    "es": "Anıtkabir",
+    "sl": "53",
+    "t": "1953-10-01T00:00:00Z",
+    "prec": "10",
+    "cal": "Q1985727",
+    "co": "POINT(32.836944 39.925000)"
+   },
+   {
+    "i": "Q838359",
+    "en": "Imam Ali Mosque",
+    "es": "Mezquita del Imán Alí",
+    "sl": "52",
+    "t": "0977-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(44.314167 31.996111)"
+   }
+  ],
+  "Q180987 stupa": [
+   {
+    "i": "Q42798",
+    "en": "Borobudur Temple",
+    "es": "Borobudur",
+    "sl": "101",
+    "t": "0800-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(110.203840 -7.607930)"
+   },
+   {
+    "i": "Q47721",
+    "en": "Prambanan Temple",
+    "es": "Prambanan",
+    "sl": "72",
+    "t": "0850-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(110.491220 -7.752000)"
+   },
+   {
+    "i": "Q1059720",
+    "en": "Pha That Luang",
+    "es": "Pha That Luang",
+    "sl": "39",
+    "t": "1566-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(102.634250 17.976167)"
+   },
+   {
+    "i": "Q1150964",
+    "en": "Phra Pathommachedi",
+    "es": "Phra Pathom Chedi",
+    "sl": "14",
+    "t": "1870-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(100.060281 13.819719)"
+   },
+   {
+    "i": "Q2090440",
+    "en": "Shanti Stupa",
+    "es": "estupa Shanti",
+    "sl": "14",
+    "t": "1991-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(77.574722 34.173611)"
+   },
+   {
+    "i": "Q2735629",
+    "en": "Cetho",
+    "sl": "11",
+    "t": "1500-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985727",
+    "co": "POINT(111.157310 -7.595540)"
+   },
+   {
+    "i": "Q864865",
+    "en": "Memorial Chorten",
+    "es": "Chörten conmemorativo",
+    "sl": "11",
+    "t": "1974-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(89.637778 27.466389)"
+   },
+   {
+    "i": "Q2593345",
+    "en": "Takht-e Rostam",
+    "es": "Takht-e Rostam",
+    "sl": "9",
+    "t": "0400-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(68.022133 36.245711)"
+   }
+  ],
+  "Q34627 synagogue": [
+   {
+    "i": "Q754397",
+    "en": "Dohány Street Synagogue",
+    "es": "Gran Sinagoga de Budapest",
+    "sl": "36",
+    "t": "1854-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(19.060700 47.495900)"
+   },
+   {
+    "i": "Q443107",
+    "en": "Old New Synagogue",
+    "es": "Sinagoga Vieja-Nueva",
+    "sl": "33",
+    "t": "1270-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(14.418611 50.090000)"
+   },
+   {
+    "i": "Q246474",
+    "en": "New Synagogue Berlin",
+    "es": "Nueva Sinagoga",
+    "sl": "31",
+    "t": "1859-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(13.394444 52.524722)"
+   },
+   {
+    "i": "Q1141086",
+    "en": "Synagogue of Besançon",
+    "es": "Sinagoga de Besanzón",
+    "sl": "30",
+    "t": "1871-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(6.021444 47.241333)"
+   },
+   {
+    "i": "Q990003",
+    "en": "Spanish Synagogue",
+    "es": "Sinagoga Española (Praga)",
+    "sl": "27",
+    "t": "1868-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(14.420833 50.090361)"
+   },
+   {
+    "i": "Q253663",
+    "en": "Stadttempel",
+    "es": "Stadttempel",
+    "sl": "26",
+    "t": "1826-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(16.374825 48.211649)"
+   },
+   {
+    "i": "Q1151525",
+    "en": "Hurva Synagogue",
+    "es": "Sinagoga Hurva",
+    "sl": "25",
+    "t": "1864-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(35.231350 31.775100)"
+   },
+   {
+    "i": "Q1151525",
+    "en": "Hurva Synagogue",
+    "es": "Sinagoga Hurva",
+    "sl": "25",
+    "t": "2010-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(35.231350 31.775100)"
+   }
+  ],
+  "Q842402 Hindu temple": [
+   {
+    "i": "Q43473",
+    "en": "Angkor Wat",
+    "es": "Angkor Wat",
+    "sl": "138",
+    "t": "0802-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(103.866667 13.412500)"
+   },
+   {
+    "i": "Q43473",
+    "en": "Angkor Wat",
+    "es": "Angkor Wat",
+    "sl": "138",
+    "t": "1200-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(103.866667 13.412500)"
+   },
+   {
+    "i": "Q47721",
+    "en": "Prambanan Temple",
+    "es": "Prambanan",
+    "sl": "72",
+    "t": "0850-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(110.491220 -7.752000)"
+   },
+   {
+    "i": "Q752091",
+    "en": "Konark Sun Temple",
+    "es": "Templo de Suria",
+    "sl": "56",
+    "t": "1201-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(86.094596 19.887444)"
+   },
+   {
+    "i": "Q916943",
+    "en": "Prahadisvarar Temple",
+    "es": "Templo Rajarajeswaram",
+    "sl": "55",
+    "t": "1010-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(79.132500 10.783055)"
+   },
+   {
+    "i": "Q45949",
+    "en": "Preah Vihear Temple",
+    "es": "Preah Vihear",
+    "sl": "52",
+    "t": "0893-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(104.680278 14.390556)"
+   },
+   {
+    "i": "Q1424358",
+    "en": "Meenakshi Temple",
+    "es": "Templo de Meenakshi Amman",
+    "sl": "45",
+    "t": "1200-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(78.119444 9.919722)"
+   },
+   {
+    "i": "Q96401169",
+    "en": "Ram Mandir",
+    "es": "Ram Mandir",
+    "sl": "43",
+    "t": "2020-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(82.194300 26.795600)"
+   }
+  ],
+  "Q5393308 Buddhist temple": [
+   {
+    "i": "Q43473",
+    "en": "Angkor Wat",
+    "es": "Angkor Wat",
+    "sl": "138",
+    "t": "0802-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(103.866667 13.412500)"
+   },
+   {
+    "i": "Q43473",
+    "en": "Angkor Wat",
+    "es": "Angkor Wat",
+    "sl": "138",
+    "t": "1200-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(103.866667 13.412500)"
+   },
+   {
+    "i": "Q42798",
+    "en": "Borobudur Temple",
+    "es": "Borobudur",
+    "sl": "101",
+    "t": "0800-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(110.203840 -7.607930)"
+   },
+   {
+    "i": "Q71229",
+    "en": "Potala Palace",
+    "es": "Potala",
+    "sl": "85",
+    "t": "0637-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(91.116945 29.657778)"
+   },
+   {
+    "i": "Q221716",
+    "en": "Kiyomizu-dera",
+    "sl": "77",
+    "t": "0778-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(135.785003 34.994831)"
+   },
+   {
+    "i": "Q270983",
+    "en": "Kinkaku-ji Temple",
+    "es": "Kinkaku-ji",
+    "sl": "57",
+    "t": "1397-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(135.728500 35.039500)"
+   },
+   {
+    "i": "Q261932",
+    "en": "Hōryū-ji Temple",
+    "es": "Hōryū-ji",
+    "sl": "54",
+    "t": "0607-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(135.734167 34.614444)"
+   },
+   {
+    "i": "Q460367",
+    "en": "Tōdai-ji Temple",
+    "es": "Tōdai-ji",
+    "sl": "44",
+    "t": "0800-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(135.839722 34.689167)"
+   }
+  ],
+  "Q193475 menhir": [
+   {
+    "i": "Q508651",
+    "en": "menhir d'Er Grah",
+    "es": "Menhir partido de Er Grah",
+    "sl": "13",
+    "t": "-5000-01-01T00:00:00Z",
+    "prec": "6",
+    "cal": "Q1985786",
+    "co": "POINT(-2.950222 47.571306)"
+   },
+   {
+    "i": "Q1920536",
+    "en": "menhir of Beisenerbierg",
+    "sl": "6",
+    "t": "-2000-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(6.076111 49.759167)"
+   },
+   {
+    "i": "Q22991024",
+    "en": "Pierre de Richebourg",
+    "sl": "3",
+    "t": "-5000-01-01T00:00:00Z",
+    "prec": "6",
+    "cal": "Q1985786",
+    "co": "POINT(-1.323080 47.882535)"
+   },
+   {
+    "i": "Q22991619",
+    "en": "La Roche Longue",
+    "sl": "3",
+    "t": "-4000-01-01T00:00:00Z",
+    "prec": "6",
+    "cal": "Q1985786",
+    "co": "POINT(-1.629056 48.586972)"
+   },
+   {
+    "i": "Q25509639",
+    "en": "Pedrafita do Casal",
+    "sl": "3",
+    "t": "-3499-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-8.042721 42.898817)"
+   },
+   {
+    "i": "Q14628616",
+    "en": "Langenstein",
+    "sl": "2",
+    "t": "-0559-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(7.220730 47.957600)"
+   },
+   {
+    "i": "Q1920554",
+    "en": "Weilheimer Menhir",
+    "sl": "2",
+    "t": "-2000-01-01T00:00:00Z",
+    "prec": "6",
+    "cal": "Q1985786",
+    "co": "POINT(9.030670 48.492700)"
+   },
+   {
+    "i": "Q20512158",
+    "en": "Vishap, Yeghegnadzor",
+    "sl": "2",
+    "t": "-1999-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(45.332111 39.762739)"
+   }
+  ],
+  "Q12518 tower": [
+   {
+    "i": "Q243",
+    "en": "Eiffel Tower",
+    "es": "torre Eiffel",
+    "sl": "191",
+    "t": "1887-01-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.294479 48.858296)"
+   },
+   {
+    "i": "Q243",
+    "en": "Eiffel Tower",
+    "es": "torre Eiffel",
+    "sl": "191",
+    "t": "1887-01-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.294479 48.858296)"
+   },
+   {
+    "i": "Q9202",
+    "en": "Statue of Liberty",
+    "es": "Estatua de la Libertad",
+    "sl": "159",
+    "t": "1886-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-74.044425 40.689209)"
+   },
+   {
+    "i": "Q39054",
+    "en": "Leaning Tower of Pisa",
+    "es": "Torre de Pisa",
+    "sl": "119",
+    "t": "1173-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(10.396624 43.723010)"
+   },
+   {
+    "i": "Q39054",
+    "en": "Leaning Tower of Pisa",
+    "es": "Torre de Pisa",
+    "sl": "119",
+    "t": "1173-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(10.396624 43.723010)"
+   },
+   {
+    "i": "Q41225",
+    "en": "Big Ben",
+    "es": "Big Ben",
+    "sl": "88",
+    "t": "1843-09-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-0.124570 51.500670)"
+   },
+   {
+    "i": "Q41225",
+    "en": "Big Ben",
+    "es": "Big Ben",
+    "sl": "88",
+    "t": "1843-09-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-0.124570 51.500670)"
+   },
+   {
+    "i": "Q41225",
+    "en": "Big Ben",
+    "es": "Big Ben",
+    "sl": "88",
+    "t": "1858-04-10T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-0.124570 51.500670)"
+   }
+  ],
+  "Q11303 skyscraper": [
+   {
+    "i": "Q12495",
+    "en": "Burj Khalifa",
+    "es": "Burj Khalifa",
+    "sl": "140",
+    "t": "2004-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(55.274167 25.197222)"
+   },
+   {
+    "i": "Q9188",
+    "en": "Empire State Building",
+    "es": "Empire State Building",
+    "sl": "125",
+    "t": "1931-05-08T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-73.985555 40.748333)"
+   },
+   {
+    "i": "Q29294",
+    "en": "Willis Tower",
+    "es": "Sears Tower",
+    "sl": "97",
+    "t": "1971-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-87.635833 41.878611)"
+   },
+   {
+    "i": "Q83063",
+    "en": "Petronas Towers",
+    "es": "Torres Petronas",
+    "sl": "90",
+    "t": "1993-03-01T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(101.711667 3.157778)"
+   },
+   {
+    "i": "Q83101",
+    "en": "Taipei 101",
+    "es": "Taipei 101",
+    "sl": "85",
+    "t": "2005-12-31T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(121.564722 25.033611)"
+   },
+   {
+    "i": "Q1030463",
+    "en": "Mode Gakuen Cocoon Tower",
+    "es": "Mode Gakuen Cocoon Tower",
+    "sl": "83",
+    "t": "2008-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(139.696945 35.691667)"
+   },
+   {
+    "i": "Q11274",
+    "en": "Chrysler Building",
+    "es": "Edificio Chrysler",
+    "sl": "75",
+    "t": "1930-05-27T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-73.975719 40.751430)"
+   },
+   {
+    "i": "Q11245",
+    "en": "One World Trade Center",
+    "es": "One World Trade Center",
+    "sl": "74",
+    "t": "2014-11-03T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-74.013500 40.713000)"
+   }
+  ],
+  "Q12323 dam": [
+   {
+    "i": "Q12514",
+    "en": "Three Gorges Dam",
+    "es": "Presa de las Tres Gargantas",
+    "sl": "106",
+    "t": "1994-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(111.003670 30.823860)"
+   },
+   {
+    "i": "Q38891",
+    "en": "Aswan Dam",
+    "es": "Presa de Asuán",
+    "sl": "100",
+    "t": "1960-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(32.880192 23.971431)"
+   },
+   {
+    "i": "Q38891",
+    "en": "Aswan Dam",
+    "es": "Presa de Asuán",
+    "sl": "100",
+    "t": "1960-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(32.880192 23.971431)"
+   },
+   {
+    "i": "Q172822",
+    "es": "Presa Hoover",
+    "sl": "73",
+    "t": "1931-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-114.737778 36.015833)"
+   },
+   {
+    "i": "Q172822",
+    "es": "Presa Hoover",
+    "sl": "73",
+    "t": "1931-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-114.737778 36.015833)"
+   },
+   {
+    "i": "Q244169",
+    "en": "Itaipu Dam",
+    "es": "Central hidroeléctrica Itaipu",
+    "sl": "57",
+    "t": "1970-01-01T00:00:00Z",
+    "prec": "8",
+    "cal": "Q1985727",
+    "co": "POINT(-54.590000 -25.407778)"
+   },
+   {
+    "i": "Q244169",
+    "en": "Itaipu Dam",
+    "es": "Central hidroeléctrica Itaipu",
+    "sl": "57",
+    "t": "1970-01-01T00:00:00Z",
+    "prec": "8",
+    "cal": "Q1985727",
+    "co": "POINT(-54.590000 -25.407778)"
+   },
+   {
+    "i": "Q244169",
+    "en": "Itaipu Dam",
+    "es": "Central hidroeléctrica Itaipu",
+    "sl": "57",
+    "t": "1970-01-01T00:00:00Z",
+    "prec": "8",
+    "cal": "Q1985727",
+    "co": "POINT(-54.590000 -25.407778)"
+   }
+  ],
+  "Q41176 building": [
+   {
+    "i": "Q243",
+    "en": "Eiffel Tower",
+    "es": "torre Eiffel",
+    "sl": "191",
+    "t": "1887-01-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.294479 48.858296)"
+   },
+   {
+    "i": "Q243",
+    "en": "Eiffel Tower",
+    "es": "torre Eiffel",
+    "sl": "191",
+    "t": "1887-01-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.294479 48.858296)"
+   },
+   {
+    "i": "Q19675",
+    "en": "Louvre Museum",
+    "es": "Museo del Louvre",
+    "sl": "170",
+    "t": "1793-08-10T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.335833 48.861111)"
+   },
+   {
+    "i": "Q19675",
+    "en": "Louvre Museum",
+    "es": "Museo del Louvre",
+    "sl": "170",
+    "t": "1793-08-10T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.335833 48.861111)"
+   },
+   {
+    "i": "Q9202",
+    "en": "Statue of Liberty",
+    "es": "Estatua de la Libertad",
+    "sl": "159",
+    "t": "1886-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-74.044425 40.689209)"
+   },
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0415-10-11T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0404-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0415-10-11T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0532-01-16T00:00:00Z"
+   },
+   {
+    "i": "Q12506",
+    "en": "Hagia Sophia",
+    "es": "Santa Sofía",
+    "sl": "152",
+    "t": "0537-12-29T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985786",
+    "co": "POINT(28.980000 41.008333)",
+    "end": "0404-01-01T00:00:00Z"
+   }
+  ],
+  "Q811979 built structure": [
+   {
+    "i": "Q12501",
+    "en": "Great Wall of China",
+    "es": "Gran Muralla china",
+    "sl": "195",
+    "t": "-0700-01-01T00:00:00Z",
+    "prec": "8",
+    "cal": "Q1985786",
+    "co": "POINT(116.564444 40.431389)"
+   },
+   {
+    "i": "Q243",
+    "en": "Eiffel Tower",
+    "es": "torre Eiffel",
+    "sl": "191",
+    "t": "1887-01-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.294479 48.858296)"
+   },
+   {
+    "i": "Q243",
+    "en": "Eiffel Tower",
+    "es": "torre Eiffel",
+    "sl": "191",
+    "t": "1887-01-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.294479 48.858296)"
+   },
+   {
+    "i": "Q243",
+    "en": "Eiffel Tower",
+    "es": "torre Eiffel",
+    "sl": "191",
+    "t": "1887-01-28T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.294479 48.858296)"
+   },
+   {
+    "i": "Q19675",
+    "en": "Louvre Museum",
+    "es": "Museo del Louvre",
+    "sl": "170",
+    "t": "1793-08-10T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.335833 48.861111)"
+   },
+   {
+    "i": "Q19675",
+    "en": "Louvre Museum",
+    "es": "Museo del Louvre",
+    "sl": "170",
+    "t": "1793-08-10T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(2.335833 48.861111)"
+   },
+   {
+    "i": "Q478595",
+    "en": "Tan Son Nhat International Airport",
+    "es": "Aeropuerto Internacional de Tan Son Nhat",
+    "sl": "168",
+    "t": "1930-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(106.652000 10.818800)"
+   },
+   {
+    "i": "Q478595",
+    "en": "Tan Son Nhat International Airport",
+    "es": "Aeropuerto Internacional de Tan Son Nhat",
+    "sl": "168",
+    "t": "1930-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(106.652000 10.818800)"
+   }
+  ],
+  "Q515 city": [
+   {
+    "i": "Q90",
+    "en": "Paris",
+    "es": "París",
+    "sl": "367",
+    "t": "-0300-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(2.352222 48.856667)"
+   },
+   {
+    "i": "Q90",
+    "en": "Paris",
+    "es": "París",
+    "sl": "367",
+    "t": "-0300-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(2.352222 48.856667)"
+   },
+   {
+    "i": "Q90",
+    "en": "Paris",
+    "es": "París",
+    "sl": "367",
+    "t": "-0300-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(2.352222 48.856667)"
+   },
+   {
+    "i": "Q90",
+    "en": "Paris",
+    "es": "París",
+    "sl": "367",
+    "t": "-0300-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(2.352222 48.856667)"
+   },
+   {
+    "i": "Q90",
+    "en": "Paris",
+    "es": "París",
+    "sl": "367",
+    "t": "-0300-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(2.352222 48.856667)"
+   },
+   {
+    "i": "Q84",
+    "en": "London",
+    "es": "Londres",
+    "sl": "357",
+    "t": "0047-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-0.127500 51.507222)"
+   },
+   {
+    "i": "Q84",
+    "en": "London",
+    "es": "Londres",
+    "sl": "357",
+    "t": "0047-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-0.127500 51.507222)"
+   },
+   {
+    "i": "Q84",
+    "en": "London",
+    "es": "Londres",
+    "sl": "357",
+    "t": "0047-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-0.127500 51.507222)"
+   }
+  ],
+  "Q486972 human settlement": [
+   {
+    "i": "Q90",
+    "en": "Paris",
+    "es": "París",
+    "sl": "367",
+    "t": "-0300-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(2.352222 48.856667)"
+   },
+   {
+    "i": "Q90",
+    "en": "Paris",
+    "es": "París",
+    "sl": "367",
+    "t": "-0300-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(2.352222 48.856667)"
+   },
+   {
+    "i": "Q90",
+    "en": "Paris",
+    "es": "París",
+    "sl": "367",
+    "t": "-0300-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(2.352222 48.856667)"
+   },
+   {
+    "i": "Q90",
+    "en": "Paris",
+    "es": "París",
+    "sl": "367",
+    "t": "-0300-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(2.352222 48.856667)"
+   },
+   {
+    "i": "Q90",
+    "en": "Paris",
+    "es": "París",
+    "sl": "367",
+    "t": "-0300-01-01T00:00:00Z",
+    "prec": "7",
+    "cal": "Q1985786",
+    "co": "POINT(2.352222 48.856667)"
+   },
+   {
+    "i": "Q84",
+    "en": "London",
+    "es": "Londres",
+    "sl": "357",
+    "t": "0047-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-0.127500 51.507222)"
+   },
+   {
+    "i": "Q84",
+    "en": "London",
+    "es": "Londres",
+    "sl": "357",
+    "t": "0047-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-0.127500 51.507222)"
+   },
+   {
+    "i": "Q84",
+    "en": "London",
+    "es": "Londres",
+    "sl": "357",
+    "t": "0047-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-0.127500 51.507222)"
+   }
+  ],
+  "Q46831 mountain range": [
+   {
+    "i": "Q211778",
+    "en": "Lake District",
+    "es": "Distrito de los Lagos",
+    "sl": "59",
+    "t": "1951-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-3.166667 54.500000)"
+   },
+   {
+    "i": "Q211778",
+    "en": "Lake District",
+    "es": "Distrito de los Lagos",
+    "sl": "59",
+    "t": "1951-08-13T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-3.166667 54.500000)"
+   },
+   {
+    "i": "Q738004",
+    "en": "Serra da Estrela",
+    "es": "Sierra de la Estrella",
+    "sl": "40",
+    "t": "1998-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-7.612917 40.321889)"
+   },
+   {
+    "i": "Q535065",
+    "en": "Mount Kōya",
+    "es": "Monte Koya",
+    "sl": "38",
+    "t": "0810-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(135.583333 34.217778)"
+   },
+   {
+    "i": "Q26728",
+    "en": "Sierra Nevada de Santa Marta",
+    "es": "Sierra Nevada de Santa Marta",
+    "sl": "37",
+    "t": "1964-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-73.720000 10.866667)"
+   },
+   {
+    "i": "Q341327",
+    "en": "Bohemian Paradise",
+    "es": "El Paraíso Checo (Český ráj)",
+    "sl": "32",
+    "t": "1955-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(15.170556 50.519722)"
+   },
+   {
+    "i": "Q1585051",
+    "en": "Hardangervidda",
+    "es": "Hardangervidda",
+    "sl": "30",
+    "t": "1981-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(7.018033 60.051989)"
+   },
+   {
+    "i": "Q1019768",
+    "en": "Bohemian Switzerland",
+    "es": "Suiza bohemia",
+    "sl": "25",
+    "t": "1972-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(14.250000 50.833333)"
+   }
+  ],
+  "Q8514 desert": [
+   {
+    "i": "Q1244809",
+    "en": "Médanos de Coro National Park",
+    "es": "Parque nacional Los Médanos de Coro",
+    "sl": "22",
+    "t": "1974-02-06T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-69.737630 11.606419)"
+   },
+   {
+    "i": "Q8770950",
+    "en": "Maspalomas Dunes",
+    "es": "Dunas de Maspalomas",
+    "sl": "15",
+    "t": "1987-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-15.585300 27.741700)"
+   },
+   {
+    "i": "Q8770950",
+    "en": "Maspalomas Dunes",
+    "es": "Dunas de Maspalomas",
+    "sl": "15",
+    "t": "1987-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-15.582900 27.742800)"
+   },
+   {
+    "i": "Q2957595",
+    "en": "Chara Sands",
+    "es": "Arenas de Chara",
+    "sl": "12",
+    "t": "1980-01-14T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(118.130000 56.836667)"
+   },
+   {
+    "i": "Q2957595",
+    "en": "Chara Sands",
+    "es": "Arenas de Chara",
+    "sl": "12",
+    "t": "1980-01-14T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(118.150000 56.840000)"
+   },
+   {
+    "i": "Q196047",
+    "en": "Monegros Desert",
+    "es": "Desierto de los Monegros",
+    "sl": "10",
+    "t": "1992-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-0.183333 41.633333)"
+   }
+  ],
+  "Q185113 cape": [
+   {
+    "i": "Q735025",
+    "en": "Cabo Frio",
+    "es": "Cabo Frío",
+    "sl": "46",
+    "t": "1615-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-42.018889 -22.878889)"
+   },
+   {
+    "i": "Q1648563",
+    "en": "Kaliakra",
+    "es": "Kaliakra",
+    "sl": "24",
+    "t": "1941-09-27T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(28.465490 43.361260)"
+   },
+   {
+    "i": "Q175676",
+    "en": "Cap Fréhel",
+    "es": "Landes Du Cap Frehel",
+    "sl": "19",
+    "t": "2012-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-2.318056 48.683333)"
+   },
+   {
+    "i": "Q621794",
+    "en": "Cape Spear",
+    "es": "Cabo Spear",
+    "sl": "19",
+    "t": "1836-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-52.619445 47.523611)"
+   },
+   {
+    "i": "Q1368996",
+    "en": "Estaca de Bares",
+    "es": "Estaca de Bares",
+    "sl": "18",
+    "t": "2004-12-01T00:00:00Z",
+    "prec": "10",
+    "cal": "Q1985727",
+    "co": "POINT(-7.687778 43.790278)"
+   },
+   {
+    "i": "Q856866",
+    "en": "Cabo Girão",
+    "es": "Cabo Girão",
+    "sl": "18",
+    "t": "2015-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-17.004460 32.656490)"
+   },
+   {
+    "i": "Q1419141",
+    "en": "Rt Kamenjak",
+    "sl": "11",
+    "t": "1996-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(13.910000 44.783333)"
+   },
+   {
+    "i": "Q4392556",
+    "en": "Cape Ray",
+    "sl": "11",
+    "t": "1871-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(-59.301900 47.618600)"
+   }
+  ],
+  "Q9259 World Heritage Site": [
+   {
+    "i": "Q676203",
+    "en": "Machu Picchu",
+    "es": "Machu Picchu",
+    "sl": "151",
+    "t": "1450-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(-72.545556 -13.163333)",
+    "end": "1572-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q194504",
+    "en": "Church of the Nativity",
+    "es": "basílica de la Natividad",
+    "sl": "62",
+    "t": "0327-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(35.207583 31.704306)"
+   },
+   {
+    "i": "Q134905",
+    "en": "K'gari",
+    "es": "Isla Fraser",
+    "sl": "62",
+    "t": "1992-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(153.150000 -25.240000)"
+   },
+   {
+    "i": "Q593870",
+    "en": "Virgin Komi Forests",
+    "es": "Bosques vírgenes de Komi",
+    "sl": "50",
+    "t": "1995-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(60.150000 65.066667)"
+   },
+   {
+    "i": "Q211962",
+    "en": "Trinity Lavra of St. Sergius",
+    "es": "Monasterio de la Trinidad y San Sergio",
+    "sl": "49",
+    "t": "1337-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985786",
+    "co": "POINT(38.130650 56.310350)"
+   },
+   {
+    "i": "Q679568",
+    "en": "Purnululu National Park",
+    "es": "Parque nacional Purnululu",
+    "sl": "48",
+    "t": "1987-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(128.546055 -17.448789)"
+   },
+   {
+    "i": "Q647777",
+    "en": "Lençóis Maranhenses National Park",
+    "es": "Parque Nacional de los Lençóis Maranhenses",
+    "sl": "48",
+    "t": "1981-06-02T00:00:00Z",
+    "prec": "11",
+    "cal": "Q1985727",
+    "co": "POINT(-43.133333 -2.483333)"
+   },
+   {
+    "i": "Q270725",
+    "en": "Novodevichy Convent",
+    "es": "Monasterio Novodévichi",
+    "sl": "47",
+    "t": "1524-01-01T00:00:00Z",
+    "prec": "9",
+    "cal": "Q1985727",
+    "co": "POINT(37.556583 55.725972)"
+   }
+  ]
+ },
+ "bands": {
+  "Q811979 sl>=5": 52426,
+  "Q811979 sl>=10": 18014,
+  "Q811979 sl>=20": 5344,
+  "Q811979 sl>=40": 1061,
+  "Q811979 sl>=80": 102,
+  "Q811979 sl>=20 con varias P571": {
+   "items": "5344",
+   "multi": "161"
+  },
+  "Q811979 sl>=20 precision P571": [
+   {
+    "prec": "4",
+    "n": "1"
+   },
+   {
+    "prec": "5",
+    "n": "2"
+   },
+   {
+    "prec": "6",
+    "n": "7"
+   },
+   {
+    "prec": "7",
+    "n": "421"
+   },
+   {
+    "prec": "8",
+    "n": "54"
+   },
+   {
+    "prec": "9",
+    "n": "3880"
+   },
+   {
+    "prec": "10",
+    "n": "118"
+   },
+   {
+    "prec": "11",
+    "n": "970"
+   }
+  ]
+ },
+ "names": {
+  "Q515 city": {
+   "withOfficialName": 7269,
+   "withDatedName": 1096,
+   "withEndedName_sl20": 1003
+  },
+  "Q486972 human settlement": {
+   "withOfficialName": 282945,
+   "withDatedName": 10323,
+   "withEndedName_sl20": 2357
+  },
+  "sample": [
+   {
+    "i": "Q220",
+    "en": "Rome",
+    "sl": "344",
+    "name": "Roma",
+    "lang": "it"
+   },
+   {
+    "i": "Q220",
+    "en": "Rome",
+    "sl": "344",
+    "name": "Colonia Lucia Annia Commodiana",
+    "lang": "la",
+    "from": "0191-01-01T00:00:00Z",
+    "to": "0193-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q60",
+    "en": "New York City",
+    "sl": "325",
+    "name": "City of New York",
+    "lang": "en"
+   },
+   {
+    "i": "Q60",
+    "en": "New York City",
+    "sl": "325",
+    "name": "New York City",
+    "lang": "en"
+   },
+   {
+    "i": "Q60",
+    "en": "New York City",
+    "sl": "325",
+    "name": "Fort Neu-Amsterdam",
+    "lang": "en",
+    "from": "1624-01-01T00:00:00Z",
+    "to": "1664-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q60",
+    "en": "New York City",
+    "sl": "325",
+    "name": "New York",
+    "lang": "en",
+    "from": "1664-01-01T00:00:00Z"
+   },
+   {
+    "i": "Q235",
+    "en": "Monaco",
+    "sl": "321",
+    "name": "Monaco",
+    "lang": "fr"
+   },
+   {
+    "i": "Q235",
+    "en": "Monaco",
+    "sl": "321",
+    "name": "la Principauté de Monaco",
+    "lang": "fr"
+   },
+   {
+    "i": "Q235",
+    "en": "Monaco",
+    "sl": "321",
+    "name": "Múnegu",
+    "lang": "lij-mc"
+   },
+   {
+    "i": "Q235",
+    "en": "Monaco",
+    "sl": "321",
+    "name": "Furstendömet Monaco",
+    "lang": "sv"
+   },
+   {
+    "i": "Q235",
+    "en": "Monaco",
+    "sl": "321",
+    "name": "Fort-Hercule",
+    "lang": "fr",
+    "from": "1793-10-16T00:00:00Z",
+    "to": "1814-07-08T00:00:00Z"
+   },
+   {
+    "i": "Q956",
+    "en": "Beijing",
+    "sl": "306",
+    "name": "北京市",
+    "lang": "zh",
+    "from": "1421-01-01T00:00:00Z",
+    "to": "1928-06-07T00:00:00Z"
+   },
+   {
+    "i": "Q956",
+    "en": "Beijing",
+    "sl": "306",
+    "name": "北平市",
+    "lang": "zh",
+    "from": "1928-06-08T00:00:00Z",
+    "to": "1937-07-28T00:00:00Z"
+   },
+   {
+    "i": "Q956",
+    "en": "Beijing",
+    "sl": "306",
+    "name": "北京市",
+    "lang": "zh",
+    "from": "1937-07-29T00:00:00Z",
+    "to": "1945-09-02T00:00:00Z"
+   },
+   {
+    "i": "Q956",
+    "en": "Beijing",
+    "sl": "306",
+    "name": "北平市",
+    "lang": "zh",
+    "from": "1945-09-03T00:00:00Z",
+    "to": "1949-09-30T00:00:00Z"
+   },
+   {
+    "i": "Q956",
+    "en": "Beijing",
+    "sl": "306",
+    "name": "北京市",
+    "lang": "zh-cn",
+    "from": "1949-10-01T00:00:00Z"
+   },
+   {
+    "i": "Q1490",
+    "en": "Tokyo",
+    "sl": "303",
+    "name": "江戸",
+    "lang": "ja",
+    "to": "1868-09-03T00:00:00Z"
+   },
+   {
+    "i": "Q1490",
+    "en": "Tokyo",
+    "sl": "303",
+    "name": "東京都",
+    "lang": "ja"
+   },
+   {
+    "i": "Q1490",
+    "en": "Tokyo",
+    "sl": "303",
+    "name": "Tokio",
+    "lang": "pl"
+   },
+   {
+    "i": "Q1741",
+    "en": "Vienna",
+    "sl": "294",
+    "name": "Wien",
+    "lang": "de-at"
+   },
+   {
+    "i": "Q1741",
+    "en": "Vienna",
+    "sl": "294",
+    "name": "Groß-Wien",
+    "lang": "de-at",
+    "from": "1938-10-15T00:00:00Z",
+    "to": "1954-01-01T00:00:00Z"
+   }
+  ]
+ }
+}
