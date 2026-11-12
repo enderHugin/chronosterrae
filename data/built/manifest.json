@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-12T00:40:05Z",
+ "generated_at": "2026-11-12T14:43:32Z",
  "source": "Wikidata (CC0) via QLever (https://qlever.cs.uni-freiburg.de/api/wikidata)",
  "min_sitelinks": 20,
  "verify": {
@@ -579,7 +579,7 @@
  },
  "counts": {
   "rows": 8845,
-  "end_rows": 430,
+  "end_rows": 432,
   "features": 5137,
   "with_end": 222,
   "bce": 129,
@@ -605,7 +605,7 @@
   }
  },
  "skipped": {
-  "fin anterior a la ultima construccion (se ignora el fin)": 13,
+  "fin anterior a la ultima construccion (se ignora el fin)": 14,
   "sin coordenadas legibles": 1,
   "inicio: precision menor que el milenio": 3,
   "sin fecha de construccion utilizable": 4,
@@ -613,13 +613,13 @@
  },
  "file": {
   "name": "built.json",
-  "bytes": 4210531,
-  "sha256": "d496b1b0a18621271c281eab47e1314db0725d1606066feeb89d4a5cef2bb6c7"
+  "bytes": 4210516,
+  "sha256": "c2a5a5fbf2fab1e3a4e4c18dfa0e9e8d6a1835b3ad8691c5dbdcf2f5665ace5a"
  },
  "mapFile": {
   "name": "built-map.json",
-  "bytes": 622842,
-  "sha256": "7b97b3e3c9a751ff21fb1330561f338026982fdf2879428b85189552a67cda51",
+  "bytes": 622830,
+  "sha256": "be36c0ed06a11e0ed4a91f8813bcfb834196821e35609d26bc38c057ca4d15b3",
   "rows": 5137
  }
 }
