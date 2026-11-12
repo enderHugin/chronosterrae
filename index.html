@@ -67,7 +67,13 @@
             margin: 0; padding: 4px; list-style: none; pointer-events: auto; background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 8px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); z-index: 30; font: 13px/1.3 var(--font-ui); }
         #search-list li { display: grid; grid-template-columns: 44px 1fr; gap: 9px; align-items: center; padding: 5px 7px; border-radius: 6px; cursor: pointer; min-height: 44px; }
-        #search-list li[aria-selected="true"] { background: color-mix(in srgb, var(--accent) 22%, transparent); box-shadow: inset 3px 0 0 var(--accent); }
+        #search-list li[aria-selected="true"] { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+        /* cada resultado con el color de SU epoca: franja a la izquierda y la epoca escrita en una etiqueta */
+        #search-list li[role=option] { border-left: 4px solid var(--era-c, transparent); }
+        #search-list .sr-row { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+        #search-list .sr-row .sr-name { flex: 1 1 auto; min-width: 0; }
+        #search-list .sr-era { flex: none; font: 600 10.5px/1.5 var(--font-ui); padding: 0 6px; border-radius: 9px; background: var(--era-c); color: var(--era-bg); white-space: nowrap; max-width: 46%; overflow: hidden; text-overflow: ellipsis; }
+        #search-list .sr-alt { font-weight: 400; opacity: 0.8; }
         #search-list li:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
         #search-list .sr-pic { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; background: color-mix(in srgb, var(--text) 8%, transparent); display: block; }
         #search-list .sr-ico { width: 30px; height: 30px; margin: 7px; display: block; object-fit: contain; }
@@ -739,6 +745,7 @@ const i18n = {
             born: 'n.', died: 'm.', noPlace: 'sin lugar', maps: '{n} mapas', near: 'más cercano: {y}',
             hint: '↑↓ recorre (el mapa va a cada uno) · Intro elige · Esc vuelve',
             hintTouch: 'Toca uno: el mapa va allí · tócalo otra vez para abrirlo',
+            altTip: 'Sale porque lo buscado está en su nombre en el otro idioma',
             img: 'Imagen: {a} · {l}', imgSrc: 'Wikimedia Commons', imgTip: 'Imagen de Wikimedia Commons; autor y licencia en la ficha',
             sort: { label: 'Orden de los resultados', new: 'Recientes ↓', old: 'Antiguos ↑', rel: 'Relevancia' }
         }, timePlaceholder: '1789 · 44 a.C. · 250 Ma',
@@ -951,6 +958,7 @@ const i18n = {
             born: 'b.', died: 'd.', noPlace: 'no place', maps: '{n} maps', near: 'nearest: {y}',
             hint: '↑↓ browse (the map goes to each) · Enter picks · Esc goes back',
             hintTouch: 'Tap one: the map goes there · tap it again to open it',
+            altTip: 'It shows up because what you typed is in its name in the other language',
             img: 'Image: {a} · {l}', imgSrc: 'Wikimedia Commons', imgTip: 'Image from Wikimedia Commons; author and licence in the panel',
             sort: { label: 'Order of the results', new: 'Newest ↓', old: 'Oldest ↑', rel: 'Relevance' }
         }, timePlaceholder: '1789 · 44 BC · 250 Ma',
@@ -2336,15 +2344,34 @@ function bboxOf(features) {
     return minX <= maxX ? [[minX, minY], [maxX, maxY]] : null;
 }
 
+/** Donde «esta» una entidad politica: el punto de su nombre en el mapa (dentro de su poligono mayor), o el centro de su extension. */
+// Se mira el poligono mayor que no este en un casquete polar (|lat| < 66°): la Union de Kalmar incluye Groenlandia, que es su poligono mas
+// grande, pero su sitio es Escandinavia. Si todos son polares (Groenlandia sola), el mayor.
+function polityCenterOf(feats, name) {
+    if (!feats.length) return null;
+    try {
+        if (window.ChronosLabels) {
+            const parts = []; feats.forEach((f) => { const g = f.geometry; if (!g) return; (g.type === 'MultiPolygon' ? g.coordinates : g.type === 'Polygon' ? [g.coordinates] : []).forEach((c) => parts.push({ type: 'Feature', properties: { k: parts.length }, geometry: { type: 'Polygon', coordinates: c } })); });
+            const ls = ChronosLabels.polityLabels({ type: 'FeatureCollection', features: parts }, (f) => 'p' + f.properties.k, () => name);   // uno por poligono, de mayor a menor
+            const l = ls.find((x) => Math.abs(x.lat) < 66) || ls[0]; if (l) return [l.lng, l.lat];
+        }
+    } catch (e) { /* abajo */ }
+    const box = bboxOf(feats); return box ? [(box[0][0] + box[1][0]) / 2, (box[0][1] + box[1][1]) / 2] : null;
+}
+/** Lo mismo, con el mapa de la fecha ybp (se carga si hace falta; queda en cache para cuando se cambie la fecha). */
+async function polityCenterAt(name, ybp) {
+    const b = await loadBorders(ybp); if (!b || !b.data) return null;
+    return polityCenterOf(b.data.features.filter((f) => f.properties.NAME === name), name);
+}
 function focusPolity(name) {
     if (!state.borders) return;
     const feats = state.borders.data.features.filter((f) => f.properties.NAME === name);
     if (!feats.length) return;
     setHighlightKey(polityKey(feats[0].properties));
-    const box = bboxOf(feats);
-    // centrar sin acercar ni alejar (como el buscador): giro breve hasta el centro de su extension
-    if (box) map.easeTo({ center: [(box[0][0] + box[1][0]) / 2, (box[0][1] + box[1][1]) / 2], duration: SRCH_REDUCED() ? 0 : 700, easing: SRCH_EASE, essential: true });
-    showPolity(feats[0].properties);
+    // centrar sin acercar ni alejar (como el buscador): giro breve hasta donde va su nombre; si el buscador ya giro hasta alli, no se mueve
+    const c = polityCenterOf(feats, name); const p = map.getCenter();
+    if (c && (Math.abs(p.lng - c[0]) > 1e-4 || Math.abs(p.lat - c[1]) > 1e-4)) map.easeTo({ center: c, duration: SRCH_REDUCED() ? 0 : 700, easing: SRCH_EASE, essential: true });
+    showPolity(feats[0].properties); SEL.keepYbp = state.ybp;     // la ficha es de esta fecha: lo que aun se este cargando de ella no la cierra
 }
 
 function showPolity(p) {
@@ -2752,6 +2779,12 @@ function srchSub(e) {
     const fam = e.kind === 'built' ? (ChronosBuilt.FAMILIES.find((x) => x.id === e.icon) || {})[lang] : t('events.kind.' + (e.ek || 'event'));
     return (fam && !/^events\./.test(fam) ? fam : k) + ' · ' + srchIsoText(e.iso) + (e.lng === undefined || e.lng === null ? ' · ' + t('search.noPlace') : '');
 }
+/** Epoca de un resultado (por su año: nacimiento, construccion, suceso o mapa mas cercano), o null si no se sabe. */
+function srchEra(e) {
+    if (!window.ChronosEras) return null;
+    const y = e.kind === 'polity' ? srchNearYear(e) : parseInt(String(e.iso || '').match(/^-?\d+/), 10);
+    return Number.isFinite(y) ? ChronosEras.at(y) : null;
+}
 const builtIcoCache = new Map();
 function srchIcon(e) {
     if (e.kind === 'built') {
@@ -2773,9 +2806,20 @@ function srchRender(msg) {
             pic.addEventListener('error', () => pic.replaceWith(icon), { once: true });
             li.appendChild(pic);
         } else li.appendChild(icon);
-        const txt = el('div', {}); const nm = el('div', { class: 'sr-name' });
-        ChronosSearch.highlight(srchName(e), SRCH.q).forEach((p) => nm.appendChild(p.m ? el('mark', { text: p.t }) : document.createTextNode(p.t)));
-        txt.appendChild(nm); txt.appendChild(el('div', { class: 'sr-sub', text: srchSub(e) }));
+        const txt = el('div', {}); const row = el('div', { class: 'sr-row' }); const nm = el('div', { class: 'sr-name' });
+        const hl = ChronosSearch.highlight(srchName(e), SRCH.q);
+        hl.forEach((p) => nm.appendChild(p.m ? el('mark', { text: p.t }) : document.createTextNode(p.t)));
+        // ¿por que sale? si lo buscado esta en el nombre del OTRO idioma (einstein -> einstenio, que en ingles es «einsteinium»), se enseña
+        const alt = lang === 'es' ? e.en : e.es;
+        if (!hl.some((p) => p.m) && alt && alt !== srchName(e)) {
+            const ah = ChronosSearch.highlight(alt, SRCH.q);
+            if (ah.some((p) => p.m)) { const sp = el('span', { class: 'sr-alt', title: t('search.altTip') }); sp.appendChild(document.createTextNode(' (' + (lang === 'es' ? 'en' : 'es') + ': ')); ah.forEach((p) => sp.appendChild(p.m ? el('mark', { text: p.t }) : document.createTextNode(p.t))); sp.appendChild(document.createTextNode(')')); nm.appendChild(sp); }
+        }
+        row.appendChild(nm);
+        // color de su epoca: una franja a la izquierda y la epoca escrita (pedido del creador: entender de un vistazo de cuando es cada cosa)
+        const era = srchEra(e);
+        if (era) { const pal = state.dark ? era.dark : era.light; li.style.setProperty('--era-c', pal.accent); li.style.setProperty('--era-bg', pal.bg); row.appendChild(el('span', { class: 'sr-era', text: ChronosEras.labelOf(era, lang) })); }
+        txt.appendChild(row); txt.appendChild(el('div', { class: 'sr-sub', text: srchSub(e) }));
         li.appendChild(txt);
         li.addEventListener('mousedown', (ev) => ev.preventDefault());        // no quitar el foco a la caja
         li.addEventListener('pointerdown', (ev) => { SRCH.ptype = ev.pointerType || 'mouse'; });
@@ -2834,7 +2878,9 @@ function srchClose(keepSpot) { clearTimeout(SRCH.hoverT); SRCH.keepOpen = false;
 function srchTarget(e) {
     if (e.kind === 'polity') {
         const y = srchNearYear(e);
-        return { id: e.id, center: null, year: y, apply: () => { currentFocus = e.en; setTime(yearToYbp(y), { immediate: true }); } };
+        // Su sitio se sabe con el mapa de ESA fecha: se carga antes (prep) para girar primero, a la vista, y cambiar la fecha despues. Antes
+        // giraba despues del cambio de fecha y el fundido de epoca lo tapaba: el creador vio que no habia giro (2026-11-12).
+        return { id: e.id, center: null, year: y, prep: () => polityCenterAt(e.en, yearToYbp(y)), apply: () => { currentFocus = e.en; setTime(yearToYbp(y), { immediate: true }); } };
     }
     const center = e.lng !== undefined && e.lng !== null ? [e.lng, e.lat] : null;
     const y = parseInt(String(e.iso || '').match(/^-?\d+/), 10);
@@ -2897,6 +2943,11 @@ const SRCH_EASE = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) 
  */
 function srchGo(tg) {
     if (solarView.isOpen) solarView.close();
+    if (!tg.center && tg.prep && !SRCH_REDUCED()) {      // destino que aun no se sabe donde esta (entidad politica): primero averiguarlo
+        const seq0 = ++SRCH.goSeq; const prep = tg.prep; tg.prep = null;
+        Promise.resolve().then(prep).catch(() => null).then((c) => { if (seq0 !== SRCH.goSeq) return; if (c) tg.center = c; srchGo(tg); });
+        return;
+    }
     const seq = ++SRCH.goSeq; SRCH.markSeq++; evHoverSet(null); buHoverSet(null);      // la señal del destino anterior se apaga
     // a donde se va DE VERDAD (no basta con que este pedido): elegir un resultado al que ya se esta yendo espera a llegar, no repite ni se lo salta
     const went = SRCH.went = tg.id ? { id: tg.id, seq, arrived: false, after: null } : null;
@@ -2968,7 +3019,7 @@ function srchCommit(e) {
     // La ficha, ya en la fecha nueva; SEL.keepYbp: la carga del mapa de esa fecha no debe cerrarla (como con la seleccion recordada)
     const show = () => {
         SEL.keepYbp = state.ybp; spotlight(e.id, true);      // ya en la fecha nueva: que la carga de su mapa no cierre la ficha ni quite el foco
-        if (e.kind === 'polity') { selRemember('p', e.en); return; }
+        if (e.kind === 'polity') { selRemember('p', e.en); SEL.keepYbp = state.ybp; return; }   // selRemember borra keepYbp: la carga de la tierra cerraba su ficha
         if (e.kind === 'built') { selRemember('b', e.id); builtFull().then(() => { const f = BUILT.byId && BUILT.byId.get(e.id); if (f) { showBuilt(f); SEL.keepYbp = state.ybp; } }); return; }
         // suceso o persona: la ficha sale cuando llegan los sucesos de esa fecha (mismo mecanismo que la seleccion recordada)
         selRemember('e', e.id); SEL.pending = { k: 'e', v: e.id }; selRestoreEvent();
