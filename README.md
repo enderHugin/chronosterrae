@@ -128,6 +128,12 @@ sale y cuánto se puede fiar de él.
   ese icono queda al 100 % y los demás (sucesos y construcciones) bajan a un 42 % de su opacidad; el mapa no se toca. Lo elegido en el
   buscador se dibuja siempre, aunque a esa distancia su capa no lo pinte, y su etiqueta no se sale de la pantalla. El cambio de época ya no pasa por un velo
   oscuro: una foto de la escena de antes se desvanece sobre la nueva (fundido cruzado).
+- **Búsqueda también en Wikidata, en directo (2026-11-12).** Nuestro índice son las ~6.400 personas del mapa; si buscas a otra («Jaime I de
+  Aragón»), la lista añade debajo, en su propia sección, las personas que Wikidata encuentra en ese momento (la API responde al navegador:
+  medido con `scripts/probe-live.js`). Al elegir una, la Tierra gira hasta su lugar de nacimiento, la fecha pasa a ese día y la ficha dice
+  que es una consulta en directo, sin revisar. No se guarda nada. Cada resultado lleva además el color y el nombre de su época, y si coincide
+  por el nombre en el otro idioma se dice («einstenio (en: einsteinium)»). Si la fuente da varias fechas para lo mismo (Jesús de Nazaret:
+  7-4-30 y 3-4-33), la ficha dice las dos.
 - **Buscador en pantallas táctiles (2026-11-12).** Sin ratón no hay «pasar por encima»: el **primer toque** en un resultado hace lo
   mismo (la Tierra gira hasta allí, cambia la fecha, se resalta y se esconde el teclado para ver el mapa) y el **segundo toque** en el
   mismo lo abre; tocar fuera de la lista la cierra y deja el mapa donde está. Se decide por el puntero de cada toque (un iPad con

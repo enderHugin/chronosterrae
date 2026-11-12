@@ -100,6 +100,21 @@ const [url, out] = process.argv.slice(2);
         await ctx.close();
         return { hint, first, second };
     });
+    // Busqueda en directo en Wikidata (personas fuera de nuestro indice): «jaime» -> Jaime I de Aragon (Q212052), con la API de verdad
+    await step('wikidata en directo: jaime', async () => {
+        await page.evaluate(() => { map.jumpTo({ center: [15, 12] }); });
+        await page.fill('#search', ''); await page.click('#search'); await page.keyboard.type('jaime i de aragon', { delay: 50 });
+        await page.waitForFunction(() => SRCH.items.some((e) => e.kind === 'wd') || (WD.err && !WD.loading), null, { timeout: 60000 }).catch(() => {});
+        await page.waitForTimeout(2500);
+        const list = await page.evaluate(() => ({ err: WD.err, items: SRCH.items.filter((e) => e.kind === 'wd').map((e) => [e.qid, e.es || e.en, e.desc]) }));
+        await page.screenshot({ path: path.join(out, '10-wd-lista.png') });
+        const i = await page.evaluate(() => SRCH.items.findIndex((e) => e.qid === 'Q212052'));
+        if (i < 0) return { list };
+        await page.click('#sr-' + i); await page.waitForTimeout(9000);
+        const r = await page.evaluate(() => ({ center: map.getCenter().toArray(), date: ChronosSky.jdToCalendar(clock.jd, 'auto'), title: $('info-title').textContent, rows: [...document.querySelectorAll('#info-body .row')].map((x) => x.textContent).slice(0, 8), pick: SPOTPICK.f && SPOTPICK.f.properties.id }));
+        await page.screenshot({ path: path.join(out, '11-wd-jaime.png') });
+        return { list, r };
+    });
     // Movil (iPhone emulado en Chromium): construccion elegida de lejos DIBUJADA (capa spot-pick) con su etiqueta en pantalla y sin taparla;
     // con muchos resultados la lista termina por encima del destino (el creador, 2026-11-12: iconos de construcciones que no se veian).
     await step('movil: destino dibujado y visible', async () => {
