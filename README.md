@@ -124,6 +124,22 @@ sale y cuánto se puede fiar de él.
   icono crece con un resplandor de su color y aparece su nombre en una etiqueta del mismo color: se sabe sobre qué caerá el clic.
   Un clic en un suceso **no mueve el mapa** (salvo con «Centrar al hacer clic», que ahora centra en el suceso y no en el punto del
   clic), y un temblor de la mano al hacer clic ya no arrastra el mapa.
+- **Iconos de personaje (2026-11-12).** En los nacimientos y muertes, la **forma** dice quién era cada persona y el **color**, qué
+  pasa (cian nace, gris muere): corona (realeza), mitra (papado), vela (religión), orador tras un atril (política), galones con
+  estrella (milicia), rosa de los vientos (exploración), libreta y pluma (literatura), libreta y pluma con pentagrama y corchea
+  (composición), micrófono (interpretación musical), paleta (pintura y escultura), compás (arquitectura), claqueta (cine y teatro),
+  bocadillo de pensamiento (filosofía), matraz (ciencia), bombilla (invención e ingeniería) y corredor (deporte). Sin dato, el
+  cochecito o la lápida de siempre. El papel se deduce de Wikidata (`scripts/build-roles.js` → `data/people/roles.json`):
+  ocupación (P106) o cargo (P39) dentro de clases **verificadas por su etiqueta** en cada build; si hay varios, el que antes nombra
+  su descripción («German writer … and politician» → literatura); papa manda siempre y monarca si además su descripción lo dice
+  (el presidente de Francia es copríncipe de Andorra por su cargo y no debe salir con corona); sin pista, la primera ocupación que
+  da Wikidata. Es una **deducción**, y la ficha lo dice («Ámbito», con su explicación al pasar el ratón). Leyenda en Ajustes.
+- **Fechas julianas corregidas (2026-11-12).** Con precisión de día, QLever da la fecha ya pasada al gregoriano aunque Wikidata la
+  guarde como juliana (medido con `scripts/probe-calendar.js`: Hastings, guardado 14-10-1066 juliano, llega como 1066-10-20). Se
+  leía como juliana: ~1 300 sucesos caían 2-13 días tarde y la ficha mostraba la fecha gregoriana con la etiqueta «juliano». Ahora
+  el instante es el correcto y la ficha muestra la fecha juliana guardada (Hastings 14-10-1066, Nerva † 27-1-98). Con precisión de
+  mes o de año el literal no viene convertido (también medido). El buscador fija además el día por la fecha ISO: un redondeo dejaba
+  ~9 300 sucesos un día antes en el reloj.
 - **Buscador con lista inmediata e imágenes (2026-11-12).** Al escribir (desde 2 letras) sale la lista de coincidencias: personas
   (una vez, con nacimiento y muerte: «einstein» → Albert Einstein, n. 14/03/1879 · m. 18/04/1955), sucesos, construcciones y
   entidades políticas, sin tildes ni mayúsculas, por principio de palabra y por notoriedad. **Recorrerla** con ↑↓ (o dejando el

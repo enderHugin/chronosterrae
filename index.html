@@ -301,6 +301,9 @@
         #settings .st-actions .btn { padding: 4px 10px; font-size: 12px; }
         #settings .btn:disabled { opacity: 0.4; cursor: default; }
         #settings .st-pins { margin-left: 14px; }
+        #settings .st-roles { margin-left: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px 10px; font-size: 13px; }
+        #settings .st-roles span { display: flex; align-items: center; gap: 6px; }
+        #settings .st-roles img { width: 22px; height: 22px; flex: none; }
         #undo-bar { position: relative; display: none; gap: 6px; width: auto !important; }
         body.touch #undo-bar { display: flex; }
         /* La barra deshacer/rehacer flotante no cabe en pantallas pequenas (esta tambien en Ajustes) */
@@ -548,6 +551,9 @@
                 <button class="btn" id="st-types-none" type="button" data-i18n="ui.types.none"></button>
             </div>
             <div class="st-sub" data-i18n="ui.types.note"></div>
+            <h3 data-i18n="ui.roles.title"></h3>
+            <div id="st-roles" class="st-roles"></div>
+            <div class="st-sub" data-i18n="ui.roles.note"></div>
             <h3 id="st-anim-title" data-i18n="ui.icons.title"></h3>
             <div id="st-anim-modes" role="radiogroup" aria-labelledby="st-anim-title"></div>
             <div class="st-sub" data-i18n="ui.icons.note"></div>
@@ -826,13 +832,14 @@ const i18n = {
             },
             pins: { title: 'Mostrar siempre (no se oculta solo)', info: 'Ficha del elemento seleccionado', status: 'Avisos y notas de estado', 'space-note': 'Nota del fondo espacial', 'solar-note': 'Nota del sistema solar', 'solar-info': 'Ficha del cuerpo celeste' },
             types: { title: 'Tipos de suceso', all: 'Marcar todos', none: 'Desmarcar todos', note: 'Marca los tipos que quieres ver en el mapa, en el panel de sucesos y en los avisos. Es una elección tuya: no borra ningún dato.' },
+            roles: { title: 'Personajes: quién era cada uno', note: 'En nacimientos y muertes, la forma dice quién era (según su ocupación o cargo en Wikidata) y el color qué pasa: cian nace, gris muere. Sin ese dato, cochecito o lápida.' },
             anim: { off: 'Apagada', saver: 'Ahorro (recomendada)', full: 'Completa', auto: 'La animación se ha reducido sola porque este equipo va justo. Puedes cambiarlo en Ajustes → Iconos y movimiento.' },
             era: { title: 'Ambientación de época', l0: 'Sin ambientación (aspecto neutro)', l1: 'Sutil: colores y tipografía de la época', l2: 'Completa: además adornos, cursor, iconos y colores del mapa', note: 'La época se deduce de la fecha del mapa y cambia solo el aspecto, nunca los datos. Los nombres (Bronce, Hierro, Medieval…) son convenciones, sobre todo eurasiáticas: no marcan lo mismo en todas las regiones.', badgeTip: 'Época de la fecha mostrada' },
             icons: { title: 'Iconos y movimiento', note: 'Ahorro: los iconos se mueven un instante cada pocos segundos y los saltos de tiempo van a 25 fotogramas por segundo. Completa: movimiento continuo, gasta más batería y procesador. Apagada: no se mueve nada y los saltos son directos. Espada, mosquete o tanque según la época para guerras y batallas; pluma y papiro para tratados; anillos para alianzas y uniones. Son una convención de dibujo, no un dato del suceso.' },
             layout: { title: 'Posición de los recuadros', note: 'Ctrl+Z deshace y Ctrl+Mayús+Z (o Ctrl+Y) rehace ocultar y mover recuadros. En pantallas táctiles hay botones de deshacer y rehacer.' }
         },
         events: {
-            button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
+            button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', role: 'Ámbito', roleTip: 'Según su ocupación o cargo en Wikidata; si tiene varios, el que antes nombra su descripción (papa y monarca mandan). Es una deducción, no un dato de la fuente.', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
             basisUtc: 'UTC/GMT', basisLocal: 'hora oficial del lugar (UTC{off})', noPlace: 'sin lugar', empty: 'No hay sucesos con fuente cerca de este instante a esta escala. Acércate o cambia de año.',
             none: 'No hay sucesos cargados todavía.', outOfRange: 'Los sucesos con fecha se muestran entre los años 1 y hoy.',
             shown: 'Los más cercanos al reloj ({n}). A esta escala solo los más notorios: al acercarte aparecen más.',
@@ -1036,13 +1043,14 @@ const i18n = {
             },
             pins: { title: 'Always show (never auto-hide)', info: 'Selected element card', status: 'Status notices and notes', 'space-note': 'Space background note', 'solar-note': 'Solar system note', 'solar-info': 'Celestial body card' },
             types: { title: 'Event types', all: 'Select all', none: 'Select none', note: 'Tick the types you want on the map, in the events panel and in the notices. It is your choice: no data is deleted.' },
+            roles: { title: 'People: who each one was', note: 'On births and deaths, the shape says who the person was (from their occupation or position on Wikidata) and the colour what happens: cyan born, grey dies. Without that data, pram or headstone.' },
             anim: { off: 'Off', saver: 'Saver (recommended)', full: 'Full', auto: 'Animation was reduced automatically because this device is struggling. You can change it in Settings → Icons and motion.' },
             era: { title: 'Period look', l0: 'No period look (neutral)', l1: 'Subtle: period colours and typography', l2: 'Full: also ornaments, cursor, icons and map colours', note: 'The period is taken from the date on the map and only changes the look, never the data. The names (Bronze, Iron, Medieval…) are conventions, mostly Eurasian: they do not mean the same everywhere.', badgeTip: 'Period of the date shown' },
             icons: { title: 'Icons and motion', note: 'Saver: icons move for a moment every few seconds and time jumps run at 25 frames per second. Full: continuous motion, uses more battery and CPU. Off: nothing moves and jumps are direct. Sword, musket or tank by era for wars and battles; quill and scroll for treaties; rings for alliances and unions. This is a drawing convention, not a fact about the event.' },
             layout: { title: 'Box positions', note: 'Ctrl+Z undoes and Ctrl+Shift+Z (or Ctrl+Y) redoes hiding and moving boxes. Touch screens get undo and redo buttons.' }
         },
         events: {
-            button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
+            button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', role: 'Field', roleTip: 'From their occupation or position on Wikidata; if several, the one their description names first (pope and monarch win). It is a deduction, not a statement of the source.', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
             basisUtc: 'UTC/GMT', basisLocal: 'official local time (UTC{off})', noPlace: 'no place', empty: 'No sourced events near this instant at this scale. Zoom in or change the year.',
             none: 'No events loaded yet.', outOfRange: 'Dated events are shown between year 1 and today.',
             shown: 'The closest to the clock ({n}). At this scale only the most notable: more appear as you zoom in.',
@@ -1244,6 +1252,8 @@ function el(tag, props, children) {
 function fillRows(body, rows) {
     rows.forEach((r) => {
         const row = el('div', { class: 'row' }, [el('b', { text: r.label + ': ' })]);
+        if (r.title) row.title = r.title;
+        if (r.icon) { const im = el('img', { class: 'ev-ico', alt: '', 'aria-hidden': 'true', src: r.icon }); im.style.cssText = 'display:inline-block;width:20px;height:20px;vertical-align:-5px;margin-right:4px'; row.appendChild(im); }
         if (r.badge) row.appendChild(el('span', { class: 'badge ' + r.badge, text: t('ev.' + r.badge) }));
         else if (r.href) row.appendChild(el('a', { href: r.href, target: '_blank', rel: 'noopener', text: r.value }));
         else row.appendChild(document.createTextNode(String(r.value)));
@@ -2694,6 +2704,7 @@ function srchIcon(e) {
         return builtIcoCache.get(e.icon);
     }
     const key = ChronosEventIcons.KEYS.includes(e.icon) ? e.icon : e.kind === 'polity' ? 'political' : 'event';
+    if (e.kind === 'person' && e.qid) return evIconUrl(ChronosEventIcons.drawKey(key, PEOPLE.roles.get(e.qid)));   // corona, mitra, pluma... (ver PEOPLE)
     return evIconUrl(ChronosEventIcons.KEYS.includes(key) ? key : 'event');
 }
 function srchRender(msg) {
@@ -2759,7 +2770,7 @@ function srchTarget(e) {
     const y = parseInt(String(e.iso || '').match(/^-?\d+/), 10);
     const geom = center ? { type: 'Point', coordinates: center } : null;
     const feature = !center ? null : e.kind === 'built' ? { geometry: geom, properties: { id: e.id, n: srchName(e), d: e.iso, p: null } }
-        : (() => { const key = ChronosEventIcons.KEYS.includes(e.icon) ? e.icon : 'event'; return { geometry: geom, properties: { id: e.id, name: srchName(e), icon: key, img: 'evi-' + key, importance: e.imp || 0.5 } }; })();
+        : (() => { const key = ChronosEventIcons.KEYS.includes(e.icon) ? e.icon : 'event'; const dk = e.kind === 'person' && e.qid ? ChronosEventIcons.drawKey(key, PEOPLE.roles.get(e.qid)) : key; return { geometry: geom, properties: { id: e.id, name: srchName(e), icon: key, img: 'evi-' + dk, importance: e.imp || 0.5 } }; })();
     return { center, year: Number.isFinite(y) ? y : undefined, mark: center ? { layers: e.kind === 'built' ? ChronosBuilt.LAYER_IDS : ['events-circle'], built: e.kind === 'built', id: e.id, at: center, feature } : null, apply: () => {
         // primero el año (desde tiempo profundo el reloj aun no existe: lo crea setTime) y despues el dia exacto si el reloj lo alcanza
         if (Number.isFinite(y) && (!clockUsable() || ybpToYear(state.ybp) !== y)) setTime(yearToYbp(y), { immediate: true });
@@ -3300,7 +3311,7 @@ panelsUI = (function () {
             c.addEventListener('change', () => { ah.setPinned(id, c.checked); savePrefs({ pp: P.pinsToMask(ah.pinned()) }); });
             lab.append(c, document.createTextNode(t('ui.pins.' + id))); pins.appendChild(lab);
         });
-        if (typesReady) { typesRender(); animRender(); eraRender(); }
+        if (typesReady) { typesRender(); rolesRender(); animRender(); eraRender(); }
     }
     function setSettingsOpen(open) {
         byId('settings').classList.toggle('open', open); byId('btn-settings').setAttribute('aria-pressed', String(open));
@@ -4175,6 +4186,28 @@ const evIconKey = (f) => {
     const p = f.properties; let year = NaN; try { year = ChronosChanges.eventYears(f).from; } catch (e) { /* sin fecha valida: epoca por defecto */ }
     k = ChronosEventIcons.classify({ kind: p.kind, name: p.name, classes: p.classes, year }).icon; evIconCache.set(f, k); return k;
 };
+// Papel de cada persona (data/people/roles.json, scripts/build-roles.js): QID -> 'monarch', 'writer'... Solo cambia el DIBUJO del nacimiento y
+// la muerte (corona, mitra, libreta y pluma...; ChronosEventIcons.ROLE_GLYPHS); el icono, su grupo del filtro y su color siguen siendo los de siempre.
+var PEOPLE = { roles: new Map(), ver: 0, loading: false };
+async function peopleLoad() {
+    if (PEOPLE.loading || PEOPLE.ver) return; PEOPLE.loading = true;
+    try {
+        const res = await fetch('./data/people/roles.json'); if (!res.ok) throw new Error('HTTP ' + res.status);
+        const j = await res.json(); const m = new Map();
+        Object.entries((j && j.roles) || {}).forEach(([r, list]) => { if (ChronosEventIcons.ROLE_GLYPHS[r] && Array.isArray(list)) list.forEach((n) => { if (Number.isInteger(n)) m.set('Q' + n, r); }); });
+        PEOPLE.roles = m; PEOPLE.ver++;
+        // lo ya pintado pasa a su dibujo: mapa, lista de sucesos, avisos y buscador
+        if (map.getSource && map.getSource('events')) evPush();
+        if (events.open) renderEventsPanel();
+        if (SRCH.items.length) srchRender();
+        if (INFO_EV && lastInfo && lastInfo.title === evName(INFO_EV) && $('info').style.display === 'block' && evRole(INFO_EV)) showEvent(INFO_EV);
+    } catch (e) { console.warn('[PEOPLE] papeles', e.message); }
+    finally { PEOPLE.loading = false; }
+}
+const evQid = (f) => { const w = (f.properties.sources || []).find((x) => x.kind === 'wikidata'); return w ? w.id : null; };
+const evRole = (f) => { const k = evKind(f); if (k !== 'birth' && k !== 'death') return null; const q = evQid(f); return (q && PEOPLE.roles.get(q)) || null; };
+/** Clave de DIBUJO del suceso: la del icono o, si es una persona con papel, 'birth.monarch', 'death.writer'... */
+const evDrawKey = (f) => ChronosEventIcons.drawKey(evIconKey(f), evRole(f));
 function evSpriteCanvas(key, size, pad, t) {
     const total = size + 2 * pad; const c = document.createElement('canvas'); c.width = c.height = total;
     // willReadFrequently: respaldo en CPU. Con el lienzo en GPU, getImageData sincroniza con ella (medido: 1,5 s para ~100 fotogramas en un mismo tramo).
@@ -4188,7 +4221,7 @@ function evIconUrl(key) {
     return evUrlCache.get(key);
 }
 function evIconImg(f) {
-    const img = document.createElement('img'); img.className = 'ev-ico'; img.alt = ''; img.src = evIconUrl(evIconKey(f)); img.setAttribute('aria-hidden', 'true'); return img;
+    const img = document.createElement('img'); img.className = 'ev-ico'; img.alt = ''; img.src = evIconUrl(evDrawKey(f)); img.setAttribute('aria-hidden', 'true'); return img;
 }
 function evIconsRegister() {       // setStyle borra las imagenes: se vuelven a añadir cada vez que se rehace el estilo
     ChronosEventIcons.KEYS.forEach((k) => {
@@ -4198,12 +4231,15 @@ function evIconsRegister() {       // setStyle borra las imagenes: se vuelven a 
     });
 }
 // Fotogramas de la entrada animada: 'evi-<icono>~<n>' (el ultimo, el estatico 'evi-<icono>'). Se dibujan la primera vez que hacen falta y se re-añaden si setStyle los borra.
+// Las personas con papel ('evi-birth.monarch') tambien se dibujan aqui, la primera vez que hacen falta (no se registran todas de antemano).
 function evEnsureImage(name) {
     if (map.hasImage(name)) return;
-    const m = /^evi-([a-z]+)~(\d+)$/.exec(name); if (!m) return;
-    const c = evSpriteCanvas(m[1], EV_SPRITE.box, EV_SPRITE.pad, Number(m[2]) / (ChronosEventIcons.ENTER_FRAMES - 1));
+    const m = /^evi-([a-z]+(?:\.[a-z]+)?)(?:~(\d+))?$/.exec(name); if (!m || !ChronosEventIcons.hasGlyph(m[1])) return;
+    const c = evSpriteCanvas(m[1], EV_SPRITE.box, EV_SPRITE.pad, m[2] === undefined ? undefined : Number(m[2]) / (ChronosEventIcons.ENTER_FRAMES - 1));
     map.addImage(name, c.getContext('2d').getImageData(0, 0, c.width, c.height), { pixelRatio: EV_SPRITE.ratio });
 }
+// Si MapLibre pide un sprite de suceso que aun no esta (tras rehacer el estilo, o el dibujo de un papel), se dibuja en el momento
+map.on('styleimagemissing', (e) => { if (e && typeof e.id === 'string' && e.id.startsWith('evi-')) evEnsureImage(e.id); });
 const EVA = { on: false, mode: 1, phase: 0, pulse: null, gaps: [], lastRender: 0 };   // mode: 0 apagada, 1 ahorro, 2 completa (ChronosEventIcons.ANIM_MODES)
 const EV_PULSE_BASE = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 12, 1, 16];
 function evLayersAdd() {
@@ -4340,6 +4376,12 @@ function typesRender() {
     });
 }
 typesReady = true; typesRender();
+function rolesRender() {      // leyenda de personajes: un dibujo por papel (en el color de nacer), con su nombre
+    const box = document.getElementById('st-roles'); if (!box) return;
+    box.textContent = '';
+    ChronosEventIcons.ROLES.forEach((r) => box.appendChild(el('span', {}, [el('img', { alt: '', 'aria-hidden': 'true', src: evIconUrl('birth.' + r.id) }), document.createTextNode(r[lang] || r.en)])));
+}
+rolesRender(); peopleLoad();
 
 async function eventsFetch(url) {
     const res = await fetch(url);
@@ -4430,12 +4472,12 @@ function evPush() {
     const now = performance.now(); const F = ChronosEventIcons.ENTER_FRAMES; const ms = ChronosEventIcons.ENTER_MS;
     const animate = EVA.on && !document.hidden; let entering = false;
     const feats = EV_ENTER.sel.map((f) => {
-        const id = f.properties.id; const key = evIconKey(f);
+        const id = f.properties.id; const key = evIconKey(f); const dk = evDrawKey(f);
         let b = EV_ENTER.born.get(id);
         if (!b || now - b.seen > 3000) { b = { t0: now, seen: now }; EV_ENTER.born.set(id, b); } else b.seen = now;
-        let img = 'evi-' + key;
+        let img = 'evi-' + dk;
         let ent = 1;   // progreso de la entrada (0..1): el disco de respaldo entra a la vez que el icono
-        if (animate) { const fr = Math.min(F - 1, Math.floor((now - b.t0) / ms * (F - 1))); if (fr < F - 1) { img = 'evi-' + key + '~' + fr; ent = fr / (F - 1); entering = true; } }
+        if (animate) { const fr = Math.min(F - 1, Math.floor((now - b.t0) / ms * (F - 1))); if (fr < F - 1) { img = 'evi-' + dk + '~' + fr; ent = fr / (F - 1); entering = true; } }
         evEnsureImage(img);
         const m = EV_ENTER.meta.get(f);
         return { type: 'Feature', geometry: f.geometry, properties: { id, name: evName(f), kind: evKind(f), importance: f.properties.importance, status: f.properties.status, icon: key, img, anim: ChronosEventIcons.animGroup(key), ent, fade: m ? m.alpha : 1 } };
@@ -4456,6 +4498,8 @@ function eventRows(f) {
     const p = f.properties; const tm = p.time;
     const rows = [{ label: t('evidence'), badge: p.evidence }];
     rows.push({ label: t('events.kindLabel'), value: t('events.kind.' + evKind(f)) });
+    const role = evRole(f); const rd = role && ChronosEventIcons.ROLES.find((r) => r.id === role);
+    if (rd) rows.push({ label: t('events.role'), value: rd[lang] || rd.en, icon: evIconUrl(evDrawKey(f)), title: t('events.roleTip') });
     rows.push({ label: t('events.when'), value: eventDateText(f) });
     if (tm.instant) {
         const basis = tm.instant.basis === 'utc' ? t('events.basisUtc') : fmt('events.basisLocal', { off: (tm.instant.utc_offset_minutes >= 0 ? '+' : '−') + Math.abs(tm.instant.utc_offset_minutes / 60) });
@@ -4472,7 +4516,8 @@ function eventRows(f) {
     });
     return rows;
 }
-function showEvent(f) { showInfo(evName(f), eventRows(f)); const w = (f.properties.sources || []).find((x) => x.kind === 'wikidata'); if (w) infoImageFor(w.id); }
+var INFO_EV = null;   // suceso de la ficha abierta (para redibujarla si llega su papel)
+function showEvent(f) { INFO_EV = f; showInfo(evName(f), eventRows(f)); const w = (f.properties.sources || []).find((x) => x.kind === 'wikidata'); if (w) infoImageFor(w.id); }
 
 // Desde la lista de sucesos o un aviso: el mismo giro breve que el buscador, sin cambiar el zoom (y sin fundido: la fecha no cambia)
 function eventFocus(f) {
@@ -4904,7 +4949,7 @@ function evIconsRestyle() {
         if (map.getLayer('events-hover-glow')) { map.setPaintProperty('events-hover-glow', 'circle-color', evDotColors(st)); map.setPaintProperty('events-hover-dot', 'circle-color', evDotColors(st)); } map.setPaintProperty('events-dot', 'circle-stroke-color', ChronosEventIcons.HALO);
     }
     map.listImages().forEach((n) => {
-        const m = /^evi-([a-z]+)(?:~(\d+))?$/.exec(n); if (!m || !ChronosEventIcons.GLYPHS[m[1]]) return;
+        const m = /^evi-([a-z]+(?:\.[a-z]+)?)(?:~(\d+))?$/.exec(n); if (!m || !ChronosEventIcons.hasGlyph(m[1])) return;
         const c = evSpriteCanvas(m[1], EV_SPRITE.box, EV_SPRITE.pad, m[2] === undefined ? undefined : Number(m[2]) / (ChronosEventIcons.ENTER_FRAMES - 1));
         map.updateImage(n, c.getContext('2d').getImageData(0, 0, c.width, c.height));
     });

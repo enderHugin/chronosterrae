@@ -16,13 +16,14 @@ on:
       - 'data/borders/**'
       - 'data/built/**'
       - 'data/images/**'
+      - 'data/people/**'
       - 'sky/**'
       - 'map/**'
       - 'solar/**'
       - 'vendor/**'
       - '.github/workflows/pages.yml'
   workflow_run:
-    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (validación contra Horizons)', 'Sucesos (Wikidata)', 'Construcciones (Wikidata)', 'Imagenes (nombres de archivo P18)']
+    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (validación contra Horizons)', 'Sucesos (Wikidata)', 'Construcciones (Wikidata)', 'Imagenes (nombres de archivo P18)', 'Papeles de personas (Wikidata)']
     types: [completed]
     branches: [main]
   workflow_dispatch:
@@ -65,6 +66,8 @@ jobs:
           if [ -d data/events ]; then cp -r data/events _site/data/events; fi
           # capa de construcciones (built.json y su manifiesto, desde Wikidata)
           if [ -d data/built ]; then cp -r data/built _site/data/built; fi
+          # papel de cada persona para su icono (corona, mitra, pluma...; scripts/build-roles.js)
+          if [ -d data/people ]; then cp -r data/people _site/data/people; fi
           # indice del buscador (personas, sucesos, construcciones y nombre del archivo de su imagen en Commons): se genera aqui, no se guarda
           node scripts/build-search.js _site/data/search
           touch _site/.nojekyll
