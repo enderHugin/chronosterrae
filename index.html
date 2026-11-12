@@ -76,7 +76,8 @@
         #search-list .sr-msg { display: block; min-height: 0; padding: 8px 10px; color: var(--muted); cursor: default; }
         /* Fundido entre epocas: un velo cubre TODA la escena (cielo, mapa, noche, iconos) mientras cambia la fecha y el globo gira;
            los recuadros no se tapan: cambian de color con su propia transicion (abajo). */
-        #era-veil { position: absolute; inset: 0; z-index: 9; pointer-events: none; opacity: 0; background: var(--bg);
+        /* oscuro con un matiz de la epoca: es un fundido "a negro" de cine, el que pide una escena con cielo (un velo claro destella) */
+        #era-veil { position: absolute; inset: 0; z-index: 9; pointer-events: none; opacity: 0; background: #06080d; background: color-mix(in srgb, var(--bg) 22%, #04060b);
             transition: opacity 420ms cubic-bezier(0.22, 0.61, 0.36, 1); }
         #era-veil.on { opacity: 0.82; transition: opacity 200ms cubic-bezier(0.55, 0.06, 0.68, 0.19); }
         /* Los colores de la epoca (recuadros, botones, textos) pasan de una a otra en vez de saltar */
