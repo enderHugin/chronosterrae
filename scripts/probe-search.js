@@ -73,6 +73,29 @@ const [url, out] = process.argv.slice(2);
         await page.screenshot({ path: path.join(out, '5-ficha-notredame.png') });
         return r;
     });
+    // Tactil (iPad emulado en Chromium; no es Safari de verdad): 1er toque = ver (gira y cambia la fecha), 2º toque = abrir. El creador vio en
+    // su iPad que tocar un resultado no movia la Tierra (2026-11-12).
+    await step('tactil (iPad): toque ver, toque abrir', async () => {
+        const { devices } = require('playwright');
+        const ctx = await browser.newContext(Object.assign({}, devices['iPad Pro 11'], { locale: 'es-ES' }));
+        const tp = await ctx.newPage(); tp.on('pageerror', (e) => res.errors.push('tactil: ' + String(e.message || e)));
+        await tp.route(IMG_URL, block);
+        await tp.goto(url, { waitUntil: 'load', timeout: 120000 });
+        await tp.waitForFunction(() => window.map && map.loaded && map.loaded() && window.ChronosSearch, null, { timeout: 120000 }); await tp.waitForTimeout(3000);
+        await tp.tap('#search'); await tp.keyboard.type('einstein', { delay: 50 });
+        await tp.waitForFunction(() => SRCH.items.length > 0, null, { timeout: 60000 });
+        await tp.selectOption('#search-sort', 'rel'); await tp.waitForTimeout(400);
+        if (!(await tp.evaluate(() => SRCH.items.length))) { await tp.tap('#search'); await tp.waitForTimeout(800); }
+        const hint = await tp.evaluate(() => (document.querySelector('#search-list .sr-msg') || {}).textContent);
+        await tp.tap('#sr-0'); await tp.waitForTimeout(7000);
+        const first = await tp.evaluate(() => ({ center: map.getCenter().toArray(), year: ybpToYear(state.ybp), list: SRCH.items.length, info: $('info').style.display, spot: SPOT.id }));
+        await tp.screenshot({ path: path.join(out, '6-tactil-ver.png') });
+        await tp.tap('#sr-0'); await tp.waitForTimeout(5000);
+        const second = await tp.evaluate(() => ({ center: map.getCenter().toArray(), info: $('info').style.display, title: $('info-title').textContent, list: SRCH.items.length }));
+        await tp.screenshot({ path: path.join(out, '7-tactil-abrir.png') });
+        await ctx.close();
+        return { hint, first, second };
+    });
     await browser.close();
     fs.writeFileSync(path.join(out, 'search.json'), JSON.stringify(res, null, 1) + '\n');
     console.log(JSON.stringify(res, null, 1));

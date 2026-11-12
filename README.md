@@ -124,6 +124,11 @@ sale y cuánto se puede fiar de él.
   icono crece con un resplandor de su color y aparece su nombre en una etiqueta del mismo color: se sabe sobre qué caerá el clic.
   Un clic en un suceso **no mueve el mapa** (salvo con «Centrar al hacer clic», que ahora centra en el suceso y no en el punto del
   clic), y un temblor de la mano al hacer clic ya no arrastra el mapa.
+- **Buscador en pantallas táctiles (2026-11-12).** Sin ratón no hay «pasar por encima»: el **primer toque** en un resultado hace lo
+  mismo (la Tierra gira hasta allí, cambia la fecha, se resalta y se esconde el teclado para ver el mapa) y el **segundo toque** en el
+  mismo lo abre; tocar fuera de la lista la cierra y deja el mapa donde está. Se decide por el puntero de cada toque (un iPad con
+  ratón o trackpad va como un ordenador). Corregido de paso: en iPad, tocar un resultado no movía la Tierra (el «pasar por encima»
+  de compatibilidad marcaba el resultado y el clic cancelaba el giro pendiente creyendo que ya se estaba allí).
 - **Iconos de personaje (2026-11-12).** En los nacimientos y muertes, la **forma** dice quién era cada persona y el **color**, qué
   pasa (cian nace, gris muere): corona (realeza), mitra (papado), vela (religión), orador tras un atril (política), galones con
   estrella (milicia), rosa de los vientos (exploración), libreta y pluma (literatura), libreta y pluma con pentagrama y corchea
