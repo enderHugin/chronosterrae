@@ -104,8 +104,26 @@ async function discoveries() {
     return out;
 }
 
+// 3) Numeracion de años a. C. en el JSON de la API (wbgetentities): ¿historica (sin año 0) o astronomica? Se compara con el texto que da la propia
+//    Wikidata (wbformatvalue) para la misma declaracion. Julio Cesar (Q1048) y Augusto (Q1405), sacados de la busqueda, se comprueban por etiqueta.
+async function bce() {
+    const out = [];
+    const r = await get(API + '?' + new URLSearchParams({ action: 'wbgetentities', ids: 'Q1048|Q1405|Q8409', props: 'labels|claims', languages: 'en', format: 'json', origin: '*' }));
+    const ents = (r.body && r.body.entities) || {};
+    for (const id of ['Q1048', 'Q1405', 'Q8409']) {
+        const e = ents[id]; if (!e) continue;
+        for (const p of ['P569', 'P570']) for (const v of claimIds(e, p)) {
+            const f = await get(API + '?' + new URLSearchParams({ action: 'wbformatvalue', generate: 'text/plain', datavalue: JSON.stringify({ type: 'time', value: v }), options: JSON.stringify({ lang: 'en' }), format: 'json', origin: '*' }));
+            out.push({ id, label: e.labels && e.labels.en && e.labels.en.value, prop: p, time: v.time, precision: v.precision, calendar: (v.calendarmodel || '').split('/').pop(), text: f.body && f.body.result });
+            await sleep(300);
+        }
+    }
+    return out;
+}
+
 (async () => {
     const out = { generated_at: new Date().toISOString() };
+    try { out.bce = await bce(); } catch (e) { out.bce = { error: String(e.stack || e) }; }
     try { out.live = await live(); } catch (e) { out.live = { error: String(e.stack || e) }; }
     try { out.discoveries = await discoveries(); } catch (e) { out.discoveries = { error: String(e.stack || e) }; }
     process.stdout.write(JSON.stringify(out, null, 1) + '\n');
