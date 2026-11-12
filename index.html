@@ -159,6 +159,7 @@
         }
         #info h2 { margin: 0 0 6px; font: 700 18px var(--font); color: var(--accent); }
         #info .row { margin-top: 7px; font-size: 13px; line-height: 1.4; word-break: break-word; }
+        #info .row.row-link { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
         #info .row b { color: var(--accent); }
         #info a { color: var(--accent); }
         #info .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
@@ -846,7 +847,7 @@ const i18n = {
             layout: { title: 'Posición de los recuadros', note: 'Ctrl+Z deshace y Ctrl+Mayús+Z (o Ctrl+Y) rehace ocultar y mover recuadros. En pantallas táctiles hay botones de deshacer y rehacer.' }
         },
         events: {
-            button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', role: 'Ámbito', roleTip: 'Según su ocupación o cargo en Wikidata; si tiene varios, el que antes nombra su descripción (papa y monarca mandan). Es una deducción, no un dato de la fuente.', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
+            button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', otherDates: 'La fuente da también', otherDatesTip: 'Wikidata declara varias fechas para lo mismo (no hay acuerdo entre las fuentes). Toca para ir a la otra.', role: 'Ámbito', roleTip: 'Según su ocupación o cargo en Wikidata; si tiene varios, el que antes nombra su descripción (papa y monarca mandan). Es una deducción, no un dato de la fuente.', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
             basisUtc: 'UTC/GMT', basisLocal: 'hora oficial del lugar (UTC{off})', noPlace: 'sin lugar', empty: 'No hay sucesos con fuente cerca de este instante a esta escala. Acércate o cambia de año.',
             none: 'No hay sucesos cargados todavía.', outOfRange: 'Los sucesos con fecha se muestran entre los años 1 y hoy.',
             shown: 'Los más cercanos al reloj ({n}). A esta escala solo los más notorios: al acercarte aparecen más.',
@@ -1059,7 +1060,7 @@ const i18n = {
             layout: { title: 'Box positions', note: 'Ctrl+Z undoes and Ctrl+Shift+Z (or Ctrl+Y) redoes hiding and moving boxes. Touch screens get undo and redo buttons.' }
         },
         events: {
-            button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', role: 'Field', roleTip: 'From their occupation or position on Wikidata; if several, the one their description names first (pope and monarch win). It is a deduction, not a statement of the source.', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
+            button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', otherDates: 'The source also gives', otherDatesTip: 'Wikidata states several dates for the same thing (sources disagree). Click to go to the other one.', role: 'Field', roleTip: 'From their occupation or position on Wikidata; if several, the one their description names first (pope and monarch win). It is a deduction, not a statement of the source.', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
             basisUtc: 'UTC/GMT', basisLocal: 'official local time (UTC{off})', noPlace: 'no place', empty: 'No sourced events near this instant at this scale. Zoom in or change the year.',
             none: 'No events loaded yet.', outOfRange: 'Dated events are shown between year 1 and today.',
             shown: 'The closest to the clock ({n}). At this scale only the most notable: more appear as you zoom in.',
@@ -1262,6 +1263,7 @@ function fillRows(body, rows) {
     rows.forEach((r) => {
         const row = el('div', { class: 'row' }, [el('b', { text: r.label + ': ' })]);
         if (r.title) row.title = r.title;
+        if (r.onclick) { row.classList.add('row-link'); row.tabIndex = 0; row.setAttribute('role', 'button'); row.addEventListener('click', r.onclick); row.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') r.onclick(); }); }
         if (r.icon) { const im = el('img', { class: 'ev-ico', alt: '', 'aria-hidden': 'true', src: r.icon }); im.style.cssText = 'display:inline-block;width:20px;height:20px;vertical-align:-5px;margin-right:4px'; row.appendChild(im); }
         if (r.badge) row.appendChild(el('span', { class: 'badge ' + r.badge, text: t('ev.' + r.badge) }));
         else if (r.href) row.appendChild(el('a', { href: r.href, target: '_blank', rel: 'noopener', text: r.value }));
@@ -4666,6 +4668,11 @@ function eventRows(f) {
     const role = evRole(f); const rd = role && ChronosEventIcons.ROLES.find((r) => r.id === role);
     if (rd) rows.push({ label: t('events.role'), value: rd[lang] || rd.en, icon: evIconUrl(evDrawKey(f)), title: t('events.roleTip') });
     rows.push({ label: t('events.when'), value: eventDateText(f) });
+    // La fuente da VARIAS fechas para lo mismo (registros hermanos .2, .3...: Jesus de Nazaret muere el 7-4-30 o el 3-4-33 segun Wikidata):
+    // se dicen todas, para no dar por cierta una sola (regla 3). Tocar una lleva a esa fecha.
+    const base = String(p.id).replace(/\.\d+$/, '');
+    const sibs = events.byId ? [...events.byId.values()].filter((g) => g !== f && (g.properties.id === base || String(g.properties.id).startsWith(base + '.'))) : [];
+    if (sibs.length) rows.push({ label: t('events.otherDates'), value: sibs.map((g) => eventDateText(g)).join(' · '), title: t('events.otherDatesTip'), onclick: () => evGoTo(sibs[0]) });
     if (tm.instant) {
         const basis = tm.instant.basis === 'utc' ? t('events.basisUtc') : fmt('events.basisLocal', { off: (tm.instant.utc_offset_minutes >= 0 ? '+' : '−') + Math.abs(tm.instant.utc_offset_minutes / 60) });
         rows.push({ label: t('events.timeBasis'), value: basis + ' · ±' + nf().format(tm.instant.uncertainty_s) + ' s' });
@@ -4680,6 +4687,16 @@ function eventRows(f) {
         if (s.citation) rows.push({ label: t('events.citation'), value: s.citation });
     });
     return rows;
+}
+/** Ir a un suceso cargado (giro, fecha al dia si la hay, ficha y foco): como elegirlo en el buscador. */
+function evGoTo(g) {
+    const tm = g.properties.time; const m = /^(-?\d+)(?:-(\d{2}))?(?:-(\d{2}))?$/.exec(String(tm.iso || '').split('/')[0]);
+    const year = m ? parseInt(m[1], 10) : Math.round(ybpToYear((tm.start_ybp + tm.end_ybp) / 2));
+    let jd = NaN; if (m && m[2] && m[3]) { try { jd = ChronosSky.calendarToJD({ year, month: parseInt(m[2], 10), day: parseInt(m[3], 10) }, tm.calendar === 'julian' ? 'julian' : 'gregorian').jd + 0.5; } catch (e) { jd = NaN; } }
+    srchGo({ id: g.properties.id, center: g.geometry ? g.geometry.coordinates : null, year,
+        mark: g.geometry ? { layers: ['events-circle'], id: g.properties.id, at: g.geometry.coordinates } : null,
+        apply: () => { setTime(yearToYbp(year), { immediate: true }); if (Number.isFinite(jd) && clockUsable()) clockSet(jd, { user: true }); },
+        after: () => { SEL.keepYbp = state.ybp; showEvent(g); spotlight(g.properties.id, true); } });
 }
 var INFO_EV = null;   // suceso de la ficha abierta (para redibujarla si llega su papel)
 function showEvent(f) { INFO_EV = f; showInfo(evName(f), eventRows(f)); const w = (f.properties.sources || []).find((x) => x.kind === 'wikidata'); if (w) infoImageFor(w.id); }
