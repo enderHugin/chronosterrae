@@ -1,0 +1,6 @@
+construcciones de prueba Q12501 Q19675 Q243 Q478595
+qlever GET  200 1068 ms
+qlever POST form 200 208 ms
+qlever POST sparql-query 200 204 ms
+lote 2000 1921 con P18 en 629 ms
+lote 8000 7689 con P18 en 1181 ms

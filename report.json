@@ -1,0 +1,316 @@
+{
+ "probed_at": "2026-11-12T10:14:59.401Z",
+ "site": "https://enderhugin.github.io/chronosterrae/",
+ "qlever": {
+  "GET": {
+   "status": 200,
+   "ms": 1068,
+   "rows": [
+    {
+     "item": "http://www.wikidata.org/entity/Q12501",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/The%20Great%20Wall%20of%20China%20at%20Jinshanling-edit.jpg"
+    },
+    {
+     "item": "http://www.wikidata.org/entity/Q19675",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/Cour%20Napol%C3%A9on%20at%20night%20-%20Louvre.jpg"
+    },
+    {
+     "item": "http://www.wikidata.org/entity/Q243",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tour%20Eiffel%20Wikimedia%20Commons.jpg"
+    },
+    {
+     "item": "http://www.wikidata.org/entity/Q478595",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tan%20Son%20Nhat%20International%20Airport%20at%20night%20%2812088245464%29.jpg"
+    }
+   ]
+  },
+  "POST form": {
+   "status": 200,
+   "ms": 208,
+   "rows": [
+    {
+     "item": "http://www.wikidata.org/entity/Q12501",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/The%20Great%20Wall%20of%20China%20at%20Jinshanling-edit.jpg"
+    },
+    {
+     "item": "http://www.wikidata.org/entity/Q19675",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/Cour%20Napol%C3%A9on%20at%20night%20-%20Louvre.jpg"
+    },
+    {
+     "item": "http://www.wikidata.org/entity/Q243",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tour%20Eiffel%20Wikimedia%20Commons.jpg"
+    },
+    {
+     "item": "http://www.wikidata.org/entity/Q478595",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tan%20Son%20Nhat%20International%20Airport%20at%20night%20%2812088245464%29.jpg"
+    }
+   ]
+  },
+  "POST sparql-query": {
+   "status": 200,
+   "ms": 204,
+   "rows": [
+    {
+     "item": "http://www.wikidata.org/entity/Q12501",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/The%20Great%20Wall%20of%20China%20at%20Jinshanling-edit.jpg"
+    },
+    {
+     "item": "http://www.wikidata.org/entity/Q19675",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/Cour%20Napol%C3%A9on%20at%20night%20-%20Louvre.jpg"
+    },
+    {
+     "item": "http://www.wikidata.org/entity/Q243",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tour%20Eiffel%20Wikimedia%20Commons.jpg"
+    },
+    {
+     "item": "http://www.wikidata.org/entity/Q478595",
+     "img": "http://commons.wikimedia.org/wiki/Special:FilePath/Tan%20Son%20Nhat%20International%20Airport%20at%20night%20%2812088245464%29.jpg"
+    }
+   ]
+  }
+ },
+ "coverage": {
+  "eventQids": 21272,
+  "batch2000": {
+   "ms": 629,
+   "withP18": 1921,
+   "of": 2000
+  },
+  "batch8000": {
+   "ms": 1181,
+   "withP18": 7689,
+   "of": 8000
+  },
+  "byKind8000": {
+   "death": "669/671",
+   "publication": "328/335",
+   "birth": "1613/1617",
+   "event": "617/675",
+   "discovery": "4262/4398",
+   "composition": "200/304"
+  },
+  "built": {
+   "ms": 936,
+   "withP18": 4951,
+   "of": 5000
+  }
+ },
+ "browser": {
+  "origin": "https://enderhugin.github.io",
+  "commons": {
+   "status": 200,
+   "ms": 374,
+   "acao": null,
+   "pages": [
+    {
+     "title": "File:Cour Napoléon at night - Louvre.jpg",
+     "missing": false,
+     "mime": "image/jpeg",
+     "size": [
+      3048,
+      1209
+     ],
+     "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Cour_Napol%C3%A9on_at_night_-_Louvre.jpg/330px-Cour_Napol%C3%A9on_at_night_-_Louvre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "thumbsize": [
+      320,
+      127
+     ],
+     "descriptionurl": "https://commons.wikimedia.org/wiki/File:Cour_Napol%C3%A9on_at_night_-_Louvre.jpg",
+     "artist": "Benh LIEU SONG",
+     "credit": "Own work",
+     "license": "CC BY 2.5",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+     "attributionRequired": "true",
+     "usageTerms": "Creative Commons Attribution 2.5",
+     "copyrighted": "True",
+     "restrictions": ""
+    },
+    {
+     "title": "File:Tour Eiffel Wikimedia Commons.jpg",
+     "missing": false,
+     "mime": "image/jpeg",
+     "size": [
+      2900,
+      5367
+     ],
+     "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/330px-Tour_Eiffel_Wikimedia_Commons.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "thumbsize": [
+      320,
+      592
+     ],
+     "descriptionurl": "https://commons.wikimedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons.jpg",
+     "artist": "Benh LIEU SONG",
+     "credit": "Own work",
+     "license": "Public domain",
+     "licenseUrl": null,
+     "attributionRequired": "false",
+     "usageTerms": "Public domain",
+     "copyrighted": "False",
+     "restrictions": ""
+    },
+    {
+     "title": "File:The Great Wall of China at Jinshanling-edit.jpg",
+     "missing": false,
+     "mime": "image/jpeg",
+     "size": [
+      4288,
+      2848
+     ],
+     "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/330px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "thumbsize": [
+      320,
+      213
+     ],
+     "descriptionurl": "https://commons.wikimedia.org/wiki/File:The_Great_Wall_of_China_at_Jinshanling-edit.jpg",
+     "artist": "Severin.stalder",
+     "credit": "Own work",
+     "license": "CC BY-SA 3.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+     "attributionRequired": "true",
+     "usageTerms": "Creative Commons Attribution-Share Alike 3.0",
+     "copyrighted": "True",
+     "restrictions": ""
+    },
+    {
+     "title": "File:Tan Son Nhat International Airport at night (12088245464).jpg",
+     "missing": false,
+     "mime": "image/jpeg",
+     "size": [
+      4288,
+      2476
+     ],
+     "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Tan_Son_Nhat_International_Airport_at_night_%2812088245464%29.jpg/330px-Tan_Son_Nhat_International_Airport_at_night_%2812088245464%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "thumbsize": [
+      320,
+      185
+     ],
+     "descriptionurl": "https://commons.wikimedia.org/wiki/File:Tan_Son_Nhat_International_Airport_at_night_(12088245464).jpg",
+     "artist": "Bem photography:",
+     "credit": "https://www.flickr.com/photos/bem_chip/12088245464/",
+     "license": "CC BY 2.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+     "attributionRequired": "true",
+     "usageTerms": "Creative Commons Attribution 2.0",
+     "copyrighted": "True",
+     "restrictions": ""
+    }
+   ]
+  },
+  "img": [
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Cour_Napol%C3%A9on_at_night_-_Louvre.jpg/330px-Cour_Napol%C3%A9on_at_night_-_Louvre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "ok": true,
+    "w": 330,
+    "h": 131,
+    "ms": 407
+   },
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/330px-Tour_Eiffel_Wikimedia_Commons.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "ok": true,
+    "w": 330,
+    "h": 611,
+    "ms": 407
+   },
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/330px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "ok": true,
+    "w": 330,
+    "h": 219,
+    "ms": 406
+   },
+   {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Tan_Son_Nhat_International_Airport_at_night_%2812088245464%29.jpg/330px-Tan_Son_Nhat_International_Airport_at_night_%2812088245464%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "ok": true,
+    "w": 330,
+    "h": 191,
+    "ms": 407
+   },
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Great%20Wall%20of%20China%20at%20Jinshanling-edit.jpg?width=96",
+    "ok": true,
+    "w": 120,
+    "h": 80,
+    "ms": 411
+   },
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cour%20Napol%C3%A9on%20at%20night%20-%20Louvre.jpg?width=96",
+    "ok": true,
+    "w": 120,
+    "h": 48,
+    "ms": 413
+   },
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tour%20Eiffel%20Wikimedia%20Commons.jpg?width=96",
+    "ok": true,
+    "w": 120,
+    "h": 222,
+    "ms": 452
+   },
+   {
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tan%20Son%20Nhat%20International%20Airport%20at%20night%20(12088245464).jpg?width=96",
+    "ok": true,
+    "w": 120,
+    "h": 69,
+    "ms": 439
+   }
+  ],
+  "wikidata": {
+   "status": 200,
+   "acao": null,
+   "p18": [
+    "Badaling China Great-Wall-of-China-06.jpg",
+    "The Great Wall of China at Jinshanling-edit.jpg"
+   ]
+  },
+  "wikipediaSummary": {
+   "status": 200,
+   "acao": null,
+   "keys": [
+    "type",
+    "title",
+    "displaytitle",
+    "namespace",
+    "wikibase_item",
+    "titles",
+    "pageid",
+    "thumbnail",
+    "originalimage",
+    "lang",
+    "dir",
+    "revision",
+    "tid",
+    "timestamp",
+    "description",
+    "description_source",
+    "coordinates",
+    "content_urls",
+    "extract",
+    "extract_html"
+   ],
+   "extractLen": 253,
+   "hasThumb": true
+  }
+ },
+ "files": [
+  {
+   "item": "Q12501",
+   "url": "http://commons.wikimedia.org/wiki/Special:FilePath/The%20Great%20Wall%20of%20China%20at%20Jinshanling-edit.jpg",
+   "file": "The Great Wall of China at Jinshanling-edit.jpg"
+  },
+  {
+   "item": "Q19675",
+   "url": "http://commons.wikimedia.org/wiki/Special:FilePath/Cour%20Napol%C3%A9on%20at%20night%20-%20Louvre.jpg",
+   "file": "Cour Napoléon at night - Louvre.jpg"
+  },
+  {
+   "item": "Q243",
+   "url": "http://commons.wikimedia.org/wiki/Special:FilePath/Tour%20Eiffel%20Wikimedia%20Commons.jpg",
+   "file": "Tour Eiffel Wikimedia Commons.jpg"
+  },
+  {
+   "item": "Q478595",
+   "url": "http://commons.wikimedia.org/wiki/Special:FilePath/Tan%20Son%20Nhat%20International%20Airport%20at%20night%20%2812088245464%29.jpg",
+   "file": "Tan Son Nhat International Airport at night (12088245464).jpg"
+  }
+ ]
+}
