@@ -42,7 +42,7 @@ const ROLES = [
         ['Q520549', 'geologist'], ['Q18805', 'naturalist'], ['Q2374149', 'botanist'], ['Q350979', 'zoologist'], ['Q39631', 'physician'], ['Q188094', 'economist'], ['Q212980', 'psychologist'],
         ['Q82594', 'computer scientist']], ['scientist', 'physicist', 'chemist', 'biologist', 'astronomer', 'mathematician', 'naturalist', 'geologist', 'botanist', 'zoologist', 'physician', 'economist',
         'cosmologist', 'astrophysicist', 'psychologist', 'psychiatrist', 'neurologist', 'neuroscientist', 'archaeologist', 'anthropologist', 'sociologist', 'linguist', 'geographer', 'biochemist', 'microbiologist', 'geneticist',
-        'meteorologist', 'paleontologist', 'palaeontologist', 'ornithologist', 'entomologist', 'pharmacologist', 'immunologist', 'virologist', 'bacteriologist', 'surgeon', 'polymath']],
+        'meteorologist', 'paleontologist', 'palaeontologist', 'ornithologist', 'entomologist', 'pharmacologist', 'immunologist', 'virologist', 'bacteriologist', 'surgeon']],
     ['philosopher', [['Q4964182', 'philosopher']], ['philosopher']],
     ['religious', [['Q42603', 'priest'], ['Q29182', 'bishop'], ['Q733786', 'monk'], ['Q133485', 'rabbi'], ['Q1234713', 'theologian'], ['Q2259532', 'cleric']], ['priest', 'bishop', 'archbishop', 'cardinal', 'monk', 'nun', 'friar', 'abbot', 'abbess', 'rabbi', 'imam', 'missionary', 'theologian', 'saint', 'prophet', 'preacher', 'pastor', 'cleric', 'clergyman',
         'evangelist', 'apostle', 'martyr', 'disciple', 'deacon', 'patriarch', 'hermit', 'mystic', 'ayatollah', 'mullah', 'mufti', 'lama', 'guru', 'reverend',
