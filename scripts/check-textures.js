@@ -26,6 +26,12 @@ for (const it of all) {
     check(id + ': dimensiones declaradas = reales', () => { const [w, h] = jpegSize(it.file); const ew = it.width || it.output.width; const eh = it.height || it.output.height; return w === ew && h === eh && w === 2 * h; });
     check(id + ': credito y fuente https declarados', () => Boolean(it.credit) && /^https:\/\//.test(it.sourceUrl) && /^https:\/\//.test(it.sourcePage));
 }
+check('cada textura que pide la vista solar (TEX_FILE) existe y esta en el manifiesto, y al reves', () => {
+    const src = fs.readFileSync(path.join(root, 'solar', 'solar-view.js'), 'utf8'); const m = src.match(/const TEX_FILE = \{([^}]*)\}/);
+    const want = [...m[1].matchAll(/(\w+):\s*'([a-z]+)'/g)].map((x) => x[2]).sort(); const have = man.items.map((it) => it.id).sort();
+    if (want.join() !== have.join()) throw new Error('cliente ' + want.join() + ' / manifiesto ' + have.join());
+    return want.every((f) => fs.existsSync(path.join(dir, f + '.jpg')));
+});
 check('todo cuerpo con textura declara como se tomo la longitud (diseno comun o giro)', () => man.items.every((it) => typeof it.lonLayout === 'string' && it.lonLayout.length > 10 && typeof it.note === 'string'));
 check('lo que no tiene textura lo dice (Venus, Saturno, Urano, Neptuno)', () => ['Venus', 'Saturn', 'Uranus', 'Neptune'].every((k) => man.noTexture[k]));
 const rg = JSON.parse(fs.readFileSync(path.join(root, man.rings.file), 'utf8'));

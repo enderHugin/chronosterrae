@@ -48,7 +48,8 @@ sale y cuánto se puede fiar de él.
   (~150.000 km para Venus hacia el 2000 a. C.). Radios: NASA NSSDCA e IAU 2015. Cada cuerpo se dibuja como esfera
   (elipsoide si está achatado) **orientada con su eje de rotación IAU**, con la **fase** real y, donde hay mapa verificado,
   con su **textura de misión espacial** (NASA/USGS, dominio público: Mercurio, Luna, Marte, Júpiter, Ío, Europa, Ganimedes,
-  Calisto; `data/textures/`, con procedencia y huella en `manifest.json`). Saturno lleva sus **anillos con la opacidad medida
+  Calisto y, desde el 2026-11-12, la **Tierra cuando se ve de lejos o desde otro cuerpo**: Blue Marble Next Generation de NASA
+  servida por GIBS, sin nubes; de cerca la Tierra sigue siendo el mapa; `data/textures/`, con procedencia y huella en `manifest.json`). Saturno lleva sus **anillos con la opacidad medida
   por Cassini UVIS**, con sombra del planeta sobre los anillos y de los anillos sobre el planeta. Venus, Saturno, Urano y
   Neptuno no tienen mapa verificado y se dibujan en color medio ilustrativo; la web lo dice. Las lunas galileanas usan
   rotación síncrona aproximada (sin libraciones). Es una imagen del cuerpo **tal como lo vio una misión**, no de cómo se ve

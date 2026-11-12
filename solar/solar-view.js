@@ -21,8 +21,9 @@
     const DRAG_RAD_PER_PX = 0.006;
     // Ley de iluminacion por cuerpo (modelo): Lommel-Seeliger para superficies sin atmosfera, Lambert para atmosferas y nubes.
     const LAW = { Mercury: 'lommel', Moon: 'lommel', Io: 'lommel', Europa: 'lommel', Ganymede: 'lommel', Callisto: 'lommel' };
-    const TEX_IDS = ['Mercury', 'Moon', 'Mars', 'Jupiter', 'Io', 'Europa', 'Ganymede', 'Callisto'];
-    const TEX_FILE = { Mercury: 'mercury', Moon: 'moon', Mars: 'mars', Jupiter: 'jupiter', Io: 'io', Europa: 'europa', Ganymede: 'ganymede', Callisto: 'callisto' };
+    const TEX_IDS = ['Mercury', 'Moon', 'Mars', 'Jupiter', 'Io', 'Europa', 'Ganymede', 'Callisto', 'Earth'];
+    // La Tierra lleva textura solo cuando NO se ve el mapa (de lejos, o vista desde otro cuerpo): Blue Marble NG de NASA, sin nubes
+    const TEX_FILE = { Mercury: 'mercury', Moon: 'moon', Mars: 'mars', Jupiter: 'jupiter', Io: 'io', Europa: 'europa', Ganymede: 'ganymede', Callisto: 'callisto', Earth: 'earth' };
     const JOVIAN = ['Io', 'Europa', 'Ganymede', 'Callisto'];
     const RING_COLOR = [222, 205, 175];                // ILUSTRATIVO: la opacidad es medida, el color no
     const TEX_MIN_PX = 6;                              // por debajo de este radio el cuerpo es un disco plano
@@ -250,7 +251,10 @@
         /** Ejes del cuerpo (x = meridiano origen, y = este, z = polo norte) en la base de la camara; null si no se conocen. */
         function axesInCam(id, jd, P, cam) {
             let x; let y; let z;
-            if (JOVIAN.includes(id)) {            // rotacion sincrona: el polo es el de Jupiter y el meridiano 0 mira a Jupiter (sin libraciones)
+            if (id === 'Earth') {                 // el marco del globo del mapa (precesion + GAST): x del globo = este (lng 90), y = polo norte, z = lng 0
+                const F = Solar.earthFrame(jd);
+                x = Solar.globeToEcl(F, [0, 0, 1]); y = Solar.globeToEcl(F, [1, 0, 0]); z = Solar.globeToEcl(F, [0, 1, 0]);
+            } else if (JOVIAN.includes(id)) {            // rotacion sincrona: el polo es el de Jupiter y el meridiano 0 mira a Jupiter (sin libraciones)
                 const f = Planets.frame('Jupiter', Planets.engineTime(jd)); z = Solar.eqjToEcl(f.z);
                 let t = [P.Jupiter[0] - P[id][0], P.Jupiter[1] - P[id][1], P.Jupiter[2] - P[id][2]];
                 const k = dot3(t, z); t = norm3([t[0] - k * z[0], t[1] - k * z[1], t[2] - k * z[2]]);
@@ -460,7 +464,7 @@
 
             // cuerpos: de lejos a cerca. Con el mapa puesto, la Tierra es el mapa y lo que esta mas cerca de la camara que ella se dibuja delante.
             const items = Solar.BODIES.map((b) => ({ b, q: cam.project(P[b.id]) })).filter((it) => it.q).sort((a, c) => c.q[2] - a.q[2]);
-            const labels = [];
+            const labels = []; let earthTex = false;
             const jq = (items.find((it) => it.b.id === 'Jupiter') || {}).q;
             for (const { b, q } of items) {
                 if (JOVIAN.includes(b.id) && st.focus !== 'Jupiter' && !JOVIAN.includes(st.focus) && (!jq || Math.hypot(q[0] - jq[0], q[1] - jq[1]) < 70)) continue;
@@ -469,7 +473,9 @@
                 if (q[0] < -r - 50 || q[1] < -r - 50 || q[0] > w + r + 50 || q[1] > h + r + 50) continue;
                 if (!(mapOn && b.id === 'Earth')) {
                     const ctx = mapOn && q[2] < earthZ ? ctxF : ctxB;
-                    if (!(scaled && r >= TEX_MIN_PX && !b.emissive && b.id !== 'Earth' && texturedSphere(ctx, q[0], q[1], r, b, P, cam, jd))) sphere(ctx, q[0], q[1], px, b, Solar.lighting(cam, P[b.id], [0, 0, 0]));   // el Sol es el origen del marco
+                    const drewTex = scaled && r >= TEX_MIN_PX && !b.emissive && texturedSphere(ctx, q[0], q[1], r, b, P, cam, jd);
+                    if (!drewTex) sphere(ctx, q[0], q[1], px, b, Solar.lighting(cam, P[b.id], [0, 0, 0]));   // el Sol es el origen del marco
+                    if (b.id === 'Earth' && drewTex && st.texState.Earth === 'ready') earthTex = true;
                     if (!scaled && !b.emissive) { ctx.strokeStyle = rgba(hexRgb(b.color), 0.55); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(q[0], q[1], px + 4, 0, 2 * Math.PI); ctx.stroke(); }
                 }
                 st.shapes.push({ id: b.id, x: q[0], y: q[1], r: px });
@@ -501,6 +507,7 @@
                 if (JOVIAN.includes(st.focus)) out.push(o.t('solar.axesSync'));
             }
             if (mapOn) out.push(o.t('solar.earthIsMap'));
+            else if (earthTex) out.push(o.t('solar.tex.Earth'));
             const unscaled = labels.filter((l) => !l.scaled).length;
             if (unscaled) out.push(o.t('solar.dots'));
             const year = yearOf(jd);

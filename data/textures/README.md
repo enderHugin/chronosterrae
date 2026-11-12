@@ -9,6 +9,8 @@ Lo que se ve es **la superficie o el techo de nubes actual** de cada cuerpo (ima
 
 - Júpiter: techo de nubes de diciembre de 2000. Las bandas son estables; las manchas y óvalos no. No se afirma la posición de ningún detalle.
 - Marte: color sintetizado de Viking (producto cartográfico). Luna: color de LROC con relleno polar de albedo de LOLA.
+- Tierra (solo de lejos o vista desde otro cuerpo; de cerca es el mapa): Blue Marble Next Generation de NASA servida por GIBS (GeoTIFF WGS84
+  2048×1024, comprobado por la sonda `textures-probe`). Sin nubes ni hielo marino del momento; no consta qué mes sirve GIBS.
 - Venus: la única fuente verificada es radar, no luz visible; no se usa. Saturno, Urano y Neptuno: sin mapa verificado, se dibujan en color medio.
 - Anillos de Saturno: perfil de profundidad óptica normal medido por Cassini UVIS (Becker y Jarmak 2023, DOI 10.17189/1523014), mediana de 41
   ocultaciones solares. Dice cuánta luz bloquea el anillo, no su color; en el anillo B es cota inferior (saturación del instrumento).
