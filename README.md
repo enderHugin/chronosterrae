@@ -127,9 +127,13 @@ sale y cuánto se puede fiar de él.
 - **Buscador con lista inmediata e imágenes (2026-11-12).** Al escribir (desde 2 letras) sale la lista de coincidencias: personas
   (una vez, con nacimiento y muerte: «einstein» → Albert Einstein, n. 14/03/1879 · m. 18/04/1955), sucesos, construcciones y
   entidades políticas, sin tildes ni mayúsculas, por principio de palabra y por notoriedad. **Recorrerla** con ↑↓ (o dejando el
-  ratón un instante encima) lleva el mapa a cada resultado: la Tierra gira brevemente hasta el lugar **sin acercar ni alejar** y,
-  solo si cambia la época (otro año), **toda la escena** (cielo, mapa, noche, iconos) se funde bajo un velo y reaparece ya en la
-  fecha, cuando el mapa nuevo está pintado; los recuadros pasan de los colores de una época a los de la otra con transición. El
+  ratón un instante encima) lleva el mapa a cada resultado en dos tiempos: **primero la Tierra gira** hasta el lugar, suave y visible
+  (0,6–1,3 s según la distancia, **sin acercar ni alejar**, y sin cambiar aún la fecha: cargar otra época durante el giro lo hacía ir
+  a saltos) y, ya en el sitio, si cambia la época, **toda la escena** (cielo, mapa, noche, iconos) se funde bajo un velo y reaparece
+  en la nueva fecha cuando el mapa nuevo está pintado. El aspecto de la época (colores, letra, bordes, adornos de los recuadros)
+  pasa de uno a otro con un **fundido cruzado** (View Transitions, solo sobre los recuadros; sin la API, los colores con transición).
+  Junto a la caja, el **orden** de los resultados: recientes primero (por defecto), antiguos primero o por relevancia (se ordena
+  en el tiempo el conjunto de las mejores coincidencias). El
   elegido queda **en foco**: los demás iconos de sucesos y construcciones bajan de opacidad (con transición) mientras se recorre la
   lista y, tras elegir, mientras su ficha está abierta. El icono elegido se señala con su nombre. Lo mismo al elegir un suceso de la
   lista de sucesos; las entidades políticas también se centran sin zoom. Intro abre la ficha; Esc vuelve a donde se

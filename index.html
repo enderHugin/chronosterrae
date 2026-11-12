@@ -60,7 +60,8 @@
            (flex), nunca en coordenadas absolutas sueltas: asi no se solapan. --top-h y --bot-h los mide el JS (layoutMeasure). */
         #topbar { position: absolute; top: 14px; left: 14px; right: 14px; z-index: 20; display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; pointer-events: none; }
         #topbar > * { pointer-events: auto; }
-        #top-left { flex: 1 1 200px; min-width: 0; max-width: 300px; display: flex; position: relative; }
+        #top-left { flex: 1 1 200px; min-width: 0; max-width: 390px; display: flex; gap: 6px; position: relative; }
+        #search-sort { flex: none; pointer-events: auto; padding: 0 6px; border: 1px solid var(--accent); border-radius: 6px; background: var(--panel); color: var(--text); font: 600 12px var(--font-ui); max-width: 112px; }
         /* Lista del buscador: aparece al escribir; recorrerla lleva el mapa a cada resultado (giro breve y fundido a la fecha) */
         #search-list { position: absolute; top: calc(100% + 4px); left: 0; width: max(100%, 380px); max-width: calc(100vw - 28px); max-height: min(62vh, 480px); overflow: auto;
             margin: 0; padding: 4px; list-style: none; pointer-events: auto; background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 8px;
@@ -83,6 +84,17 @@
         /* Los colores de la epoca (recuadros, botones, textos) pasan de una a otra en vez de saltar */
         .panel, .btn, #search, #search-list, .menu-pop, #era-badge, #timeline, #slider, .custom-pop {
             transition: background-color 450ms ease, color 450ms ease, border-color 450ms ease, outline-color 450ms ease, box-shadow 450ms ease; }
+        /* Fundido cruzado del aspecto de la epoca: solo los recuadros llevan nombre, y solo durante el cambio (body.vt) */
+        :root { view-transition-name: none; }
+        ::view-transition { pointer-events: none; }
+        body.vt #timeline { view-transition-name: vt-timeline; }
+        body.vt #top-right { view-transition-name: vt-top-right; }
+        body.vt #search { view-transition-name: vt-search; }
+        body.vt #search-list { view-transition-name: vt-search-list; }
+        body.vt #dock-l { view-transition-name: vt-dock-l; }
+        body.vt #dock-r { view-transition-name: vt-dock-r; }
+        ::view-transition-group(*) { animation-duration: 600ms; animation-timing-function: ease-in-out; }
+        ::view-transition-old(*), ::view-transition-new(*) { animation-duration: 600ms; animation-timing-function: ease-in-out; }
         @media (prefers-reduced-motion: reduce) { #era-veil, #era-veil.on { transition: none; opacity: 0; }
             .panel, .btn, #search, #search-list, .menu-pop, #era-badge, #timeline, #slider, .custom-pop { transition: none; } }
         #info figure.info-pic { margin: 2px 0 8px; }
@@ -420,6 +432,7 @@
         <div id="top-left">
             <input id="search" type="search" data-i18n-placeholder="searchPlaceholder" aria-label="Search" autocomplete="off" style="width:100%"
                 role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-list">
+            <select id="search-sort" aria-label="Orden"></select>
             <ul id="search-list" role="listbox" hidden></ul>
         </div>
         <div id="top-right">
@@ -667,6 +680,7 @@ const parsePrefs = (raw) => {
     if (p.bh === 0 || p.bh === 1) out.bh = p.bh === 1;   // fronteras historicas ocultas por el usuario (de cerca)
     if (p.rd === 0 || p.rd === 1) out.rd = p.rd === 1;   // capa de carreteras y ferrocarriles de hoy (apagada por defecto)
     if (p.bu === 0 || p.bu === 1) out.bu = p.bu === 1;   // capa de construcciones (encendida por defecto)
+    if (p.so === 'new' || p.so === 'old' || p.so === 'rel') out.so = p.so;   // orden de los resultados del buscador
     if (typeof p.ks === 'string' && /^(?:[0-9A-Za-z]{1,5}|x[1-9][0-9]{0,8}[nhdwoy])$/.test(p.ks)) out.ks = p.ks;   // paso de las flechas (id, o personalizado 'x15n'; se valida al usarlo)
     // ultimo elemento elegido (ficha): pais/entidad por su nombre ('p'), suceso por su id ('e') o construccion por su id ('b'); texto corto y sin caracteres de control
     if (p.sel && typeof p.sel === 'object' && (p.sel.k === 'p' || p.sel.k === 'e' || p.sel.k === 'b') && typeof p.sel.v === 'string' && p.sel.v.length > 0 && p.sel.v.length <= 160 && !/[\u0000-\u001f\u007f]/.test(p.sel.v)) out.sel = { k: p.sel.k, v: p.sel.v };
@@ -700,7 +714,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -719,7 +733,8 @@ const i18n = {
             kind: { person: 'Persona', event: 'Suceso', built: 'Construcción', polity: 'Entidad política' },
             born: 'n.', died: 'm.', noPlace: 'sin lugar', maps: '{n} mapas', near: 'más cercano: {y}',
             hint: '↑↓ recorre (el mapa va a cada uno) · Intro elige · Esc vuelve',
-            img: 'Imagen: {a} · {l}', imgSrc: 'Wikimedia Commons', imgTip: 'Imagen de Wikimedia Commons; autor y licencia en la ficha'
+            img: 'Imagen: {a} · {l}', imgSrc: 'Wikimedia Commons', imgTip: 'Imagen de Wikimedia Commons; autor y licencia en la ficha',
+            sort: { label: 'Orden de los resultados', new: 'Recientes ↓', old: 'Antiguos ↑', rel: 'Relevancia' }
         }, timePlaceholder: '1789 · 44 a.C. · 250 Ma',
         today: 'Hoy', yearsAgo: 'hace {n} años', approxYear: '≈ año {y}',
         ce: 'd.C.', bce: 'a.C.',
@@ -748,7 +763,7 @@ const i18n = {
         noResults: 'Sin resultados para «{q}». Pronto una búsqueda sin resultado podrá convertirse en una petición de datos.',
         found: '«{n}» aparece en {c} épocas. Mostrando {y}.', badTime: 'No entiendo esa fecha. Prueba: 1789, 44 a.C., 12 ka, 250 Ma.',
         liveOk: 'Datos recientes cargados: {n}.',
-        evidence: 'Tipo de evidencia', source: 'Fuente', snapshotLabel: 'Instantánea', precision: 'Precisión de la frontera',
+        evidence: 'Se basa en', source: 'Fuente', snapshotLabel: 'Instantánea', precision: 'Precisión de la frontera',
         parent: 'Parte de', power: 'Bajo autoridad de', model: 'Modelo', age: 'Edad',
         ev: { measurement: 'Medición', documentary: 'Documento', artefact: 'Artefacto', model: 'Modelo', reconstruction: 'Reconstrucción', speculation: 'Especulación' },
         coastTitle: 'Contorno continental (modelo de placas)', coastNote: 'Los contornos ACTUALES de los continentes, desplazados como bloques rígidos según un modelo de placas. No son las costas reales de esa época: no incluyen mares someros, nivel del mar ni deformación. Las costas paleogeográficas reales solo están disponibles hasta 535 Ma.',
@@ -821,7 +836,7 @@ const i18n = {
             basisUtc: 'UTC/GMT', basisLocal: 'hora oficial del lugar (UTC{off})', noPlace: 'sin lugar', empty: 'No hay sucesos con fuente cerca de este instante a esta escala. Acércate o cambia de año.',
             none: 'No hay sucesos cargados todavía.', outOfRange: 'Los sucesos con fecha se muestran entre los años 1 y hoy.',
             shown: 'Los más cercanos al reloj ({n}). A esta escala solo los más notorios: al acercarte aparecen más.',
-            verif: { title: 'Verificación: qué mostrar', status: 'Nivel de revisión', evidence: 'Tipo de evidencia', help: 'Tú decides qué mostrar. Lo no revisado sale atenuado en el mapa.',
+            verif: { title: 'Verificación: qué mostrar', status: 'Nivel de revisión', evidence: 'En qué se basa', help: 'Tú decides qué mostrar. Lo no revisado sale atenuado en el mapa.',
                 st: { raw: 'Automático, sin revisar', community: 'Aportado, sin revisar', reviewed: 'Revisado por una persona experta', consensus: 'Consenso de varios revisores' },
                 ev: { documentary: 'Medición, documento u objeto', reconstruction: 'Reconstrucción o modelo', speculation: 'Especulación (hipótesis)' } },
             kind: { birth: 'Nacimiento', death: 'Muerte', publication: 'Publicación', composition: 'Composición', discovery: 'Descubrimiento o invención', extinction: 'Extinción', event: 'Suceso' },
@@ -928,7 +943,8 @@ const i18n = {
             kind: { person: 'Person', event: 'Event', built: 'Building', polity: 'Polity' },
             born: 'b.', died: 'd.', noPlace: 'no place', maps: '{n} maps', near: 'nearest: {y}',
             hint: '↑↓ browse (the map goes to each) · Enter picks · Esc goes back',
-            img: 'Image: {a} · {l}', imgSrc: 'Wikimedia Commons', imgTip: 'Image from Wikimedia Commons; author and licence in the panel'
+            img: 'Image: {a} · {l}', imgSrc: 'Wikimedia Commons', imgTip: 'Image from Wikimedia Commons; author and licence in the panel',
+            sort: { label: 'Order of the results', new: 'Newest ↓', old: 'Oldest ↑', rel: 'Relevance' }
         }, timePlaceholder: '1789 · 44 BC · 250 Ma',
         today: 'Today', yearsAgo: '{n} years ago', approxYear: '≈ year {y}',
         ce: 'AD', bce: 'BC',
@@ -957,7 +973,7 @@ const i18n = {
         noResults: 'No results for "{q}". Soon an empty search will be able to become a data request.',
         found: '"{n}" appears in {c} eras. Showing {y}.', badTime: "I can't read that date. Try: 1789, 44 BC, 12 ka, 250 Ma.",
         liveOk: 'Recent data loaded: {n}.',
-        evidence: 'Evidence type', source: 'Source', snapshotLabel: 'Snapshot', precision: 'Border precision',
+        evidence: 'Based on', source: 'Source', snapshotLabel: 'Snapshot', precision: 'Border precision',
         parent: 'Part of', power: 'Under authority of', model: 'Model', age: 'Age',
         ev: { measurement: 'Measurement', documentary: 'Documentary', artefact: 'Artefact', model: 'Model', reconstruction: 'Reconstruction', speculation: 'Speculation' },
         coastTitle: 'Continental outline (plate model)', coastNote: 'The PRESENT-DAY outlines of the continents, moved as rigid blocks by a plate model. They are not the real coastlines of that time: no shallow seas, sea level or deformation. Real palaeogeographic coastlines are only available up to 535 Ma.',
@@ -1030,7 +1046,7 @@ const i18n = {
             basisUtc: 'UTC/GMT', basisLocal: 'official local time (UTC{off})', noPlace: 'no place', empty: 'No sourced events near this instant at this scale. Zoom in or change the year.',
             none: 'No events loaded yet.', outOfRange: 'Dated events are shown between year 1 and today.',
             shown: 'The closest to the clock ({n}). At this scale only the most notable: more appear as you zoom in.',
-            verif: { title: 'Verification: what to show', status: 'Review level', evidence: 'Evidence type', help: 'You decide what to show. Unreviewed items are dimmed on the map.',
+            verif: { title: 'Verification: what to show', status: 'Review level', evidence: 'What it is based on', help: 'You decide what to show. Unreviewed items are dimmed on the map.',
                 st: { raw: 'Automatic, unreviewed', community: 'Contributed, unreviewed', reviewed: 'Reviewed by an expert', consensus: 'Agreed by several reviewers' },
                 ev: { documentary: 'Measurement, document or object', reconstruction: 'Reconstruction or model', speculation: 'Speculation (hypothesis)' } },
             kind: { birth: 'Birth', death: 'Death', publication: 'Publication', composition: 'Composition', discovery: 'Discovery or invention', extinction: 'Extinction', event: 'Event' },
@@ -2634,7 +2650,7 @@ async function runSearch(raw) {
 // Al escribir sale la lista; recorrerla (flechas o raton) lleva el mapa a cada resultado con un giro breve del globo y un fundido a la
 // fecha; Intro elige (abre la ficha); Esc vuelve a donde se estaba. Las personas salen una vez y llevan a su nacimiento.
 // Imagenes: solo el nombre del archivo viene en el indice; la miniatura y, en la ficha, la imagen con autor y licencia, de Wikimedia Commons.
-const SRCH = { markSeq: 0, entries: null, byQid: null, polities: false, loading: null, failed: null, items: [], active: -1, origin: null, prevT: 0, fadeT: 0, hoverT: 0, blurT: 0, q: '' };
+const SRCH = { sort: prefs.so || 'new', goSeq: 0, markSeq: 0, entries: null, byQid: null, polities: false, loading: null, failed: null, items: [], active: -1, origin: null, prevT: 0, fadeT: 0, hoverT: 0, blurT: 0, q: '' };
 const SRCH_REDUCED = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 const commonsThumb = (file, w) => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(file) + '?width=' + w;
 function srchEnsure() {
@@ -2710,9 +2726,28 @@ async function srchRun() {
     const raw = $('search').value; SRCH.q = raw;
     if (ChronosSearch.normalize(raw).length < 2) { SRCH.items = []; SRCH.active = -1; srchRender(); return; }
     if (!SRCH.entries) { srchRender(t('search.loading')); await srchEnsure(); if ($('search').value !== raw) return; }
-    SRCH.items = ChronosSearch.query(SRCH.entries, raw, { limit: 8 }); SRCH.active = -1;
+    SRCH.items = srchSorted(ChronosSearch.query(SRCH.entries, raw, { limit: SRCH.sort === 'rel' ? 8 : 10 })); SRCH.active = -1;
     srchRender(SRCH.items.length ? null : SRCH.failed ? fmt('search.fail', { err: SRCH.failed }) : fmt('search.none', { q: raw.trim() }));
 }
+/**
+ * Orden: las mejores coincidencias (por relevancia) y, salvo «Relevancia», puestas en el tiempo: de la mas reciente a la mas antigua o al
+ * reves. Se ordena el conjunto de las mejores, no todas las coincidencias (con «al» saldrian las mas antiguas de miles, sin relacion).
+ */
+const srchWhen = (e) => (Number.isFinite(e.jd) ? e.jd : e.kind === 'polity' ? 2451545 + (srchNearYear(e) - 2000) * 365.25 : NaN);
+function srchSorted(list) {
+    if (SRCH.sort === 'rel') return list;
+    const dir = SRCH.sort === 'old' ? 1 : -1;
+    return list.slice().sort((a, b) => { const x = srchWhen(a), y = srchWhen(b); if (!Number.isFinite(x)) return 1; if (!Number.isFinite(y)) return -1; return dir * (x - y); });
+}
+function srchSortUI() {
+    const sel = $('search-sort'); const v = SRCH.sort;
+    sel.textContent = ''; ['new', 'old', 'rel'].forEach((k) => sel.appendChild(el('option', { value: k, text: t('search.sort.' + k) })));
+    sel.value = v; sel.title = sel.ariaLabel = t('search.sort.label');
+}
+$('search-sort').addEventListener('change', () => {
+    SRCH.sort = $('search-sort').value; savePrefs({ so: SRCH.sort });
+    $('search').focus(); if ($('search').value) srchRun();
+});
 function srchClose(keepSpot) { clearTimeout(SRCH.hoverT); SRCH.items = []; SRCH.active = -1; srchRender(); if (!keepSpot) spotlight(null); }
 /** Lugar y fecha de un resultado: { center|null, year, apply() }. Sin zoom: centrar no acerca ni aleja (lo pide el creador, 2026-11-12). */
 function srchTarget(e) {
@@ -2757,16 +2792,27 @@ const SRCH_EASE = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) 
  */
 function srchGo(tg) {
     if (solarView.isOpen) solarView.close();
-    clearTimeout(SRCH.fadeT); SRCH.markSeq++; evHoverSet(null); buHoverSet(null);      // la señal del destino anterior se apaga
+    const seq = ++SRCH.goSeq; SRCH.markSeq++; evHoverSet(null); buHoverSet(null);      // la señal del destino anterior se apaga
     const done = () => { if (tg.after) tg.after(); };
-    const fade = tg.year !== undefined && tg.year !== ybpToYear(state.ybp);
     const moveTo = (c) => { if (!c) return false; const p = map.getCenter(); return Math.abs(p.lng - c[0]) > 1e-6 || Math.abs(p.lat - c[1]) > 1e-6; };
     const moving = moveTo(tg.center);
     if (SRCH_REDUCED()) { tg.apply(); done(); if (moving) map.jumpTo({ center: tg.center }); if (tg.mark) srchMarkOnLanding(tg.mark, true); return; }
-    if (fade) eraVeil(() => { tg.apply(); done(); });
-    else { tg.apply(); done(); }
-    if (tg.mark) srchMarkOnLanding(tg.mark, !moving);
-    if (moving) map.easeTo({ center: tg.center, duration: 700, easing: SRCH_EASE, essential: true });
+    // 2) Ya en el sitio: cambiar la fecha. Con otra epoca, bajo el velo (fundido); en el mismo año, directamente.
+    const arrive = () => {
+        if (seq !== SRCH.goSeq) return;                         // ya se pidio otro destino
+        const fade = tg.year !== undefined && tg.year !== ybpToYear(state.ybp);
+        if (fade) eraVeil(() => { tg.apply(); done(); }); else { tg.apply(); done(); }
+        if (tg.mark) srchMarkOnLanding(tg.mark, true);
+    };
+    // 1) Primero el giro, VISIBLE y suave: durante el no se cambia la fecha (cargar fronteras y sucesos de otra epoca bloquea el hilo y
+    //    el giro se veria a saltos o de golpe). Dura mas cuanto mas lejos: de ~0,6 s (vecinos) a ~1,3 s (antipodas).
+    if (moving) {
+        const c0 = map.getCenter(); const rad = Math.PI / 180;
+        const cosd = Math.sin(c0.lat * rad) * Math.sin(tg.center[1] * rad) + Math.cos(c0.lat * rad) * Math.cos(tg.center[1] * rad) * Math.cos((tg.center[0] - c0.lng) * rad);
+        const ang = Math.acos(Math.max(-1, Math.min(1, cosd))) / rad;
+        map.easeTo({ center: tg.center, duration: Math.round(600 + 700 * Math.min(1, ang / 180)), easing: SRCH_EASE, essential: true });
+        map.once('moveend', arrive);                          // despues de easeTo: el fin del giro anterior (interrumpido) no cuenta
+    } else arrive();
 }
 // Al llegar, el icono elegido se señala como al pasar el raton (brillo y etiqueta con su nombre): asi se ve cual es entre los demas
 function srchMarkOnLanding(mark, now) {
@@ -2831,7 +2877,7 @@ $('search').addEventListener('keydown', (e) => {
         if (SRCH.items.length || SRCH.origin) { e.preventDefault(); srchCancel(); }
     }
 });
-$('search').addEventListener('blur', () => { SRCH.blurT = setTimeout(() => { const had = SRCH.items.length > 0; SRCH.origin = null; if (had) srchClose(); }, 150); });   // salir de la caja con la lista abierta: la cierra (y quita el foco); tras elegir, el foco se queda   // salir de la caja deja el mapa donde este
+$('search').addEventListener('blur', (ev) => { if (ev.relatedTarget === $('search-sort')) return; SRCH.blurT = setTimeout(() => { const had = SRCH.items.length > 0; SRCH.origin = null; if (had) srchClose(); }, 150); });   // salir de la caja con la lista abierta: la cierra (y quita el foco); tras elegir, el foco se queda   // salir de la caja deja el mapa donde este
 
 /** Imagen de la ficha (Wikidata P18) con autor y licencia de Commons. Sin licencia legible no se enseña. */
 const infoPicCache = new Map();
@@ -2943,6 +2989,7 @@ function applyStrings() {
     $('btn-borders').title = t('borders.tip');
     $('btn-roads').title = t('roads.tip');
     $('btn-built').title = t('built.tip');
+    if (typeof srchSortUI === 'function') srchSortUI();
     if (typeof builtRefresh === 'function') builtRefresh();
     $('btn-center').title = $('btn-center').ariaLabel = t('center.tip');
     $('btn-changes').title = t('changes.tip');
@@ -4873,8 +4920,26 @@ function eraHeavy() {
 }
 function eraApply() {
     ERA.last = performance.now();
-    eraVars(); eraBadge();
+    eraCrossfade(() => { eraVars(); eraBadge(); });
     clearTimeout(ERA.heavy); ERA.heavy = setTimeout(eraHeavy, ERA_HEAVY_MS);
+}
+/**
+ * El aspecto de la epoca (colores, letra, bordes, adornos) pasa de una a otra con un fundido cruzado de los recuadros, no de golpe.
+ * View Transitions con nombre SOLO en los recuadros (body.vt): el mapa no se captura y sigue vivo debajo. Los nombres se ponen solo
+ * durante el cambio (un elemento con nombre aisla el desenfoque de fondo de sus hijos). Sin la API (o con «reducir movimiento»),
+ * los colores ya pasan con transicion CSS y el resto cambia al momento.
+ */
+let eraVT = null;
+function eraCrossfade(swap) {
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!ERA.booted || reduce || typeof document.startViewTransition !== 'function') { swap(); ERA.booted = true; return; }
+    try {
+        document.body.classList.add('vt');
+        const vt = document.startViewTransition(swap); eraVT = vt;
+        // si empieza otro cambio antes de acabar, este se salta: es normal (al recorrer la lista deprisa), no un error
+        vt.ready.catch(() => {}); vt.updateCallbackDone.catch(() => {});
+        vt.finished.catch(() => {}).then(() => { if (eraVT === vt) { document.body.classList.remove('vt'); eraVT = null; } });
+    } catch (e) { document.body.classList.remove('vt'); swap(); }
 }
 /** Se llama con cada cambio de fecha: solo actua si cambia la epoca, y no mas de una vez cada ERA_MIN_MS. */
 function eraUpdate(year) {
