@@ -38,5 +38,12 @@ check('construcciones en el indice: Notre-Dame de Paris con su fecha (1163)', ()
 check('sucesos sin lugar tambien se encuentran (lng null) y no rompen el indice', () => rows.some((r) => r[F.kind] === 'event' && r[F.lng] === null) && rows.every((r) => r[F.lng] === null || (Math.abs(r[F.lng]) <= 180 && Math.abs(r[F.lat]) <= 90)));
 check('imagenes: solo nombres de archivo (nunca una URL ni datos de imagen)', () => rows.every((r) => r[F.img] === null || (typeof r[F.img] === 'string' && !/^https?:|^data:/.test(r[F.img]) && /\.(jpe?g|png|gif|svg|tiff?|webp)$/i.test(r[F.img]))));
 
+check('build-search.js corre sin paquetes de npm (lo ejecuta Pages sin npm ci): solo modulos de Node y map/ sin dependencias', () => {
+    const fs = require('fs'); const path = require('path'); const reqs = (f) => [...fs.readFileSync(f, 'utf8').matchAll(/require\((['"])([^'"]+)\1\)/g)].map((m) => m[2]);
+    const own = reqs(path.join(__dirname, 'build-search.js'));
+    const bad = own.filter((r) => !/^(fs|path|crypto)$/.test(r) && !/^\.\.\/map\/[a-z-]+\.js$/.test(r));
+    const deep = own.filter((r) => r.startsWith('../map/')).flatMap((r) => reqs(path.join(__dirname, r)).filter((x) => !/^\.\/[a-z-]+\.js$/.test(x)));
+    return (bad.length === 0 && deep.length === 0) || { bad, deep };
+});
 console.log('\nPASS ' + passes.length); passes.forEach((p) => console.log('  ok  ' + p));
 if (fails) { console.log('\nFAIL ' + fails); process.exit(1); } else console.log('\nBuscador: todo verde.');

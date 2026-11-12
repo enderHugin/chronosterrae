@@ -7,9 +7,10 @@
 // Las personas salen UNA vez (no "nacimiento" y "muerte" por separado): la entrada apunta al nacimiento y lleva la muerte aparte.
 // Las entidades politicas no van aqui: sus nombres llegan en ejecucion con el indice de historical-basemaps (GPL, no se copia).
 'use strict';
+// Sin dependencias de npm: corre en el workflow de Pages, que no instala paquetes (2026-11-12 fallo la publicacion por requerir sky.js,
+// que necesita astronomy-engine). Solo modulos de Node y map/*.js sin dependencias.
 const fs = require('fs');
 const path = require('path');
-const S = require('../sky/sky.js');
 const EI = require('../map/event-icons.js');
 
 const root = path.join(__dirname, '..');
