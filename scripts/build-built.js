@@ -41,14 +41,16 @@ const FAMILIES = [
     ['pyramid', [['Q12516', 'pyramid'], ['Q2270185', 'Mesoamerican pyramid'], ['Q170153', 'ziggurat']]],
     ['religious', [['Q2977', 'cathedral'], ['Q16970', 'church building'], ['Q44539', 'temple'], ['Q32815', 'mosque'], ['Q34627', 'synagogue'],
         ['Q842402', 'Hindu temple'], ['Q5393308', 'Buddhist temple'], ['Q180987', 'stupa'], ['Q44613', 'monastery']]],
-    // 2a pasada: museos y chateaux (las etiquetas vienen de las clases P31 que trajo la 1a; se vuelven a verificar)
-    ['palace', [['Q16560', 'palace'], ['Q751876', 'château'], ['Q33506', 'museum']]],
+    // 2a pasada: chateaux (las etiquetas vienen de las clases P31 que trajo la 1a; se vuelven a verificar)
+    ['palace', [['Q16560', 'palace'], ['Q751876', 'château']]],
     ['fortification', [['Q23413', 'castle'], ['Q57821', 'fortification']]],
     ['monument', [['Q4989906', 'monument'], ['Q162875', 'mausoleum'], ['Q193475', 'menhir'], ['Q164240', 'megalith'], ['Q1935728', 'stone circle']]],
     ['venue', [['Q54831', 'amphitheatre'], ['Q483110', 'stadium'], ['Q641226', 'arena'], ['Q24354', 'theatre building'], ['Q153562', 'opera house'], ['Q1060829', 'concert hall']]],
     ['tower', [['Q12518', 'tower'], ['Q11303', 'skyscraper'], ['Q39715', 'lighthouse']]],
     ['infrastructure', [['Q12280', 'bridge'], ['Q12323', 'dam'], ['Q474', 'aqueduct'], ['Q1248784', 'airport'], ['Q55488', 'railway station'], ['Q928830', 'metro station']]],
-    ['archaeological', [['Q839954', 'archaeological site']]]
+    ['archaeological', [['Q839954', 'archaeological site']]],
+    // Museo, con la prioridad MAS BAJA: el Coliseo y Stonehenge son tambien "museo" en Wikidata y salian como palacio (3a pasada)
+    ['palace', [['Q33506', 'museum']]]
 ];
 const BASE = [['Q811979', 'built structure'], ['Q839954', 'archaeological site'], ['Q486972', 'human settlement']];
 // 1a pasada: entraban ciudades (Atenas, Damasco, El Cairo, Constantinopla...) porque Wikidata las tipa tambien como yacimiento. Una ciudad no es
@@ -298,10 +300,11 @@ async function main() {
     const families = new Map();
     for (const [fam, roots] of FAMILIES) {
         const good = roots.filter(([id]) => manifest.verify[id] && manifest.verify[id].ok);
-        manifest.families[fam] = { roots: good.map(([id, l]) => id + ' ' + l), rejected: roots.filter((r) => !good.includes(r)).map(([id, l]) => id + ' ' + l), n: 0 };
+        const mk = manifest.families[fam] ? fam + '+' : fam;
+        manifest.families[mk] = { roots: good.map(([id, l]) => id + ' ' + l), rejected: roots.filter((r) => !good.includes(r)).map(([id, l]) => id + ' ' + l), n: 0 };
         if (!good.length) continue;
         const r = await sparql(`SELECT DISTINCT ?item WHERE { VALUES ?root { ${good.map(([id]) => 'wd:' + id).join(' ')} } ?item wdt:P31/wdt:P279* ?root . ${ITEMS(minSl)} ?item wdt:P571 ?t . }`);
-        for (const b of r) { const q = b.item.split('/').pop(); if (!families.has(q)) { families.set(q, fam); manifest.families[fam].n++; } }
+        for (const b of r) { const q = b.item.split('/').pop(); if (!families.has(q)) { families.set(q, fam); manifest.families[mk].n++; } }
     }
     const clsRows = await sparql(`SELECT ?item ?cls ?cl WHERE { ${ITEMS(minSl)} ?item wdt:P571 ?t . ?item wdt:P31 ?cls . OPTIONAL { ?cls rdfs:label ?cl . FILTER(LANG(?cl) = "en") } }`);
     const classes = new Map();
@@ -319,9 +322,24 @@ async function main() {
     const body = JSON.stringify({ type: 'FeatureCollection', features });
     fs.writeFileSync(path.join(out, 'built.json'), body + '\n');
     manifest.file = { name: 'built.json', bytes: Buffer.byteLength(body) + 1, sha256: crypto.createHash('sha256').update(body + '\n').digest('hex') };
+    // Tabla compacta para el mapa (lo que se descarga al abrir la web); la ficha completa (built.json) se pide al primer clic
+    const table = mapTable(features); const tbody = JSON.stringify(table);
+    fs.writeFileSync(path.join(out, 'built-map.json'), tbody + '\n');
+    manifest.mapFile = { name: 'built-map.json', bytes: Buffer.byteLength(tbody) + 1, sha256: crypto.createHash('sha256').update(tbody + '\n').digest('hex'), rows: table.rows.length };
     fs.writeFileSync(path.join(out, 'manifest.json'), JSON.stringify(manifest, null, 1) + '\n');
     log('hecho:', JSON.stringify(manifest.counts));
 }
 
-module.exports = { rdfInterval, textInterval, calibrate, valueToJD, rowsToFeatures, groupOf, FAMILIES };
+/** Registros -> tabla compacta para el mapa: una fila por construccion con lo que necesitan el icono, el filtro por fecha y la etiqueta. */
+function mapTable(features) {
+    const fields = ['qid', 'lng', 'lat', 'family', 'start_ybp', 'end_ybp', 'importance', 'en', 'es', 'iso', 'precision'];
+    const rows = features.map((f) => {
+        const p = f.properties; const d = p.built.dates[0];
+        return [p.sources[0].id, f.geometry.coordinates[0], f.geometry.coordinates[1], p.built.family, p.time.start_ybp, p.built.end ? p.time.end_ybp : null, p.importance,
+            p.labels.en || p.name, p.labels.es || null, d.iso, d.precision];
+    });
+    return { note: 'Tabla para el mapa derivada de built.json (mismo orden). Fuente: Wikidata (CC0). La ficha completa y la procedencia estan en built.json.', fields, rows };
+}
+
+module.exports = { mapTable, rdfInterval, textInterval, calibrate, valueToJD, rowsToFeatures, groupOf, FAMILIES };
 if (require.main === module) main().catch((e) => { log('fallo:', e && e.stack || e); process.exit(1); });

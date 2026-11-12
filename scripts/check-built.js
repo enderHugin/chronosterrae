@@ -4,7 +4,7 @@
  * el texto de Wikibase, que RECHAZA un grupo contradictorio (y lo distingue de "sin muestras"), y la regla de fin (P576). */
 'use strict';
 const fs = require('fs'); const path = require('path');
-const B = require('./build-built.js');
+const B = require('./build-built.js'); const CB = require('../map/built.js');
 let fails = 0; const passes = [];
 function check(name, fn) { let ok = false, err = ''; try { const r = fn(); ok = r === true; if (!ok) err = ' -> ' + JSON.stringify(r); } catch (e) { err = ' (' + e.message + ')'; } if (ok) passes.push(name); else { fails++; console.log('  XX  ' + name + err); } }
 const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -74,10 +74,19 @@ check('los registros cumplen schemas/record.schema.json (layer built)', () => {
     const r = run([row('Q1865480', 'Bastille', '1370-01-01T00:00:00Z', 9, JUL), row('Q10288', 'Parthenon', '-0500-01-01T00:00:00Z', 7, JUL)], [{ item: 'http://www.wikidata.org/entity/Q1865480', t: '1789-01-01T00:00:00Z', prec: '9', cal: GRE }]);
     return r.features.every((f) => v(f)) || v.errors;
 });
-check('familias: el orden de prioridad pone piramide antes que religioso y yacimiento al final', () => B.FAMILIES[0][0] === 'pyramid' && B.FAMILIES[1][0] === 'religious' && B.FAMILIES[B.FAMILIES.length - 1][0] === 'archaeological');
+check('familias: el orden de prioridad pone piramide antes que religioso, recinto antes que museo, y museo el ultimo (el Coliseo es tambien "museo")', () => {
+    const order = B.FAMILIES.map(([f, roots]) => [f, roots.map((r) => r[0])]); const at = (q) => order.findIndex(([, r]) => r.includes(q));
+    return order[0][0] === 'pyramid' && order[1][0] === 'religious' && at('Q54831') < at('Q33506') && at('Q33506') === order.length - 1 && order[order.length - 1][0] === 'palace';
+});
+check('tabla del mapa: una fila por registro, con la primera fecha y el fin solo si lo hay', () => {
+    const r = run([row('Q1865480', 'Bastille', '1370-01-01T00:00:00Z', 9, JUL), row('Q10288', 'Parthenon', '-0500-01-01T00:00:00Z', 7, JUL)], [{ item: 'http://www.wikidata.org/entity/Q1865480', t: '1789-01-01T00:00:00Z', prec: '9', cal: GRE }]);
+    const tb = B.mapTable(r.features); const fc = CB.fromTable(tb, 'es').features.map((f) => f.properties);
+    const bas = fc.find((p) => p.id === 'wd.q1865480.built'); const par = fc.find((p) => p.id === 'wd.q10288.built');
+    return (tb.rows.length === 2 && bas.e !== undefined && bas.d === '1370' && par.e === undefined && par.p === 'century' && par.d === '-0499/-0400') || { tb, fc };
+});
 
 // --- modulo del cliente (map/built.js)
-const CB = require('../map/built.js'); const EIc = require('../map/event-icons.js');
+const EIc = require('../map/event-icons.js');
 check('iconos: una familia por cada una del esquema, todas con dibujo valido dentro de la rejilla 24x24', () => {
     const schemaFam = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'schemas', 'record.schema.json'), 'utf8')).properties.properties.properties.built.properties.family.enum;
     if (JSON.stringify(schemaFam) !== JSON.stringify(CB.IDS)) return { schema: schemaFam, client: CB.IDS };

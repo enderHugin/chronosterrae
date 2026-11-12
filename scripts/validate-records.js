@@ -29,7 +29,7 @@ const listJson = (dir) => {
         if (entry.isDirectory()) return listJson(full);
         // index.json y manifest.json de data/events describen los ficheros, no son registros
         if (/[\\/]data[\\/]events$/.test(dir) && ['index.json', 'manifest.json'].includes(entry.name)) return [];
-        if (/[\\/](data[\\/]built|built-out)$/.test(dir) && entry.name === 'manifest.json') return [];
+        if (/[\\/](data[\\/]built|built-out)$/.test(dir) && ['manifest.json', 'built-map.json'].includes(entry.name)) return [];
         return entry.name.endsWith('.json') ? [full] : [];
     });
 };
