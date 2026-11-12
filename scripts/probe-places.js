@@ -40,7 +40,18 @@ const PROPS = [['P31', 'instance of'], ['P279', 'subclass of'], ['P571', 'incept
 // Terminos que se buscan tambien por texto, por si el QID de memoria es otro (el informe ensena los 3 primeros resultados).
 const SEARCH = ['megalith', 'cathedral', 'pyramid', 'Egyptian pyramid', 'Mesoamerican pyramid', 'castle', 'amphitheatre', 'ziggurat', 'stone circle', 'aqueduct', 'mountain range', 'cape', 'World Heritage Site'];
 
+// 2a pasada: QLever respondio 429 (Too Many Requests) tras ~45 consultas seguidas. Ahora: pausa entre consultas y reintento con espera creciente.
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+let lastQ = 0;
 async function sparql(q, timeoutMs = 120000) {
+    for (let attempt = 0; ; attempt++) {
+        const wait = 1500 - (Date.now() - lastQ); if (wait > 0) await sleep(wait);
+        const r = await sparqlOnce(q, timeoutMs); lastQ = Date.now();
+        if (r.status !== 429 || attempt >= 4) return Object.assign(r, attempt ? { retries: attempt } : {});
+        log('429: espero', 10 * (attempt + 1), 's'); await sleep(10000 * (attempt + 1));
+    }
+}
+async function sparqlOnce(q, timeoutMs) {
     const t0 = Date.now();
     try {
         const res = await fetch(QLEVER + '?query=' + encodeURIComponent(PRE + q), { headers: { 'User-Agent': UA, Accept: 'application/sparql-results+json' }, signal: AbortSignal.timeout(timeoutMs) });
@@ -113,6 +124,14 @@ const short = (iri) => String(iri).replace('http://www.wikidata.org/entity/', ''
             const r = await sparql(`SELECT (COUNT(DISTINCT ?i) AS ?n) WHERE { ?i wdt:P31/wdt:P279* wd:Q811979 . ?i wdt:P625 ?co . ?i wdt:P571 ?t . ?i wikibase:sitelinks ?sl . FILTER(?sl >= ${lo}) }`);
             out.bands['Q811979 sl>=' + lo] = r.rows ? Number(r.rows[0].n) : r; log('banda', lo, JSON.stringify(out.bands['Q811979 sl>=' + lo]));
         }
+    }
+    // Varias fechas de construccion "verdaderas" (wdt) en un mismo elemento: reconstrucciones (Santa Sofia: 360, 415, 532...) o dudas
+    if (okClasses.some(([id]) => id === 'Q811979')) {
+        const r = await sparql(`SELECT (COUNT(*) AS ?items) (SUM(IF(?k > 1, 1, 0)) AS ?multi) WHERE { { SELECT ?i (COUNT(DISTINCT ?t) AS ?k) WHERE { ?i wdt:P31/wdt:P279* wd:Q811979 . ?i wdt:P625 ?co . ?i wdt:P571 ?t . ?i wikibase:sitelinks ?sl . FILTER(?sl >= 20) } GROUP BY ?i } }`);
+        out.bands['Q811979 sl>=20 con varias P571'] = r.rows ? r.rows[0] : r;
+        // precision de la fecha (9 = ano, 8 = decada, 7 = siglo, 6 = milenio) en ese mismo conjunto
+        const pr = await sparql(`SELECT ?prec (COUNT(DISTINCT ?i) AS ?n) WHERE { ?i wdt:P31/wdt:P279* wd:Q811979 . ?i wdt:P625 ?co . ?i wikibase:sitelinks ?sl . FILTER(?sl >= 20) ?i p:P571/psv:P571 ?v . ?v wikibase:timePrecision ?prec . } GROUP BY ?prec ORDER BY ?prec`);
+        out.bands['Q811979 sl>=20 precision P571'] = pr.rows || pr;
     }
     // Patrimonio de la Humanidad (P1435 = Q9259) con coordenadas y fecha
     if (propOk('P1435') && okClasses.some(([id]) => id === 'Q9259')) {
