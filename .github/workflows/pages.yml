@@ -15,13 +15,14 @@ on:
       - 'data/events/**'
       - 'data/borders/**'
       - 'data/built/**'
+      - 'data/images/**'
       - 'sky/**'
       - 'map/**'
       - 'solar/**'
       - 'vendor/**'
       - '.github/workflows/pages.yml'
   workflow_run:
-    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (validación contra Horizons)', 'Sucesos (Wikidata)', 'Construcciones (Wikidata)']
+    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (validación contra Horizons)', 'Sucesos (Wikidata)', 'Construcciones (Wikidata)', 'Imagenes (nombres de archivo P18)']
     types: [completed]
     branches: [main]
   workflow_dispatch:
@@ -45,6 +46,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
       - name: Preparar el sitio (solo lo que la web usa)
         run: |
@@ -61,6 +65,8 @@ jobs:
           if [ -d data/events ]; then cp -r data/events _site/data/events; fi
           # capa de construcciones (built.json y su manifiesto, desde Wikidata)
           if [ -d data/built ]; then cp -r data/built _site/data/built; fi
+          # indice del buscador (personas, sucesos, construcciones y nombre del archivo de su imagen en Commons): se genera aqui, no se guarda
+          node scripts/build-search.js _site/data/search
           touch _site/.nojekyll
           du -sh _site
 

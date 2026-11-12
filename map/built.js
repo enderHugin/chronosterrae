@@ -60,6 +60,16 @@
         return EI.draw(ctx, 'built-' + family, size, Object.assign({}, o || {}, { parts, color: o && o.ended ? ENDED_COLOR : COLOR }));
     }
 
+    /**
+     * Desde que fecha (años BP) se dibuja. La fecha del mapa va por años (setTime): con una fecha al año, mes o dia se dibuja desde el
+     * COMIENZO de ese año (si no, Notre-Dame, de 1163, no saldria en 1163); con decada, siglo o milenio, desde el centro del intervalo.
+     * Igual para el fin: desde el comienzo del año del fin.
+     */
+    function yearStart(ybp, iso, precision) {
+        if (precision === 'year' || precision === 'month' || precision === 'day') { const y = parseInt((String(iso || '').match(/^-?\d+/) || [])[0], 10); if (Number.isFinite(y)) return 1950 - y; }
+        return ybp;
+    }
+
     /** Nombre en el idioma (si no, ingles). */
     const nameOf = (p, lang) => (p.labels && (p.labels[lang] || p.labels.en)) || p.name;
 
@@ -71,8 +81,9 @@
         const out = [];
         for (const f of features || []) {
             const p = f.properties; if (!f.geometry || f.geometry.type !== 'Point') continue;
-            const q = { id: p.id, f: IDS.includes(p.built && p.built.family) ? p.built.family : 'other', s: p.time.start_ybp, i: p.importance || 0, n: nameOf(p, lang) };
-            if (p.built && p.built.end) q.e = p.time.end_ybp;
+            const d0 = p.built.dates[0];
+            const q = { id: p.id, f: IDS.includes(p.built && p.built.family) ? p.built.family : 'other', s: yearStart(p.time.start_ybp, d0.iso, d0.precision), i: p.importance || 0, n: nameOf(p, lang), d: d0.iso, p: d0.precision };
+            if (p.built && p.built.end) q.e = yearStart(p.time.end_ybp, p.built.end.iso, p.built.end.precision);
             out.push({ type: 'Feature', geometry: f.geometry, properties: q });
         }
         return { type: 'FeatureCollection', features: out };
@@ -89,8 +100,9 @@
         const out = [];
         for (const r of table.rows || []) {
             if (keep && !keep(r)) continue;
-            const q = { id: 'wd.' + String(r[ix.qid]).toLowerCase() + '.built', f: IDS.includes(r[ix.family]) ? r[ix.family] : 'other', s: r[ix.start_ybp], i: r[ix.importance] || 0,
+            const q = { id: 'wd.' + String(r[ix.qid]).toLowerCase() + '.built', f: IDS.includes(r[ix.family]) ? r[ix.family] : 'other', s: yearStart(r[ix.start_ybp], r[ix.iso], r[ix.precision]), i: r[ix.importance] || 0,
                 n: (lang === 'es' && r[ix.es]) || r[ix.en], d: r[ix.iso], p: r[ix.precision] };
+            // (la tabla no trae la precision del fin: se usa su centro, a lo sumo medio año tarde con fechas al año)
             if (r[ix.end_ybp] !== null && r[ix.end_ybp] !== undefined) q.e = r[ix.end_ybp];
             out.push({ type: 'Feature', geometry: { type: 'Point', coordinates: [r[ix.lng], r[ix.lat]] }, properties: q });
         }
@@ -99,8 +111,9 @@
 
     /** Estado de una construccion (propiedades compactas o registro) en la fecha `ybp` (años BP): 'future' | 'standing' | 'ended'. */
     function stateAt(p, ybp) {
-        const s = p.s !== undefined ? p.s : p.time.start_ybp;
-        const e = p.e !== undefined ? p.e : (p.built && p.built.end ? p.time.end_ybp : undefined);
+        const d0 = p.built && p.built.dates && p.built.dates[0];
+        const s = p.s !== undefined ? p.s : d0 ? yearStart(p.time.start_ybp, d0.iso, d0.precision) : p.time.start_ybp;
+        const e = p.e !== undefined ? p.e : (p.built && p.built.end ? yearStart(p.time.end_ybp, p.built.end.iso, p.built.end.precision) : undefined);
         if (ybp > s) return 'future';
         return e !== undefined && ybp < e ? 'ended' : 'standing';
     }
@@ -123,5 +136,5 @@
         return fmtYear(a);
     }
 
-    return { COLOR, ENDED_COLOR, ENDED_OPACITY, FAMILIES, IDS, GLYPHS, draw, nameOf, compact, fromTable, stateAt, filterAt, endedExpr, imageAt, sizeExpr, dateText };
+    return { COLOR, ENDED_COLOR, ENDED_OPACITY, FAMILIES, IDS, GLYPHS, draw, nameOf, yearStart, compact, fromTable, stateAt, filterAt, endedExpr, imageAt, sizeExpr, dateText };
 });

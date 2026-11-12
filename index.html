@@ -60,7 +60,27 @@
            (flex), nunca en coordenadas absolutas sueltas: asi no se solapan. --top-h y --bot-h los mide el JS (layoutMeasure). */
         #topbar { position: absolute; top: 14px; left: 14px; right: 14px; z-index: 20; display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap; pointer-events: none; }
         #topbar > * { pointer-events: auto; }
-        #top-left { flex: 1 1 200px; min-width: 0; max-width: 300px; display: flex; }
+        #top-left { flex: 1 1 200px; min-width: 0; max-width: 300px; display: flex; position: relative; }
+        /* Lista del buscador: aparece al escribir; recorrerla lleva el mapa a cada resultado (giro breve y fundido a la fecha) */
+        #search-list { position: absolute; top: calc(100% + 4px); left: 0; width: max(100%, 380px); max-width: calc(100vw - 28px); max-height: min(62vh, 480px); overflow: auto;
+            margin: 0; padding: 4px; list-style: none; pointer-events: auto; background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); z-index: 30; font: 13px/1.3 var(--font-ui); }
+        #search-list li { display: grid; grid-template-columns: 44px 1fr; gap: 9px; align-items: center; padding: 5px 7px; border-radius: 6px; cursor: pointer; min-height: 44px; }
+        #search-list li[aria-selected="true"] { background: color-mix(in srgb, var(--accent) 22%, transparent); box-shadow: inset 3px 0 0 var(--accent); }
+        #search-list li:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+        #search-list .sr-pic { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; background: color-mix(in srgb, var(--text) 8%, transparent); display: block; }
+        #search-list .sr-ico { width: 30px; height: 30px; margin: 7px; display: block; object-fit: contain; }
+        #search-list .sr-name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #search-list .sr-name mark { background: none; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+        #search-list .sr-sub { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #search-list .sr-msg { display: block; min-height: 0; padding: 8px 10px; color: var(--muted); cursor: default; }
+        /* fundido a la nueva fecha mientras el globo gira hacia el lugar */
+        #map { transition: opacity 170ms ease-out; }
+        #map.srch-fade { opacity: 0.3; transition: opacity 150ms ease-in; }
+        @media (prefers-reduced-motion: reduce) { #map, #map.srch-fade { transition: none; opacity: 1; } }
+        #info figure.info-pic { margin: 2px 0 8px; }
+        #info figure.info-pic img { display: block; max-width: 100%; max-height: 220px; border-radius: 6px; margin: 0 auto; background: color-mix(in srgb, var(--text) 8%, transparent); }
+        #info figure.info-pic figcaption { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.35; }
         #top-right { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
         #dock { position: absolute; left: 14px; right: 14px; top: var(--top-h, 60px); bottom: var(--bot-h, 180px); z-index: 11; display: flex; justify-content: space-between; gap: 10px; pointer-events: none; }
         #dock-l, #dock-r { display: flex; flex-direction: column; gap: 8px; min-height: 0; min-width: 0; align-items: stretch; }
@@ -390,7 +410,9 @@
 
     <div id="topbar">
         <div id="top-left">
-            <input id="search" type="search" data-i18n-placeholder="searchPlaceholder" aria-label="Search" autocomplete="off" style="width:100%">
+            <input id="search" type="search" data-i18n-placeholder="searchPlaceholder" aria-label="Search" autocomplete="off" style="width:100%"
+                role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-list">
+            <ul id="search-list" role="listbox" hidden></ul>
         </div>
         <div id="top-right">
             <button class="btn" id="btn-events" type="button" aria-pressed="false" data-i18n="events.button"></button>
@@ -572,6 +594,7 @@
 <script src="./map/panels.js"></script>
 <script src="./map/event-icons.js"></script>
 <script src="./map/built.js"></script>
+<script src="./map/search.js"></script>
 <script src="./map/glide.js"></script>
 <script src="./map/eras.js"></script>
 <script src="./map/labels.js"></script>
@@ -682,7 +705,14 @@ const savePrefs = (patch) => {
 /* ------------------------------------------------------------------ */
 const i18n = {
     es: {
-        donate: 'Apoyar el proyecto', searchPlaceholder: 'Buscar un imperio, pueblo o lugar…', timePlaceholder: '1789 · 44 a.C. · 250 Ma',
+        donate: 'Apoyar el proyecto', searchPlaceholder: 'Buscar persona, suceso, edificio, imperio…',
+        search: {
+            loading: 'Cargando el índice…', none: 'Nada con «{q}».', fail: 'No se pudo cargar el índice de búsqueda: {err}',
+            kind: { person: 'Persona', event: 'Suceso', built: 'Construcción', polity: 'Entidad política' },
+            born: 'n.', died: 'm.', noPlace: 'sin lugar', maps: '{n} mapas', near: 'más cercano: {y}',
+            hint: '↑↓ recorre (el mapa va a cada uno) · Intro elige · Esc vuelve',
+            img: 'Imagen: {a} · {l}', imgSrc: 'Wikimedia Commons', imgTip: 'Imagen de Wikimedia Commons; autor y licencia en la ficha'
+        }, timePlaceholder: '1789 · 44 a.C. · 250 Ma',
         today: 'Hoy', yearsAgo: 'hace {n} años', approxYear: '≈ año {y}',
         ce: 'd.C.', bce: 'a.C.',
         paleoOk: 'Costas paleogeográficas (PaleoMAP): {age}{near}.', paleoNear: ' · loncha más cercana a {t} Ma (a {d} Ma)',
@@ -884,7 +914,14 @@ const i18n = {
         }
     },
     en: {
-        donate: 'Support the project', searchPlaceholder: 'Search an empire, people or place…', timePlaceholder: '1789 · 44 BC · 250 Ma',
+        donate: 'Support the project', searchPlaceholder: 'Search a person, event, building, empire…',
+        search: {
+            loading: 'Loading the index…', none: 'Nothing for “{q}”.', fail: 'Could not load the search index: {err}',
+            kind: { person: 'Person', event: 'Event', built: 'Building', polity: 'Polity' },
+            born: 'b.', died: 'd.', noPlace: 'no place', maps: '{n} maps', near: 'nearest: {y}',
+            hint: '↑↓ browse (the map goes to each) · Enter picks · Esc goes back',
+            img: 'Image: {a} · {l}', imgSrc: 'Wikimedia Commons', imgTip: 'Image from Wikimedia Commons; author and licence in the panel'
+        }, timePlaceholder: '1789 · 44 BC · 250 Ma',
         today: 'Today', yearsAgo: '{n} years ago', approxYear: '≈ year {y}',
         ce: 'AD', bce: 'BC',
         paleoOk: 'Palaeogeographic coastlines (PaleoMAP): {age}{near}.', paleoNear: ' · nearest slice to {t} Ma (off by {d} Ma)',
@@ -1190,7 +1227,9 @@ function fillRows(body, rows) {
         else body.appendChild(row);
     });
 }
+let infoSeq = 0;      // cada ficha nueva invalida la imagen que aun estuviera llegando para la anterior
 function showInfo(title, rows) {
+    infoSeq++;
     lastInfo = { title, rows };
     $('info-title').textContent = title;
     const body = $('info-body');
@@ -2461,7 +2500,7 @@ function builtRows(f) {
     });
     return rows;
 }
-function showBuilt(f) { showInfo(ChronosBuilt.nameOf(f.properties, lang), builtRows(f)); }
+function showBuilt(f) { showInfo(ChronosBuilt.nameOf(f.properties, lang), builtRows(f)); infoImageFor(f.properties.sources[0].id); }
 function selRestoreBuilt() {
     const s = SEL.pending; if (!s || s.k !== 'b' || !BUILT.byId) return;
     const f = BUILT.byId.get(s.v); if (!f) { SEL.pending = null; return; }
@@ -2540,6 +2579,210 @@ async function runSearch(raw) {
         return;
     }
     setStatus('warn', fmt('noResults', { q: raw.trim() }));
+}
+
+/* ------------------------------------------------------------------ */
+/* Buscador con lista inmediata (map/search.js, data/search/index.json) */
+/* ------------------------------------------------------------------ */
+// Al escribir sale la lista; recorrerla (flechas o raton) lleva el mapa a cada resultado con un giro breve del globo y un fundido a la
+// fecha; Intro elige (abre la ficha); Esc vuelve a donde se estaba. Las personas salen una vez y llevan a su nacimiento.
+// Imagenes: solo el nombre del archivo viene en el indice; la miniatura y, en la ficha, la imagen con autor y licencia, de Wikimedia Commons.
+const SRCH = { markSeq: 0, entries: null, byQid: null, polities: false, loading: null, failed: null, items: [], active: -1, origin: null, prevT: 0, fadeT: 0, hoverT: 0, blurT: 0, q: '' };
+const SRCH_REDUCED = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+const commonsThumb = (file, w) => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(file) + '?width=' + w;
+function srchEnsure() {
+    if (SRCH.entries || SRCH.loading) return SRCH.loading || Promise.resolve(SRCH.entries);
+    SRCH.loading = (async () => {
+        try {
+            const res = await fetch('./data/search/index.json'); if (!res.ok) throw new Error('HTTP ' + res.status);
+            const tb = await res.json(); if (!tb || !Array.isArray(tb.rows) || !Array.isArray(tb.fields)) throw new Error('forma inesperada');
+            SRCH.entries = ChronosSearch.prepare(tb); SRCH.failed = null;
+            SRCH.byQid = new Map(); SRCH.entries.forEach((e) => { if (e.qid && e.img && !SRCH.byQid.has(e.qid)) SRCH.byQid.set(e.qid, e.img); });
+        } catch (e) { SRCH.failed = e.message; SRCH.entries = []; SRCH.byQid = new Map(); }
+        // Entidades politicas (historical-basemaps, se cargan en ejecucion): un nombre, sus años de mapa
+        try {
+            const pol = await loadPolities(); const years = new Map();
+            pol.forEach((p) => p.names.forEach((n) => { if (!n) return; if (!years.has(n)) years.set(n, []); years.get(n).push(p.year); }));
+            years.forEach((ys, n) => SRCH.entries.push(ChronosSearch.entry({ id: 'p:' + n, kind: 'polity', icon: 'political', en: n, years: ys.sort((a, b) => a - b), imp: Math.min(0.9, 0.45 + ys.length / 60) })));
+            SRCH.polities = true;
+        } catch (e) { /* sin indice de fronteras: se busca igual en lo demas */ }
+        SRCH.loading = null; return SRCH.entries;
+    })();
+    return SRCH.loading;
+}
+const srchName = (e) => (lang === 'es' && e.es) || e.en;
+function srchIsoText(iso) { return String(iso || '').split('/').map((p) => ChronosBuilt.dateText({ iso: p }, formatYear)).join(' – '); }
+function srchNearYear(e) { const here = ybpToYear(state.ybp); return e.years.reduce((a, b) => (Math.abs(a - here) <= Math.abs(b - here) ? a : b)); }
+function srchSub(e) {
+    const k = t('search.kind.' + e.kind);
+    if (e.kind === 'person') {
+        const born = e.icon === 'birth'; const parts = [(born ? t('search.born') : t('search.died')) + ' ' + srchIsoText(e.iso)];
+        if (e.d) parts.push(t('search.died') + ' ' + srchIsoText(e.d));
+        return parts.join(' · ');
+    }
+    if (e.kind === 'polity') return k + ' · ' + fmt('search.maps', { n: e.years.length }) + ' · ' + fmt('search.near', { y: formatYear(srchNearYear(e)) });
+    const fam = e.kind === 'built' ? (ChronosBuilt.FAMILIES.find((x) => x.id === e.icon) || {})[lang] : t('events.kind.' + (e.ek || 'event'));
+    return (fam && !/^events\./.test(fam) ? fam : k) + ' · ' + srchIsoText(e.iso) + (e.lng === undefined || e.lng === null ? ' · ' + t('search.noPlace') : '');
+}
+const builtIcoCache = new Map();
+function srchIcon(e) {
+    if (e.kind === 'built') {
+        if (!builtIcoCache.has(e.icon)) { const c = document.createElement('canvas'); c.width = c.height = 52; ChronosBuilt.draw(c.getContext('2d'), e.icon, 40, { x: 6, y: 6 }); builtIcoCache.set(e.icon, c.toDataURL()); }
+        return builtIcoCache.get(e.icon);
+    }
+    const key = ChronosEventIcons.KEYS.includes(e.icon) ? e.icon : e.kind === 'polity' ? 'political' : 'event';
+    return evIconUrl(ChronosEventIcons.KEYS.includes(key) ? key : 'event');
+}
+function srchRender(msg) {
+    const ul = $('search-list'); ul.textContent = '';
+    if (msg) { ul.appendChild(el('li', { class: 'sr-msg', role: 'presentation', text: msg })); }
+    SRCH.items.forEach((e, i) => {
+        const li = el('li', { role: 'option', id: 'sr-' + i, 'aria-selected': String(i === SRCH.active) });
+        const icon = el('img', { class: 'sr-ico', alt: '', src: srchIcon(e) });
+        if (e.img) {
+            const pic = el('img', { class: 'sr-pic', alt: '', loading: 'lazy', referrerpolicy: 'no-referrer', src: commonsThumb(e.img, 96), title: t('search.imgTip') });
+            pic.addEventListener('error', () => pic.replaceWith(icon), { once: true });
+            li.appendChild(pic);
+        } else li.appendChild(icon);
+        const txt = el('div', {}); const nm = el('div', { class: 'sr-name' });
+        ChronosSearch.highlight(srchName(e), SRCH.q).forEach((p) => nm.appendChild(p.m ? el('mark', { text: p.t }) : document.createTextNode(p.t)));
+        txt.appendChild(nm); txt.appendChild(el('div', { class: 'sr-sub', text: srchSub(e) }));
+        li.appendChild(txt);
+        li.addEventListener('mousedown', (ev) => ev.preventDefault());        // no quitar el foco a la caja
+        li.addEventListener('click', () => srchCommit(e));
+        li.addEventListener('mouseenter', () => { clearTimeout(SRCH.hoverT); SRCH.hoverT = setTimeout(() => srchMove(i), 220); });   // pausa breve: pasar el raton por encima no hace volar el mapa
+        li.addEventListener('mouseleave', () => clearTimeout(SRCH.hoverT));
+        ul.appendChild(li);
+    });
+    if (SRCH.items.length) ul.appendChild(el('li', { class: 'sr-msg', role: 'presentation', text: t('search.hint') }));
+    const open = !!(msg || SRCH.items.length);
+    ul.hidden = !open; $('search').setAttribute('aria-expanded', String(open));
+    $('search').setAttribute('aria-activedescendant', SRCH.active >= 0 ? 'sr-' + SRCH.active : '');
+}
+async function srchRun() {
+    const raw = $('search').value; SRCH.q = raw;
+    if (ChronosSearch.normalize(raw).length < 2) { SRCH.items = []; SRCH.active = -1; srchRender(); return; }
+    if (!SRCH.entries) { srchRender(t('search.loading')); await srchEnsure(); if ($('search').value !== raw) return; }
+    SRCH.items = ChronosSearch.query(SRCH.entries, raw, { limit: 8 }); SRCH.active = -1;
+    srchRender(SRCH.items.length ? null : SRCH.failed ? fmt('search.fail', { err: SRCH.failed }) : fmt('search.none', { q: raw.trim() }));
+}
+function srchClose() { clearTimeout(SRCH.hoverT); SRCH.items = []; SRCH.active = -1; srchRender(); }
+/** Lugar y fecha de un resultado: { center|null, zoom, apply() } */
+function srchTarget(e) {
+    const z = map.getZoom();
+    if (e.kind === 'polity') {
+        const y = srchNearYear(e);
+        return { center: null, apply: () => { currentFocus = e.en; setTime(yearToYbp(y), { immediate: true }); } };
+    }
+    const center = e.lng !== undefined && e.lng !== null ? [e.lng, e.lat] : null;
+    const zoom = e.kind === 'built' ? Math.min(Math.max(z, 5.5), 12) : Math.min(Math.max(z, 3.6), 8);
+    return { center, zoom, mark: center ? { layer: e.kind === 'built' ? 'built-icons' : 'events-circle', id: e.id, at: center } : null, apply: () => {
+        // primero el año (desde tiempo profundo el reloj aun no existe: lo crea setTime) y despues el dia exacto si el reloj lo alcanza
+        const y = parseInt(String(e.iso || '').match(/^-?\d+/), 10);
+        if (Number.isFinite(y) && (!clockUsable() || ybpToYear(state.ybp) !== y)) setTime(yearToYbp(y), { immediate: true });
+        if (clockUsable() && Number.isFinite(e.jd) && e.jd >= clockMinJD() && e.jd <= realNowJD()) clockSet(e.jd, { user: true });
+    } };
+}
+/** Ir a un destino: el globo gira hasta el lugar (vuelo corto) mientras el mapa se funde y aparece ya en la nueva fecha. */
+function srchGo(tg) {
+    if (solarView.isOpen) solarView.close();
+    clearTimeout(SRCH.fadeT); SRCH.markSeq++; evHoverSet(null); buHoverSet(null);      // la señal del destino anterior se apaga
+    const done = () => { if (tg.after) tg.after(); };
+    const m = map.getContainer();
+    if (SRCH_REDUCED()) { tg.apply(); done(); if (tg.center) map.jumpTo({ center: tg.center, zoom: tg.zoom, bearing: tg.bearing !== undefined ? tg.bearing : map.getBearing() }); if (tg.mark) srchMarkOnLanding(tg.mark, true); return; }
+    m.classList.add('srch-fade');
+    SRCH.fadeT = setTimeout(() => { tg.apply(); done(); requestAnimationFrame(() => m.classList.remove('srch-fade')); }, 160);
+    if (tg.mark) srchMarkOnLanding(tg.mark);
+    if (tg.center) map.flyTo({ center: tg.center, zoom: tg.zoom, bearing: tg.bearing !== undefined ? tg.bearing : 0, pitch: tg.pitch !== undefined ? tg.pitch : map.getPitch(), duration: 850, curve: 1.25, essential: true });
+}
+// Al llegar, el icono elegido se señala como al pasar el raton (brillo y etiqueta con su nombre): asi se ve cual es entre los demas
+function srchMarkOnLanding(mark, now) {
+    const seq = SRCH.markSeq;
+    const look = (tries) => {
+        if (seq !== SRCH.markSeq || !map.getLayer(mark.layer)) return;
+        // consulta en el punto: en el globo, la consulta de toda la vista (sin geometria o con caja) no devuelve nada (comprobado en local)
+        const p = mark.at ? map.project(mark.at) : null;
+        const f = p ? map.queryRenderedFeatures([p.x, p.y], { layers: [mark.layer] }).find((x) => x.properties.id === mark.id) : null;
+        if (f) { if (mark.layer === 'built-icons') buHoverSet(f); else evHoverSet(f); return; }
+        if (tries > 0) setTimeout(() => look(tries - 1), 350);           // los sucesos de esa fecha pueden estar aun llegando
+    };
+    if (now) setTimeout(() => look(8), 200); else map.once('moveend', () => setTimeout(() => look(8), 200));
+}
+function srchMove(i) {
+    if (!SRCH.items.length) return;
+    const next = (i + SRCH.items.length) % SRCH.items.length; if (next === SRCH.active && SRCH.origin) return;   // ya esta ahi
+    SRCH.active = next;
+    // solo se marca (rehacer la lista pondria otro elemento bajo el raton y volveria a dispararse el «pasar por encima»)
+    document.querySelectorAll('#search-list li[role=option]').forEach((li, k) => li.setAttribute('aria-selected', String(k === SRCH.active)));
+    $('search').setAttribute('aria-activedescendant', 'sr-' + SRCH.active);
+    const li = $('sr-' + SRCH.active); if (li) li.scrollIntoView({ block: 'nearest' });
+    if (!SRCH.origin) SRCH.origin = { center: map.getCenter().toArray(), zoom: map.getZoom(), bearing: map.getBearing(), pitch: map.getPitch(), ybp: state.ybp, jd: clockUsable() ? clock.jd : NaN };
+    // Al mantener pulsada la flecha no se encadenan vuelos: se va al que quede elegido tras una pausa minima
+    clearTimeout(SRCH.prevT); const e = SRCH.items[SRCH.active];
+    SRCH.prevT = setTimeout(() => srchGo(srchTarget(e)), 70);
+}
+function srchCommit(e) {
+    if (!e) return;
+    clearTimeout(SRCH.prevT);
+    const moved = SRCH.origin && SRCH.items[SRCH.active] === e;     // ya se esta alli (se llego al recorrer la lista)
+    SRCH.origin = null; $('search').value = srchName(e); srchClose(); $('search').blur();
+    // La ficha, ya en la fecha nueva; SEL.keepYbp: la carga del mapa de esa fecha no debe cerrarla (como con la seleccion recordada)
+    const show = () => {
+        if (e.kind === 'polity') { selRemember('p', e.en); return; }
+        if (e.kind === 'built') { selRemember('b', e.id); builtFull().then(() => { const f = BUILT.byId && BUILT.byId.get(e.id); if (f) { showBuilt(f); SEL.keepYbp = state.ybp; } }); return; }
+        // suceso o persona: la ficha sale cuando llegan los sucesos de esa fecha (mismo mecanismo que la seleccion recordada)
+        selRemember('e', e.id); SEL.pending = { k: 'e', v: e.id }; selRestoreEvent();
+        if (SEL.pending && SEL.pending.v === e.id) eventsEnsureData();
+    };
+    if (moved) show(); else srchGo(Object.assign(srchTarget(e), { after: show }));
+}
+function srchCancel() {
+    clearTimeout(SRCH.prevT);
+    const o = SRCH.origin; SRCH.origin = null; srchClose();
+    if (o) srchGo({ center: o.center, zoom: o.zoom, bearing: o.bearing, pitch: o.pitch, apply: () => { if (Number.isFinite(o.jd) && clockUsable()) clockSet(o.jd, { user: true }); else setTime(o.ybp, { immediate: true }); } });
+}
+$('search').addEventListener('input', () => { clearTimeout(SRCH.blurT); srchRun(); });
+$('search').addEventListener('focus', () => { srchEnsure(); if ($('search').value) srchRun(); });
+$('search').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        if (!SRCH.items.length) return; e.preventDefault();
+        srchMove(SRCH.active < 0 ? (e.key === 'ArrowDown' ? 0 : SRCH.items.length - 1) : SRCH.active + (e.key === 'ArrowDown' ? 1 : -1));
+    } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (SRCH.items.length) srchCommit(SRCH.items[Math.max(0, SRCH.active)]);
+        else runSearch(e.target.value);       // sin lista (p. ej. puntos en directo): la busqueda de siempre
+    } else if (e.key === 'Escape') {
+        if (SRCH.items.length || SRCH.origin) { e.preventDefault(); srchCancel(); }
+    }
+});
+$('search').addEventListener('blur', () => { SRCH.blurT = setTimeout(() => { SRCH.origin = null; srchClose(); }, 150); });   // salir de la caja deja el mapa donde este
+
+/** Imagen de la ficha (Wikidata P18) con autor y licencia de Commons. Sin licencia legible no se enseña. */
+const infoPicCache = new Map();
+async function infoImageFor(qid) {
+    if (!qid) return;
+    const seq = infoSeq;
+    if (!SRCH.byQid) await srchEnsure();
+    const file = SRCH.byQid && SRCH.byQid.get(qid); if (!file || seq !== infoSeq) return;
+    let meta = infoPicCache.get(file);
+    if (!meta) {
+        try {
+            const u = 'https://commons.wikimedia.org/w/api.php?' + new URLSearchParams({ action: 'query', titles: 'File:' + file, prop: 'imageinfo', iiprop: 'url|extmetadata', iiurlwidth: '480',
+                iiextmetadatafilter: 'Artist|LicenseShortName|LicenseUrl|AttributionRequired', format: 'json', origin: '*' });
+            const j = await (await fetch(u)).json(); const pg = Object.values((j.query && j.query.pages) || {})[0]; const ii = pg && pg.imageinfo && pg.imageinfo[0];
+            const m = (ii && ii.extmetadata) || {}; const txt = (k) => (m[k] ? new DOMParser().parseFromString(String(m[k].value), 'text/html').body.textContent.trim() : '');
+            meta = ii && ii.thumburl && txt('LicenseShortName') ? { thumb: ii.thumburl, page: ii.descriptionurl, artist: txt('Artist').slice(0, 120) || '?', license: txt('LicenseShortName'), licenseUrl: m.LicenseUrl ? txt('LicenseUrl') : null } : { none: true };
+        } catch (e) { meta = null; }
+        if (meta) infoPicCache.set(file, meta);
+    }
+    if (!meta || meta.none || seq !== infoSeq) return;
+    const fig = el('figure', { class: 'info-pic' });
+    const a = el('a', { href: meta.page, target: '_blank', rel: 'noopener' }); a.appendChild(el('img', { src: meta.thumb, alt: '', referrerpolicy: 'no-referrer' })); fig.appendChild(a);
+    const cap = el('figcaption', {}); cap.appendChild(document.createTextNode(fmt('search.img', { a: meta.artist, l: '' }).replace(/ · $/, ' · ')));
+    cap.appendChild(meta.licenseUrl ? el('a', { href: meta.licenseUrl, target: '_blank', rel: 'noopener', text: meta.license }) : document.createTextNode(meta.license));
+    cap.appendChild(document.createTextNode(' · ')); cap.appendChild(el('a', { href: meta.page, target: '_blank', rel: 'noopener', text: t('search.imgSrc') }));
+    fig.appendChild(cap);
+    const body = $('info-body'); body.insertBefore(fig, body.firstChild);
 }
 
 /* ------------------------------------------------------------------ */
@@ -2750,7 +2993,6 @@ $('time-input').addEventListener('keydown', (e) => {
     if (!glideToYear(ybp)) { if (glide) glide.cancel(); setTime(ybp, { immediate: true }); }
     e.target.blur();
 });
-$('search').addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(e.target.value); });
 $('btn-lang').addEventListener('click', () => { lang = lang === 'es' ? 'en' : 'es'; applyStrings(); savePrefs({ lang }); });
 $('btn-theme').addEventListener('click', () => { state.dark = !state.dark; applyTheme(); savePrefs({ dark: state.dark }); });
 $('info-close').addEventListener('click', () => { if (panelsUI) panelsUI.closeInfo(); else hideInfo(); selRemember(null); });
@@ -4104,7 +4346,7 @@ function eventRows(f) {
     });
     return rows;
 }
-function showEvent(f) { showInfo(evName(f), eventRows(f)); }
+function showEvent(f) { showInfo(evName(f), eventRows(f)); const w = (f.properties.sources || []).find((x) => x.kind === 'wikidata'); if (w) infoImageFor(w.id); }
 
 function eventFocus(f) {
     if (f.geometry) map.flyTo({ center: f.geometry.coordinates, zoom: Math.max(map.getZoom(), 4.5), duration: 1400 });

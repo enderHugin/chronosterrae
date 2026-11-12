@@ -124,6 +124,16 @@ sale y cuánto se puede fiar de él.
   icono crece con un resplandor de su color y aparece su nombre en una etiqueta del mismo color: se sabe sobre qué caerá el clic.
   Un clic en un suceso **no mueve el mapa** (salvo con «Centrar al hacer clic», que ahora centra en el suceso y no en el punto del
   clic), y un temblor de la mano al hacer clic ya no arrastra el mapa.
+- **Buscador con lista inmediata e imágenes (2026-11-12).** Al escribir (desde 2 letras) sale la lista de coincidencias: personas
+  (una vez, con nacimiento y muerte: «einstein» → Albert Einstein, n. 14/03/1879 · m. 18/04/1955), sucesos, construcciones y
+  entidades políticas, sin tildes ni mayúsculas, por principio de palabra y por notoriedad. **Recorrerla** con ↑↓ (o dejando el
+  ratón un instante encima) lleva el mapa a cada resultado: el globo gira hasta el lugar mientras el mapa se funde y reaparece ya en
+  la fecha (al nacimiento, en una persona), y el icono elegido se señala con su nombre. Intro abre la ficha; Esc vuelve a donde se
+  estaba. El índice (`data/search/index.json`, ~1,3 MB comprimido) se genera al publicar (`scripts/build-search.js`) y se descarga
+  al tocar la caja. **Imágenes:** de cada QID solo se guarda el nombre del archivo de su imagen principal en Wikidata (P18, CC0;
+  `data/images/p18.json`, workflow `images-build`; 23.016 de 26.395 tienen); la miniatura de la lista y la imagen de la ficha se
+  piden a Wikimedia Commons en el momento, y la ficha pone autor y licencia leídos de Commons (si no se pueden leer, no se enseña).
+  Comprobado antes con la sonda `images-probe` (CORS, licencias y carga de miniaturas desde el origen de la web).
 - **Construcciones (2026-11-12).** Capa nueva en *Capas*: catedrales, pirámides, castillos, palacios, museos, anfiteatros y
   estadios, torres, puentes, presas, estaciones, yacimientos… (5.137 con coordenadas, fecha de construcción y ≥ 20 Wikipedias;
   Wikidata, CC0, vía QLever; `scripts/build-built.js`, workflow `built-build`). Cada una aparece **desde su fecha de construcción**

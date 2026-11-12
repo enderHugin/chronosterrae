@@ -50,7 +50,9 @@ check('despliegue: cada carpeta ./data/<x>/ que carga el cliente se copia en pag
     const files = ['index.html'].concat(['solar', 'sky', 'map'].flatMap((d) => fs.readdirSync(path.join(root, d)).filter((f) => f.endsWith('.js')).map((f) => d + '/' + f)));
     const used = new Set();
     for (const f of files) for (const m of fs.readFileSync(path.join(root, f), 'utf8').matchAll(/['"`]\.\/data\/([a-z0-9_-]+)\//gi)) used.add(m[1]);
-    const missing = [...used].filter((d) => !pages.includes('cp -r data/' + d + ' ') || !pages.includes("'data/" + d + "/**'"));
+    // o se copia (cp -r data/x) y esta en los disparadores, o se GENERA al publicar con un script del repo (node scripts/build-x.js _site/data/x)
+    const generated = (d) => new RegExp('node scripts/[a-z-]+\\.js _site/data/' + d + '(\\s|$)', 'm').test(pages);
+    const missing = [...used].filter((d) => !generated(d) && (!pages.includes('cp -r data/' + d + ' ') || !pages.includes("'data/" + d + "/**'")));
     if (missing.length) throw new Error('pages.yml no publica: ' + missing.join(', '));
     return used.has('textures') && used.has('sky');           // y la propia guarda ve las carpetas que debe ver
 });

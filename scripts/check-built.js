@@ -97,9 +97,17 @@ const rec = (s, e) => ({ time: { start_ybp: s, end_ybp: e === undefined ? -76 : 
 check('estado: antes de construirse no se ve; despues si; pasado el fin de la fuente, atenuada (no borrada)', () =>
     CB.stateAt(rec(160.5, -76), 200) === 'future' && CB.stateAt(rec(580, 160.5), 300) === 'standing' && CB.stateAt(rec(580, 160.5), 100) === 'ended' && CB.stateAt(rec(580), -50) === 'standing');
 check('datos compactos: fin solo si la fuente lo da; familia desconocida -> other; nombre en el idioma', () => {
-    const f = (fam, end, labels) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [1, 2] }, properties: Object.assign({ id: 'wd.q1.built', name: 'X', labels, importance: 0.5 }, rec(500, end), { built: { family: fam, end: end === undefined ? null : { iso: '1789', precision: 'year' } } }) });
+    const f = (fam, end, labels) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [1, 2] }, properties: Object.assign({ id: 'wd.q1.built', name: 'X', labels, importance: 0.5 }, rec(500, end), { built: { family: fam, dates: [{ iso: '1450/1550', precision: 'century' }], end: end === undefined ? null : { iso: '0160/0169', precision: 'decade' } } }) });
     const c = CB.compact([f('palace', 160, { en: 'Palace', es: 'Palacio' }), f('nope', undefined, { en: 'Y' })], 'es').features.map((x) => x.properties);
     return (c[0].e === 160 && c[0].n === 'Palacio' && c[1].e === undefined && c[1].f === 'other' && c[1].n === 'Y') || c;
+});
+check('fecha al año: se dibuja desde el COMIENZO del año (Notre-Dame, 1163, sale en 1163) y deja de estar en pie desde el año siguiente al fin', () => {
+    const nd = { time: { start_ybp: 786.5, end_ybp: -76 }, built: { dates: [{ iso: '1163', precision: 'year' }], end: null } };
+    const bas = { time: { start_ybp: 579.5, end_ybp: 160.5 }, built: { dates: [{ iso: '1370', precision: 'year' }], end: { iso: '1789', precision: 'year' } } };
+    const tb = { fields: ['qid', 'lng', 'lat', 'family', 'start_ybp', 'end_ybp', 'importance', 'en', 'es', 'iso', 'precision'], rows: [['Q2981', 2.35, 48.85, 'religious', 786.5, null, 1, 'Notre-Dame', null, '1163', 'year']] };
+    const s0 = CB.fromTable(tb, 'es').features[0].properties.s;
+    return (CB.stateAt(nd, 1950 - 1163) === 'standing' && CB.stateAt(nd, 1950 - 1162) === 'future' && s0 === 787
+        && CB.stateAt(bas, 1950 - 1789) === 'standing' && CB.stateAt(bas, 1950 - 1790) === 'ended') || { s0 };
 });
 check('texto de fechas: año, intervalo de siglo, dia', () => {
     const fy = (y) => (y >= 1 ? y + ' d. C.' : (1 - y) + ' a. C.');
