@@ -76,6 +76,27 @@ check('los registros cumplen schemas/record.schema.json (layer built)', () => {
 });
 check('familias: el orden de prioridad pone piramide antes que religioso y yacimiento al final', () => B.FAMILIES[0][0] === 'pyramid' && B.FAMILIES[1][0] === 'religious' && B.FAMILIES[B.FAMILIES.length - 1][0] === 'archaeological');
 
+// --- modulo del cliente (map/built.js)
+const CB = require('../map/built.js'); const EIc = require('../map/event-icons.js');
+check('iconos: una familia por cada una del esquema, todas con dibujo valido dentro de la rejilla 24x24', () => {
+    const schemaFam = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'schemas', 'record.schema.json'), 'utf8')).properties.properties.properties.built.properties.family.enum;
+    if (JSON.stringify(schemaFam) !== JSON.stringify(CB.IDS)) return { schema: schemaFam, client: CB.IDS };
+    return CB.IDS.every((f) => CB.GLYPHS[f] && CB.GLYPHS[f].every((p) => { const b = EIc.pathBox(p.d); return b.minX >= 0.5 && b.minY >= 0.5 && b.maxX <= 23.5 && b.maxY <= 23.5; }));
+});
+check('iconos: el marfil de las construcciones no es el color de ningun tipo de suceso', () => !Object.values(EIc.COLORS).map((c) => c.toLowerCase()).includes(CB.COLOR));
+const rec = (s, e) => ({ time: { start_ybp: s, end_ybp: e === undefined ? -76 : e }, built: { end: e === undefined ? null : { iso: 'x', precision: 'year' } } });
+check('estado: antes de construirse no se ve; despues si; pasado el fin de la fuente, atenuada (no borrada)', () =>
+    CB.stateAt(rec(160.5, -76), 200) === 'future' && CB.stateAt(rec(580, 160.5), 300) === 'standing' && CB.stateAt(rec(580, 160.5), 100) === 'ended' && CB.stateAt(rec(580), -50) === 'standing');
+check('datos compactos: fin solo si la fuente lo da; familia desconocida -> other; nombre en el idioma', () => {
+    const f = (fam, end, labels) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [1, 2] }, properties: Object.assign({ id: 'wd.q1.built', name: 'X', labels, importance: 0.5 }, rec(500, end), { built: { family: fam, end: end === undefined ? null : { iso: '1789', precision: 'year' } } }) });
+    const c = CB.compact([f('palace', 160, { en: 'Palace', es: 'Palacio' }), f('nope', undefined, { en: 'Y' })], 'es').features.map((x) => x.properties);
+    return (c[0].e === 160 && c[0].n === 'Palacio' && c[1].e === undefined && c[1].f === 'other' && c[1].n === 'Y') || c;
+});
+check('texto de fechas: año, intervalo de siglo, dia', () => {
+    const fy = (y) => (y >= 1 ? y + ' d. C.' : (1 - y) + ' a. C.');
+    return CB.dateText({ iso: '-2559' }, fy) === '2560 a. C.' && CB.dateText({ iso: '-0499/-0400' }, fy) === '500 a. C. – 401 a. C.' && CB.dateText({ iso: '0537-12-27' }, fy) === '27/12/537 d. C.';
+});
+
 // --- datos publicados (si existen)
 const dir = path.join(__dirname, '..', 'data', 'built');
 if (fs.existsSync(path.join(dir, 'manifest.json'))) {

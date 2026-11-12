@@ -40,16 +40,19 @@ const log = (...a) => process.stderr.write(a.join(' ') + '\n');
 const FAMILIES = [
     ['pyramid', [['Q12516', 'pyramid'], ['Q2270185', 'Mesoamerican pyramid'], ['Q170153', 'ziggurat']]],
     ['religious', [['Q2977', 'cathedral'], ['Q16970', 'church building'], ['Q44539', 'temple'], ['Q32815', 'mosque'], ['Q34627', 'synagogue'],
-        ['Q842402', 'Hindu temple'], ['Q5393308', 'Buddhist temple'], ['Q180987', 'stupa']]],
-    ['palace', [['Q16560', 'palace']]],
+        ['Q842402', 'Hindu temple'], ['Q5393308', 'Buddhist temple'], ['Q180987', 'stupa'], ['Q44613', 'monastery']]],
+    // 2a pasada: museos y chateaux (las etiquetas vienen de las clases P31 que trajo la 1a; se vuelven a verificar)
+    ['palace', [['Q16560', 'palace'], ['Q751876', 'château'], ['Q33506', 'museum']]],
     ['fortification', [['Q23413', 'castle'], ['Q57821', 'fortification']]],
     ['monument', [['Q4989906', 'monument'], ['Q162875', 'mausoleum'], ['Q193475', 'menhir'], ['Q164240', 'megalith'], ['Q1935728', 'stone circle']]],
-    ['venue', [['Q54831', 'amphitheatre']]],
+    ['venue', [['Q54831', 'amphitheatre'], ['Q483110', 'stadium'], ['Q641226', 'arena'], ['Q24354', 'theatre building'], ['Q153562', 'opera house'], ['Q1060829', 'concert hall']]],
     ['tower', [['Q12518', 'tower'], ['Q11303', 'skyscraper'], ['Q39715', 'lighthouse']]],
-    ['infrastructure', [['Q12280', 'bridge'], ['Q12323', 'dam'], ['Q474', 'aqueduct']]],
+    ['infrastructure', [['Q12280', 'bridge'], ['Q12323', 'dam'], ['Q474', 'aqueduct'], ['Q1248784', 'airport'], ['Q55488', 'railway station'], ['Q928830', 'metro station']]],
     ['archaeological', [['Q839954', 'archaeological site']]]
 ];
-const BASE = [['Q811979', 'built structure'], ['Q839954', 'archaeological site']];
+const BASE = [['Q811979', 'built structure'], ['Q839954', 'archaeological site'], ['Q486972', 'human settlement']];
+// 1a pasada: entraban ciudades (Atenas, Damasco, El Cairo, Constantinopla...) porque Wikidata las tipa tambien como yacimiento. Una ciudad no es
+// una construccion: va a la capa de nombres. Se excluye todo lo que es asentamiento humano (Q486972 y subclases).
 const PROPS = [['P571', 'inception'], ['P576', 'dissolved, abolished or demolished'], ['P625', 'coordinate location'], ['P31', 'instance of'], ['P279', 'subclass of']];
 const CAL = { Q1985727: 'gregorian', Q1985786: 'julian' };
 const PREC = { 6: 'millennium', 7: 'century', 8: 'decade', 9: 'year', 10: 'month', 11: 'day' };
@@ -236,7 +239,8 @@ async function api(params) {
 }
 const ITEMS = (minSl) => `{ ?item wdt:P31/wdt:P279* wd:Q811979 } UNION { ?item wdt:P31/wdt:P279* wd:Q839954 }
   ?item wikibase:sitelinks ?sl . FILTER(?sl >= ${minSl})
-  ?item wdt:P625 ?coord .`;
+  ?item wdt:P625 ?coord .
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q486972 }`;
 
 async function main() {
     const out = arg('out'); if (!out) throw new Error('falta --out');
@@ -261,7 +265,8 @@ async function main() {
     const sampleQ = (cond, lim) => `SELECT ?item ?st ?t ?prec ?cal WHERE { ${ITEMS(minSl)} ?item p:P571 ?st . ?st psv:P571 ?v . ?v wikibase:timeValue ?t ; wikibase:timePrecision ?prec ; wikibase:timeCalendarModel ?cal . FILTER(${cond}) } ORDER BY DESC(?sl) LIMIT ${lim}`;
     const DT = (y) => '"' + (y < 0 ? '-' : '') + String(Math.abs(y)).padStart(4, '0') + '-01-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>';
     let sample = [];
-    for (const cond of [`?prec >= 9 && ?t < ${DT(1)}`, `?prec >= 9 && ?t >= ${DT(1)}`, `?prec = 8`, `?prec = 7 && ?t < ${DT(1)}`, `?prec = 7 && ?t >= ${DT(1)}`, `?prec = 6`]) {
+    for (const cond of [`?prec >= 9 && ?t < ${DT(1)}`, `?prec >= 9 && ?t >= ${DT(1)}`, `?prec = 8 && ?t < ${DT(1)}`, `?prec = 8 && ?t >= ${DT(1)}`,
+        `?prec = 7 && ?t < ${DT(1)}`, `?prec = 7 && ?t >= ${DT(1)}`, `?prec = 6 && ?t < ${DT(1)}`, `?prec = 6 && ?t >= ${DT(1)}`]) {
         try { sample = sample.concat(await sparql(sampleQ(cond, 14))); } catch (e) { log('muestra fallida:', cond, e.message); }
     }
     const byItem = {};

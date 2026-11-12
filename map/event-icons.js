@@ -266,10 +266,10 @@
     /**
      * Dibuja el icono `key` en un cuadrado de `size` px (esquina superior izquierda en (x,y)): primero el borde (negro, HALO) de toda la silueta y encima
      * el relleno. Opciones: `Path2D` y `color` (por defecto, el global y el color del icono) y `t` (0..1, instante de la entrada animada; sin él,
-     * el dibujo final).
+     * el dibujo final) y `parts` (un dibujo ajeno, p. ej. las construcciones, que comparte borde y trazo con los sucesos).
      */
     function draw(ctx, key, size, o) {
-        const parts = GLYPHS[key]; if (!parts) throw new Error('icono desconocido: ' + key);
+        const parts = (o && o.parts) || GLYPHS[key]; if (!parts) throw new Error('icono desconocido: ' + key);   // o.parts: dibujo de otra capa (map/built.js) con el mismo estilo
         const P2D = (o && o.Path2D) || (typeof Path2D !== 'undefined' ? Path2D : null); if (!P2D) throw new Error('falta Path2D');
         const tint = o && o.tint && o.tint.amt > 0 ? o.tint : null;      // matiz de la epoca (ChronosEras): mezcla suave, el icono sigue siendo reconocible
         const color = (o && o.color) || (tint ? mixHex(COLORS[key], tint.color, Math.min(tint.amt, 0.35)) : COLORS[key]); const dark = shade(color, -0.4);
