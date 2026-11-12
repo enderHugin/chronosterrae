@@ -14,13 +14,14 @@ on:
       - 'data/textures/**'
       - 'data/events/**'
       - 'data/borders/**'
+      - 'data/built/**'
       - 'sky/**'
       - 'map/**'
       - 'solar/**'
       - 'vendor/**'
       - '.github/workflows/pages.yml'
   workflow_run:
-    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (validación contra Horizons)', 'Sucesos (Wikidata)']
+    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (validación contra Horizons)', 'Sucesos (Wikidata)', 'Construcciones (Wikidata)']
     types: [completed]
     branches: [main]
   workflow_dispatch:
@@ -58,6 +59,8 @@ jobs:
           if [ -d data/textures ]; then cp -r data/textures _site/data/textures; fi
           # capa de sucesos (seed.json, index.json y los fragmentos c<siglo>.json que pide index.html)
           if [ -d data/events ]; then cp -r data/events _site/data/events; fi
+          # capa de construcciones (built.json y su manifiesto, desde Wikidata)
+          if [ -d data/built ]; then cp -r data/built _site/data/built; fi
           touch _site/.nojekyll
           du -sh _site
 

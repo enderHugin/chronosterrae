@@ -124,6 +124,14 @@ sale y cuánto se puede fiar de él.
   icono crece con un resplandor de su color y aparece su nombre en una etiqueta del mismo color: se sabe sobre qué caerá el clic.
   Un clic en un suceso **no mueve el mapa** (salvo con «Centrar al hacer clic», que ahora centra en el suceso y no en el punto del
   clic), y un temblor de la mano al hacer clic ya no arrastra el mapa.
+- **Construcciones (2026-11-12).** Capa nueva en *Capas*: catedrales, pirámides, castillos, palacios, museos, anfiteatros y
+  estadios, torres, puentes, presas, estaciones, yacimientos… (5.137 con coordenadas, fecha de construcción y ≥ 20 Wikipedias;
+  Wikidata, CC0, vía QLever; `scripts/build-built.js`, workflow `built-build`). Cada una aparece **desde su fecha de construcción**
+  (la más antigua si hay varias: Santa Sofía 360/415/537) con un icono de línea marfil por familia; si Wikidata da un fin
+  (P576, que mezcla demolición y abandono) desde entonces se ve **atenuada en gris, no se borra**. Las fechas antes del año 1 y las
+  de siglo/milenio se **calibran** contra el texto que genera la propia Wikidata para esas declaraciones (en su RDF el año a. C.
+  ya es astronómico pero el siglo no); lo que no se puede calibrar no entra. Se excluyen los asentamientos (las ciudades irán en
+  la capa de nombres). Todo es ingesta automática sin revisar y la ficha lo dice. Ficha al hacer clic; nombre y fecha al pasar.
 - **Capas del cielo (2026-11-12).** En *Capas* (y en el panel del cielo) se encienden y apagan por separado las **líneas de las
   constelaciones**, los **nombres de las constelaciones** (en español; en inglés, el nombre latino de la IAU) y los **nombres de
   estrellas** (las de magnitud ≤ 2,6, de la más brillante a la más débil, sin pisarse; con el alias español si lo tiene). Valen en

@@ -78,6 +78,25 @@
         return { type: 'FeatureCollection', features: out };
     }
 
+    /**
+     * Tabla compacta (data/built/built-map.json: { fields, rows }) -> GeoJSON para la fuente del mapa, con los mismos campos que compact()
+     * y ademas la primera fecha (d: iso, p: precision) para la etiqueta al pasar el raton. vf(status, evidence) -> bool filtra (todo es raw/documentary).
+     */
+    function fromTable(table, lang, keep) {
+        const ix = {}; (table.fields || []).forEach((k, i) => { ix[k] = i; });
+        const need = ['qid', 'lng', 'lat', 'family', 'start_ybp', 'end_ybp', 'importance', 'en', 'es', 'iso', 'precision'];
+        if (!need.every((k) => k in ix)) throw new Error('tabla de construcciones sin los campos esperados');
+        const out = [];
+        for (const r of table.rows || []) {
+            if (keep && !keep(r)) continue;
+            const q = { id: 'wd.' + String(r[ix.qid]).toLowerCase() + '.built', f: IDS.includes(r[ix.family]) ? r[ix.family] : 'other', s: r[ix.start_ybp], i: r[ix.importance] || 0,
+                n: (lang === 'es' && r[ix.es]) || r[ix.en], d: r[ix.iso], p: r[ix.precision] };
+            if (r[ix.end_ybp] !== null && r[ix.end_ybp] !== undefined) q.e = r[ix.end_ybp];
+            out.push({ type: 'Feature', geometry: { type: 'Point', coordinates: [r[ix.lng], r[ix.lat]] }, properties: q });
+        }
+        return { type: 'FeatureCollection', features: out };
+    }
+
     /** Estado de una construccion (propiedades compactas o registro) en la fecha `ybp` (años BP): 'future' | 'standing' | 'ended'. */
     function stateAt(p, ybp) {
         const s = p.s !== undefined ? p.s : p.time.start_ybp;
@@ -91,7 +110,7 @@
     const endedExpr = (ybp) => ['all', ['has', 'e'], ['<', ybp, ['get', 'e']]];
     const imageAt = (ybp) => ['case', endedExpr(ybp), ['concat', 'bui-', ['get', 'f'], '-x'], ['concat', 'bui-', ['get', 'f']]];
     // tamaño con el zoom como los sucesos (encogen con la Tierra lejos) y algo menor: son fondo, no noticia
-    const sizeExpr = () => EI.zoomScaled(['interpolate', ['linear'], ['get', 'i'], 0.5, 0.62, 1, 0.86]);
+    const sizeExpr = () => EI.zoomScaled(['interpolate', ['linear'], ['get', 'i'], 0.5, 0.74, 1, 0.98]);
 
     /** Texto de una fecha del registro ({iso, precision}) con un formateador de años astronomicos (fmtYear(y) -> "2560 a. C."). */
     function dateText(d, fmtYear) {
@@ -104,5 +123,5 @@
         return fmtYear(a);
     }
 
-    return { COLOR, ENDED_COLOR, ENDED_OPACITY, FAMILIES, IDS, GLYPHS, draw, nameOf, compact, stateAt, filterAt, endedExpr, imageAt, sizeExpr, dateText };
+    return { COLOR, ENDED_COLOR, ENDED_OPACITY, FAMILIES, IDS, GLYPHS, draw, nameOf, compact, fromTable, stateAt, filterAt, endedExpr, imageAt, sizeExpr, dateText };
 });

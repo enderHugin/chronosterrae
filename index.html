@@ -400,6 +400,7 @@
                 <div class="menu-pop panel" id="menu-layers-pop" role="group" hidden>
                     <button class="btn" id="btn-borders" type="button" aria-pressed="false" hidden data-i18n="borders.button"></button>
                     <button class="btn" id="btn-roads" type="button" aria-pressed="false" hidden data-i18n="roads.button"></button>
+                    <button class="btn" id="btn-built" type="button" aria-pressed="true" data-i18n="built.button"></button>
                     <button class="btn" id="btn-center" type="button" aria-pressed="false" data-i18n="center.button"></button>
                     <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
                     <div class="menu-sep" role="separator"></div>
@@ -570,6 +571,7 @@
 <script src="./map/changes.js"></script>
 <script src="./map/panels.js"></script>
 <script src="./map/event-icons.js"></script>
+<script src="./map/built.js"></script>
 <script src="./map/glide.js"></script>
 <script src="./map/eras.js"></script>
 <script src="./map/labels.js"></script>
@@ -633,9 +635,10 @@ const parsePrefs = (raw) => {
     if (p.cc === 0 || p.cc === 1) out.cc = p.cc === 1;   // centrar al hacer clic
     if (p.bh === 0 || p.bh === 1) out.bh = p.bh === 1;   // fronteras historicas ocultas por el usuario (de cerca)
     if (p.rd === 0 || p.rd === 1) out.rd = p.rd === 1;   // capa de carreteras y ferrocarriles de hoy (apagada por defecto)
+    if (p.bu === 0 || p.bu === 1) out.bu = p.bu === 1;   // capa de construcciones (encendida por defecto)
     if (typeof p.ks === 'string' && /^(?:[0-9A-Za-z]{1,5}|x[1-9][0-9]{0,8}[nhdwoy])$/.test(p.ks)) out.ks = p.ks;   // paso de las flechas (id, o personalizado 'x15n'; se valida al usarlo)
-    // ultimo elemento elegido (ficha): pais/entidad por su nombre ('p') o suceso por su id ('e'); texto corto y sin caracteres de control
-    if (p.sel && typeof p.sel === 'object' && (p.sel.k === 'p' || p.sel.k === 'e') && typeof p.sel.v === 'string' && p.sel.v.length > 0 && p.sel.v.length <= 160 && !/[\u0000-\u001f\u007f]/.test(p.sel.v)) out.sel = { k: p.sel.k, v: p.sel.v };
+    // ultimo elemento elegido (ficha): pais/entidad por su nombre ('p'), suceso por su id ('e') o construccion por su id ('b'); texto corto y sin caracteres de control
+    if (p.sel && typeof p.sel === 'object' && (p.sel.k === 'p' || p.sel.k === 'e' || p.sel.k === 'b') && typeof p.sel.v === 'string' && p.sel.v.length > 0 && p.sel.v.length <= 160 && !/[\u0000-\u001f\u007f]/.test(p.sel.v)) out.sel = { k: p.sel.k, v: p.sel.v };
     if (typeof p.kp === 'string' && /^(?:auto|[0-9A-Za-z]{1,5}|x[1-9][0-9]{0,8}[nhdwoy])$/.test(p.kp)) out.kp = p.kp;   // paso de RePag/AvPag ('auto' = x10 el de las flechas)
     if (Number.isInteger(p.ah) && p.ah >= 0 && p.ah <= 3) out.ah = p.ah;   // ocultar recuadros informativos solos: nivel 0 (nunca) a 3
     if (Number.isInteger(p.pp) && p.pp >= 0 && p.pp <= 31) out.pp = p.pp;   // recuadros «mostrar siempre» (mascara de bits)
@@ -666,7 +669,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -826,6 +829,14 @@ const i18n = {
         nav: { zoomIn: 'Acercar', zoomOut: 'Alejar (más allá de la Tierra: el sistema solar)' },
         borders: {
             button: 'Fronteras', tip: 'Muestra u oculta las fronteras históricas (de cerca). Es una aproximación: sus polígonos son toscos.'
+        },
+        built: {
+            button: 'Construcciones', tip: 'Catedrales, pirámides, castillos, puentes… desde su fecha de construcción (Wikidata, sin revisar). Si Wikidata da un fin (demolición o abandono), desde entonces se ven atenuadas, no se borran.',
+            family: 'Tipo', classes: 'Clases (Wikidata)', when: 'Construcción', more: 'Otras fechas de construcción', end: 'Fin según Wikidata',
+            endNote: 'Wikidata usa una misma propiedad (P576, «disuelto, abolido o demolido») para la demolición y para el abandono: Machu Picchu «termina» en 1572 y sigue en pie como ruina. Por eso en el mapa se atenúa desde esa fecha, sin borrarla.',
+            notYet: 'Aún no construido en la fecha elegida.', ended: 'Pasada su fecha de fin según la fuente.',
+            prec: { day: 'día', month: 'mes', year: 'año', decade: 'década', century: 'siglo', millennium: 'milenio' },
+            calNote: 'calendario {c}', loading: 'Cargando construcciones…', fail: 'No se pudieron cargar las construcciones: {err}', credits: 'Construcciones'
         },
         roads: {
             button: 'Carreteras', tip: 'Muestra u oculta las carreteras, ferrocarriles y caminos de hoy (OpenStreetMap), con sus nombres y números. Solo en el mapa actual y de cerca: antes de hoy no existían como son ahora.'
@@ -1020,6 +1031,14 @@ const i18n = {
         nav: { zoomIn: 'Zoom in', zoomOut: 'Zoom out (beyond Earth: the solar system)' },
         borders: {
             button: 'Borders', tip: 'Shows or hides the historical borders (when zoomed in). An approximation: their polygons are coarse.'
+        },
+        built: {
+            button: 'Buildings', tip: 'Cathedrals, pyramids, castles, bridges… from their construction date (Wikidata, unreviewed). If Wikidata gives an end (demolition or abandonment), they are dimmed from then on, not removed.',
+            family: 'Type', classes: 'Classes (Wikidata)', when: 'Construction', more: 'Other construction dates', end: 'End according to Wikidata',
+            endNote: 'Wikidata uses one property (P576, “dissolved, abolished or demolished”) for both demolition and abandonment: Machu Picchu “ends” in 1572 and still stands as a ruin. So on the map it is dimmed from that date, not removed.',
+            notYet: 'Not yet built at the chosen date.', ended: 'Past its end date according to the source.',
+            prec: { day: 'day', month: 'month', year: 'year', decade: 'decade', century: 'century', millennium: 'millennium' },
+            calNote: '{c} calendar', loading: 'Loading buildings…', fail: 'Could not load the buildings: {err}', credits: 'Buildings'
         },
         roads: {
             button: 'Roads', tip: 'Shows or hides today\'s roads, railways and paths (OpenStreetMap), with their names and numbers. Only on the current map and zoomed in: they were not as they are now before today.'
@@ -1450,6 +1469,7 @@ mapReady.then(() => {
     updateNight(true);
     map.addSource('events', { type: 'geojson', data: emptyFC() });
     evLayersAdd();
+    builtLayersAdd();
     eventsRefresh();
     detailApply();
 });
@@ -2221,6 +2241,7 @@ function setTime(ybp, { fromSlider = false, immediate = false, persist = true, f
     $('time-label').textContent = f.main;
     $('time-sub').textContent = f.sub; $('time-sub').title = f.sub;
     eraUpdate(ybpToYear(state.ybp));
+    builtTimeApply();
     if (immediate) { clearTimeout(sceneTimer); sceneTimer = null; lastScene = performance.now(); updateScene({ immediate: true }); } else scheduleScene();
     if (!fromClock) clockChanged();
     detailApply();
@@ -2338,30 +2359,149 @@ function evHoverPlace() {
 function evHoverUpdate() {
     EVH.raf = 0;
     const e = hoverPt;
-    if (!e || !map.getLayer('events-circle') || solarView.isOpen) { evHoverSet(null); return; }
-    evHoverSet(map.queryRenderedFeatures(e, { layers: ['events-circle'] })[0] || null);
+    if (!e || !map.getLayer('events-circle') || solarView.isOpen) { evHoverSet(null); if (typeof buHoverSet === 'function') buHoverSet(null); return; }
+    const ev = map.queryRenderedFeatures(e, { layers: ['events-circle'] })[0] || null;
+    evHoverSet(ev);
+    if (typeof buHoverSet === 'function') buHoverSet(!ev && BUILT.on && map.getLayer('built-icons') ? map.queryRenderedFeatures(e, { layers: ['built-icons'] })[0] || null : null);
 }
 map.on('move', evHoverPlace);
-map.getCanvas().addEventListener('mouseleave', () => { hoverPt = null; setHoverKey(null); evHoverSet(null); });
+map.getCanvas().addEventListener('mouseleave', () => { hoverPt = null; setHoverKey(null); evHoverSet(null); if (typeof buHoverSet === 'function') buHoverSet(null); });
 map.on('dragstart', () => { hoverPt = null; setHoverKey(null); });
+
+/* ------------------------------------------------------------------ */
+/* Construcciones (map/built.js, data/built: Wikidata via QLever)       */
+/* ------------------------------------------------------------------ */
+// Catedrales, piramides, castillos... desde su fecha de construccion. Si la fuente da un fin (P576: demolicion O abandono), desde entonces
+// se ven atenuadas en gris, no se borran. Se cargan al encenderse (un archivo, ~3 MB sin comprimir) y pasan por los filtros de verificacion.
+const BUILT = { on: prefs.bu !== false, table: null, records: null, byId: null, loading: null, full: null, failed: false, key: null, ybp: null, raf: 0 };
+const BU_SPRITE = { box: 44, pad: 6, ratio: 2 };
+function builtButton() { $('btn-built').setAttribute('aria-pressed', String(BUILT.on)); }
+function builtImagesRegister() {
+    ChronosBuilt.IDS.forEach((fam) => [false, true].forEach((ended) => {
+        const name = 'bui-' + fam + (ended ? '-x' : ''); if (map.hasImage(name)) return;
+        const c = document.createElement('canvas'); c.width = c.height = BU_SPRITE.box + 2 * BU_SPRITE.pad;
+        ChronosBuilt.draw(c.getContext('2d', { willReadFrequently: true }), fam, BU_SPRITE.box, { x: BU_SPRITE.pad, y: BU_SPRITE.pad, ended });
+        map.addImage(name, c.getContext('2d').getImageData(0, 0, c.width, c.height), { pixelRatio: BU_SPRITE.ratio });
+    }));
+}
+function builtLayersAdd() {
+    if (!window.ChronosBuilt || map.getLayer('built-icons')) return;
+    builtImagesRegister();
+    if (!map.getSource('built')) map.addSource('built', { type: 'geojson', data: emptyFC() });
+    const ybp = state.ybp;
+    // Por debajo de los sucesos. Sin solaparse: con la Tierra lejos solo caben las mas notorias (symbol-sort-key: menor = antes).
+    map.addLayer({ id: 'built-icons', type: 'symbol', source: 'built', minzoom: 1.6, filter: ChronosBuilt.filterAt(ybp),
+        layout: { visibility: BUILT.on ? 'visible' : 'none', 'icon-image': ChronosBuilt.imageAt(ybp), 'icon-size': ChronosBuilt.sizeExpr(), 'icon-allow-overlap': false, 'icon-padding': 4, 'symbol-sort-key': ['-', 1, ['get', 'i']] },
+        paint: { 'icon-opacity': ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 1] } }, map.getLayer('events-dot') ? 'events-dot' : undefined);
+    BUILT.ybp = ybp;
+    if (BUILT.on) builtEnsure();
+}
+// Para el mapa basta la tabla compacta (built-map.json, ~0,2 MB comprimida); la ficha completa con su procedencia (built.json) se pide al primer clic.
+async function builtEnsure() {
+    if (BUILT.table || BUILT.loading || BUILT.failed) return BUILT.loading;
+    BUILT.loading = (async () => {
+        try {
+            const res = await fetch('./data/built/built-map.json'); if (!res.ok) throw new Error('HTTP ' + res.status);
+            const tb = await res.json(); if (!tb || !Array.isArray(tb.rows) || !Array.isArray(tb.fields)) throw new Error('forma inesperada');
+            BUILT.table = tb; builtRefresh(); renderCredits();
+            if (SEL.pending && SEL.pending.k === 'b') builtFull().then(selRestoreBuilt);
+        } catch (e) { BUILT.failed = true; setStatus('warn', fmt('built.fail', { err: e.message })); }
+        finally { BUILT.loading = null; }
+    })();
+    return BUILT.loading;
+}
+function builtFull() {
+    if (BUILT.records) return Promise.resolve(BUILT.records);
+    if (!BUILT.full) BUILT.full = fetch('./data/built/built.json').then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then((fc) => {
+        if (!fc || !Array.isArray(fc.features)) throw new Error('forma inesperada');
+        BUILT.records = fc.features; BUILT.byId = new Map(fc.features.map((f) => [f.properties.id, f])); return BUILT.records;
+    }).catch((e) => { BUILT.full = null; setStatus('warn', fmt('built.fail', { err: e.message })); return null; });
+    return BUILT.full;
+}
+/** Rehace la fuente del mapa si cambian el idioma o los filtros de verificacion (no en cada fecha: eso es un filtro). */
+function builtRefresh() {
+    if (!BUILT.table || !map.getSource('built')) return;
+    const key = lang + '|' + vfMask; if (key === BUILT.key) return; BUILT.key = key;
+    const pass = vfPasses({ properties: { status: 'raw', evidence: 'documentary' } });     // toda la capa es ingesta automatica documental
+    map.getSource('built').setData(pass ? ChronosBuilt.fromTable(BUILT.table, lang) : emptyFC());
+}
+/** La fecha: que construcciones existen ya y cuales han pasado su fin (literales en las expresiones; una vez por fotograma como mucho). */
+function builtTimeApply() {
+    if (BUILT.raf || !map.getLayer('built-icons')) return;
+    BUILT.raf = requestAnimationFrame(() => {
+        BUILT.raf = 0; const ybp = state.ybp; if (ybp === BUILT.ybp) return; BUILT.ybp = ybp;
+        map.setFilter('built-icons', ChronosBuilt.filterAt(ybp));
+        map.setLayoutProperty('built-icons', 'icon-image', ChronosBuilt.imageAt(ybp));
+        map.setPaintProperty('built-icons', 'icon-opacity', ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 1]);
+    });
+}
+function builtSet(on, persist) {
+    BUILT.on = !!on; builtButton(); if (persist) savePrefs({ bu: BUILT.on });
+    if (map.getLayer('built-icons')) map.setLayoutProperty('built-icons', 'visibility', BUILT.on ? 'visible' : 'none');
+    if (BUILT.on) builtEnsure(); else buHoverSet(null);
+    renderCredits();
+}
+$('btn-built').addEventListener('click', () => builtSet(!BUILT.on, true));
+builtButton();
+function builtRows(f) {
+    const p = f.properties; const b = p.built; const fy = (y) => formatYear(y);
+    const fam = ChronosBuilt.FAMILIES.find((x) => x.id === b.family) || ChronosBuilt.FAMILIES[ChronosBuilt.FAMILIES.length - 1];
+    const dText = (d) => ChronosBuilt.dateText(d, fy) + ' (' + t('built.prec.' + d.precision) + ((d.precision === 'day' || d.precision === 'month') && d.calendar ? ', ' + fmt('built.calNote', { c: t('sky.cal.' + d.calendar).toLowerCase() }) : '') + ')';
+    const rows = [{ label: t('evidence'), badge: p.evidence }, { label: t('built.family'), value: fam[lang] || fam.en }];
+    if (p.classes && p.classes.length) rows.push({ label: t('built.classes'), value: p.classes.map((c) => c.label || c.id).join(', ') });
+    rows.push({ label: t('built.when'), value: dText(b.dates[0]) });
+    if (b.dates.length > 1) rows.push({ label: t('built.more'), value: b.dates.slice(1).map(dText).join(' · ') });
+    if (b.end) rows.push({ label: t('built.end'), value: dText(b.end), note: t('built.endNote') });
+    const st = ChronosBuilt.stateAt(p, state.ybp);
+    if (st !== 'standing') rows.push({ label: t('events.when'), value: t(st === 'future' ? 'built.notYet' : 'built.ended') });
+    rows.push({ label: t('events.status'), value: t('events.verif.st.' + p.status) });
+    p.sources.forEach((s) => {
+        rows.push({ label: t('source'), value: 'Wikidata ' + s.id, href: 'https://www.wikidata.org/wiki/' + s.id });
+        if (s.citation) rows.push({ label: t('events.citation'), value: s.citation });
+    });
+    return rows;
+}
+function showBuilt(f) { showInfo(ChronosBuilt.nameOf(f.properties, lang), builtRows(f)); }
+function selRestoreBuilt() {
+    const s = SEL.pending; if (!s || s.k !== 'b' || !BUILT.byId) return;
+    const f = BUILT.byId.get(s.v); if (!f) { SEL.pending = null; return; }
+    SEL.pending = null; showBuilt(f); SEL.keepYbp = state.ybp;
+}
+// Construccion bajo el raton: la misma etiqueta que los sucesos, en marfil (solo si no hay un suceso debajo)
+const BUH = { id: null, coords: null };
+function buHoverSet(f) {
+    const id = f ? f.properties.id : null; if (id === BUH.id) return;
+    BUH.id = id; BUH.coords = f && f.geometry ? f.geometry.coordinates.slice() : null;
+    if (EVH.id) return;
+    const chip = $('ev-hover');
+    if (!f) { chip.hidden = true; return; }
+    const y = f.properties.d ? ChronosBuilt.dateText({ iso: f.properties.d, precision: f.properties.p }, formatYear) : '';
+    chip.textContent = (f.properties.n || '') + (y ? ' · ' + y : ''); chip.style.setProperty('--ev', ChronosBuilt.COLOR); chip.hidden = !chip.textContent;
+    const pt = map.project(BUH.coords); chip.style.transform = 'translate(' + Math.round(pt.x + 16) + 'px,' + Math.round(pt.y - 11) + 'px)';
+}
+map.on('move', () => { if (BUH.coords && !EVH.id) { const pt = map.project(BUH.coords); $('ev-hover').style.transform = 'translate(' + Math.round(pt.x + 16) + 'px,' + Math.round(pt.y - 11) + 'px)'; } });
 // Centrar al hacer clic (ajuste): un clic sobre un elemento del mapa lleva el centro a ese punto, sin cambiar el zoom
 const CENTER = { on: prefs.cc === true };
 $('btn-center').setAttribute('aria-pressed', String(CENTER.on));
 $('btn-center').addEventListener('click', () => { CENTER.on = !CENTER.on; $('btn-center').setAttribute('aria-pressed', String(CENTER.on)); savePrefs({ cc: CENTER.on }); });
 map.on('click', (e) => {
     if (!map.getLayer('borders-fill')) return;
-    const hit = map.queryRenderedFeatures(e.point, { layers: ['events-circle', 'live-points', 'borders-fill', 'land-fill', 'margin-fill'] })[0];
+    const hit = map.queryRenderedFeatures(e.point, { layers: ['events-circle', 'live-points', ...(map.getLayer('built-icons') && BUILT.on ? ['built-icons'] : []), 'borders-fill', 'land-fill', 'margin-fill'] })[0];
     if (bordersStale() && hit && hit.layer.id === 'borders-fill') return;   // se ve el mapa de la instantanea anterior hasta que llegue la nueva
     clearHighlight(); setHoverKey(null);
     if (!hit) { hideInfo(); selRemember(null); return; }
     if (hit.layer.id === 'events-circle') { const f = events.byId.get(hit.properties.id); if (f) { showEvent(f); selRemember('e', hit.properties.id); } }
     else if (hit.layer.id === 'live-points') { showLive(hit.properties); selRemember(null); }
+    else if (hit.layer.id === 'built-icons') {
+        const id = hit.properties.id; selRemember('b', id); setStatus('ok', t('built.loading'), 1500);
+        builtFull().then(() => { const f = BUILT.byId && BUILT.byId.get(id); if (f) showBuilt(f); });
+    }
     else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { setHighlightKey(polityKey(hit.properties)); showPolity(hit.properties); selRemember('p', hit.properties.NAME); }
     else if (hit.layer.id === 'borders-fill') { showPolity(hit.properties); selRemember(null); }
     else { showCoast(hit.properties); selRemember(null); }
-    if (CENTER.on) map.easeTo({ center: hit.layer.id === 'events-circle' && hit.geometry ? hit.geometry.coordinates : e.lngLat, duration: 600 });   // sobre un suceso, se centra en EL (no en el punto del clic)
+    if (CENTER.on) map.easeTo({ center: (hit.layer.id === 'events-circle' || hit.layer.id === 'built-icons') && hit.geometry ? hit.geometry.coordinates : e.lngLat, duration: 600 });   // sobre un suceso, se centra en EL (no en el punto del clic)
 });
-['events-circle', 'live-points', 'borders-fill'].forEach((id) => {
+['events-circle', 'live-points', 'borders-fill', 'built-icons'].forEach((id) => {
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = ERA.pointer || 'pointer'; });
     map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
 });
@@ -2435,6 +2575,11 @@ function renderCredits() {
         box.appendChild(el('a', { href: 'https://svs.gsfc.nasa.gov/4851/', target: '_blank', rel: 'noopener', text: 'NASA/GSFC SVS 4851' }));
         box.appendChild(document.createTextNode(' · ESA/Gaia/DPAC'));
     }
+    if (BUILT.on && BUILT.table) {
+        box.appendChild(document.createTextNode('   |   ' + t('built.credits') + ': '));
+        box.appendChild(el('a', { href: 'https://www.wikidata.org/', target: '_blank', rel: 'noopener', text: 'Wikidata' }));
+        box.appendChild(document.createTextNode(' (CC0)'));
+    }
     if (DETAIL.shown) {
         box.appendChild(document.createTextNode('   |   ' + t('creditsDetail') + ': '));
         box.appendChild(el('a', { href: 'https://openfreemap.org', target: '_blank', rel: 'noopener', text: 'OpenFreeMap' }));
@@ -2478,6 +2623,8 @@ function applyStrings() {
     $('btn-space').title = t('space.tip');
     $('btn-borders').title = t('borders.tip');
     $('btn-roads').title = t('roads.tip');
+    $('btn-built').title = t('built.tip');
+    if (typeof builtRefresh === 'function') builtRefresh();
     $('btn-center').title = $('btn-center').ariaLabel = t('center.tip');
     $('btn-changes').title = t('changes.tip');
     $('menu-layers-btn').title = t('menu.layersTip');
@@ -3797,6 +3944,7 @@ function eventsRebuild() {
     events.byId = new Map(events.all.map((f) => [f.properties.id, f]));
     events.timed = events.all.filter((f) => window.ChronosTimed && ChronosTimed.isTimed(f));
     eventsVisApply();
+    builtRefresh();          // los filtros de verificacion valen tambien para las construcciones (solo rehace si cambiaron)
 }
 
 // Lo que se muestra = lo que pasa el filtro de verificacion (events.all) Y el de tipos del usuario (Ajustes). events.all se conserva entero: lo usan los cambios y las relaciones.

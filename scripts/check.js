@@ -450,6 +450,11 @@ check('prefs: sel (ultimo elemento elegido) acepta pais o suceso con texto corto
         && [{ k: 'x', v: 'a' }, { k: 'p', v: '' }, { k: 'p', v: 'a'.repeat(161) }, { k: 'p', v: 'a\nb' }, { k: 'e', v: 5 }, 'p:Spain', null, []].every((v) => P(v) === undefined)
         && !('extra' in (P({ k: 'p', v: 'Spain', extra: 1 }) || {}));
 });
+check('prefs: sel admite construccion (b) por su id; bu (capa de construcciones) acepta 0/1 y rechaza el resto', () => {
+    const { parsePrefs } = prefsFns(); const P = (o) => parsePrefs(JSON.stringify(o));
+    const b = P({ sel: { k: 'b', v: 'wd.q2981.built' } }).sel;
+    return b && b.k === 'b' && b.v === 'wd.q2981.built' && P({ bu: 0 }).bu === false && P({ bu: 1 }).bu === true && [2, '1', true, null].every((v) => !('bu' in P({ bu: v })));
+});
 check('prefs: sl (capas del cielo) acepta 0..7 y rechaza el resto', () => {
     const { parsePrefs } = prefsFns(); const P = (v) => parsePrefs(JSON.stringify({ sl: v })).sl;
     return [0, 1, 5, 7].every((v) => P(v) === v) && [8, -1, 1.5, '3', true, null].every((v) => P(v) === undefined);
