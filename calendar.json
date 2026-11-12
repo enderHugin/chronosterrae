@@ -1,0 +1,270 @@
+{
+ "generated_at": "2026-11-12T14:24:02.231Z",
+ "cases": [
+  {
+   "qid": "Q83224",
+   "prop": "P585",
+   "note": "Battle of Hastings: 1066-10-20 julian day",
+   "label": "Battle of Hastings",
+   "stored": [
+    {
+     "time": "+1066-10-14T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985786",
+     "rank": "normal"
+    }
+   ],
+   "qlever_status": 200,
+   "qlever": [
+    {
+     "t": "1066-10-20T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985786"
+    }
+   ]
+  },
+  {
+   "qid": "Q122553",
+   "prop": "P570",
+   "note": "Charles II of England: 1685-02-16 julian day",
+   "label": "Charles II of England",
+   "stored": [
+    {
+     "time": "+1685-02-06T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985786",
+     "rank": "normal"
+    }
+   ],
+   "qlever_status": 200,
+   "qlever": [
+    {
+     "t": "1685-02-16T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985786"
+    }
+   ]
+  },
+  {
+   "qid": "Q164047",
+   "prop": "P569",
+   "note": "Alexander Pope: 1688-05-31 julian + 1688-05-21 gregorian",
+   "label": "Alexander Pope",
+   "stored": [
+    {
+     "time": "+1688-05-21T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985786",
+     "rank": "preferred"
+    },
+    {
+     "time": "+1688-05-21T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985727",
+     "rank": "normal"
+    }
+   ],
+   "qlever_status": 200,
+   "qlever": [
+    {
+     "t": "1688-05-21T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985727"
+    },
+    {
+     "t": "1688-05-31T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985786"
+    }
+   ]
+  },
+  {
+   "qid": "Q11812",
+   "prop": "P569",
+   "note": "Thomas Jefferson: 1743-04-13 julian day",
+   "label": "Thomas Jefferson",
+   "stored": [
+    {
+     "time": "+1743-04-13T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985727",
+     "rank": "deprecated"
+    },
+    {
+     "time": "+1743-04-02T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985786",
+     "rank": "normal"
+    }
+   ],
+   "qlever_status": 200,
+   "qlever": [
+    {
+     "t": "1743-04-13T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985786"
+    },
+    {
+     "t": "1743-04-13T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985727"
+    }
+   ]
+  },
+  {
+   "qid": "Q33391",
+   "prop": "P569",
+   "note": "Leon Trotsky: 1879-11-07 julian day",
+   "label": "Leon Trotsky",
+   "stored": [
+    {
+     "time": "+1879-10-26T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985786",
+     "rank": "normal"
+    },
+    {
+     "time": "+1879-11-07T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985727",
+     "rank": "deprecated"
+    }
+   ],
+   "qlever_status": 200,
+   "qlever": [
+    {
+     "t": "1879-11-07T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985786"
+    },
+    {
+     "t": "1879-11-07T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985727"
+    }
+   ]
+  },
+  {
+   "qid": "Q1750892",
+   "prop": "P580",
+   "note": "Siege of Constantinople (1204): 1204-04-20 julian",
+   "label": "Siege of Constantinople",
+   "stored": [
+    {
+     "time": "+1204-04-08T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985727",
+     "rank": "normal"
+    }
+   ],
+   "qlever_status": 200,
+   "qlever": [
+    {
+     "t": "1204-04-08T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985727"
+    }
+   ]
+  },
+  {
+   "qid": "Q1414",
+   "prop": "P570",
+   "note": "Galba: 0069-01 julian month",
+   "label": "Galba",
+   "stored": [
+    {
+     "time": "+0069-01-15T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985786",
+     "rank": "preferred"
+    },
+    {
+     "time": "+0069-01-00T00:00:00Z",
+     "precision": 10,
+     "calendar": "Q1985786",
+     "rank": "normal"
+    }
+   ],
+   "qlever_status": 200,
+   "qlever": [
+    {
+     "t": "0069-01-01T00:00:00Z",
+     "prec": "10",
+     "cal": "Q1985786"
+    },
+    {
+     "t": "0069-01-13T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985786"
+    }
+   ]
+  },
+  {
+   "qid": "Q42887",
+   "prop": "P570",
+   "note": "Clement: 0099 julian year",
+   "label": "Clement",
+   "stored": [
+    {
+     "time": "+0099-00-00T00:00:00Z",
+     "precision": 9,
+     "calendar": "Q1985786",
+     "rank": "normal"
+    }
+   ],
+   "qlever_status": 200,
+   "qlever": [
+    {
+     "t": "0099-01-01T00:00:00Z",
+     "prec": "9",
+     "cal": "Q1985786"
+    }
+   ]
+  },
+  {
+   "qid": "Q179826",
+   "prop": "P585",
+   "note": "First Council of Constantinople: 0381 julian year",
+   "label": "First Council of Constantinople",
+   "stored": [
+    {
+     "time": "+0381-00-00T00:00:00Z",
+     "precision": 9,
+     "calendar": "Q1985786",
+     "rank": "normal"
+    }
+   ],
+   "qlever_status": 200,
+   "qlever": [
+    {
+     "t": "0381-01-01T00:00:00Z",
+     "prec": "9",
+     "cal": "Q1985786"
+    }
+   ]
+  },
+  {
+   "qid": "Q937",
+   "prop": "P569",
+   "note": "Albert Einstein: 1879-03-14 gregorian day (control)",
+   "label": "Albert Einstein",
+   "stored": [
+    {
+     "time": "+1879-03-14T00:00:00Z",
+     "precision": 11,
+     "calendar": "Q1985727",
+     "rank": "normal"
+    }
+   ],
+   "qlever_status": 200,
+   "qlever": [
+    {
+     "t": "1879-03-14T00:00:00Z",
+     "prec": "11",
+     "cal": "Q1985727"
+    }
+   ]
+  }
+ ],
+ "api_status": 200
+}
