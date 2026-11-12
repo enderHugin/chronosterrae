@@ -92,7 +92,24 @@ check('iconos: una familia por cada una del esquema, todas con dibujo valido den
     if (JSON.stringify(schemaFam) !== JSON.stringify(CB.IDS)) return { schema: schemaFam, client: CB.IDS };
     return CB.IDS.every((f) => CB.GLYPHS[f] && CB.GLYPHS[f].every((p) => { const b = EIc.pathBox(p.d); return b.minX >= 0.5 && b.minY >= 0.5 && b.maxX <= 23.5 && b.maxY <= 23.5; }));
 });
-check('iconos: el marfil de las construcciones no es el color de ningun tipo de suceso', () => !Object.values(EIc.COLORS).map((c) => c.toLowerCase()).includes(CB.COLOR));
+check('iconos: el color de las construcciones no es el de ningun tipo de suceso', () => !Object.values(EIc.COLORS).map((c) => c.toLowerCase()).includes(CB.COLOR));
+// El creador (2026-11-12): "el icono de construcciones no puede ser mismo diseño que el tipo evento". Se fija la diferencia:
+const lum = (h) => { const n = parseInt(h.slice(1), 16); const c = [n >> 16, (n >> 8) & 255, n & 255].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+check('estilo propio frente a los sucesos: tinta OSCURA con halo CLARO (los sucesos: color vivo con borde negro)', () => lum(CB.COLOR) < 0.05 && lum(CB.HALO) > 0.7 && EIc.HALO === '#000000' && Object.values(EIc.COLORS).every((c) => lum(c) > 0.15) && (lum(CB.HALO) + 0.05) / (lum(CB.COLOR) + 0.05) >= 7);
+check('estilo propio: halo y trazos mas finos que los de los sucesos', () => {
+    const evW = Object.values(EIc.GLYPHS).flat().filter((p) => p.t === 's').map((p) => p.w || 2); const buW = CB.IDS.flatMap((f) => CB.GLYPHS[f]).filter((p) => p.t === 's').map((p) => p.w || 2);
+    const max = (a) => Math.max(...a);
+    return (CB.BORDER_W < EIc.BORDER && max(buW) < max(evW)) || { border: [CB.BORDER_W, EIc.BORDER], w: [max(buW), max(evW)] };
+});
+check('estilo propio: tamaño ~2/3 del de los sucesos (el mayor de las construcciones por debajo del menor de los sucesos de notoriedad maxima)', () => {
+    const top = (e) => JSON.stringify(e).match(/-?\d+(\.\d+)?/g).map(Number);
+    const bu = CB.sizeExpr(); const s = JSON.stringify(bu); const m = s.match(/"importance"|"i"\],0\.5,([\d.]+),1,([\d.]+)/);
+    return (m && Number(m[2]) <= 0.75 && Number(m[1]) <= 0.6) || s;
+});
+check('cuantas segun la distancia: tres tramos de zoom contiguos, de las mas notorias a todas', () => {
+    const t = CB.TIERS; return t.length === 3 && t[0].maxzoom === t[1].minzoom && t[1].maxzoom === t[2].minzoom && t[0].min > t[1].min && t[1].min > t[2].min && t[2].min === 0 && CB.LAYER_IDS.includes('built-icons');
+});
+check('filtro por tramo: fecha y notoriedad minima', () => JSON.stringify(CB.filterAt(500, 0.8)) === JSON.stringify(['all', ['>=', ['get', 's'], 500], ['>=', ['get', 'i'], 0.8]]) && JSON.stringify(CB.filterAt(500, 0)) === JSON.stringify(['>=', ['get', 's'], 500]));
 const rec = (s, e) => ({ time: { start_ybp: s, end_ybp: e === undefined ? -76 : e }, built: { end: e === undefined ? null : { iso: 'x', precision: 'year' } } });
 check('estado: antes de construirse no se ve; despues si; pasado el fin de la fuente, atenuada (no borrada)', () =>
     CB.stateAt(rec(160.5, -76), 200) === 'future' && CB.stateAt(rec(580, 160.5), 300) === 'standing' && CB.stateAt(rec(580, 160.5), 100) === 'ended' && CB.stateAt(rec(580), -50) === 'standing');

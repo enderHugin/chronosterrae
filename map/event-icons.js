@@ -275,6 +275,7 @@
         const color = (o && o.color) || (tint ? mixHex(COLORS[key], tint.color, Math.min(tint.amt, 0.35)) : COLORS[key]); const dark = shade(color, -0.4);
         const light = hexOr(o && o.halo, HALO);               // borde que sigue la silueta (negro por defecto; `halo` lo cambia)
         const outer = o && o.outer ? hexOr(o.outer, null) : OUTER;   // filo exterior opcional (por defecto ninguno)
+        const bw0 = o && typeof o.border === 'number' ? o.border : BORDER;   // grosor del borde (las construcciones lo llevan mas fino)
         const x = (o && o.x) || 0; const y = (o && o.y) || 0; const k = size / 24;
         const t = o && o.t !== undefined ? o.t : 1;
         const trs = parts.map((p, i) => enterParams(key, t, i));
@@ -286,7 +287,7 @@
         };
         ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
         // 1. borde negro (HALO) de toda la silueta; si se pide, debajo un filo exterior (`outer`, mas ancho)
-        [[outer, BORDER + 2 * OUTER_W], [light, BORDER]].filter(([col]) => col).forEach(([col, bw]) => parts.forEach((p, i) => {
+        [[outer, bw0 + 2 * OUTER_W], [light, bw0]].filter(([col]) => col).forEach(([col, bw]) => parts.forEach((p, i) => {
             const tr = trs[i]; if (p.t === 'l' || p.t === 'c' || tr.a <= 0 || tr.sx === 0 || tr.sy === 0) return;
             ctx.save(); place(p, tr); ctx.globalAlpha = tr.a; ctx.strokeStyle = col; ctx.lineWidth = bw + ((p.t === 's' || p.t === 'd') ? (p.w || 2) : 0); ctx.stroke(new P2D(p.d)); ctx.restore();
         }));

@@ -127,8 +127,9 @@ sale y cuánto se puede fiar de él.
 - **Buscador con lista inmediata e imágenes (2026-11-12).** Al escribir (desde 2 letras) sale la lista de coincidencias: personas
   (una vez, con nacimiento y muerte: «einstein» → Albert Einstein, n. 14/03/1879 · m. 18/04/1955), sucesos, construcciones y
   entidades políticas, sin tildes ni mayúsculas, por principio de palabra y por notoriedad. **Recorrerla** con ↑↓ (o dejando el
-  ratón un instante encima) lleva el mapa a cada resultado: el globo gira hasta el lugar mientras el mapa se funde y reaparece ya en
-  la fecha (al nacimiento, en una persona), y el icono elegido se señala con su nombre. Intro abre la ficha; Esc vuelve a donde se
+  ratón un instante encima) lleva el mapa a cada resultado: la Tierra gira brevemente hasta el lugar **sin acercar ni alejar** y,
+  solo si cambia la época (otro año), el mapa se funde y reaparece ya en la fecha (al nacimiento, en una persona); el icono elegido se
+  señala con su nombre. Lo mismo al elegir un suceso de la lista de sucesos. Intro abre la ficha; Esc vuelve a donde se
   estaba. El índice (`data/search/index.json`, ~1,3 MB comprimido) se genera al publicar (`scripts/build-search.js`) y se descarga
   al tocar la caja. **Imágenes:** de cada QID solo se guarda el nombre del archivo de su imagen principal en Wikidata (P18, CC0;
   `data/images/p18.json`, workflow `images-build`; 23.016 de 26.395 tienen); la miniatura de la lista y la imagen de la ficha se
@@ -137,7 +138,10 @@ sale y cuánto se puede fiar de él.
 - **Construcciones (2026-11-12).** Capa nueva en *Capas*: catedrales, pirámides, castillos, palacios, museos, anfiteatros y
   estadios, torres, puentes, presas, estaciones, yacimientos… (5.137 con coordenadas, fecha de construcción y ≥ 20 Wikipedias;
   Wikidata, CC0, vía QLever; `scripts/build-built.js`, workflow `built-build`). Cada una aparece **desde su fecha de construcción**
-  (la más antigua si hay varias: Santa Sofía 360/415/537) con un icono de línea marfil por familia; si Wikidata da un fin
+  (la más antigua si hay varias: Santa Sofía 360/415/537) con un **símbolo de mapa** por familia, a propósito distinto de los
+  sucesos: tinta oscura con halo claro fino, trazo más fino y ~2/3 de tamaño (los sucesos: color vivo con borde negro). Cuántas se
+  ven depende de la distancia: con la Tierra lejos solo las más notorias (≥ ~75 Wikipedias), a media distancia ≥ ~45, de cerca todas.
+  Si Wikidata da un fin
   (P576, que mezcla demolición y abandono) desde entonces se ve **atenuada en gris, no se borra**. Las fechas antes del año 1 y las
   de siglo/milenio se **calibran** contra el texto que genera la propia Wikidata para esas declaraciones (en su RDF el año a. C.
   ya es astronómico pero el siglo no); lo que no se puede calibrar no entra. Se excluyen los asentamientos (las ciudades irán en

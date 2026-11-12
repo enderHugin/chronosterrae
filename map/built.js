@@ -5,17 +5,24 @@
  *   - antes de su fecha de construccion (la mas antigua que da la fuente): no se muestra;
  *   - despues: se muestra; si la fuente da un fin (Wikidata P576, que mezcla demolicion y abandono) y ya ha pasado, se ATENUA
  *     ("fin segun la fuente"), no se borra: Machu Picchu "termina" en 1572 y sigue en pie como ruina.
- * Un solo color (marfil, como la piedra) para todas: distingue las construcciones de los sucesos, que llevan un color por tipo.
+ * ESTILO PROPIO, a proposito distinto del de los sucesos (2026-11-12, el creador: "no puede ser el mismo diseño que el tipo evento"):
+ *   - sucesos: trazo de color intenso con borde NEGRO grueso (insignia que llama la atencion);
+ *   - construcciones: simbolo de mapa, TINTA oscura con un halo CLARO fino, trazo mas fino y tamaño menor (~2/3), como un grabado;
+ *     pasado su fin, tinta gris y halo apagado, semitransparente.
  */
 (function (root, factory) {
     if (typeof module === 'object' && module.exports) module.exports = factory(require('./event-icons.js'));
     else root.ChronosBuilt = factory(root.ChronosEventIcons);
 })(typeof self !== 'undefined' ? self : this, function (EI) {
     'use strict';
-    const W = 2.05;
-    const COLOR = '#efe4cc';          // marfil: piedra; no lo usa ningun tipo de suceso
-    const ENDED_COLOR = '#8f897e';    // gris: ya paso el fin que da la fuente
-    const ENDED_OPACITY = 0.7;
+    const W = 1.75;                   // trazo mas fino que el de los sucesos (2,05)
+    const COLOR = '#2e241a';          // tinta sepia oscura (los sucesos son colores vivos)
+    const HALO = '#f4ecdc';           // halo de papel (los sucesos llevan borde negro)
+    const BORDER_W = 1.9;             // halo mas fino que el borde de los sucesos (2,6)
+    const ENDED_COLOR = '#746d62';    // ya paso el fin que da la fuente: tinta gris...
+    const ENDED_HALO = '#d8d2c6';     // ...con halo apagado
+    const ENDED_OPACITY = 0.6;
+    const CHIP = '#f4ecdc';           // fondo de la etiqueta al pasar el raton (papel, no el color de un suceso)
     const FAMILIES = [
         { id: 'pyramid', es: 'Pirámide o zigurat', en: 'Pyramid or ziggurat' },
         { id: 'religious', es: 'Templo, iglesia, mezquita, monasterio…', en: 'Temple, church, mosque, monastery…' },
@@ -30,34 +37,36 @@
     ];
     const IDS = FAMILIES.map((f) => f.id);
     // Rejilla de 24x24 como los sucesos. 's' = trazo del color; 'f' = relleno del color.
+    // (trazos secundarios al 85 % de los del primer diseño: todo mas fino que en los sucesos)
     const GLYPHS = {
         // piramide escalonada
-        pyramid: [{ d: 'M2.4 20.6 H21.6 L12 3.6 Z', t: 's', w: W }, { d: 'M6.4 13.6 H17.6', t: 's', w: 1.6 }, { d: 'M4.4 17.1 H19.6', t: 's', w: 1.6 }],
+        pyramid: [{ d: 'M2.4 20.6 H21.6 L12 3.6 Z', t: 's', w: W }, { d: 'M6.4 13.6 H17.6', t: 's', w: 1.36 }, { d: 'M4.4 17.1 H19.6', t: 's', w: 1.36 }],
         // edificio con cupula y aguja: neutro entre religiones (sin cruz ni media luna)
-        religious: [{ d: 'M5 21 V12.4 H19 V21 Z', t: 's', w: W }, { d: 'M7.2 12.4 a4.8 4.8 0 0 1 9.6 0', t: 's', w: W }, { d: 'M12 7.6 V2.8', t: 's', w: 1.8 },
-            { d: 'M10.3 21 V17.6 a1.7 1.7 0 0 1 3.4 0 V21', t: 's', w: 1.5 }],
+        religious: [{ d: 'M5 21 V12.4 H19 V21 Z', t: 's', w: W }, { d: 'M7.2 12.4 a4.8 4.8 0 0 1 9.6 0', t: 's', w: W }, { d: 'M12 7.6 V2.8', t: 's', w: 1.53 },
+            { d: 'M10.3 21 V17.6 a1.7 1.7 0 0 1 3.4 0 V21', t: 's', w: 1.27 }],
         // fronton y columnas
-        palace: [{ d: 'M2.8 8.6 L12 3.4 L21.2 8.6 Z', t: 's', w: W }, { d: 'M6 11 V18.4 M10 11 V18.4 M14 11 V18.4 M18 11 V18.4', t: 's', w: 1.8 }, { d: 'M2.8 20.8 H21.2', t: 's', w: W }],
+        palace: [{ d: 'M2.8 8.6 L12 3.4 L21.2 8.6 Z', t: 's', w: W }, { d: 'M6 11 V18.4 M10 11 V18.4 M14 11 V18.4 M18 11 V18.4', t: 's', w: 1.53 }, { d: 'M2.8 20.8 H21.2', t: 's', w: W }],
         // torre con almenas y puerta
-        fortification: [{ d: 'M5 21 V7.6 H7.8 V10.2 H10.6 V7.6 H13.4 V10.2 H16.2 V7.6 H19 V21 Z', t: 's', w: W }, { d: 'M10 21 V16.8 a2 2 0 0 1 4 0 V21', t: 's', w: 1.6 }],
+        fortification: [{ d: 'M5 21 V7.6 H7.8 V10.2 H10.6 V7.6 H13.4 V10.2 H16.2 V7.6 H19 V21 Z', t: 's', w: W }, { d: 'M10 21 V16.8 a2 2 0 0 1 4 0 V21', t: 's', w: 1.36 }],
         // obelisco sobre su base
         monument: [{ d: 'M9.8 19 L10.8 6.2 L12 3.4 L13.2 6.2 L14.2 19 Z', t: 's', w: W }, { d: 'M6.4 21 H17.6', t: 's', w: W + 0.3 }],
         // anfiteatro: dos elipses
-        venue: [{ d: 'M2.4 13 a9.6 6.2 0 1 0 19.2 0 a9.6 6.2 0 1 0 -19.2 0', t: 's', w: W }, { d: 'M7.6 13 a4.4 2.4 0 1 0 8.8 0 a4.4 2.4 0 1 0 -8.8 0', t: 's', w: 1.6 }],
+        venue: [{ d: 'M2.4 13 a9.6 6.2 0 1 0 19.2 0 a9.6 6.2 0 1 0 -19.2 0', t: 's', w: W }, { d: 'M7.6 13 a4.4 2.4 0 1 0 8.8 0 a4.4 2.4 0 1 0 -8.8 0', t: 's', w: 1.36 }],
         // torre alta con remate
-        tower: [{ d: 'M8.8 21 L10 7.4 H14 L15.2 21 Z', t: 's', w: W }, { d: 'M8.4 7.4 H15.6', t: 's', w: W }, { d: 'M12 7.4 V2.6', t: 's', w: 1.6 }, { d: 'M10.8 12.6 H13.2', t: 's', w: 1.4 }],
+        tower: [{ d: 'M8.8 21 L10 7.4 H14 L15.2 21 Z', t: 's', w: W }, { d: 'M8.4 7.4 H15.6', t: 's', w: W }, { d: 'M12 7.4 V2.6', t: 's', w: 1.36 }, { d: 'M10.8 12.6 H13.2', t: 's', w: 1.19 }],
         // puente de arco con tablero y pilas
-        infrastructure: [{ d: 'M2 9.6 H22', t: 's', w: W }, { d: 'M2.8 20.4 C6.4 12.4 17.6 12.4 21.2 20.4', t: 's', w: W }, { d: 'M7.2 9.6 V14.6 M12 9.6 V12.6 M16.8 9.6 V14.6', t: 's', w: 1.5 }],
+        infrastructure: [{ d: 'M2 9.6 H22', t: 's', w: W }, { d: 'M2.8 20.4 C6.4 12.4 17.6 12.4 21.2 20.4', t: 's', w: W }, { d: 'M7.2 9.6 V14.6 M12 9.6 V12.6 M16.8 9.6 V14.6', t: 's', w: 1.27 }],
         // columna rota sobre su base
-        archaeological: [{ d: 'M8.2 20.6 V9.4 L10.2 7.4 L12.2 9.2 L14 6.6 L15.8 8.6 V20.6', t: 's', w: W }, { d: 'M5.4 21 H18.6', t: 's', w: W + 0.3 }, { d: 'M11.1 11.4 V18.6 M13 11.4 V18.6', t: 's', w: 1.3 }],
+        archaeological: [{ d: 'M8.2 20.6 V9.4 L10.2 7.4 L12.2 9.2 L14 6.6 L15.8 8.6 V20.6', t: 's', w: W }, { d: 'M5.4 21 H18.6', t: 's', w: W + 0.3 }, { d: 'M11.1 11.4 V18.6 M13 11.4 V18.6', t: 's', w: 1.1 }],
         // casa generica
-        other: [{ d: 'M4.4 21 V10.4 L12 4 L19.6 10.4 V21 Z', t: 's', w: W }, { d: 'M10.2 21 V16 H13.8 V21', t: 's', w: 1.6 }]
+        other: [{ d: 'M4.4 21 V10.4 L12 4 L19.6 10.4 V21 Z', t: 's', w: W }, { d: 'M10.2 21 V16 H13.8 V21', t: 's', w: 1.36 }]
     };
 
     /** Dibuja el icono de la familia en un cuadrado de `size` px. o: { x, y, ended (gris), Path2D }. */
     function draw(ctx, family, size, o) {
         const parts = GLYPHS[family] || GLYPHS.other;
-        return EI.draw(ctx, 'built-' + family, size, Object.assign({}, o || {}, { parts, color: o && o.ended ? ENDED_COLOR : COLOR }));
+        const ended = !!(o && o.ended);
+        return EI.draw(ctx, 'built-' + family, size, Object.assign({}, o || {}, { parts, color: ended ? ENDED_COLOR : COLOR, halo: ended ? ENDED_HALO : HALO, border: BORDER_W }));
     }
 
     /**
@@ -118,12 +127,20 @@
         return e !== undefined && ybp < e ? 'ended' : 'standing';
     }
 
+    // Cuantas se ven segun la distancia (capas por tramos de zoom): con la Tierra lejos solo las mas notorias, de cerca todas.
+    // importancia = log10(Wikipedias)/2,2: 0,85 ~ 75 Wikipedias (128 en el mundo); 0,75 ~ 45 (731); de cerca, las 5 137.
+    const TIERS = [
+        { id: 'built-icons-far', minzoom: 1.6, maxzoom: 3.5, min: 0.85 },
+        { id: 'built-icons-mid', minzoom: 3.5, maxzoom: 5.5, min: 0.75 },
+        { id: 'built-icons', minzoom: 5.5, maxzoom: 24, min: 0 }
+    ];
+    const LAYER_IDS = TIERS.map((x) => x.id);
     // Expresiones de MapLibre con la fecha como literal (se rehacen al cambiar la fecha: setFilter / setLayoutProperty, baratos con miles de puntos)
-    const filterAt = (ybp) => ['>=', ['get', 's'], ybp];
+    const filterAt = (ybp, min) => (min ? ['all', ['>=', ['get', 's'], ybp], ['>=', ['get', 'i'], min]] : ['>=', ['get', 's'], ybp]);
     const endedExpr = (ybp) => ['all', ['has', 'e'], ['<', ybp, ['get', 'e']]];
     const imageAt = (ybp) => ['case', endedExpr(ybp), ['concat', 'bui-', ['get', 'f'], '-x'], ['concat', 'bui-', ['get', 'f']]];
-    // tamaño con el zoom como los sucesos (encogen con la Tierra lejos) y algo menor: son fondo, no noticia
-    const sizeExpr = () => EI.zoomScaled(['interpolate', ['linear'], ['get', 'i'], 0.5, 0.74, 1, 0.98]);
+    // tamaño con el zoom como los sucesos (encogen con la Tierra lejos) pero ~2/3 del suyo: son fondo del mapa, no noticia
+    const sizeExpr = () => EI.zoomScaled(['interpolate', ['linear'], ['get', 'i'], 0.5, 0.56, 1, 0.72]);
 
     /** Texto de una fecha del registro ({iso, precision}) con un formateador de años astronomicos (fmtYear(y) -> "2560 a. C."). */
     function dateText(d, fmtYear) {
@@ -136,5 +153,5 @@
         return fmtYear(a);
     }
 
-    return { COLOR, ENDED_COLOR, ENDED_OPACITY, FAMILIES, IDS, GLYPHS, draw, nameOf, yearStart, compact, fromTable, stateAt, filterAt, endedExpr, imageAt, sizeExpr, dateText };
+    return { COLOR, HALO, BORDER_W, CHIP, ENDED_COLOR, ENDED_HALO, ENDED_OPACITY, TIERS, LAYER_IDS, FAMILIES, IDS, GLYPHS, draw, nameOf, yearStart, compact, fromTable, stateAt, filterAt, endedExpr, imageAt, sizeExpr, dateText };
 });

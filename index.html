@@ -2401,7 +2401,7 @@ function evHoverUpdate() {
     if (!e || !map.getLayer('events-circle') || solarView.isOpen) { evHoverSet(null); if (typeof buHoverSet === 'function') buHoverSet(null); return; }
     const ev = map.queryRenderedFeatures(e, { layers: ['events-circle'] })[0] || null;
     evHoverSet(ev);
-    if (typeof buHoverSet === 'function') buHoverSet(!ev && BUILT.on && map.getLayer('built-icons') ? map.queryRenderedFeatures(e, { layers: ['built-icons'] })[0] || null : null);
+    if (typeof buHoverSet === 'function') buHoverSet(!ev && BUILT.on && map.getLayer('built-icons') ? map.queryRenderedFeatures(e, { layers: ChronosBuilt.LAYER_IDS })[0] || null : null);
 }
 map.on('move', evHoverPlace);
 map.getCanvas().addEventListener('mouseleave', () => { hoverPt = null; setHoverKey(null); evHoverSet(null); if (typeof buHoverSet === 'function') buHoverSet(null); });
@@ -2428,10 +2428,11 @@ function builtLayersAdd() {
     builtImagesRegister();
     if (!map.getSource('built')) map.addSource('built', { type: 'geojson', data: emptyFC() });
     const ybp = state.ybp;
-    // Por debajo de los sucesos. Sin solaparse: con la Tierra lejos solo caben las mas notorias (symbol-sort-key: menor = antes).
-    map.addLayer({ id: 'built-icons', type: 'symbol', source: 'built', minzoom: 1.6, filter: ChronosBuilt.filterAt(ybp),
-        layout: { visibility: BUILT.on ? 'visible' : 'none', 'icon-image': ChronosBuilt.imageAt(ybp), 'icon-size': ChronosBuilt.sizeExpr(), 'icon-allow-overlap': false, 'icon-padding': 4, 'symbol-sort-key': ['-', 1, ['get', 'i']] },
-        paint: { 'icon-opacity': ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 1] } }, map.getLayer('events-dot') ? 'events-dot' : undefined);
+    // Por debajo de los sucesos. Una capa por tramo de distancia (ChronosBuilt.TIERS): lejos solo las mas notorias, de cerca todas;
+    // y dentro de cada tramo sin solaparse (symbol-sort-key: menor = antes, la mas notoria gana el sitio).
+    ChronosBuilt.TIERS.forEach((tr) => map.addLayer({ id: tr.id, type: 'symbol', source: 'built', minzoom: tr.minzoom, maxzoom: tr.maxzoom, filter: ChronosBuilt.filterAt(ybp, tr.min),
+        layout: { visibility: BUILT.on ? 'visible' : 'none', 'icon-image': ChronosBuilt.imageAt(ybp), 'icon-size': ChronosBuilt.sizeExpr(), 'icon-allow-overlap': false, 'icon-padding': 6, 'symbol-sort-key': ['-', 1, ['get', 'i']] },
+        paint: { 'icon-opacity': ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 0.95] } }, map.getLayer('events-dot') ? 'events-dot' : undefined));
     BUILT.ybp = ybp;
     if (BUILT.on) builtEnsure();
 }
@@ -2469,14 +2470,16 @@ function builtTimeApply() {
     if (BUILT.raf || !map.getLayer('built-icons')) return;
     BUILT.raf = requestAnimationFrame(() => {
         BUILT.raf = 0; const ybp = state.ybp; if (ybp === BUILT.ybp) return; BUILT.ybp = ybp;
-        map.setFilter('built-icons', ChronosBuilt.filterAt(ybp));
-        map.setLayoutProperty('built-icons', 'icon-image', ChronosBuilt.imageAt(ybp));
-        map.setPaintProperty('built-icons', 'icon-opacity', ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 1]);
+        ChronosBuilt.TIERS.forEach((tr) => {
+            map.setFilter(tr.id, ChronosBuilt.filterAt(ybp, tr.min));
+            map.setLayoutProperty(tr.id, 'icon-image', ChronosBuilt.imageAt(ybp));
+            map.setPaintProperty(tr.id, 'icon-opacity', ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 0.95]);
+        });
     });
 }
 function builtSet(on, persist) {
     BUILT.on = !!on; builtButton(); if (persist) savePrefs({ bu: BUILT.on });
-    if (map.getLayer('built-icons')) map.setLayoutProperty('built-icons', 'visibility', BUILT.on ? 'visible' : 'none');
+    ChronosBuilt.LAYER_IDS.forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', BUILT.on ? 'visible' : 'none'); });
     if (BUILT.on) builtEnsure(); else buHoverSet(null);
     renderCredits();
 }
@@ -2515,7 +2518,7 @@ function buHoverSet(f) {
     const chip = $('ev-hover');
     if (!f) { chip.hidden = true; return; }
     const y = f.properties.d ? ChronosBuilt.dateText({ iso: f.properties.d, precision: f.properties.p }, formatYear) : '';
-    chip.textContent = (f.properties.n || '') + (y ? ' · ' + y : ''); chip.style.setProperty('--ev', ChronosBuilt.COLOR); chip.hidden = !chip.textContent;
+    chip.textContent = (f.properties.n || '') + (y ? ' · ' + y : ''); chip.style.setProperty('--ev', ChronosBuilt.CHIP); chip.hidden = !chip.textContent;
     const pt = map.project(BUH.coords); chip.style.transform = 'translate(' + Math.round(pt.x + 16) + 'px,' + Math.round(pt.y - 11) + 'px)';
 }
 map.on('move', () => { if (BUH.coords && !EVH.id) { const pt = map.project(BUH.coords); $('ev-hover').style.transform = 'translate(' + Math.round(pt.x + 16) + 'px,' + Math.round(pt.y - 11) + 'px)'; } });
@@ -2525,22 +2528,22 @@ $('btn-center').setAttribute('aria-pressed', String(CENTER.on));
 $('btn-center').addEventListener('click', () => { CENTER.on = !CENTER.on; $('btn-center').setAttribute('aria-pressed', String(CENTER.on)); savePrefs({ cc: CENTER.on }); });
 map.on('click', (e) => {
     if (!map.getLayer('borders-fill')) return;
-    const hit = map.queryRenderedFeatures(e.point, { layers: ['events-circle', 'live-points', ...(map.getLayer('built-icons') && BUILT.on ? ['built-icons'] : []), 'borders-fill', 'land-fill', 'margin-fill'] })[0];
+    const hit = map.queryRenderedFeatures(e.point, { layers: ['events-circle', 'live-points', ...(map.getLayer('built-icons') && BUILT.on ? ChronosBuilt.LAYER_IDS : []), 'borders-fill', 'land-fill', 'margin-fill'] })[0];
     if (bordersStale() && hit && hit.layer.id === 'borders-fill') return;   // se ve el mapa de la instantanea anterior hasta que llegue la nueva
     clearHighlight(); setHoverKey(null);
     if (!hit) { hideInfo(); selRemember(null); return; }
     if (hit.layer.id === 'events-circle') { const f = events.byId.get(hit.properties.id); if (f) { showEvent(f); selRemember('e', hit.properties.id); } }
     else if (hit.layer.id === 'live-points') { showLive(hit.properties); selRemember(null); }
-    else if (hit.layer.id === 'built-icons') {
+    else if (ChronosBuilt.LAYER_IDS.includes(hit.layer.id)) {
         const id = hit.properties.id; selRemember('b', id); setStatus('ok', t('built.loading'), 1500);
         builtFull().then(() => { const f = BUILT.byId && BUILT.byId.get(id); if (f) showBuilt(f); });
     }
     else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { setHighlightKey(polityKey(hit.properties)); showPolity(hit.properties); selRemember('p', hit.properties.NAME); }
     else if (hit.layer.id === 'borders-fill') { showPolity(hit.properties); selRemember(null); }
     else { showCoast(hit.properties); selRemember(null); }
-    if (CENTER.on) map.easeTo({ center: (hit.layer.id === 'events-circle' || hit.layer.id === 'built-icons') && hit.geometry ? hit.geometry.coordinates : e.lngLat, duration: 600 });   // sobre un suceso, se centra en EL (no en el punto del clic)
+    if (CENTER.on) map.easeTo({ center: (hit.layer.id === 'events-circle' || ChronosBuilt.LAYER_IDS.includes(hit.layer.id)) && hit.geometry ? hit.geometry.coordinates : e.lngLat, duration: 600 });   // sobre un suceso, se centra en EL (no en el punto del clic)
 });
-['events-circle', 'live-points', 'borders-fill', 'built-icons'].forEach((id) => {
+['events-circle', 'live-points', 'borders-fill', ...ChronosBuilt.LAYER_IDS].forEach((id) => {
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = ERA.pointer || 'pointer'; });
     map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
 });
@@ -2574,7 +2577,7 @@ async function runSearch(raw) {
     const live = state.live && state.live.features.find((f) => String(f.properties.name || '').toLowerCase().includes(q));
     if (live) {
         setTime(0 - (CFG.nowYear - CFG.present), { immediate: true });
-        map.flyTo({ center: live.geometry.coordinates, zoom: 5 });
+        map.easeTo({ center: live.geometry.coordinates, duration: 700, essential: true });   // centrar sin cambiar el zoom
         showLive(live.properties);
         return;
     }
@@ -2667,43 +2670,48 @@ async function srchRun() {
     srchRender(SRCH.items.length ? null : SRCH.failed ? fmt('search.fail', { err: SRCH.failed }) : fmt('search.none', { q: raw.trim() }));
 }
 function srchClose() { clearTimeout(SRCH.hoverT); SRCH.items = []; SRCH.active = -1; srchRender(); }
-/** Lugar y fecha de un resultado: { center|null, zoom, apply() } */
+/** Lugar y fecha de un resultado: { center|null, year, apply() }. Sin zoom: centrar no acerca ni aleja (lo pide el creador, 2026-11-12). */
 function srchTarget(e) {
-    const z = map.getZoom();
     if (e.kind === 'polity') {
         const y = srchNearYear(e);
-        return { center: null, apply: () => { currentFocus = e.en; setTime(yearToYbp(y), { immediate: true }); } };
+        return { center: null, year: y, apply: () => { currentFocus = e.en; setTime(yearToYbp(y), { immediate: true }); } };
     }
     const center = e.lng !== undefined && e.lng !== null ? [e.lng, e.lat] : null;
-    const zoom = e.kind === 'built' ? Math.min(Math.max(z, 5.5), 12) : Math.min(Math.max(z, 3.6), 8);
-    return { center, zoom, mark: center ? { layer: e.kind === 'built' ? 'built-icons' : 'events-circle', id: e.id, at: center } : null, apply: () => {
+    const y = parseInt(String(e.iso || '').match(/^-?\d+/), 10);
+    return { center, year: Number.isFinite(y) ? y : undefined, mark: center ? { layers: e.kind === 'built' ? ChronosBuilt.LAYER_IDS : ['events-circle'], built: e.kind === 'built', id: e.id, at: center } : null, apply: () => {
         // primero el año (desde tiempo profundo el reloj aun no existe: lo crea setTime) y despues el dia exacto si el reloj lo alcanza
-        const y = parseInt(String(e.iso || '').match(/^-?\d+/), 10);
         if (Number.isFinite(y) && (!clockUsable() || ybpToYear(state.ybp) !== y)) setTime(yearToYbp(y), { immediate: true });
         if (clockUsable() && Number.isFinite(e.jd) && e.jd >= clockMinJD() && e.jd <= realNowJD()) clockSet(e.jd, { user: true });
     } };
 }
-/** Ir a un destino: el globo gira hasta el lugar (vuelo corto) mientras el mapa se funde y aparece ya en la nueva fecha. */
+const SRCH_EASE = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+/**
+ * Ir a un destino: la Tierra gira hasta el lugar (giro breve, sin acercar ni alejar) y, SOLO si cambia la epoca (otro año), el mapa se
+ * funde y reaparece ya en la nueva fecha; dentro del mismo año la fecha cambia sin fundido.
+ */
 function srchGo(tg) {
     if (solarView.isOpen) solarView.close();
     clearTimeout(SRCH.fadeT); SRCH.markSeq++; evHoverSet(null); buHoverSet(null);      // la señal del destino anterior se apaga
     const done = () => { if (tg.after) tg.after(); };
-    const m = map.getContainer();
-    if (SRCH_REDUCED()) { tg.apply(); done(); if (tg.center) map.jumpTo({ center: tg.center, zoom: tg.zoom, bearing: tg.bearing !== undefined ? tg.bearing : map.getBearing() }); if (tg.mark) srchMarkOnLanding(tg.mark, true); return; }
-    m.classList.add('srch-fade');
-    SRCH.fadeT = setTimeout(() => { tg.apply(); done(); requestAnimationFrame(() => m.classList.remove('srch-fade')); }, 160);
-    if (tg.mark) srchMarkOnLanding(tg.mark);
-    if (tg.center) map.flyTo({ center: tg.center, zoom: tg.zoom, bearing: tg.bearing !== undefined ? tg.bearing : 0, pitch: tg.pitch !== undefined ? tg.pitch : map.getPitch(), duration: 850, curve: 1.25, essential: true });
+    const m = map.getContainer(); m.classList.remove('srch-fade');
+    const fade = tg.year !== undefined && tg.year !== ybpToYear(state.ybp);
+    const moveTo = (c) => { if (!c) return false; const p = map.getCenter(); return Math.abs(p.lng - c[0]) > 1e-6 || Math.abs(p.lat - c[1]) > 1e-6; };
+    const moving = moveTo(tg.center);
+    if (SRCH_REDUCED()) { tg.apply(); done(); if (moving) map.jumpTo({ center: tg.center }); if (tg.mark) srchMarkOnLanding(tg.mark, true); return; }
+    if (fade) { m.classList.add('srch-fade'); SRCH.fadeT = setTimeout(() => { tg.apply(); done(); requestAnimationFrame(() => m.classList.remove('srch-fade')); }, 160); }
+    else { tg.apply(); done(); }
+    if (tg.mark) srchMarkOnLanding(tg.mark, !moving);
+    if (moving) map.easeTo({ center: tg.center, duration: 700, easing: SRCH_EASE, essential: true });
 }
 // Al llegar, el icono elegido se señala como al pasar el raton (brillo y etiqueta con su nombre): asi se ve cual es entre los demas
 function srchMarkOnLanding(mark, now) {
     const seq = SRCH.markSeq;
     const look = (tries) => {
-        if (seq !== SRCH.markSeq || !map.getLayer(mark.layer)) return;
+        if (seq !== SRCH.markSeq || !mark.layers.every((id) => map.getLayer(id))) return;
         // consulta en el punto: en el globo, la consulta de toda la vista (sin geometria o con caja) no devuelve nada (comprobado en local)
         const p = mark.at ? map.project(mark.at) : null;
-        const f = p ? map.queryRenderedFeatures([p.x, p.y], { layers: [mark.layer] }).find((x) => x.properties.id === mark.id) : null;
-        if (f) { if (mark.layer === 'built-icons') buHoverSet(f); else evHoverSet(f); return; }
+        const f = p ? map.queryRenderedFeatures([p.x, p.y], { layers: mark.layers }).find((x) => x.properties.id === mark.id) : null;
+        if (f) { if (mark.built) buHoverSet(f); else evHoverSet(f); return; }
         if (tries > 0) setTimeout(() => look(tries - 1), 350);           // los sucesos de esa fecha pueden estar aun llegando
     };
     if (now) setTimeout(() => look(8), 200); else map.once('moveend', () => setTimeout(() => look(8), 200));
@@ -2739,7 +2747,7 @@ function srchCommit(e) {
 function srchCancel() {
     clearTimeout(SRCH.prevT);
     const o = SRCH.origin; SRCH.origin = null; srchClose();
-    if (o) srchGo({ center: o.center, zoom: o.zoom, bearing: o.bearing, pitch: o.pitch, apply: () => { if (Number.isFinite(o.jd) && clockUsable()) clockSet(o.jd, { user: true }); else setTime(o.ybp, { immediate: true }); } });
+    if (o) srchGo({ center: o.center, year: ybpToYear(o.ybp), apply: () => { if (Number.isFinite(o.jd) && clockUsable()) clockSet(o.jd, { user: true }); else setTime(o.ybp, { immediate: true }); } });
 }
 $('search').addEventListener('input', () => { clearTimeout(SRCH.blurT); srchRun(); });
 $('search').addEventListener('focus', () => { srchEnsure(); if ($('search').value) srchRun(); });
@@ -4348,8 +4356,9 @@ function eventRows(f) {
 }
 function showEvent(f) { showInfo(evName(f), eventRows(f)); const w = (f.properties.sources || []).find((x) => x.kind === 'wikidata'); if (w) infoImageFor(w.id); }
 
+// Desde la lista de sucesos o un aviso: el mismo giro breve que el buscador, sin cambiar el zoom (y sin fundido: la fecha no cambia)
 function eventFocus(f) {
-    if (f.geometry) map.flyTo({ center: f.geometry.coordinates, zoom: Math.max(map.getZoom(), 4.5), duration: 1400 });
+    if (f.geometry) { const c = f.geometry.coordinates; srchGo({ center: c, mark: { layers: ['events-circle'], id: f.properties.id, at: c }, apply: () => {} }); }
     showEvent(f);
 }
 
