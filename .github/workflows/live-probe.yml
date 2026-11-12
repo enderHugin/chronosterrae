@@ -1,0 +1,33 @@
+name: Sonda de busqueda en directo y lugares de descubrimiento
+
+# scripts/probe-live.js: ¿puede la web buscar en Wikidata desde el navegador (CORS, tiempos, que trae)? ¿que declara Wikidata del lugar de
+# nuestros descubrimientos? Resultado en la rama `live-probe`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear
+        run: node scripts/probe-live.js > /tmp/live.json 2> /tmp/probe.log || true
+      - name: Informe en la rama live-probe
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Probe"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan live-probe
+          cp /tmp/live.json live.json || true
+          cp /tmp/probe.log probe.log || true
+          git add live.json probe.log
+          git commit -m "Sonda en directo $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin live-probe
