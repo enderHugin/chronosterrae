@@ -40,12 +40,14 @@ const ROLES = [
         'meteorologist', 'paleontologist', 'ornithologist', 'entomologist', 'pharmacologist', 'immunologist', 'virologist', 'bacteriologist', 'surgeon']],
     ['philosopher', [['Q4964182', 'philosopher']], ['philosopher']],
     ['religious', [['Q42603', 'priest'], ['Q29182', 'bishop'], ['Q733786', 'monk'], ['Q133485', 'rabbi'], ['Q1234713', 'theologian'], ['Q2259532', 'cleric']], ['priest', 'bishop', 'archbishop', 'cardinal', 'monk', 'nun', 'friar', 'abbot', 'abbess', 'rabbi', 'imam', 'missionary', 'theologian', 'saint', 'prophet', 'preacher', 'pastor', 'cleric', 'clergyman',
-        'evangelist', 'apostle', 'martyr', 'disciple', 'deacon', 'patriarch', 'hermit', 'mystic']],
+        'evangelist', 'apostle', 'martyr', 'disciple', 'deacon', 'patriarch', 'hermit', 'mystic', 'ayatollah', 'mullah', 'mufti', 'lama', 'guru', 'reverend',
+        'religious leader', 'islamic scholar', 'spiritual leader']],
     ['explorer', [['Q11900058', 'explorer']], ['explorer', 'navigator', 'conquistador', 'astronaut', 'cosmonaut']],
     ['architect', [['Q42973', 'architect']], ['architect']],
     ['inventor', [['Q205375', 'inventor'], ['Q81096', 'engineer']], ['inventor', 'engineer']],
     ['military', [['Q47064', 'military personnel']], ['general', 'admiral', 'military', 'soldier', 'commander', 'marshal', 'officer']],
-    ['politician', [['Q82955', 'politician']], ['politician', 'statesman', 'stateswoman', 'president', 'prime minister', 'diplomat', 'revolutionary', 'activist', 'lawyer']],
+    ['politician', [['Q82955', 'politician']], ['politician', 'statesman', 'stateswoman', 'president', 'prime minister', 'diplomat', 'revolutionary', 'activist', 'lawyer',
+        'leader', 'head of state', 'ruler', 'chancellor', 'premier', 'governor', 'senator', 'mayor', 'dictator', 'founding father', 'supreme leader']],
     ['actor', [['Q33999', 'actor'], ['Q2526255', 'film director']], ['actor', 'actress', 'film director', 'filmmaker', 'director', 'comedian']],
     ['musician', [['Q639669', 'musician'], ['Q177220', 'singer']], ['singer', 'musician', 'pianist', 'violinist', 'guitarist', 'rapper', 'conductor', 'songwriter']],
     ['athlete', [['Q2066131', 'athlete']], ['footballer', 'athlete', 'player', 'cyclist', 'boxer', 'swimmer', 'racing driver', 'sprinter', 'chess']]
@@ -56,9 +58,14 @@ const KNOWN = [
     ['Q937', 'Albert Einstein', 'scientist'], ['Q5879', 'Johann Wolfgang von Goethe', 'writer'], ['Q254', 'Wolfgang Amadeus Mozart', 'composer'],
     ['Q989', 'John Paul II', 'pope'], ['Q5593', 'Pablo Picasso', 'painter'], ['Q692', 'William Shakespeare', 'writer'], ['Q9682', 'Elizabeth II', 'monarch'],
     ['Q517', 'Napoleon', 'monarch'], ['Q8016', 'Winston Churchill', 'politician'], ['Q7186', 'Marie Curie', 'scientist'], ['Q762', 'Leonardo da Vinci', 'painter'],
-    ['Q255', 'Ludwig van Beethoven', 'composer'], ['Q1035', 'Charles Darwin', 'scientist'], ['Q868', 'Aristotle', 'philosopher']
+    ['Q255', 'Ludwig van Beethoven', 'composer'], ['Q1035', 'Charles Darwin', 'scientist'], ['Q868', 'Aristotle', 'philosopher'],
+    ['Q57336', 'Ali Khamenei', 'politician']   // salio «ciencia» (el creador, 2026-11-13): descripcion sin oficio y reserva que ponia ciencia antes que politica
 ];
 
+// Reserva cuando nada lo decide (ni la descripcion ni el orden de sus ocupaciones en Wikidata): los papeles publicos (gobernar, una iglesia,
+// la guerra) antes que los de oficio. Antes era el orden de ROLES, con ciencia muy arriba: el cierre de «scientist» tiene 2.770 clases (todo
+// tipo de estudiosos) y gente como Ali Jamenei salia con matraz (lo vio el creador, 2026-11-13).
+const FALLBACK = ['pope', 'monarch', 'religious', 'politician', 'military', 'explorer', 'composer', 'painter', 'writer', 'philosopher', 'architect', 'actor', 'musician', 'athlete', 'scientist', 'inventor'];
 // Cargos que mandan sobre todo lo demas: quien fue papa se reconoce por eso (Pedro: «apostle of Jesus Christ», pero primer papa). Monarca manda
 // solo si ademas la descripcion lo nombra (Napoleon: «French military leader, French Emperor»): el presidente de Francia es copríncipe de
 // Andorra por su cargo y salia con corona (Poincare, build del 2026-11-12).
@@ -91,7 +98,7 @@ function pickRole(candidates0, description, firstOcc) {
     }
     if (best) return best;
     const occ = (firstOcc || []).find((r) => candidates.has(r)); if (occ) return { role: occ, via: 'primera ocupacion' };
-    return { role: cand[0][0], via: 'prioridad' };
+    return { role: FALLBACK.find((r) => candidates.has(r)) || cand[0][0], via: 'prioridad' };
 }
 
 function personQids() {
@@ -191,7 +198,9 @@ async function main() {
     Object.values(byRole).forEach((a) => a.sort((x, y) => x - y));
     fs.writeFileSync(path.join(out, 'roles.json'), JSON.stringify({ note: 'Papel de cada persona de data/events para su icono (scripts/build-roles.js): papel -> QID de Wikidata (numero). Heuristica sobre Wikidata (CC0): ocupacion (P106) o cargo (P39) de clases verificadas y, si hay varios, el que antes nombra su descripcion inglesa.', generated_at: man.generated_at, roles: byRole }) + '\n');
     fs.writeFileSync(path.join(out, 'manifest.json'), JSON.stringify(man, null, 1) + '\n');
+    // para revisar a mano (solo en la rama roles-build): QID, papel, por que, candidatos, orden de ocupaciones, descripcion
+    fs.writeFileSync(path.join(out, 'review.tsv'), people.map((q) => { const pk = pickRole(cand.get(q), desc.get(q), order.get(q)); return [q, pk ? pk.role : '', pk ? pk.via : '', [...(cand.get(q) || [])].join('+'), (order.get(q) || []).join('>'), (desc.get(q) || '').replace(/\s+/g, ' ')].join('\t'); }).join('\n') + '\n');
     log('hecho:', JSON.stringify(man.counts));
 }
-module.exports = { ROLES, DOMINANT, ROYAL_WORDS, pickRole, KNOWN };
+module.exports = { ROLES, DOMINANT, ROYAL_WORDS, FALLBACK, pickRole, KNOWN };
 if (require.main === module) main().catch((e) => { log('fallo:', e && e.stack || e); process.exit(1); });
