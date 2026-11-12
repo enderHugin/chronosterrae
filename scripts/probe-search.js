@@ -32,8 +32,9 @@ const [url, out] = process.argv.slice(2);
         return { ms: Date.now() - t0, items };
     });
     await step('flecha abajo: Ulm, 14-3-1879', async () => {
+        const r0 = await page.evaluate(() => (earthDisk() || {}).r);
         await page.keyboard.press('ArrowDown'); await page.waitForTimeout(5000);
-        const r = await page.evaluate(() => ({ center: map.getCenter().toArray(), date: ChronosSky.jdToCalendar(clock.jd, 'auto'), chip: $('ev-hover').hidden ? null : $('ev-hover').textContent, opacity: getComputedStyle(map.getContainer()).opacity }));
+        const r = await page.evaluate((r0) => ({ diskBefore: r0, diskAfter: (earthDisk() || {}).r, center: map.getCenter().toArray(), date: ChronosSky.jdToCalendar(clock.jd, 'auto'), chip: $('ev-hover').hidden ? null : $('ev-hover').textContent, opacity: getComputedStyle(map.getContainer()).opacity }), r0);
         await page.screenshot({ path: path.join(out, '2-ulm-1879.png') });
         return r;
     });
