@@ -29,13 +29,14 @@ const listJson = (dir) => {
         if (entry.isDirectory()) return listJson(full);
         // index.json y manifest.json de data/events describen los ficheros, no son registros
         if (/[\\/]data[\\/]events$/.test(dir) && ['index.json', 'manifest.json'].includes(entry.name)) return [];
+        if (/[\\/](data[\\/]built|built-out)$/.test(dir) && entry.name === 'manifest.json') return [];
         return entry.name.endsWith('.json') ? [full] : [];
     });
 };
 
 const dirs = process.argv.length > 2
     ? process.argv.slice(2).map((d) => path.resolve(d))
-    : [path.join(root, 'schemas/examples'), path.join(root, 'data/records'), path.join(root, 'data/events')];
+    : [path.join(root, 'schemas/examples'), path.join(root, 'data/records'), path.join(root, 'data/events'), path.join(root, 'data/built')];
 
 const problems = [];
 const seen = new Map();

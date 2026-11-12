@@ -42,8 +42,8 @@
           "additionalProperties": false
         },
         "layer": {
-          "enum": ["paleogeography", "geology", "polity", "biota", "event", "astronomy", "microscale"],
-          "description": "Capa temática a la que pertenece el dato."
+          "enum": ["paleogeography", "geology", "polity", "biota", "event", "astronomy", "microscale", "built"],
+          "description": "Capa temática a la que pertenece el dato. built = construcciones (edificios, monumentos, obras) con fecha de construcción y, si la fuente la da, de fin."
         },
         "evidence": {
           "enum": ["measurement", "documentary", "artefact", "reconstruction", "model", "speculation"],
@@ -157,6 +157,17 @@
             "gbif_id": { "type": "integer" }
           }
         },
+        "built": {
+          "type": "object",
+          "description": "Solo para layer = built. family: familia del icono, decidida por las clases de la fuente (Wikidata P31/P279), no por el nombre. dates: todas las fechas de construcción que da la fuente (reconstrucciones incluidas; time.start_ybp es la más antigua). end: fin según la fuente (Wikidata P576 mezcla demolición y abandono: la interfaz lo presenta como «fin según la fuente», no como desaparición) o null.",
+          "required": ["family", "dates", "end"],
+          "additionalProperties": false,
+          "properties": {
+            "family": { "enum": ["pyramid", "religious", "palace", "fortification", "monument", "venue", "tower", "infrastructure", "archaeological", "other"] },
+            "dates": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/builtDate" } },
+            "end": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/builtDate" }] }
+          }
+        },
         "classes": {
           "type": "array",
           "description": "Clases del suceso tal como las declara la fuente (Wikidata P31: «battle», «treaty»...). Sirven para clasificar por dato y no por el nombre.",
@@ -219,6 +230,18 @@
           "then": { "required": ["contributors"], "properties": { "contributors": { "type": "array", "minItems": 1 } } }
         }
       ]
+    }
+  },
+  "$defs": {
+    "builtDate": {
+      "type": "object",
+      "required": ["iso", "precision"],
+      "additionalProperties": false,
+      "properties": {
+        "iso": { "type": "string", "minLength": 1, "description": "Año astronómico (0 = 1 a. C.) o intervalo «a/b» si la precisión es de década, siglo o milenio." },
+        "precision": { "enum": ["day", "month", "year", "decade", "century", "millennium"] },
+        "calendar": { "enum": ["gregorian", "julian"] }
+      }
     }
   }
 }

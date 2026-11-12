@@ -1,0 +1,76 @@
+name: Construcciones (Wikidata)
+
+# Construye la capa de construcciones con fecha (catedrales, piramides, castillos...) desde Wikidata via QLever, con la numeracion de
+# años calibrada contra el texto de Wikibase (scripts/build-built.js). Deja el resultado en la rama `built-build` para revisarlo;
+# con mode=publish ademas lo copia a data/built/.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'run | publish'
+        default: 'run'
+      min_sl:
+        description: 'minimo de Wikipedias (sitelinks)'
+        default: '20'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: built-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      MODE: ${{ github.event.inputs.mode }}
+      MIN_SL: ${{ github.event.inputs.min_sl }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+
+      - name: Construir
+        run: node scripts/build-built.js --out /tmp/built-out --min-sl "$MIN_SL" 2> /tmp/build.log
+
+      - name: Validar contra el esquema
+        run: node scripts/validate-records.js /tmp/built-out
+
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 40 /tmp/build.log || true
+          ls -la /tmp/built-out 2>/dev/null || true
+
+      - name: Publicar en main (data/built)
+        if: env.MODE == 'publish'
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          mkdir -p data/built
+          cp /tmp/built-out/built.json /tmp/built-out/manifest.json data/built/
+          git add data/built
+          if git diff --staged --quiet; then echo "Sin cambios."; else
+            git commit -m "Datos: construcciones con fecha desde Wikidata (CC0)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Informe en la rama built-build
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan built-build
+          cp /tmp/build.log build.log || true
+          if [ -d /tmp/built-out ]; then cp -r /tmp/built-out out; git add out; fi
+          git add build.log
+          git commit -m "Construcciones $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin built-build
