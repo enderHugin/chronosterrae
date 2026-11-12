@@ -1,0 +1,42 @@
+name: Sonda de construcciones y nombres de lugar (Wikidata via QLever)
+
+# Verifica QID/PID por etiqueta y cuenta construcciones fechadas y nombres de lugar con fechas (regla 6); informe en la rama `places-probe`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: places-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sondear construcciones y nombres
+        run: node scripts/probe-places.js > /tmp/bulk.json 2> /tmp/bulk.log
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 30 /tmp/bulk.log || true
+          head -c 800 /tmp/bulk.json || true
+      - name: Informe en la rama places-probe
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s /tmp/bulk.json || echo '{"error":"sin salida"}' > /tmp/bulk.json
+          git config user.name "ChronosTerrae-Build"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan places-probe
+          cp /tmp/bulk.json report.json
+          cp /tmp/bulk.log report.log || true
+          git add report.json report.log
+          git commit -m "Sonda de lugares $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin places-probe
