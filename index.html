@@ -2678,7 +2678,10 @@ function srchTarget(e) {
     }
     const center = e.lng !== undefined && e.lng !== null ? [e.lng, e.lat] : null;
     const y = parseInt(String(e.iso || '').match(/^-?\d+/), 10);
-    return { center, year: Number.isFinite(y) ? y : undefined, mark: center ? { layers: e.kind === 'built' ? ChronosBuilt.LAYER_IDS : ['events-circle'], built: e.kind === 'built', id: e.id, at: center } : null, apply: () => {
+    const geom = center ? { type: 'Point', coordinates: center } : null;
+    const feature = !center ? null : e.kind === 'built' ? { geometry: geom, properties: { id: e.id, n: srchName(e), d: e.iso, p: null } }
+        : (() => { const key = ChronosEventIcons.KEYS.includes(e.icon) ? e.icon : 'event'; return { geometry: geom, properties: { id: e.id, name: srchName(e), icon: key, img: 'evi-' + key, importance: e.imp || 0.5 } }; })();
+    return { center, year: Number.isFinite(y) ? y : undefined, mark: center ? { layers: e.kind === 'built' ? ChronosBuilt.LAYER_IDS : ['events-circle'], built: e.kind === 'built', id: e.id, at: center, feature } : null, apply: () => {
         // primero el año (desde tiempo profundo el reloj aun no existe: lo crea setTime) y despues el dia exacto si el reloj lo alcanza
         if (Number.isFinite(y) && (!clockUsable() || ybpToYear(state.ybp) !== y)) setTime(yearToYbp(y), { immediate: true });
         if (clockUsable() && Number.isFinite(e.jd) && e.jd >= clockMinJD() && e.jd <= realNowJD()) clockSet(e.jd, { user: true });
@@ -2712,7 +2715,9 @@ function srchMarkOnLanding(mark, now) {
         const p = mark.at ? map.project(mark.at) : null;
         const f = p ? map.queryRenderedFeatures([p.x, p.y], { layers: mark.layers }).find((x) => x.properties.id === mark.id) : null;
         if (f) { if (mark.built) buHoverSet(f); else evHoverSet(f); return; }
-        if (tries > 0) setTimeout(() => look(tries - 1), 350);           // los sucesos de esa fecha pueden estar aun llegando
+        if (tries > 0) { setTimeout(() => look(tries - 1), 350); return; }   // los sucesos de esa fecha pueden estar aun llegando
+        // Sin icono dibujado (la Tierra lejos: sin zoom no se acerca, y de lejos no se dibujan todos): la señal va igual al lugar
+        if (mark.feature) { if (mark.built) buHoverSet(mark.feature); else { evEnsureImage(mark.feature.properties.img); evHoverSet(mark.feature); } }
     };
     if (now) setTimeout(() => look(8), 200); else map.once('moveend', () => setTimeout(() => look(8), 200));
 }
