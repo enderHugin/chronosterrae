@@ -131,14 +131,19 @@ function valueToJD(t, prec, calIri, rules) {
     if (!rule) return { skip: 'sin calibrar: ' + g };
     const iv = rdfInterval(v.y, prec, rule);
     try {
-        if (prec >= 11) { const y = iv[0]; const jd = S.calendarToJD({ year: y, month: v.mo, day: v.d }, cal).jd; return { a: jd, b: jd + 1, cal, prec, years: iv }; }
+        // con precision de dia el literal del RDF ya es gregoriano aunque el calendario declarado sea el juliano (sonda calendar-probe, 2026-11-12)
+        if (prec >= 11) { const y = iv[0]; const jd = S.calendarToJD({ year: y, month: v.mo, day: v.d }, 'gregorian').jd; return { a: jd, b: jd + 1, cal, prec, years: iv }; }
         if (prec === 10) { const y = iv[0]; const a = S.calendarToJD({ year: y, month: v.mo, day: 1 }, cal).jd; const b = v.mo === 12 ? S.calendarToJD({ year: y + 1, month: 1, day: 1 }, cal).jd : S.calendarToJD({ year: y, month: v.mo + 1, day: 1 }, cal).jd; return { a, b, cal, prec, years: iv }; }
         return { a: S.calendarToJD({ year: iv[0], month: 1, day: 1 }, cal).jd, b: S.calendarToJD({ year: iv[1] + 1, month: 1, day: 1 }, cal).jd, cal, prec, years: iv };
     } catch (e) { return { skip: 'fecha invalida: ' + e.message }; }
 }
 const ybpOf = (jd) => (JD_1950 - jd) / 365.25;
 const isoYear = (y) => (y < 0 ? '-' + String(-y).padStart(4, '0') : String(y).padStart(4, '0'));
-function isoOf(v, iv, prec) {
+function isoOf(v, iv, prec, cal) {
+    if (prec >= 11 && cal === 'julian') {   // el literal es gregoriano: la ficha muestra la fecha juliana que guarda Wikidata
+        const j = S.jdToCalendar(S.calendarToJD({ year: iv[0], month: v.mo, day: v.d }, 'gregorian').jd, 'julian');
+        return isoYear(j.year) + '-' + String(j.month).padStart(2, '0') + '-' + String(j.day).padStart(2, '0');
+    }
     if (prec >= 11) return isoYear(iv[0]) + '-' + String(v.mo).padStart(2, '0') + '-' + String(v.d).padStart(2, '0');
     if (prec === 10) return isoYear(iv[0]) + '-' + String(v.mo).padStart(2, '0');
     return iv[0] === iv[1] ? isoYear(iv[0]) : isoYear(iv[0]) + '/' + isoYear(iv[1]);
@@ -185,7 +190,7 @@ function rowsToFeatures(rows, endRows, families, classes, rules, retrievedAt) {
         const now = Date.parse(retrievedAt) / 86400000 + 2440587.5;
         const time = {
             start_ybp: +ybpOf(mid).toFixed(4), end_ybp: +ybpOf(end ? (end.a + end.b) / 2 : now).toFixed(4), uncertainty_yr: +((first.b - first.a) / 2 / 365.25).toFixed(4),
-            precision: PREC[Math.min(first.prec, 11)], iso: isoOf(first.v, first.years, first.prec), calendar: first.cal
+            precision: PREC[Math.min(first.prec, 11)], iso: isoOf(first.v, first.years, first.prec, first.cal), calendar: first.cal
         };
         if (time.end_ybp > time.start_ybp) time.end_ybp = time.start_ybp;
         const fam = families.get(it.qid) || 'other';
@@ -198,8 +203,8 @@ function rowsToFeatures(rows, endRows, families, classes, rules, retrievedAt) {
             status: 'raw',
             built: {
                 family: fam,
-                dates: starts.map((s) => ({ iso: isoOf(s.v, s.years, s.prec), precision: PREC[Math.min(s.prec, 11)], calendar: s.cal })),
-                end: end ? { iso: isoOf(end.v, end.years, end.prec), precision: PREC[Math.min(end.prec, 11)], calendar: end.cal } : null
+                dates: starts.map((s) => ({ iso: isoOf(s.v, s.years, s.prec, s.cal), precision: PREC[Math.min(s.prec, 11)], calendar: s.cal })),
+                end: end ? { iso: isoOf(end.v, end.years, end.prec, end.cal), precision: PREC[Math.min(end.prec, 11)], calendar: end.cal } : null
             }
         };
         const cls = classes.get(it.qid); if (cls && cls.length) props.classes = cls.slice(0, 6);

@@ -184,6 +184,104 @@
     };
     const KEYS = Object.keys(GLYPHS);
 
+    /* ---------------------------- Papel de cada persona ----------------------------
+     * Pedido del creador (2026-11-12): «iconos para entender visualmente y al instante quien es cada personaje: corona para rey, mitra para
+     * papa, libreta y pluma para escritor, libreta y pluma con pentagramas para compositor, etc.». El nacimiento y la muerte de una persona con
+     * papel conocido (data/people/roles.json, scripts/build-roles.js: ocupacion/cargo de Wikidata) se dibujan con el dibujo de su papel en el
+     * COLOR de siempre (cian nace, gris muere): la forma dice quien es; el color, que pasa. Sin papel, el cochecito o la lapida de siempre.
+     * Clave de dibujo compuesta: 'birth.monarch', 'death.writer'... (el icono, el grupo del filtro y el color siguen siendo 'birth'/'death').
+     */
+    const notebook = [   // libreta de espiral con pluma (escritor y compositor la comparten; cambia lo que hay escrito)
+        { d: 'M5.8 3.6 H16 V21 H5.8 Z', t: 's', w: W }, { d: 'M3.6 6.8 H7.8 M3.6 10.6 H7.8 M3.6 14.4 H7.8 M3.6 18.2 H7.8', t: 's', w: 1.31 }
+    ];
+    const quill = [{ d: 'M22.4 2 C17.8 3.6 15.6 7.6 14.8 12.4 L16.4 11.8 C19.8 10 21.6 6.8 22.4 2 Z', t: 'f' }, { d: 'M14.8 12.4 L13.4 16.8', t: 's', w: 1.31 }];
+    const ROLE_GLYPHS = {
+        // corona: tres puntas con perla y aro
+        monarch: [
+            { d: 'M4.4 17.8 L3.4 8.2 L8.3 11.8 L12 5.2 L15.7 11.8 L20.6 8.2 L19.6 17.8 Z', t: 's', w: W }, { d: 'M4.4 21.2 H19.6', t: 's', w: W },
+            { d: circle(3.4, 6.4, 1.45), t: 'f' }, { d: circle(12, 3.4, 1.45), t: 'f' }, { d: circle(20.6, 6.4, 1.45), t: 'f' }
+        ],
+        // mitra: sombrero apuntado con la hendidura arriba, cinta ancha abajo, galon vertical y las dos infulas que cuelgan
+        pope: [
+            { d: 'M6 19.6 L4.8 9.6 L10.6 3 L12 5.4 L13.4 3 L19.2 9.6 L18 19.6 Z', t: 's', w: W },
+            { d: 'M6 15.8 H18 V19.6 H6 Z', t: 'f' }, { d: 'M12 8 V15.8', t: 's', w: 1.64 }, { d: 'M8.8 19.8 L8 22.8 M15.2 19.8 L16 22.8', t: 's', w: 1.64 }
+        ],
+        // libreta y pluma, con renglones
+        writer: notebook.concat([{ d: 'M8.6 8 H12.8 M8.6 11.4 H12.4 M8.6 14.8 H11.6', t: 's', w: 1.31 }], quill),
+        // libreta y pluma, con pentagrama y una corchea
+        composer: notebook.concat([{ d: 'M8.2 7 H13.6 M8.2 9.6 H13.6 M8.2 12.2 H13.6', t: 's', w: 1.1 }, { d: 'M11.4 17.4 V8.4 C12.4 9.8 14.2 10.4 14.2 12.8', t: 's', w: 1.48 }, { d: ellipse(9.6, 17.6, 2.4, 1.9), t: 'f' }], quill),
+        // paleta con agujero para el pulgar y cuatro colores
+        painter: [
+            { d: 'M12 3 C6.6 3 2.6 6.8 2.6 11.6 C2.6 16.4 6.4 20.6 11.2 20.6 C13 20.6 13.6 19.2 13.2 17.8 C12.8 16.2 13.8 15 15.4 15 H17.6 C19.8 15 21.4 13.4 21.4 11 C21.4 6.4 17.2 3 12 3 Z', t: 's', w: W },
+            { d: circle(7.2, 9.6, 1.55), t: 'f' }, { d: circle(11.6, 7, 1.55), t: 'f' }, { d: circle(16.4, 8.6, 1.55), t: 'f' }, { d: circle(7.2, 14.6, 1.55), t: 'f' }
+        ],
+        // matraz con liquido
+        scientist: [
+            { d: 'M9.4 2.8 H14.6', t: 's', w: W },
+            { d: 'M10.4 3 V9.4 L4.6 19 C3.8 20.4 4.6 21.4 6 21.4 H18 C19.4 21.4 20.2 20.4 19.4 19 L13.6 9.4 V3', t: 's', w: W },
+            { d: 'M7.4 15.4 H16.6 L18.2 18.4 C18.6 19.2 18.2 19.8 17.4 19.8 H6.6 C5.8 19.8 5.4 19.2 5.8 18.4 Z', t: 'f' }
+        ],
+        // bocadillo de pensamiento
+        philosopher: [{ d: ellipse(13.6, 9, 8, 5.8), t: 's', w: W }, { d: circle(6, 17.4, 1.9), t: 'f' }, { d: circle(3.2, 20.8, 1.2), t: 'f' }],
+        // vela encendida (devocion; sin simbolo de una religion concreta)
+        religious: [
+            { d: 'M12 1.8 C14.4 4.4 14.8 6.6 12 8.6 C9.2 6.6 9.6 4.4 12 1.8 Z', t: 'f' }, { d: 'M9.2 11 H14.8 V20.8 H9.2 Z', t: 's', w: W }, { d: 'M5.4 21.2 H18.6', t: 's', w: W }
+        ],
+        // rosa de los vientos
+        explorer: [{ d: circle(12, 12, 7.2), t: 's', w: 1.48 }, { d: star(12, 12, 10.6, 2.7, 4), t: 'f' }],
+        // compas de dibujo
+        architect: [
+            { d: circle(12, 4, 1.9), t: 's', w: 1.48 }, { d: 'M10.9 5.8 L5.6 21.2', t: 's', w: W }, { d: 'M13.1 5.8 L18.4 21.2', t: 's', w: W },
+            { d: 'M7.6 15.4 C10.4 16.8 13.6 16.8 16.4 15.4', t: 's', w: 1.48 }
+        ],
+        // bombilla
+        inventor: [
+            { d: 'M9 16.2 C6.6 14.6 5.2 12.2 5.2 9.6 A6.8 6.8 0 0 1 18.8 9.6 C18.8 12.2 17.4 14.6 15 16.2 Z', t: 's', w: W },
+            { d: 'M10.2 12.6 L12 10.2 L13.8 12.6', t: 's', w: 1.23 }, { d: 'M9.4 19 H14.6', t: 's', w: 1.8 }, { d: 'M10.6 21.6 H13.4', t: 's', w: 1.8 }
+        ],
+        // galones con estrella
+        military: [{ d: star(12, 5.4, 4.4, 1.85, 5), t: 'f' }, { d: 'M4.2 14.2 L12 10.2 L19.8 14.2', t: 's', w: W + 0.2 }, { d: 'M4.2 20 L12 16 L19.8 20', t: 's', w: W + 0.2 }],
+        // orador tras un atril (discurso)
+        politician: [
+            { d: circle(12, 4.6, 2.6), t: 'f' }, { d: 'M6.4 12 C6.4 8.4 17.6 8.4 17.6 12', t: 's', w: W },
+            { d: 'M4.2 12.4 H19.8', t: 's', w: W + 0.2 }, { d: 'M7.2 12.6 L8.6 21.2 H15.4 L16.8 12.6', t: 's', w: W }
+        ],
+        // claqueta (cine y teatro)
+        actor: [
+            { d: 'M3.4 10.2 H20.6 V20.6 H3.4 Z', t: 's', w: W }, { d: 'M3.6 9.6 L19.6 4.4', t: 's', w: W },
+            { d: 'M8.4 10.4 L7 13.8 M13.4 10.4 L12 13.8 M18.4 10.4 L17 13.8', t: 's', w: 1.31 }, { d: 'M3.4 13.8 H20.6', t: 's', w: 1.31 }
+        ],
+        // microfono de pie (interpretacion musical)
+        musician: [
+            { d: 'M9.2 4.8 A2.8 2.8 0 0 1 14.8 4.8 V11 A2.8 2.8 0 0 1 9.2 11 Z', t: 's', w: W },
+            { d: 'M6.2 10.4 C6.2 14 8.8 16.2 12 16.2 C15.2 16.2 17.8 14 17.8 10.4', t: 's', w: 1.64 }, { d: 'M12 16.2 V20.6', t: 's', w: 1.64 }, { d: 'M8.4 21.2 H15.6', t: 's', w: W }
+        ],
+        // corredor
+        athlete: [
+            { d: circle(15.6, 3.8, 2.2), t: 'f' }, { d: 'M14 7.6 L11 13.4', t: 's', w: W + 0.2 }, { d: 'M7.4 10.2 L10 7.8 L14 7.6 L16.4 10.8 L19.2 11.4', t: 's', w: 1.64 },
+            { d: 'M11 13.4 L15 16 L13.8 21.4', t: 's', w: W }, { d: 'M11 13.4 L8.6 17.4 L4.2 18.2', t: 's', w: W }
+        ]
+    };
+    // Orden: el de la leyenda. Nombres neutros (ambito, no profesion con genero): «Ámbito: Realeza».
+    const ROLES = [
+        { id: 'monarch', es: 'Realeza', en: 'Royalty' }, { id: 'pope', es: 'Papado', en: 'Papacy' }, { id: 'religious', es: 'Religión', en: 'Religion' },
+        { id: 'politician', es: 'Política', en: 'Politics' }, { id: 'military', es: 'Milicia', en: 'Military' }, { id: 'explorer', es: 'Exploración', en: 'Exploration' },
+        { id: 'writer', es: 'Literatura', en: 'Literature' }, { id: 'composer', es: 'Composición musical', en: 'Musical composition' }, { id: 'musician', es: 'Interpretación musical', en: 'Music performance' },
+        { id: 'painter', es: 'Pintura y escultura', en: 'Painting and sculpture' }, { id: 'architect', es: 'Arquitectura', en: 'Architecture' }, { id: 'actor', es: 'Cine y teatro', en: 'Film and theatre' },
+        { id: 'philosopher', es: 'Filosofía', en: 'Philosophy' }, { id: 'scientist', es: 'Ciencia', en: 'Science' }, { id: 'inventor', es: 'Invención e ingeniería', en: 'Invention and engineering' },
+        { id: 'athlete', es: 'Deporte', en: 'Sport' }
+    ];
+    const ROLE_IDS = ROLES.map((r) => r.id);
+    const PERSON_ICONS = ['birth', 'death'];
+    /** Clave de dibujo de un suceso: el icono, o 'birth.monarch' si es una persona con papel conocido. */
+    const drawKey = (icon, role) => (role && ROLE_GLYPHS[role] && PERSON_ICONS.indexOf(icon) >= 0 ? icon + '.' + role : icon);
+    const splitKey = (key) => { const s = String(key || ''); const i = s.indexOf('.'); return i < 0 ? { icon: s, role: null } : { icon: s.slice(0, i), role: s.slice(i + 1) }; };
+    /** Partes del dibujo de una clave (simple o compuesta); null si no existe. */
+    const glyphOf = (key) => { const k = splitKey(key); if (!k.role) return GLYPHS[k.icon] || null; return PERSON_ICONS.indexOf(k.icon) >= 0 && ROLE_GLYPHS[k.role] ? ROLE_GLYPHS[k.role] : null; };
+    const hasGlyph = (key) => !!glyphOf(key);
+    /** Todas las claves de dibujo de personas con papel ('birth.monarch', 'death.monarch', ...). */
+    const ROLE_KEYS = [].concat(...PERSON_ICONS.map((ic) => ROLE_IDS.map((r) => ic + '.' + r)));
+
     // Color del icono: intenso y por FAMILIA, para que de lejos (puntos de color) tambien se distinga el tipo. Rojo guerra, magenta violencia,
     // naranja desastre natural, amarillo peligro (accidente), azules politica y votaciones, verde tratados (paz), rosa uniones y bodas,
     // cian nacimientos, gris muertes, morados obras, verde azulado descubrimientos, oro premios y deporte, pardo fosil extinciones, gris
@@ -254,11 +352,16 @@
         extinction: (e) => { const k = lerp(0.8, 1, e); return { sx: k, sy: k, a: sub(e, 0, 0.6) }; },
         event: (e) => ({ dy: -7 * (1 - e), a: sub(e, 0, 0.4) })                                                                    // la chincheta se clava
     };
+    // Personas con papel: nace -> el dibujo sube y crece un poco al aparecer; muere -> baja despacio hasta su sitio (como quien se posa)
+    const ENTER_ROLE = {
+        birth: (e) => { const k = lerp(0.7, 1, settle(e)); return { dy: 5 * (1 - e), sx: k, sy: k, pv: [12, 21], a: sub(e, 0, 0.4) }; },
+        death: (e) => ({ dy: -5 * (1 - e), a: sub(e, 0, 0.55) })
+    };
     const IDENT = { dx: 0, dy: 0, rot: 0, sx: 1, sy: 1, a: 1, pv: [12, 12], clip: null };
     /** Transformacion de la parte `i` del icono `key` en el instante t (0..1) de su entrada. En t >= 1 es la identidad. */
     function enterParams(key, t, i) {
         if (!(t < 1)) return Object.assign({}, IDENT);
-        const f = ENTER[key]; if (!f) return Object.assign({}, IDENT);
+        const sk = splitKey(key); const f = sk.role ? ENTER_ROLE[sk.icon] : ENTER[key]; if (!f) return Object.assign({}, IDENT);
         return Object.assign({}, IDENT, f(easeOut(Number.isFinite(t) ? t : 0), i));
     }
     const isIdent = (tr) => tr.dx === 0 && tr.dy === 0 && tr.rot === 0 && tr.sx === 1 && tr.sy === 1 && tr.a === 1 && tr.clip === null;
@@ -269,10 +372,11 @@
      * el dibujo final) y `parts` (un dibujo ajeno, p. ej. las construcciones, que comparte borde y trazo con los sucesos).
      */
     function draw(ctx, key, size, o) {
-        const parts = (o && o.parts) || GLYPHS[key]; if (!parts) throw new Error('icono desconocido: ' + key);   // o.parts: dibujo de otra capa (map/built.js) con el mismo estilo
+        const parts = (o && o.parts) || glyphOf(key); if (!parts) throw new Error('icono desconocido: ' + key);   // o.parts: dibujo de otra capa (map/built.js) con el mismo estilo
         const P2D = (o && o.Path2D) || (typeof Path2D !== 'undefined' ? Path2D : null); if (!P2D) throw new Error('falta Path2D');
         const tint = o && o.tint && o.tint.amt > 0 ? o.tint : null;      // matiz de la epoca (ChronosEras): mezcla suave, el icono sigue siendo reconocible
-        const color = (o && o.color) || (tint ? mixHex(COLORS[key], tint.color, Math.min(tint.amt, 0.35)) : COLORS[key]); const dark = shade(color, -0.4);
+        const base = COLORS[splitKey(key).icon] || COLORS.event;   // 'birth.monarch' lleva el color de 'birth'
+        const color = (o && o.color) || (tint ? mixHex(base, tint.color, Math.min(tint.amt, 0.35)) : base); const dark = shade(color, -0.4);
         const light = hexOr(o && o.halo, HALO);               // borde que sigue la silueta (negro por defecto; `halo` lo cambia)
         const outer = o && o.outer ? hexOr(o.outer, null) : OUTER;   // filo exterior opcional (por defecto ninguno)
         const bw0 = o && typeof o.border === 'number' ? o.border : BORDER;   // grosor del borde (las construcciones lo llevan mas fino)
@@ -435,5 +539,5 @@
     /** Color de cada punto: el del icono (o el que devuelva colorOf, p. ej. con el matiz de la epoca). Expresion 'match' sobre la propiedad icon. */
     const dotColorExpr = (colorOf) => ['match', ['get', 'icon']].concat(...KEYS.map((k) => [k, colorOf ? colorOf(COLORS[k], k) : COLORS[k]]), ['#888888']);
 
-    return { HALO, OUTER, OUTER_W, ZOOM_SCALE, DOT_ZOOM, DOT_SWITCH, zoomScale, iconShare, zoomScaled, iconFade, dotFade, DOT_RADIUS, dotColorExpr, ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
+    return { ROLE_GLYPHS, ROLES, ROLE_IDS, ROLE_KEYS, PERSON_ICONS, drawKey, splitKey, glyphOf, hasGlyph, HALO, OUTER, OUTER_W, ZOOM_SCALE, DOT_ZOOM, DOT_SWITCH, zoomScale, iconShare, zoomScaled, iconFade, dotFade, DOT_RADIUS, dotColorExpr, ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
 });

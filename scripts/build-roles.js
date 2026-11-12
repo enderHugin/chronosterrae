@@ -9,7 +9,8 @@
 // Como (nada se inventa; regla 1):
 //   1. Cada papel tiene clases raiz de Wikidata escritas de memoria: se VERIFICAN por su etiqueta inglesa en cada build; la que no
 //      coincide no se usa (y se dice en el manifiesto).
-//   2. Papeles candidatos de una persona: sus oficios (P106) y cargos (P39) que son esas clases o subclases (P279*), via QLever.
+//   2. Papeles candidatos de una persona: sus oficios (P106) y cargos (P39) que son esas clases o subclases (P279*), via QLever
+//      (el cierre de subclases se pide raiz a raiz y se cruza aqui: la union directa agotaba el tiempo del servidor).
 //   3. Quien fue papa o monarca lleva mitra o corona (aunque fuera tambien otra cosa). Si no, y tiene varios (Goethe: escritor y politico; Churchill: politico y escritor), gana el que su descripcion corta de Wikidata
 //      nombra ANTES ("German writer and statesman" -> escritor; "British statesman, writer" -> politico). Sin pista en la
 //      descripcion, el orden de prioridad de ROLES. Es una heuristica sobre datos de la fuente: el registro lo dice ("via").
@@ -107,15 +108,29 @@ async function main() {
     // 2. candidatos por persona
     const people = personQids(); log('personas:', people.length);
     const cand = new Map(); const desc = new Map();
-    const rootRole = new Map(); ROLES.forEach(([r]) => ok[r].forEach(([id]) => rootRole.set(id, r)));
-    const R = [...rootRole.keys()].map((id) => 'wd:' + id).join(' ');
+    // 2a. Cierre de subclases de cada raiz (P279*), raiz a raiz: unir el camino P279* con miles de personas a la vez agotaba el tiempo de
+    //     QLever (429 «Operation timed out ... Sort on ?root», build del 2026-11-12). Aqui solo se recorre el arbol de clases.
+    const classRole = new Map(); man.closure = {};
+    for (const [r] of ROLES) {
+        for (const [id] of ok[r]) {
+            const rows = await post(`SELECT DISTINCT ?c WHERE { ?c wdt:P279* wd:${id} }`);
+            man.closure[id] = rows.length;
+            rows.forEach((b) => { const c = b.c.split('/').pop(); if (!classRole.has(c)) classRole.set(c, new Set()); classRole.get(c).add(r); });
+        }
+    }
+    log('clases en los cierres:', classRole.size);
+    // 2b. Ocupaciones (P106) y cargos (P39) de cada persona, y su descripcion inglesa; se cruzan aqui con los cierres
     for (let i = 0; i < people.length; i += 2000) {
         const batch = people.slice(i, i + 2000); const V = batch.map((x) => 'wd:' + x).join(' ');
-        const rows = await post(`SELECT DISTINCT ?p ?root WHERE { VALUES ?p { ${V} } VALUES ?root { ${R} } { ?p wdt:P106/wdt:P279* ?root } UNION { ?p wdt:P39/wdt:P279* ?root } }`);
-        rows.forEach((b) => { const q = b.p.split('/').pop(); const r = rootRole.get(b.root.split('/').pop()); if (!r) return; if (!cand.has(q)) cand.set(q, new Set()); cand.get(q).add(r); });
+        const rows = await post(`SELECT DISTINCT ?p ?o WHERE { VALUES ?p { ${V} } { ?p wdt:P106 ?o } UNION { ?p wdt:P39 ?o } }`);
+        let pairs = 0;
+        rows.forEach((b) => {
+            const q = b.p.split('/').pop(); const rs = classRole.get(b.o.split('/').pop()); if (!rs) return;
+            if (!cand.has(q)) cand.set(q, new Set()); rs.forEach((r) => { cand.get(q).add(r); pairs++; });
+        });
         const d = await post(`SELECT ?p ?d WHERE { VALUES ?p { ${V} } ?p schema:description ?d . FILTER(LANG(?d) = "en") }`);
         d.forEach((b) => desc.set(b.p.split('/').pop(), b.d));
-        log('  lote', i, ':', rows.length, 'pares persona-papel,', d.length, 'descripciones');
+        log('  lote', i, ':', rows.length, 'ocupaciones/cargos,', pairs, 'pares persona-papel,', d.length, 'descripciones');
     }
     // 3. elegir
     const roles = {}; const via = {};

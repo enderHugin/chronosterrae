@@ -93,10 +93,31 @@ check('wikidata: precision de mes y de año producen tramos, no un dia', () => {
     const y = B.bindingToFeature('publication', row({ t: '1851-01-01T00:00:00Z', prec: 9 }), 'x').feature.properties.time;
     return m.precision === 'month' && m.start_ybp > m.end_ybp && y.precision === 'year' && Math.abs((y.start_ybp - y.end_ybp) - 1) < 0.01;
 });
-check('wikidata: el calendario juliano da otro dia juliano que el gregoriano para la misma fecha', () => {
-    const a = B.bindingToFeature('birth', row({ t: '1500-03-01T00:00:00Z', cal: 'Q1985786' }), 'x').feature.properties.time;
-    const b = B.bindingToFeature('birth', row({ t: '1500-03-01T00:00:00Z', cal: 'Q1985727' }), 'x').feature.properties.time;
-    return a.calendar === 'julian' && b.calendar === 'gregorian' && Math.abs((a.start_ybp - b.start_ybp) * 365.25 + 9) < 0.5 || Math.abs((a.start_ybp - b.start_ybp) * 365.25) > 8;
+// Medido con la sonda calendar-probe (2026-11-12): con precision de dia QLever da el literal YA en gregoriano aunque Wikidata guarde la fecha
+// como juliana; con mes o año, no. Antes se suponia lo contrario y los registros julianos con dia caian 2-13 dias tarde.
+check('wikidata: dia juliano (Hastings: guardado 14-10-1066 juliano, QLever da 1066-10-20): el instante es el 20 gregoriano y la ficha dice 14 (juliano)', () => {
+    const S = require('../sky/sky.js');
+    const a = B.bindingToFeature('event', row({ q: 'Q83224', label: 'Battle of Hastings', t: '1066-10-20T00:00:00Z', cal: 'Q1985786' }), 'x').feature.properties.time;
+    const want = (2433282.5 - S.calendarToJD({ year: 1066, month: 10, day: 14 }, 'julian').jd) / 365.25;
+    return (a.iso === '1066-10-14' && a.calendar === 'julian' && Math.abs(a.start_ybp - want) * 365.25 < 0.01) || a;
+});
+check('wikidata: dia juliano tras la reforma (Carlos II: QLever 1685-02-16, guardado 6-2-1685 juliano) y gregoriano sin tocar (Einstein)', () => {
+    const a = B.bindingToFeature('death', row({ t: '1685-02-16T00:00:00Z', cal: 'Q1985786' }), 'x').feature.properties.time;
+    const g = B.bindingToFeature('death', row({ t: '1685-02-16T00:00:00Z', cal: 'Q1985727' }), 'x').feature.properties.time;
+    const e = B.bindingToFeature('birth', row({ t: '1879-03-14T00:00:00Z' }), 'x').feature.properties.time;
+    return (a.iso === '1685-02-06' && g.iso === '1685-02-16' && a.start_ybp === g.start_ybp && e.iso === '1879-03-14') || [a, g, e];
+});
+check('wikidata: dia juliano que cruza el año al volver al calendario guardado (QLever 1700-01-05 -> 26-12-1699 juliano: 10 dias de diferencia hasta marzo de 1700)', () => { const r = B.rdfDay(1700, 1, 5, 'julian'); return (r.iso === '1699-12-26' && r.ymd.join() === '1699,12,26') || r; });
+check('wikidata: con precision de mes o de año el literal NO viene convertido: se lee en el calendario declarado (Galba 0069-01 juliano)', () => {
+    const S = require('../sky/sky.js');
+    const m = B.bindingToFeature('death', row({ t: '0069-01-01T00:00:00Z', prec: 10, cal: 'Q1985786' }), 'x').feature.properties.time;
+    const want = (2433282.5 - S.calendarToJD({ year: 69, month: 1, day: 1 }, 'julian').jd) / 365.25;
+    return (m.iso === '0069-01' && m.calendar === 'julian' && Math.abs(m.start_ybp - want) * 365.25 < 0.01) || m;
+});
+check('intervalo juliano al dia: el inicio y el fin se leen como gregorianos y el iso vuelve al juliano guardado', () => {
+    const E = 'http://www.wikidata.org/entity/'; const JUL = E + 'Q1985786';
+    const r = B.spanRowsToFeatures([{ item: { value: E + 'Q815167' }, label: { value: 'Siege' }, sl: { value: '30' }, a: { value: '0860-06-22T00:00:00Z' }, pa: { value: '11' }, ca: { value: JUL }, b: { value: '0860-08-08T00:00:00Z' }, pb: { value: '11' }, cb: { value: JUL } }], 'x');
+    const tm = r.features[0] && r.features[0].properties.time; return (tm && tm.iso === '0860-06-18/0860-08-04' && tm.calendar === 'julian') || tm || r.skipped;
 });
 check('wikidata: se descarta, con motivo, lo que no se puede afirmar', () => {
     const why = (o, kind) => B.bindingToFeature(kind || 'birth', row(o), 'x').skip;

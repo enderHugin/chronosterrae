@@ -43,9 +43,11 @@ const RULES = { 'year+|ce': 'astro', 'year+|bce': 'astro', 'century|ce': 'astro'
 const row = (q, label, t, prec, cal, extra) => Object.assign({ item: 'http://www.wikidata.org/entity/' + q, label, sl: '90', coord: 'POINT(28.98 41.008333)', t, prec: String(prec), cal }, extra || {});
 const AT = '2026-11-12T00:00:00Z';
 const run = (rows, ends, fam) => B.rowsToFeatures(rows, ends, new Map(fam || []), new Map(), RULES, AT);
-check('varias fechas de construccion (Santa Sofia 360, 415, 537): inicio = la mas antigua y se guardan todas', () => {
-    const r = run([row('Q12506', 'Hagia Sophia', '0537-12-27T00:00:00Z', 11, JUL), row('Q12506', 'Hagia Sophia', '0360-02-15T00:00:00Z', 11, JUL), row('Q12506', 'Hagia Sophia', '0415-10-10T00:00:00Z', 11, JUL)], []);
-    const p = r.features[0].properties; return (r.features.length === 1 && p.built.dates.length === 3 && p.time.iso === '0360-02-15' && p.time.precision === 'day') || p;
+// Literales como los da QLever (con dia, ya en gregoriano: sonda calendar-probe 2026-11-12); la ficha muestra lo guardado en Wikidata, en juliano:
+// 0360-02-16 -> 15-2-360, 0415-10-11 -> 10-10-415, 0537-12-29 -> 27-12-537
+check('varias fechas de construccion (Santa Sofia 360, 415, 537): inicio = la mas antigua y se guardan todas, con la fecha juliana guardada', () => {
+    const r = run([row('Q12506', 'Hagia Sophia', '0537-12-29T00:00:00Z', 11, JUL), row('Q12506', 'Hagia Sophia', '0360-02-16T00:00:00Z', 11, JUL), row('Q12506', 'Hagia Sophia', '0415-10-11T00:00:00Z', 11, JUL)], []);
+    const p = r.features[0].properties; return (r.features.length === 1 && p.built.dates.length === 3 && p.time.iso === '0360-02-15' && p.built.dates.map((d) => d.iso).sort().join() === '0360-02-15,0415-10-10,0537-12-27' && p.time.precision === 'day') || p;
 });
 check('un fin ANTERIOR a la ultima construccion se ignora (habla de un edificio anterior) y se cuenta', () => {
     const r = run([row('Q12506', 'Hagia Sophia', '0360-02-15T00:00:00Z', 11, JUL), row('Q12506', 'Hagia Sophia', '0537-12-27T00:00:00Z', 11, JUL)], [{ item: 'http://www.wikidata.org/entity/Q12506', t: '0532-01-16T00:00:00Z', prec: '11', cal: JUL }]);

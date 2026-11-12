@@ -96,6 +96,24 @@ const bindingValue = (b, k) => (b[k] ? b[k].value : undefined);
 
 function ybpOf(jd) { return (JD_1950 - jd) / 365.25; }
 
+const pad2 = (n) => String(n).padStart(2, '0');
+const isoY = (y) => (y < 0 ? '-' + String(-y).padStart(4, '0') : String(y).padStart(4, '0'));
+/**
+ * Dia de un valor de tiempo de Wikidata leido por SPARQL (wikibase:timeValue) con precision de dia o mejor.
+ * MEDIDO (sonda calendar-probe, 2026-11-12, guardado en Wikidata frente a QLever): con precision de dia el literal YA viene pasado al
+ * gregoriano proleptico aunque la fecha se guardara como juliana (Hastings: guardado +1066-10-14 juliano, QLever da 1066-10-20; Carlos II:
+ * 6-2-1685 -> 16-2-1685; Trotski: 26-10-1879 -> 7-11-1879). Con precision de mes o de año NO se convierte (Galba: 0069-01-00 juliano ->
+ * 0069-01-01; Clemente: 0099 -> 0099-01-01). Antes se leia el literal como si estuviera en el calendario declarado: los ~1 400 registros
+ * julianos con dia caian 2-13 dias tarde y la ficha mostraba la fecha gregoriana con la etiqueta «juliano».
+ * Devuelve el JD (00:00 UT de ese dia) y la fecha en el calendario declarado (la que guarda Wikidata), para el iso del registro.
+ */
+function rdfDay(year, month, day, cal) {
+    const jd = S.calendarToJD({ year, month, day }, 'gregorian').jd;
+    if (cal !== 'julian') return { jd, ymd: [year, month, day], iso: isoY(year) + '-' + pad2(month) + '-' + pad2(day) };
+    const j = S.jdToCalendar(jd, 'julian');
+    return { jd, ymd: [j.year, j.month, j.day], iso: isoY(j.year) + '-' + pad2(j.month) + '-' + pad2(j.day) };
+}
+
 /** Devuelve el Feature o {skip: motivo}. Funcion pura: se prueba sin red. */
 function bindingToFeature(kind, b, retrievedAt) {
     const k = KINDS[kind];
@@ -115,10 +133,10 @@ function bindingToFeature(kind, b, retrievedAt) {
     const prec = parseInt(bindingValue(b, 'prec'), 10);
     const cal = CAL[(bindingValue(b, 'cal') || '').split('/').pop()];
     if (!cal) return { skip: 'calendario desconocido' };
-    let start; let end; let precision; let uncertaintyYr;
+    let start; let end; let precision; let uncertaintyYr; let dayIso = null;
     try {
         if (prec >= 11) {
-            const jd = S.calendarToJD({ year, month, day }, cal).jd;
+            dayIso = rdfDay(year, month, day, cal); const jd = dayIso.jd;   // el literal ya es gregoriano (ver rdfDay)
             start = jd; end = jd; precision = 'day'; uncertaintyYr = 0.5 / 365.25;
         } else if (prec === 10) {
             start = S.calendarToJD({ year, month, day: 1 }, cal).jd;
@@ -139,7 +157,7 @@ function bindingToFeature(kind, b, retrievedAt) {
     }
     const sl = parseInt(bindingValue(b, 'sl'), 10) || 0;
     const importance = Math.round(Math.max(0, Math.min(1, Math.log10(Math.max(sl, 1)) / k.norm)) * 100) / 100;
-    const iso = m[1] + '-' + m[2] + '-' + m[3];
+    const iso = dayIso ? dayIso.iso : m[1] + '-' + m[2] + '-' + m[3];
     const time = {
         start_ybp: +ybpOf(start).toFixed(6), end_ybp: +ybpOf(end).toFixed(6), uncertainty_yr: +uncertaintyYr.toFixed(6), precision,
         iso: precision === 'day' ? iso : precision === 'month' ? m[1] + '-' + m[2] : m[1], calendar: cal
@@ -188,7 +206,7 @@ function timeBounds(value, prec, cal) {
     const m = /^(-?\d{4,})-(\d{2})-(\d{2})T/.exec(value || ''); if (!m) return null;
     const year = parseInt(m[1], 10); const month = parseInt(m[2], 10); const day = parseInt(m[3], 10);
     if (year < FIRST_YEAR) return { skip: 'anterior al año 1 (numeracion sin calibrar)' };
-    if (prec >= 11) { const jd = S.calendarToJD({ year, month, day }, cal).jd; return { m, a: jd, b: jd, prec: 11 }; }
+    if (prec >= 11) { const d = rdfDay(year, month, day, cal); return { m: [null, isoY(d.ymd[0]), pad2(d.ymd[1]), pad2(d.ymd[2])], a: d.jd, b: d.jd, prec: 11 }; }   // literal gregoriano (ver rdfDay)
     if (prec === 10) { const a = S.calendarToJD({ year, month, day: 1 }, cal).jd; const b = month === 12 ? S.calendarToJD({ year: year + 1, month: 1, day: 1 }, cal).jd : S.calendarToJD({ year, month: month + 1, day: 1 }, cal).jd; return { m, a, b, prec: 10 }; }
     return { m, a: S.calendarToJD({ year, month: 1, day: 1 }, cal).jd, b: S.calendarToJD({ year: year + 1, month: 1, day: 1 }, cal).jd, prec: 9 };
 }
@@ -422,4 +440,4 @@ async function main() {
 function ybpToYear(startYbp, endYbp) { return Math.floor(1950 - (startYbp + endYbp) / 2); }
 
 if (require.main === module) main().catch((e) => { console.error('[ERR] ' + describe(e)); process.exitCode = 1; });
-module.exports = { KINDS, query, queryAll, bindingToFeature, windows, ybpToYear, spanQuery, spanRowsToFeatures, SPAN_CLASSES, RELATIONS, relationRows, enrichEvents };
+module.exports = { rdfDay, KINDS, query, queryAll, bindingToFeature, windows, ybpToYear, spanQuery, spanRowsToFeatures, SPAN_CLASSES, RELATIONS, relationRows, enrichEvents };
