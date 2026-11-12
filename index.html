@@ -74,10 +74,16 @@
         #search-list .sr-name mark { background: none; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
         #search-list .sr-sub { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         #search-list .sr-msg { display: block; min-height: 0; padding: 8px 10px; color: var(--muted); cursor: default; }
-        /* fundido a la nueva fecha mientras el globo gira hacia el lugar */
-        #map { transition: opacity 170ms ease-out; }
-        #map.srch-fade { opacity: 0.3; transition: opacity 150ms ease-in; }
-        @media (prefers-reduced-motion: reduce) { #map, #map.srch-fade { transition: none; opacity: 1; } }
+        /* Fundido entre epocas: un velo cubre TODA la escena (cielo, mapa, noche, iconos) mientras cambia la fecha y el globo gira;
+           los recuadros no se tapan: cambian de color con su propia transicion (abajo). */
+        #era-veil { position: absolute; inset: 0; z-index: 9; pointer-events: none; opacity: 0; background: var(--bg);
+            transition: opacity 420ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+        #era-veil.on { opacity: 0.82; transition: opacity 200ms cubic-bezier(0.55, 0.06, 0.68, 0.19); }
+        /* Los colores de la epoca (recuadros, botones, textos) pasan de una a otra en vez de saltar */
+        .panel, .btn, #search, #search-list, .menu-pop, #era-badge, #timeline, #slider, .custom-pop {
+            transition: background-color 450ms ease, color 450ms ease, border-color 450ms ease, outline-color 450ms ease, box-shadow 450ms ease; }
+        @media (prefers-reduced-motion: reduce) { #era-veil, #era-veil.on { transition: none; opacity: 0; }
+            .panel, .btn, #search, #search-list, .menu-pop, #era-badge, #timeline, #slider, .custom-pop { transition: none; } }
         #info figure.info-pic { margin: 2px 0 8px; }
         #info figure.info-pic img { display: block; max-width: 100%; max-height: 220px; border-radius: 6px; margin: 0 auto; background: color-mix(in srgb, var(--text) 8%, transparent); }
         #info figure.info-pic figcaption { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.35; }
@@ -406,6 +412,7 @@
 
     <canvas id="space" aria-hidden="true"></canvas>
     <div id="map"></div>
+    <div id="era-veil" aria-hidden="true"></div>
     <div id="solar" hidden></div>
 
     <div id="topbar">
@@ -1283,7 +1290,7 @@ function showStar(i) {
     rows[rows.length - 1].note = t('star.note');
     showInfo(name || ('HIP ' + hip), rows);
 }
-const hideInfo = () => { $('info').style.display = 'none'; clearHighlight(); };
+const hideInfo = () => { $('info').style.display = 'none'; clearHighlight(); if (SPOT && SPOT.sticky) spotlight(null); };   // el foco de lo elegido se va con su ficha (el de la lista, no: se recorre cambiando de epoca)
 
 /* ------------------------------------------------------------------ */
 /* Carga de datos                                                     */
@@ -2306,7 +2313,8 @@ function focusPolity(name) {
     if (!feats.length) return;
     setHighlightKey(polityKey(feats[0].properties));
     const box = bboxOf(feats);
-    if (box) map.fitBounds(box, { padding: 120, maxZoom: 6, duration: 1400 });
+    // centrar sin acercar ni alejar (como el buscador): giro breve hasta el centro de su extension
+    if (box) map.easeTo({ center: [(box[0][0] + box[1][0]) / 2, (box[0][1] + box[1][1]) / 2], duration: SRCH_REDUCED() ? 0 : 700, easing: SRCH_EASE, essential: true });
     showPolity(feats[0].properties);
 }
 
@@ -2408,6 +2416,40 @@ map.getCanvas().addEventListener('mouseleave', () => { hoverPt = null; setHoverK
 map.on('dragstart', () => { hoverPt = null; setHoverKey(null); });
 
 /* ------------------------------------------------------------------ */
+/* Foco: un elemento a plena opacidad y los demas iconos atenuados        */
+/* ------------------------------------------------------------------ */
+// Al elegir (o pasar el raton por) un resultado del buscador, el resto de iconos de sucesos y construcciones baja de opacidad para que el
+// elegido se vea solo. Cada capa registra aqui su opacidad base (spotSet) y el foco la multiplica: ['case', id == foco, 1, SPOT.dim].
+// Con zoom, MapLibre exige ['zoom'] arriba del todo: el factor se mete en cada salida del step/interpolate, no alrededor.
+var SPOT = { id: null, dim: 0.16, base: new Map(), sticky: false };     // var: hideInfo (definida antes) puede llamar a spotlight durante el arranque
+function spotWrap(expr) {
+    if (!SPOT || !SPOT.id) return expr;
+    const f = ['case', ['==', ['get', 'id'], SPOT.id], 1, SPOT.dim];
+    if (Array.isArray(expr) && expr[0] === 'step' && Array.isArray(expr[1]) && expr[1][0] === 'zoom') return expr.map((x, i) => (i >= 2 && i % 2 === 0 ? ['*', x, f] : x));
+    if (Array.isArray(expr) && expr[0] === 'interpolate' && Array.isArray(expr[2]) && expr[2][0] === 'zoom') return expr.map((x, i) => (i >= 4 && i % 2 === 0 ? ['*', x, f] : x));
+    return ['*', expr, f];
+}
+/** Opacidad base de una capa (la que tendria sin foco); se pinta ya con el foco que haya. */
+function spotSet(layer, prop, expr) {
+    SPOT.base.set(layer + '|' + prop, { layer, prop, expr });
+    if (!map.getLayer(layer)) return;
+    map.setPaintProperty(layer, prop + '-transition', { duration: 260, delay: 0 });   // atenuar y volver, con transicion (no de golpe)
+    map.setPaintProperty(layer, prop, spotWrap(expr));
+}
+/** Pone (id) o quita (null) el foco. sticky: elegido (sigue con la ficha abierta); si no, es de la lista y lo quita cerrarla. */
+function spotlight(id, sticky) {
+    id = id || null; if (!SPOT) return;
+    SPOT.sticky = !!(id && sticky);
+    if (id === SPOT.id) return;
+    SPOT.id = id;
+    SPOT.base.forEach((b) => { if (map.getLayer(b.layer)) map.setPaintProperty(b.layer, b.prop, spotWrap(b.expr)); });
+    if (typeof evAnimApply === 'function' && typeof EVA !== 'undefined') evAnimApply(EVA.phase);     // el anillo que late, apagado con foco
+}
+// Tras elegir, el foco sigue mientras se mira la ficha; se quita al tocar el mapa o cerrar la ficha
+map.on('click', () => spotlight(null));
+map.on('dragstart', () => spotlight(null));
+
+/* ------------------------------------------------------------------ */
 /* Construcciones (map/built.js, data/built: Wikidata via QLever)       */
 /* ------------------------------------------------------------------ */
 // Catedrales, piramides, castillos... desde su fecha de construccion. Si la fuente da un fin (P576: demolicion O abandono), desde entonces
@@ -2432,7 +2474,8 @@ function builtLayersAdd() {
     // y dentro de cada tramo sin solaparse (symbol-sort-key: menor = antes, la mas notoria gana el sitio).
     ChronosBuilt.TIERS.forEach((tr) => map.addLayer({ id: tr.id, type: 'symbol', source: 'built', minzoom: tr.minzoom, maxzoom: tr.maxzoom, filter: ChronosBuilt.filterAt(ybp, tr.min),
         layout: { visibility: BUILT.on ? 'visible' : 'none', 'icon-image': ChronosBuilt.imageAt(ybp), 'icon-size': ChronosBuilt.sizeExpr(), 'icon-allow-overlap': false, 'icon-padding': 6, 'symbol-sort-key': ['-', 1, ['get', 'i']] },
-        paint: { 'icon-opacity': ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 0.95] } }, map.getLayer('events-dot') ? 'events-dot' : undefined));
+        paint: { 'icon-opacity': ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 0.95], 'icon-opacity-transition': { duration: 180, delay: 0 } } }, map.getLayer('events-dot') ? 'events-dot' : undefined));
+    ChronosBuilt.TIERS.forEach((tr) => spotSet(tr.id, 'icon-opacity', ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 0.95]));
     BUILT.ybp = ybp;
     if (BUILT.on) builtEnsure();
 }
@@ -2473,7 +2516,7 @@ function builtTimeApply() {
         ChronosBuilt.TIERS.forEach((tr) => {
             map.setFilter(tr.id, ChronosBuilt.filterAt(ybp, tr.min));
             map.setLayoutProperty(tr.id, 'icon-image', ChronosBuilt.imageAt(ybp));
-            map.setPaintProperty(tr.id, 'icon-opacity', ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 0.95]);
+            spotSet(tr.id, 'icon-opacity', ['case', ChronosBuilt.endedExpr(ybp), ChronosBuilt.ENDED_OPACITY, 0.95]);
         });
     });
 }
@@ -2653,8 +2696,8 @@ function srchRender(msg) {
         li.appendChild(txt);
         li.addEventListener('mousedown', (ev) => ev.preventDefault());        // no quitar el foco a la caja
         li.addEventListener('click', () => srchCommit(e));
-        li.addEventListener('mouseenter', () => { clearTimeout(SRCH.hoverT); SRCH.hoverT = setTimeout(() => srchMove(i), 220); });   // pausa breve: pasar el raton por encima no hace volar el mapa
-        li.addEventListener('mouseleave', () => clearTimeout(SRCH.hoverT));
+        li.addEventListener('mouseenter', () => { spotlight(e.id); clearTimeout(SRCH.hoverT); SRCH.hoverT = setTimeout(() => srchMove(i), 220); });   // foco al momento; volar, tras una pausa breve
+        li.addEventListener('mouseleave', () => { clearTimeout(SRCH.hoverT); const a = SRCH.items[SRCH.active]; spotlight(a ? a.id : null); });
         ul.appendChild(li);
     });
     if (SRCH.items.length) ul.appendChild(el('li', { class: 'sr-msg', role: 'presentation', text: t('search.hint') }));
@@ -2669,7 +2712,7 @@ async function srchRun() {
     SRCH.items = ChronosSearch.query(SRCH.entries, raw, { limit: 8 }); SRCH.active = -1;
     srchRender(SRCH.items.length ? null : SRCH.failed ? fmt('search.fail', { err: SRCH.failed }) : fmt('search.none', { q: raw.trim() }));
 }
-function srchClose() { clearTimeout(SRCH.hoverT); SRCH.items = []; SRCH.active = -1; srchRender(); }
+function srchClose(keepSpot) { clearTimeout(SRCH.hoverT); SRCH.items = []; SRCH.active = -1; srchRender(); if (!keepSpot) spotlight(null); }
 /** Lugar y fecha de un resultado: { center|null, year, apply() }. Sin zoom: centrar no acerca ni aleja (lo pide el creador, 2026-11-12). */
 function srchTarget(e) {
     if (e.kind === 'polity') {
@@ -2687,6 +2730,25 @@ function srchTarget(e) {
         if (clockUsable() && Number.isFinite(e.jd) && e.jd >= clockMinJD() && e.jd <= realNowJD()) clockSet(e.jd, { user: true });
     } };
 }
+/**
+ * Fundido entre epocas: el velo sube (200 ms), con la escena tapada cambia la fecha (fn) y baja despacio (420 ms) mientras el globo
+ * termina de girar. Si llega otro antes de acabar (recorrer la lista deprisa), el velo no parpadea: sigue arriba y vale el ultimo.
+ */
+const VEIL = { t: 0, fn: null, seq: 0 };
+function eraVeil(fn) {
+    const v = $('era-veil');
+    if (SRCH_REDUCED() || !v) { fn(); return; }
+    VEIL.fn = fn; clearTimeout(VEIL.t);
+    v.classList.add('on');
+    VEIL.t = setTimeout(() => {
+        const f = VEIL.fn; VEIL.fn = null; if (f) f();
+        // se destapa cuando el mapa de la nueva fecha ya esta pintado (fronteras, sucesos), no a medias: al quedar quieto
+        // ('idle') o, como mucho, a los 700 ms (si algo tarda mas, mejor ver como llega que esperar a ciegas)
+        const seq = ++VEIL.seq; let off = false;
+        const reveal = () => { if (off || seq !== VEIL.seq || VEIL.fn) return; off = true; v.classList.remove('on'); };
+        requestAnimationFrame(() => { map.once('idle', reveal); setTimeout(reveal, 700); });
+    }, 210);
+}
 const SRCH_EASE = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 /**
  * Ir a un destino: la Tierra gira hasta el lugar (giro breve, sin acercar ni alejar) y, SOLO si cambia la epoca (otro año), el mapa se
@@ -2696,12 +2758,11 @@ function srchGo(tg) {
     if (solarView.isOpen) solarView.close();
     clearTimeout(SRCH.fadeT); SRCH.markSeq++; evHoverSet(null); buHoverSet(null);      // la señal del destino anterior se apaga
     const done = () => { if (tg.after) tg.after(); };
-    const m = map.getContainer(); m.classList.remove('srch-fade');
     const fade = tg.year !== undefined && tg.year !== ybpToYear(state.ybp);
     const moveTo = (c) => { if (!c) return false; const p = map.getCenter(); return Math.abs(p.lng - c[0]) > 1e-6 || Math.abs(p.lat - c[1]) > 1e-6; };
     const moving = moveTo(tg.center);
     if (SRCH_REDUCED()) { tg.apply(); done(); if (moving) map.jumpTo({ center: tg.center }); if (tg.mark) srchMarkOnLanding(tg.mark, true); return; }
-    if (fade) { m.classList.add('srch-fade'); SRCH.fadeT = setTimeout(() => { tg.apply(); done(); requestAnimationFrame(() => m.classList.remove('srch-fade')); }, 160); }
+    if (fade) eraVeil(() => { tg.apply(); done(); });
     else { tg.apply(); done(); }
     if (tg.mark) srchMarkOnLanding(tg.mark, !moving);
     if (moving) map.easeTo({ center: tg.center, duration: 700, easing: SRCH_EASE, essential: true });
@@ -2724,7 +2785,7 @@ function srchMarkOnLanding(mark, now) {
 function srchMove(i) {
     if (!SRCH.items.length) return;
     const next = (i + SRCH.items.length) % SRCH.items.length; if (next === SRCH.active && SRCH.origin) return;   // ya esta ahi
-    SRCH.active = next;
+    SRCH.active = next; spotlight(SRCH.items[next].id);
     // solo se marca (rehacer la lista pondria otro elemento bajo el raton y volveria a dispararse el «pasar por encima»)
     document.querySelectorAll('#search-list li[role=option]').forEach((li, k) => li.setAttribute('aria-selected', String(k === SRCH.active)));
     $('search').setAttribute('aria-activedescendant', 'sr-' + SRCH.active);
@@ -2738,9 +2799,10 @@ function srchCommit(e) {
     if (!e) return;
     clearTimeout(SRCH.prevT);
     const moved = SRCH.origin && SRCH.items[SRCH.active] === e;     // ya se esta alli (se llego al recorrer la lista)
-    SRCH.origin = null; $('search').value = srchName(e); srchClose(); $('search').blur();
+    SRCH.origin = null; $('search').value = srchName(e); srchClose(true); spotlight(e.id, true); $('search').blur();
     // La ficha, ya en la fecha nueva; SEL.keepYbp: la carga del mapa de esa fecha no debe cerrarla (como con la seleccion recordada)
     const show = () => {
+        SEL.keepYbp = state.ybp; spotlight(e.id, true);      // ya en la fecha nueva: que la carga de su mapa no cierre la ficha ni quite el foco
         if (e.kind === 'polity') { selRemember('p', e.en); return; }
         if (e.kind === 'built') { selRemember('b', e.id); builtFull().then(() => { const f = BUILT.byId && BUILT.byId.get(e.id); if (f) { showBuilt(f); SEL.keepYbp = state.ybp; } }); return; }
         // suceso o persona: la ficha sale cuando llegan los sucesos de esa fecha (mismo mecanismo que la seleccion recordada)
@@ -2768,7 +2830,7 @@ $('search').addEventListener('keydown', (e) => {
         if (SRCH.items.length || SRCH.origin) { e.preventDefault(); srchCancel(); }
     }
 });
-$('search').addEventListener('blur', () => { SRCH.blurT = setTimeout(() => { SRCH.origin = null; srchClose(); }, 150); });   // salir de la caja deja el mapa donde este
+$('search').addEventListener('blur', () => { SRCH.blurT = setTimeout(() => { const had = SRCH.items.length > 0; SRCH.origin = null; if (had) srchClose(); }, 150); });   // salir de la caja con la lista abierta: la cierra (y quita el foco); tras elegir, el foco se queda   // salir de la caja deja el mapa donde este
 
 /** Imagen de la ficha (Wikidata P18) con autor y licencia de Commons. Sin licencia legible no se enseña. */
 const infoPicCache = new Map();
@@ -4128,6 +4190,9 @@ function evLayersAdd() {
     map.addLayer({ id: 'events-hover-dot', type: 'circle', source: 'events-hover', paint: { 'circle-radius': EI.DOT_RADIUS.map((x, i) => (i >= 4 && i % 2 === 0 ? ['*', x, 1.6] : x)), 'circle-color': evDotColors(es), 'circle-stroke-width': 1.2, 'circle-stroke-color': ChronosEventIcons.HALO, 'circle-opacity': EI.dotFade(1), 'circle-stroke-opacity': EI.dotFade(1) } });
     // Zona de toque: invisible, pero es la que consultan el hover y el clic (queryRenderedFeatures)
     map.addLayer({ id: 'events-circle', type: 'circle', source: 'events', paint: { 'circle-radius': EI.zoomScaled(hit, 7), 'circle-color': '#000000', 'circle-opacity': 0, 'circle-stroke-opacity': 0 } });
+    // foco del buscador: estas opacidades se atenuan para todos menos el elegido (spotSet las registra y aplica el foco que haya)
+    spotSet('events-dot', 'circle-opacity', EI.dotFade(seen)); spotSet('events-dot', 'circle-stroke-opacity', EI.dotFade(seen));
+    ['bob', 'shake'].forEach((g) => spotSet('events-icon-' + g, 'icon-opacity', EI.iconFade(1)));
     evAnimApply(EVA.phase);
     eventsRefresh();
     detailApply();
@@ -4136,7 +4201,7 @@ function evAnimApply(phase) {
     EVA.phase = phase;
     if (!map.getLayer('events-pulse')) return;
     map.setPaintProperty('events-pulse', 'circle-radius', ChronosEventIcons.zoomScaled(['+', EV_PULSE_BASE, phase ? 5 : 0]));
-    map.setPaintProperty('events-pulse', 'circle-stroke-opacity', ChronosEventIcons.dotFade(phase ? 0 : 0.55));
+    map.setPaintProperty('events-pulse', 'circle-stroke-opacity', ChronosEventIcons.dotFade(phase || (SPOT && SPOT.id) ? 0 : 0.55));
     map.setPaintProperty('events-icon-bob', 'icon-translate', [0, phase ? -2 : 0]);
     map.setPaintProperty('events-icon-shake', 'icon-translate', [phase ? 1.6 : -1.6, 0]);
 }
