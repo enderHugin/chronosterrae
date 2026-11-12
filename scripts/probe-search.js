@@ -33,10 +33,13 @@ const [url, out] = process.argv.slice(2);
     });
     await step('flecha abajo: Ulm, 14-3-1879', async () => {
         const r0 = await page.evaluate(() => (earthDisk() || {}).r);
-        await page.keyboard.press('ArrowDown'); await page.waitForTimeout(5000);
-        const r = await page.evaluate((r0) => ({ diskBefore: r0, diskAfter: (earthDisk() || {}).r, center: map.getCenter().toArray(), date: ChronosSky.jdToCalendar(clock.jd, 'auto'), chip: $('ev-hover').hidden ? null : $('ev-hover').textContent, opacity: getComputedStyle(map.getContainer()).opacity }), r0);
+        await page.keyboard.press('ArrowDown'); await page.waitForTimeout(170);
+        const veil = await page.evaluate(() => ({ on: $('era-veil').classList.contains('on'), spot: SPOT.id }));
+        await page.screenshot({ path: path.join(out, '2a-velo.png') });
+        await page.waitForTimeout(4800);
+        const r = await page.evaluate((r0) => ({ veilAfter: $('era-veil').classList.contains('on'), spotAfter: SPOT.id, dimmed: /0\.16/.test(JSON.stringify(map.getPaintProperty('events-icon-bob', 'icon-opacity'))), diskBefore: r0, diskAfter: (earthDisk() || {}).r, center: map.getCenter().toArray(), date: ChronosSky.jdToCalendar(clock.jd, 'auto'), chip: $('ev-hover').hidden ? null : $('ev-hover').textContent, opacity: getComputedStyle(map.getContainer()).opacity }), r0);
         await page.screenshot({ path: path.join(out, '2-ulm-1879.png') });
-        return r;
+        return Object.assign({ veil }, r);
     });
     await step('intro: ficha', async () => {
         await page.keyboard.press('Enter'); await page.waitForTimeout(4000);
