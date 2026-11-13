@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-12T14:43:29Z",
+ "generated_at": "2026-11-13T00:14:42Z",
  "source": "Wikidata (CC0) via QLever: P106 (ocupacion), P39 (cargo), descripcion inglesa",
  "verify": {
   "Q19546": {
@@ -44,16 +44,88 @@
    "got": "poet",
    "ok": true
   },
+  "Q201788": {
+   "role": "writer",
+   "want": "historian",
+   "got": "historian",
+   "ok": true
+  },
   "Q901": {
    "role": "scientist",
    "want": "scientist",
    "got": "scientist",
    "ok": true
   },
+  "Q169470": {
+   "role": "scientist",
+   "want": "physicist",
+   "got": "physicist",
+   "ok": true
+  },
+  "Q593644": {
+   "role": "scientist",
+   "want": "chemist",
+   "got": "chemist",
+   "ok": true
+  },
+  "Q864503": {
+   "role": "scientist",
+   "want": "biologist",
+   "got": "biologist",
+   "ok": true
+  },
+  "Q11063": {
+   "role": "scientist",
+   "want": "astronomer",
+   "got": "astronomer",
+   "ok": true
+  },
   "Q170790": {
    "role": "scientist",
    "want": "mathematician",
    "got": "mathematician",
+   "ok": true
+  },
+  "Q520549": {
+   "role": "scientist",
+   "want": "geologist",
+   "got": "geologist",
+   "ok": true
+  },
+  "Q18805": {
+   "role": "scientist",
+   "want": "naturalist",
+   "got": "naturalist",
+   "ok": true
+  },
+  "Q2374149": {
+   "role": "scientist",
+   "want": "botanist",
+   "got": "botanist",
+   "ok": true
+  },
+  "Q350979": {
+   "role": "scientist",
+   "want": "zoologist",
+   "got": "zoologist",
+   "ok": true
+  },
+  "Q39631": {
+   "role": "scientist",
+   "want": "physician",
+   "got": "physician",
+   "ok": true
+  },
+  "Q212980": {
+   "role": "scientist",
+   "want": "psychologist",
+   "got": "psychologist",
+   "ok": true
+  },
+  "Q82594": {
+   "role": "scientist",
+   "want": "computer scientist",
+   "got": "computer scientist",
    "ok": true
   },
   "Q4964182": {
@@ -167,31 +239,31 @@
  },
  "counts": {
   "people": 6424,
-  "with_role": 6349,
+  "with_role": 6233,
   "with_description": 6424,
   "via": {
    "cargo": 714,
-   "descripcion": 5126,
-   "primera ocupacion": 333,
-   "prioridad": 176
+   "descripcion": 5294,
+   "primera ocupacion": 132,
+   "prioridad": 93
   },
   "by_role": {
    "pope": 263,
-   "monarch": 542,
-   "religious": 134,
-   "scientist": 927,
-   "writer": 796,
-   "philosopher": 137,
-   "military": 128,
-   "politician": 1032,
-   "inventor": 63,
+   "monarch": 535,
+   "religious": 152,
+   "writer": 839,
+   "scientist": 749,
+   "military": 117,
+   "philosopher": 144,
+   "politician": 1055,
+   "inventor": 50,
+   "explorer": 54,
    "musician": 379,
-   "explorer": 40,
-   "painter": 152,
+   "painter": 150,
    "architect": 29,
-   "composer": 109,
-   "actor": 1013,
-   "athlete": 605
+   "composer": 108,
+   "actor": 997,
+   "athlete": 612
   }
  },
  "closure": {
@@ -202,8 +274,20 @@
   "Q1281618": 40,
   "Q36180": 344,
   "Q49757": 134,
-  "Q901": 2770,
+  "Q201788": 278,
+  "Q901": 1,
+  "Q169470": 80,
+  "Q593644": 88,
+  "Q864503": 364,
+  "Q11063": 45,
   "Q170790": 50,
+  "Q520549": 67,
+  "Q18805": 187,
+  "Q2374149": 52,
+  "Q350979": 102,
+  "Q39631": 611,
+  "Q212980": 75,
+  "Q82594": 52,
   "Q4964182": 66,
   "Q42603": 5076,
   "Q29182": 3442,
@@ -232,8 +316,8 @@
    "expect": "scientist",
    "role": "scientist",
    "candidates": [
-    "scientist",
     "philosopher",
+    "scientist",
     "inventor",
     "writer"
    ],
@@ -249,8 +333,8 @@
    "role": "writer",
    "candidates": [
     "painter",
-    "scientist",
     "religious",
+    "scientist",
     "writer",
     "philosopher",
     "composer",
@@ -283,7 +367,6 @@
    "role": "pope",
    "candidates": [
     "religious",
-    "scientist",
     "writer",
     "pope",
     "monarch",
@@ -357,7 +440,7 @@
    "role": "politician",
    "candidates": [
     "politician",
-    "scientist"
+    "writer"
    ],
    "order": null,
    "description": "British statesman, soldier and writer (1874–1965)"
@@ -442,13 +525,95 @@
    "candidates": [],
    "order": null,
    "description": null
+  },
+  {
+   "qid": "Q57336",
+   "label_ok": true,
+   "label": "Ali Khamenei",
+   "in_data": true,
+   "expect": "politician",
+   "role": "politician",
+   "candidates": [
+    "military",
+    "religious",
+    "politician",
+    "writer"
+   ],
+   "order": null,
+   "description": "Supreme Leader of Iran from 1989 to 2026"
+  },
+  {
+   "qid": "Q2039",
+   "label_ok": true,
+   "label": "Titus Livius",
+   "in_data": true,
+   "expect": "writer",
+   "role": "writer",
+   "candidates": [
+    "writer"
+   ],
+   "order": null,
+   "description": "Roman historian (59 BC – AD 17)"
+  },
+  {
+   "qid": "Q83322",
+   "label_ok": true,
+   "label": "Guru Nanak",
+   "in_data": true,
+   "expect": "religious",
+   "role": "religious",
+   "candidates": [
+    "writer"
+   ],
+   "order": null,
+   "description": "First Sikh Guru and founder of Sikhism"
+  },
+  {
+   "qid": "Q1254",
+   "label_ok": true,
+   "label": "Kofi Annan",
+   "in_data": true,
+   "expect": "politician",
+   "role": "politician",
+   "candidates": [
+    "politician"
+   ],
+   "order": null,
+   "description": "7th Secretary-General of the United Nations (1938-2018)"
+  },
+  {
+   "qid": "Q5809",
+   "label_ok": true,
+   "label": "Che Guevara",
+   "in_data": true,
+   "expect": "military",
+   "role": "military",
+   "candidates": [
+    "military",
+    "scientist"
+   ],
+   "order": null,
+   "description": "Argentine Marxist revolutionary (1928–1967)"
+  },
+  {
+   "qid": "Q174979",
+   "label_ok": true,
+   "label": "Alan Shepard",
+   "in_data": true,
+   "expect": "explorer",
+   "role": "explorer",
+   "candidates": [
+    "military"
+   ],
+   "order": null,
+   "description": "American astronaut, first American in space, lunar explorer (1923–1998)"
   }
  ],
  "sample": [
   [
    "Q42887",
    "pope",
-   "scientist+religious+pope+monarch+politician",
+   "religious+pope+monarch+politician",
    "4th Pope of the Catholic Church"
   ],
   [
@@ -471,8 +636,8 @@
   ],
   [
    "Q193769",
-   "scientist",
-   "scientist+writer",
+   "writer",
+   "writer",
    "1st century Hispanic-born Roman educator and rhetorician"
   ],
   [
@@ -483,14 +648,14 @@
   ],
   [
    "Q31845",
-   "philosopher",
-   "politician+scientist+writer+religious+military+philosopher",
+   "writer",
+   "politician+writer+religious+military+philosopher",
    "2nd century Greek historian, official and philosopher"
   ],
   [
    "Q190368",
-   "scientist",
-   "scientist+writer+politician",
+   "writer",
+   "writer+politician",
    "Greco-Roman historian (c. 95 – c.165)"
   ],
   [
@@ -508,7 +673,7 @@
   [
    "Q128538",
    "religious",
-   "painter+writer+religious",
+   "painter+writer+scientist+religious",
    "one of the four evangelists"
   ],
   [
@@ -520,7 +685,7 @@
   [
    "Q82778",
    "military",
-   "military+politician+scientist+writer+philosopher",
+   "military+politician+writer+scientist+philosopher",
    "Roman military commander and writer (AD23/24–79)"
   ],
   [
@@ -568,13 +733,13 @@
   [
    "Q10133",
    "writer",
-   "writer+scientist",
+   "writer",
    "late 1st/early 2nd-century Roman historian"
   ],
   [
    "Q192371",
    "religious",
-   "scientist+religious+writer",
+   "religious+writer",
    "bishop of Smyrna and martyr (69–155)"
   ],
   [
@@ -610,19 +775,19 @@
   [
    "Q9200",
    "religious",
-   "scientist+religious+writer",
+   "religious+writer",
    "Early Christian apostle and missionary (c. AD 5 – c. 64/65)"
   ],
   [
    "Q47180",
    "writer",
-   "politician+writer+military+scientist+philosopher",
+   "politician+writer+military+philosopher",
    "1st century AD Roman courtier and author of the Satyricon (27–66)"
   ],
   [
    "Q188646",
    "writer",
-   "scientist+writer",
+   "writer",
    "Roman poet (39–65)"
   ],
   [
@@ -646,7 +811,7 @@
   [
    "Q168707",
    "politician",
-   "politician+military+scientist+writer",
+   "politician+military+writer",
    "Roman lawyer, author and magistrate (61 – c.113)"
   ],
   [
@@ -669,20 +834,20 @@
   ],
   [
    "Q2161",
-   "scientist",
-   "politician+scientist+writer+military",
+   "writer",
+   "politician+writer+military",
    "Roman historian and senator (c. 56 – c. 120)"
   ],
   [
    "Q193800",
    "writer",
-   "scientist+writer",
+   "writer",
    "early 2nd century Roman poet"
   ],
   [
    "Q1411",
    "monarch",
-   "politician+scientist+religious+writer+monarch",
+   "politician+writer+religious+monarch",
    "fourth Roman emperor (41–54)"
   ]
  ]
