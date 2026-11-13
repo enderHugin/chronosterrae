@@ -4104,6 +4104,8 @@ const solarView = ChronosSolarView.create({
     getCatalog: () => (space.on ? sky.catalog || null : null),
     starColor: (bv) => ChronosSkyView.starColor(bv),
     starStyle: (mag) => ChronosSkyView.starStyle(mag),
+    starAlpha: (cat, i, alpha) => ChronosSkyView.starAlpha(cat, i, alpha),
+    starRadius: (cat, i, r) => ChronosSkyView.starRadius(cat, i, r),
     skyOptions: () => ({ lines: !!sky.lines, names: !!sky.names, conNames: !!sky.conNames, nameMag: SKY_NAME_MAG }),
     skyLabels: (...a) => ChronosSkyView.drawSkyLabels(...a),
     onSkyReady: () => renderCredits(),
@@ -4594,8 +4596,8 @@ function drawSpace() {
             const x = px[i]; const y = py[i];
             if (Number.isNaN(x) || x < -4 || y < -4 || x > w + 4 || y > h + 4) continue;
             const mag = cat.mag[i];
-            const sty = ChronosSkyView.starStyle(mag); const r = sty.r;
-            ctx.globalAlpha = sty.alpha;
+            const sty = ChronosSkyView.starStyle(mag); const r = ChronosSkyView.starRadius(cat, i, sty.r);
+            ctx.globalAlpha = ChronosSkyView.starAlpha(cat, i, sty.alpha);     // las de las figuras, enteras; las demas, siempre mas tenues
             ctx.fillStyle = space.colors[i];
             if (r < 1.1) ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
             else { ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fill(); }

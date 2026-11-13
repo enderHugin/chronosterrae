@@ -325,6 +325,16 @@ if (fs.existsSync(starsFile)) {
     const fakeCtx = () => { const c = { calls: [], font: '', fillStyle: '', textAlign: 'left', save() {}, restore() {}, measureText: (t) => ({ width: t.length * 6 }), fillText(t, x, y) { c.calls.push([t, x, y]); } }; return c; };
     const cat = { n: 5, hip: [1, 2, 3, 4, 5], mag: [0.5, 1.5, 2.0, 3.5, 4.0], names: { 1: ['Alfa', null], 2: ['Beta', 'Beta es'], 4: ['Delta', null] },
         constellations: [{ id: 'Aaa', es: 'Primera', en: 'First', la: 'Prima', lines: [[0, 1], [1, 2]] }, { id: 'Bbb', es: 'Segunda', en: 'Second', la: 'Secunda', lines: [[3, 4]] }] };
+    // Constelaciones legibles sin sus lineas (el creador, 2026-11-13): las de las figuras enteras, las demas siempre mas tenues
+    const cat6 = Object.assign({}, cat, { n: 6, hip: [1, 2, 3, 4, 5, 6], mag: [0.5, 1.5, 2.0, 3.5, 4.0, 1.0] });
+    check('figuras: la mascara marca exactamente las estrellas que usan las lineas (la 6.a, brillante pero suelta, no)', () => Array.from(V.figureMask(cat6)).join('') === '111110');
+    check('figuras: una estrella de figura no baja de 0,9; una suelta va al 35 % de la suya, aunque sea mas brillante', () => {
+        const fig = V.starAlpha(cat6, 4, V.starStyle(4.0).alpha); const loose = V.starAlpha(cat6, 5, V.starStyle(1.0).alpha);
+        return fig >= V.FIGURE_MIN_ALPHA && Math.abs(loose - V.starStyle(1.0).alpha * V.OFF_FIGURE_ALPHA) < 1e-12 && loose < fig ? true : [fig, loose].join(' ');
+    });
+    check('figuras: sin constelaciones en el catalogo, la opacidad de siempre (rechazado, no roto: no atenua todo el cielo)', () => V.starAlpha({ n: 3, mag: [1, 2, 3], constellations: [] }, 1, 0.7) === 0.7 && V.figureMask(null) === null);
+    check('figuras: las estrellas de figura no bajan de 1,3 px de radio (se leen sin lineas); las sueltas conservan el suyo', () => V.starRadius(cat6, 4, 0.7) === V.FIGURE_MIN_R && V.starRadius(cat6, 5, 0.7) === 0.7 && V.starRadius(cat6, 0, 2.4) === 2.4);
+    check('figuras: la mascara se calcula una vez por catalogo (misma instancia)', () => V.figureMask(cat6) === V.figureMask(cat6));
     check('rotulos: el ancla de una constelacion es el centro de sus estrellas visibles', () => { const a = V.constellationAnchors(cat, [100, 200, 300, 50, 60], [100, 100, 100, 50, 60], 800, 600); return a.length === 2 && a[0].x === 200 && a[0].y === 100; });
     check('rotulos: sin ancla si falta una estrella o si esta repartida por media pantalla (cruce del borde)', () => V.constellationAnchors(cat, [100, NaN, 300, 50, 60], [100, 100, 100, 50, 60], 800, 600).length === 1 && V.constellationAnchors(cat, [10, 790, 400, 50, 60], [100, 100, 100, 50, 60], 800, 600).length === 1);
     check('rotulos: nombres de estrellas de la mas brillante a la mas debil, hasta la magnitud pedida, y el alias en espanol', () => {

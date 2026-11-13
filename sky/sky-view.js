@@ -120,9 +120,11 @@
                 const mag = cat.mag[i];
                 if (st.alt[i] <= 0 || mag > limit) continue;
                 const [x, y] = toXY(st.alt[i], st.az[i]);
-                const r = Math.max(0.55, 2.7 - 0.43 * mag);
+                const r = starRadius(cat, i, Math.max(0.55, 2.7 - 0.43 * mag));
                 ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI);
+                ctx.globalAlpha = starAlpha(cat, i, 1);
                 ctx.fillStyle = starColor(cat.bv[i]); ctx.fill();
+                ctx.globalAlpha = 1;
                 const nm = cat.names[cat.hip[i]];
                 if (nm) {
                     const label = (opts.lang === 'es' && nm[1]) || nm[0];
@@ -184,6 +186,32 @@
 
     /** Tamano y opacidad con que se dibuja una estrella de esa magnitud (los comparten el cielo detras del globo y el sistema solar). */
     function starStyle(mag) { return { r: Math.max(0.7, Math.min(2.7, 2.5 - 0.36 * mag)), alpha: Math.max(0.6, Math.min(1, 1.15 - 0.13 * mag)) }; }
+
+    /* Las constelaciones se leen aunque sus lineas esten apagadas (el creador, 2026-11-13): las estrellas que forman sus figuras conservan su
+       brillo (y no bajan de FIGURE_MIN_ALPHA) y todas las demas van SIEMPRE mas transparentes (OFF_FIGURE_ALPHA), con lineas o sin ellas. */
+    const FIGURE_MIN_ALPHA = 0.9;
+    const FIGURE_MIN_R = 1.3;          // px: en las constelaciones debiles (Cuervo, Copa) las estrellas de la figura eran puntos de 1 px y no se leia
+    const OFF_FIGURE_ALPHA = 0.35;
+    const FIG = typeof WeakMap === 'function' ? new WeakMap() : null;
+    /** Estrellas que forman las figuras (1 por indice del catalogo); se calcula una vez por catalogo. */
+    function figureMask(cat) {
+        if (!cat || !(cat.n > 0)) return null;
+        const hit = FIG && FIG.get(cat); if (hit) return hit;
+        const m = new Uint8Array(cat.n);
+        (cat.constellations || []).forEach((c) => (c.lines || []).forEach(([a, b]) => { if (a >= 0 && a < cat.n) m[a] = 1; if (b >= 0 && b < cat.n) m[b] = 1; }));
+        if (FIG) FIG.set(cat, m);
+        return m;
+    }
+    /** Opacidad final de la estrella i: la de su magnitud, subida si forma figura y bajada si no. Sin figuras en el catalogo, la de siempre. */
+    function starAlpha(cat, i, alpha) {
+        const m = figureMask(cat); if (!m || !(cat.constellations && cat.constellations.length)) return alpha;
+        return m[i] ? Math.max(alpha, FIGURE_MIN_ALPHA) : alpha * OFF_FIGURE_ALPHA;
+    }
+    /** Radio final de la estrella i: las de las figuras no bajan de FIGURE_MIN_R. */
+    function starRadius(cat, i, r) {
+        const m = figureMask(cat); if (!m || !(cat.constellations && cat.constellations.length)) return r;
+        return m[i] ? Math.max(r, FIGURE_MIN_R) : r;
+    }
 
     /* ---------------- Rotulos del cielo: nombres de estrellas y de constelaciones (los comparten el cielo tras el globo, el sistema solar y la carta) ----------------
      * Se colocan por prioridad (constelaciones primero, luego estrellas de la mas brillante a la mas debil) y se omite el que pisaria a otro ya puesto.
@@ -248,5 +276,5 @@
         return out;
     }
 
-    root.ChronosSkyView = { draw, drawMoon, starColor, starStyle, LIMIT_MAG, PLANET_COLOR, constellationAnchors, drawSkyLabels, byMagOrder };
+    root.ChronosSkyView = { draw, drawMoon, starColor, starStyle, figureMask, starAlpha, starRadius, FIGURE_MIN_ALPHA, FIGURE_MIN_R, OFF_FIGURE_ALPHA, LIMIT_MAG, PLANET_COLOR, constellationAnchors, drawSkyLabels, byMagOrder };
 })(typeof self !== 'undefined' ? self : this);

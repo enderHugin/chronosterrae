@@ -64,7 +64,7 @@
 
     /**
      * o = { root, back (canvas bajo el mapa), earthMap: { size() -> {w,h}, fovDeg(), minZoom(), place(p), handOff(p) },
-     *       getJD(), getCatalog(), starColor(bv), starStyle(mag), skyOptions() -> {lines}, t(key), fmt(key, vars), lang(), nf(),
+     *       getJD(), getCatalog(), starColor(bv), starStyle(mag), starAlpha(cat, i, alpha), starRadius(cat, i, r), skyOptions() -> {lines}, t(key), fmt(key, vars), lang(), nf(),
      *       loadAccuracy() -> Promise<report|null>, onClose(), onUnavailable() }
      */
     function create(o) {
@@ -410,9 +410,9 @@
                 for (let i = 0; i < n; i++) {
                     const x = px[i]; const y = py[i];
                     if (Number.isNaN(x) || x < -4 || y < -4 || x > w + 4 || y > h + 4) continue;
-                    const sty = o.starStyle(S.cat.mag[i]);
-                    ctxB.fillStyle = S.colors[i]; ctxB.globalAlpha = sty.alpha;
-                    if (sty.r < 1.1) ctxB.fillRect(x - sty.r, y - sty.r, 2 * sty.r, 2 * sty.r); else { ctxB.beginPath(); ctxB.arc(x, y, sty.r, 0, 2 * Math.PI); ctxB.fill(); }
+                    const sty = o.starStyle(S.cat.mag[i]); const r = o.starRadius ? o.starRadius(S.cat, i, sty.r) : sty.r;
+                    ctxB.fillStyle = S.colors[i]; ctxB.globalAlpha = o.starAlpha ? o.starAlpha(S.cat, i, sty.alpha) : sty.alpha;
+                    if (r < 1.1) ctxB.fillRect(x - r, y - r, 2 * r, 2 * r); else { ctxB.beginPath(); ctxB.arc(x, y, r, 0, 2 * Math.PI); ctxB.fill(); }
                 }
                 ctxB.globalAlpha = 1;
                 // nombres de constelaciones y de estrellas (capas del cielo, las mismas que en el globo)
