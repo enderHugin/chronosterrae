@@ -166,5 +166,37 @@ check('rejilla fina == rejilla completa de la misma celda: coinciden en > 99 % d
     return diff / tot < 0.01 ? true : (100 * diff / tot).toFixed(2) + ' % distintos de ' + tot;
 });
 
+/* ---------- Mascara de tierra fina (Natural Earth 10m) para la Tierra natural ---------- */
+{
+    const LM = require('./build-land-mask.js');
+    const fs = require('fs'); const path = require('path');
+    // circulo de ~10 km de radio con 2.000 vertices: simplificado a 0,6 km conserva el area (< 2 %) con muchos menos puntos
+    const circ = Array.from({ length: 2001 }, (_, i) => { const a = i / 2000 * 2 * Math.PI; return [3 + 0.09 * Math.cos(a) / Math.cos(40 * Math.PI / 180) * 1.0, 40 + 0.09 * Math.sin(a)]; });
+    check('mascara: simplificar a 0,6 km deja cada vertice original a menos de 0,6 km (+ redondeo) del anillo nuevo, con muchos menos vertices y cerrado', () => {
+        const c = LM.cleanRing(circ); const km = (p, q) => Math.hypot((p[0] - q[0]) * Math.cos(40 * Math.PI / 180) * 111.32, (p[1] - q[1]) * 110.57);
+        const segD = (p, a, b) => { const L = km(a, b); if (!L) return km(p, a); let best = Infinity; for (let t = 0; t <= 1; t += 0.01) best = Math.min(best, km(p, [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t])); return best; };
+        const worst = Math.max(...circ.filter((_, i) => i % 20 === 0).map((p) => Math.min(...c.slice(1).map((q, i) => segD(p, c[i], q)))));
+        return c.length < 60 && worst < 0.6 + 0.15 && c[0][0] === c[c.length - 1][0] && c[0][1] === c[c.length - 1][1] ? true : [c.length, worst].join(' ');
+    });
+    check('mascara: un islote de menos de 0,5 km2 se quita (rechazado, no roto: devuelve null)', () => LM.cleanRing([[3, 40], [3.001, 40], [3.001, 40.001], [3, 40.001], [3, 40]]) === null);
+    const file = path.join(__dirname, '..', 'data', 'borders', 'ne-land-mask.json');
+    if (fs.existsSync(file)) {
+        const fc = JSON.parse(fs.readFileSync(file, 'utf8'));
+        const polys = fc.features[0].geometry.coordinates;
+        const pip = (pt, ring) => { let c = false; for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) { const [x1, y1] = ring[i]; const [x2, y2] = ring[j]; if ((y1 > pt[1]) !== (y2 > pt[1]) && pt[0] < (x2 - x1) * (pt[1] - y1) / (y2 - y1) + x1) c = !c; } return c; };
+        const land = (pt) => polys.some((p) => pip(pt, p[0]) && !p.slice(1).some((h) => pip(pt, h)));
+        check('ne-land-mask.json: origen registrado (commit, sha256 de cada fuente) y dominio publico', () => /^[0-9a-f]{40}$/.test(fc.meta.commit) && fc.meta.sources.every((x) => /^[0-9a-f]{64}$/.test(x.sha256)) && /Dominio publico/.test(fc.meta.license));
+        check('ne-land-mask.json: tierra donde la hay (Madrid, Lisboa, Mallorca, Corcega, Islandia) y mar donde no (frente a Valencia, golfo de Leon, Atlantico)', () => {
+            const yes = [[-3.7, 40.4], [-9.16, 38.76], [2.95, 39.62], [9.1, 42.15], [-19, 64.9]].map(land); const no = [[0.3, 39.4], [4.2, 42.6], [-30, 40]].map(land);
+            return yes.every(Boolean) && !no.some(Boolean) ? true : JSON.stringify({ yes, no });
+        });
+        check('ne-land-mask.json: ligera (< 4,5 MB) y mucho mas fina que la costa del mapa base (> 10 veces sus vertices)', () => {
+            const size = fs.statSync(file).size; const pm = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'paleocoastlines', '0.json'), 'utf8'));
+            const vpm = pm.features.reduce((s, f) => s + (f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates).reduce((t, p) => t + p.reduce((u, r) => u + r.length, 0), 0), 0);
+            return size < 4.5e6 && fc.meta.vertices_out > 10 * vpm ? true : [size, fc.meta.vertices_out, vpm].join(' ');
+        });
+    }
+}
+
 console.log(fails ? '\nHay fallos.' : '\nBordes (relleno de franjas): todo verde.');
 process.exitCode = fails ? 1 : 0;

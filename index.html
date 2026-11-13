@@ -758,7 +758,8 @@ const CFG = {
     deepTimeFrom: 1e6,                   // desde 1 Ma se muestra la edad en Ma
     paleoBase: './data/paleocoastlines/',   // archivo propio: PaleoMAP PaleoCoastlines (CC BY 4.0), 0-535 Ma
     paleoMaxDeltaMa: 10,                 // no se usa una loncha mas lejana que esto
-    neFromYear: 2016, neUrl: './data/borders/ne-10m-countries.json',   // fronteras vigentes (Natural Earth 10m) desde este año
+    neFromYear: 2016, neUrl: './data/borders/ne-10m-countries.json',
+    landMaskUrl: './data/borders/ne-land-mask.json',   // tierra actual fina (Natural Earth 10m): recorta el color politico sobre la imagen de NASA   // fronteras vigentes (Natural Earth 10m) desde este año
     bordersMaxYbp: 125000,               // las fronteras históricas empiezan en -123000
     throttleMs: 80,                      // costas: ligeras, se actualizan mientras se arrastra el slider
     bordersDebounceMs: 300,              // fronteras: archivos de 1-3,6 MB, se piden cuando el slider se detiene
@@ -865,7 +866,7 @@ const i18n = {
         landOk: 'Contornos actuales movidos por el modelo de placas {model}, {age}. No son las costas reales de la época.', seaLevel: 'Costas actuales. El nivel del mar y las glaciaciones no están modelados.',
         noBorders: 'Sin fronteras históricas para esta época (el conjunto cubre desde 123.000 a.C.).',
         gapNoteNE: 'Las rendijas entre las fronteras de Natural Earth y la costa del mapa se rellenan con el color del país más cercano (hasta 20 km); el borde que da al mar no se dibuja.',
-        gapNote: 'Los polígonos históricos son toscos: la costa la pone el mapa (de cerca, OpenStreetMap; de lejos, las costas del mapa base), así que no se dibuja el borde que da al mar, solo las fronteras entre países, y la tierra hasta la costa se colorea con el país más cercano. El reparto entre vecinos junto a la costa es aproximado.',
+        gapNote: 'Los polígonos históricos son toscos: la costa la pone el mapa (de cerca, OpenStreetMap; de lejos, las costas del mapa base), así que no se dibuja el borde que da al mar, solo las fronteras entre países, y la tierra hasta la costa se colorea con el país más cercano (hasta 100 km; la tierra más lejana que la fuente no incluye, como algunas islas, queda sin color). Con la Tierra natural el color se recorta contra la costa de Natural Earth 10m. El reparto entre vecinos junto a la costa es aproximado.',
         bordersNE: 'Fronteras vigentes: Natural Earth 10m (dominio público), resolución mediana ~{km} km.',
         neBackdate: 'Para 2016–2019 se aplican las fronteras vigentes: no se han comprobado una a una las diferencias menores de esos años.',
         neNote: 'Fronteras vigentes según Natural Earth. En zonas en disputa se muestra la convención de esa fuente (campo «Tipo»), sin juicio sobre soberanía.', resolution: 'Resolución de la fuente', typeLabel: 'Tipo según la fuente',
@@ -1081,7 +1082,7 @@ const i18n = {
         landOk: 'Present-day outlines moved by plate model {model}, {age}. Not the real coastlines of that time.', seaLevel: 'Present-day coastlines. Sea level and ice ages are not modelled.',
         noBorders: 'No historical borders for this era (the dataset starts at 123,000 BC).',
         gapNoteNE: 'Gaps between the Natural Earth borders and the map coastline are filled with the colour of the nearest country (up to 20 km); the edge facing the sea is not drawn.',
-        gapNote: 'Historical polygons are coarse: the coast comes from the map (close up, OpenStreetMap; zoomed out, the base map coastlines), so the edge facing the sea is not drawn, only borders between countries, and land up to the coast takes the colour of the nearest country. The split between neighbours near the coast is approximate.',
+        gapNote: 'Historical polygons are coarse: the coast comes from the map (close up, OpenStreetMap; zoomed out, the base map coastlines), so the edge facing the sea is not drawn, only borders between countries, and land up to the coast takes the colour of the nearest country (up to 100 km; land further away that the source does not include, such as some islands, stays uncoloured). With the natural-colour Earth the colour is cut against the Natural Earth 10m coastline. The split between neighbours near the coast is approximate.',
         bordersNE: 'Current borders: Natural Earth 10m (public domain), median resolution ~{km} km.',
         neBackdate: 'For 2016–2019 the current borders are applied: minor differences in those years have not been checked one by one.',
         neNote: 'Current borders per Natural Earth. In disputed areas the source\'s own convention is shown ("Type" field), with no judgement on sovereignty.', resolution: 'Source resolution', typeLabel: 'Type per the source',
@@ -1901,7 +1902,9 @@ function gapDrawNow() {
     const padM = Math.min(capM, 0.05 * viewWm);
     const tStart = performance.now();
     // Cache por instantanea + vista + resaltado: volver a una fecha o a una vista ya calculada no repite la clasificacion ni la codificacion
-    const gkey = [b.year, b.source || 'hb', DETAIL.shown ? 'd' : 'p', GAP.sel || '', maxCells, view.map((v) => Math.round(v * 200) / 200).join(',')].join('|');
+    const fine = landMaskWanted(); if (fine) landMaskEnsure();
+    const maskPolys = fine && LANDMASK.polys ? LANDMASK.polys : null;
+    const gkey = [b.year, b.source || 'hb', DETAIL.shown ? 'd' : maskPolys ? 'n' : 'p', GAP.sel || '', maxCells, view.map((v) => Math.round(v * 200) / 200).join(',')].join('|');
     const hit = GAP.cache.get(gkey);
     if (hit) {
         GAP.cache.delete(gkey); GAP.cache.set(gkey, hit);     // el mas reciente al final
@@ -1925,7 +1928,10 @@ function gapDrawNow() {
     const list = [...groups.values()];
     if (!list.length) { gapHide(); return; }
     let landPolys = null;
-    if (L) {
+    if (maskPolys) {
+        landPolys = maskPolys.filter((poly) => { const bb = poly._bb; return !(bb[2] < view[0] - padDeg || bb[0] > view[2] + padDeg || bb[3] < view[1] - padDeg || bb[1] > view[3] + padDeg); });
+        if (!landPolys.length) { gapHide(); return; }
+    } else if (L) {
         landPolys = [];
         for (const f of L.data.features) {
             if (!f.geometry || (f.properties && f.properties.kind === 'margin')) continue;
@@ -1957,6 +1963,21 @@ function gapDrawNow() {
     GAP.t = { cached: false, classifyMs: Math.round(tClassify - t0), paintMs: Math.round(tPaint - tClassify), cells: cols * rows, polities: list.length };
     GAP.cache.set(gkey, { img, corners: res.grid.corners }); gapTrim();
     gapShowImage(img, res.grid.corners, seq);
+}
+// Mascara de tierra fina (Natural Earth 10m). En las epocas de costas actuales la Tierra natural (imagen de NASA) ensena la costa real, y el
+// color politico se recortaba contra la del mapa base (PaleoMAP a 0 Ma, tosca): se salia al mar o se quedaba corto (el creador,
+// 2026-11-13). Se carga una vez, solo cuando hace falta; mientras llega (o si falla) vale la del mapa base.
+const LANDMASK = { polys: null, loading: false, failed: false };
+const landMaskWanted = () => !DETAIL.shown && !NAT.failed && state.ybp <= NATURAL_MAX_YBP;
+function landMaskEnsure() {
+    if (LANDMASK.polys || LANDMASK.loading || LANDMASK.failed) return;
+    LANDMASK.loading = true;
+    fetch(CFG.landMaskUrl).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then((fc) => {
+        const polys = [];
+        for (const f of fc.features || []) { const g = f.geometry; if (!g) continue; (g.type === 'MultiPolygon' ? g.coordinates : g.type === 'Polygon' ? [g.coordinates] : []).forEach((p) => polys.push(p)); }
+        polys.forEach((poly) => { let a = 180, c = 90, d = -180, e = -90; poly[0].forEach(([x, y]) => { a = Math.min(a, x); d = Math.max(d, x); c = Math.min(c, y); e = Math.max(e, y); }); poly._bb = [a, c, d, e]; });
+        LANDMASK.polys = polys; GAP.cache.clear(); if (landMaskWanted()) gapRefresh(0);
+    }).catch((e) => { LANDMASK.failed = true; console.warn('[LANDMASK]', e.message); }).finally(() => { LANDMASK.loading = false; });
 }
 function gapTrim() { while (GAP.cache.size > 10) GAP.cache.delete(GAP.cache.keys().next().value); }
 // Pone los pixeles (ImageData) en el lienzo que MapLibre lee como textura. Con animate:false la textura solo se vuelve a leer en play()/pause().
@@ -2233,7 +2254,8 @@ function naturalView() {
     // La tierra del mapa base queda casi invisible (0,01: con 0 MapLibre deja de detectar clics) para seguir dando su ficha
     map.setPaintProperty('margin-fill', 'fill-opacity', on ? 0.01 : 1);
     map.setPaintProperty('land-fill', 'fill-opacity', on ? 0.01 : 1);
-    map.setPaintProperty('land-line', 'line-opacity', on ? 0.25 : 1);
+    map.setPaintProperty('land-line', 'line-opacity', on ? 0 : 1);   // la costa tosca del mapa base, sobre la costa real de la imagen, confundia
+    if (on) gapRefresh(0);        // el color politico, recortado ya contra la costa fina (si llego)
     renderCredits(); renderStatus();
 }
 map.on('error', (e) => {
