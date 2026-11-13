@@ -112,6 +112,36 @@
         #info figure.info-pic { margin: 2px 0 8px; }
         #info figure.info-pic img { display: block; max-width: 100%; max-height: 220px; border-radius: 6px; margin: 0 auto; background: color-mix(in srgb, var(--text) 8%, transparent); }
         #info figure.info-pic figcaption { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.35; }
+        /* Ficha de suceso (el creador, 2026-11-13): arriba las fechas (nacer y morir juntas; la otra, mas tenue y tocable: lleva alli como el
+           buscador), cada una con su clase y su hora (o un cajoncito «?»); al lado del titulo el simbolo de fiabilidad; lo demas en la «i». */
+        #info-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; padding-right: 54px; margin-bottom: 6px; }
+        #info-head h2 { flex: 1 1 auto; min-width: 0; margin: 0; }
+        #info #info-head h2::after { display: none; }      /* el adorno de epoca va bajo toda la fila (titulo, fiabilidad, «i»), no solo bajo el titulo */
+        #info-head::after { content: ''; flex-basis: 100%; height: var(--orn-divider-h); margin: 4px -54px 0 0; background: var(--orn-divider) repeat-x left center; }
+        #info-rel:empty { display: none; }
+        .info-i { flex: none; width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent); border-radius: 50%; background: transparent; color: var(--accent); cursor: pointer; }
+        .info-i[aria-expanded="true"] { background: var(--accent); color: var(--bg); }
+        .info-i svg { width: 18px; height: 18px; display: block; }
+        #info-more { margin-top: 10px; padding-top: 6px; border-top: 1px solid color-mix(in srgb, var(--text) 15%, transparent); }
+        #info-more .row { font-size: 12px; margin-top: 5px; }
+        .ev-dates { display: flex; flex-direction: column; gap: 4px; margin: 2px 0 4px; }
+        .ev-dl { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 1.3; }
+        .ev-dl .ev-dl-ico { width: 20px; height: 20px; flex: none; }
+        .ev-dl .ev-dl-k { font-weight: 700; color: var(--accent); min-width: 0; }
+        .ev-dl .ev-dl-d { font-variant-numeric: tabular-nums; }
+        .ev-dl .ev-dl-tm { margin-left: auto; min-width: 44px; padding: 0 6px; height: 20px; line-height: 18px; box-sizing: border-box; text-align: center; font-size: 12px; font-variant-numeric: tabular-nums; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent); border-radius: 5px; }
+        .ev-dl .ev-dl-tm.unk { border-style: dashed; color: var(--muted); }
+        .ev-dl.other { opacity: 0.5; cursor: pointer; }
+        .ev-dl.other:hover, .ev-dl.other:focus-visible { opacity: 0.85; }
+        .ev-dl.other .ev-dl-d { text-decoration: underline dotted; text-underline-offset: 3px; }
+        .ev-dl .ev-dl-or { color: var(--muted); font-size: 12px; }
+        /* Simbolo de fiabilidad (reutilizable): 4 barras = nivel de revision; su color = en que se basa (verde: documento, medida o resto; azul:
+           modelo; ocre: reconstruccion; morado: especulacion). Lo que no es prueba directa lo dice ademas con palabras (regla 3). */
+        .rel-chip { display: inline-flex; align-items: center; gap: 4px; flex: none; --rel: #2e7d32; color: var(--rel); font: 700 11px var(--font-ui); cursor: help; }
+        .rel-chip svg { width: 18px; height: 16px; display: block; }
+        .rel-chip rect.on { fill: var(--rel); } .rel-chip rect.off { fill: none; stroke: color-mix(in srgb, var(--text) 35%, transparent); stroke-width: 0.8; }
+        .rel-chip.ev-model { --rel: #1565c0; } .rel-chip.ev-reconstruction { --rel: #b7791f; } .rel-chip.ev-speculation { --rel: #8e24aa; }
+        body.dark .rel-chip { --rel: #66bb6a; } body.dark .rel-chip.ev-model { --rel: #64b5f6; } body.dark .rel-chip.ev-reconstruction { --rel: #f0b44c; } body.dark .rel-chip.ev-speculation { --rel: #ce93d8; }
         #top-right { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
         #dock { position: absolute; left: 14px; right: 14px; top: var(--top-h, 60px); bottom: var(--bot-h, 180px); z-index: 11; display: flex; justify-content: space-between; gap: 10px; pointer-events: none; }
         #dock-l, #dock-r { display: flex; flex-direction: column; gap: 8px; min-height: 0; min-width: 0; align-items: stretch; }
@@ -661,8 +691,9 @@
         </div>
         <div id="info" class="panel" role="region" aria-live="polite">
             <button class="close" id="info-close" type="button" aria-label="Close">×</button>
-            <h2 id="info-title"></h2>
+            <div id="info-head"><h2 id="info-title"></h2><span id="info-rel"></span><button class="info-i" id="info-more-btn" type="button" aria-expanded="false" aria-controls="info-more" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 10.8v6" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="7.4" r="1.25" fill="currentColor" stroke="none"/></svg></button></div>
             <div id="info-body"></div>
+            <div id="info-more" hidden></div>
         </div>
 
         <div id="space-note" role="status"></div>
@@ -839,7 +870,7 @@ const savePrefs = (patch) => {
 /* ------------------------------------------------------------------ */
 const i18n = {
     es: {
-        donate: 'Apoyar el proyecto', tlJumps: 'Épocas', tlJumpsTip: 'Saltos rápidos a fechas señaladas (cada uno con el aspecto de su época)', tlKeysTip: 'Teclado: cuánto mueven ← → y RePág/AvPág', tlInfoTip: 'Lo que ves ahora; fuentes y licencias', sceneTitle: 'Lo que ves ahora', creditsTitle: 'Fuentes y licencias', creditsPeek: 'Fuentes', notesBack: 'Volver a mostrar las notas que cerraste', searchPlaceholder: 'Buscar persona, suceso, edificio, imperio…',
+        donate: 'Apoyar el proyecto', infoImage: 'Imagen', infoMore: 'En qué se basa, estado, fuente y cita', tlJumps: 'Épocas', tlJumpsTip: 'Saltos rápidos a fechas señaladas (cada uno con el aspecto de su época)', tlKeysTip: 'Teclado: cuánto mueven ← → y RePág/AvPág', tlInfoTip: 'Lo que ves ahora; fuentes y licencias', sceneTitle: 'Lo que ves ahora', creditsTitle: 'Fuentes y licencias', creditsPeek: 'Fuentes', notesBack: 'Volver a mostrar las notas que cerraste', searchPlaceholder: 'Buscar persona, suceso, edificio, imperio…',
         search: {
             loading: 'Cargando el índice…', none: 'Nada con «{q}».', fail: 'No se pudo cargar el índice de búsqueda: {err}',
             kind: { person: 'Persona', event: 'Suceso', built: 'Construcción', polity: 'Entidad política' },
@@ -950,7 +981,7 @@ const i18n = {
             layout: { title: 'Posición de los recuadros', note: 'Ctrl+Z deshace y Ctrl+Mayús+Z (o Ctrl+Y) rehace ocultar y mover recuadros. En pantallas táctiles hay botones de deshacer y rehacer.' }
         },
         events: {
-            button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', notYet: 'Respecto al reloj', notYetVal: 'aún no ha ocurrido: falta {d}', notYetTip: 'El reloj marca una fecha anterior: se ve porque el tiempo corre y aparece al llegar. Con el reloj parado solo se ve lo ya ocurrido (el último año).', dDays: '{n} días', dDay: '1 día', dMonths: '{n} meses', dYears: '{n} años', otherDates: 'La fuente da también', otherDatesTip: 'Wikidata declara varias fechas para lo mismo (no hay acuerdo entre las fuentes). Toca para ir a la otra.', role: 'Ámbito', roleTip: 'Según su ocupación o cargo en Wikidata; si tiene varios, el que antes nombra su descripción (papa y monarca mandan). Es una deducción, no un dato de la fuente.', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
+            button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', orDate: 'o', goOther: 'Ir a: {k} (como al buscarlo)', timeUnknown: 'Hora desconocida', notYet: 'Respecto al reloj', notYetVal: 'aún no ha ocurrido: falta {d}', notYetTip: 'El reloj marca una fecha anterior: se ve porque el tiempo corre y aparece al llegar. Con el reloj parado solo se ve lo ya ocurrido (el último año).', dDays: '{n} días', dDay: '1 día', dMonths: '{n} meses', dYears: '{n} años', otherDates: 'La fuente da también', otherDatesTip: 'Wikidata declara varias fechas para lo mismo (no hay acuerdo entre las fuentes). Toca para ir a la otra.', role: 'Ámbito', roleTip: 'Según su ocupación o cargo en Wikidata; si tiene varios, el que antes nombra su descripción (papa y monarca mandan). Es una deducción, no un dato de la fuente.', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
             basisUtc: 'UTC/GMT', basisLocal: 'hora oficial del lugar (UTC{off})', noPlace: 'sin lugar', empty: 'No hay sucesos con fuente cerca de este instante a esta escala. Acércate o cambia de año.',
             none: 'No hay sucesos cargados todavía.', outOfRange: 'Los sucesos con fecha se muestran entre los años 1 y hoy.',
             shown: 'Los más cercanos al reloj ({n}). A esta escala solo los más notorios: al acercarte aparecen más.',
@@ -1055,7 +1086,7 @@ const i18n = {
         }
     },
     en: {
-        donate: 'Support the project', tlJumps: 'Eras', tlJumpsTip: 'Quick jumps to landmark dates (each in the look of its era)', tlKeysTip: 'Keyboard: how far ← → and PgUp/PgDn move', tlInfoTip: 'What you are seeing; sources and licences', sceneTitle: 'What you are seeing', creditsTitle: 'Sources and licences', creditsPeek: 'Sources', notesBack: 'Show again the notes you closed', searchPlaceholder: 'Search a person, event, building, empire…',
+        donate: 'Support the project', infoImage: 'Image', infoMore: 'What it is based on, status, source and citation', tlJumps: 'Eras', tlJumpsTip: 'Quick jumps to landmark dates (each in the look of its era)', tlKeysTip: 'Keyboard: how far ← → and PgUp/PgDn move', tlInfoTip: 'What you are seeing; sources and licences', sceneTitle: 'What you are seeing', creditsTitle: 'Sources and licences', creditsPeek: 'Sources', notesBack: 'Show again the notes you closed', searchPlaceholder: 'Search a person, event, building, empire…',
         search: {
             loading: 'Loading the index…', none: 'Nothing for “{q}”.', fail: 'Could not load the search index: {err}',
             kind: { person: 'Person', event: 'Event', built: 'Building', polity: 'Polity' },
@@ -1166,7 +1197,7 @@ const i18n = {
             layout: { title: 'Box positions', note: 'Ctrl+Z undoes and Ctrl+Shift+Z (or Ctrl+Y) redoes hiding and moving boxes. Touch screens get undo and redo buttons.' }
         },
         events: {
-            button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', notYet: 'Relative to the clock', notYetVal: 'has not happened yet: {d} to go', notYetTip: 'The clock shows an earlier date: it is drawn because time is running and it appears as the clock arrives. With the clock stopped only what has already happened is shown (the last year).', dDays: '{n} days', dDay: '1 day', dMonths: '{n} months', dYears: '{n} years', otherDates: 'The source also gives', otherDatesTip: 'Wikidata states several dates for the same thing (sources disagree). Click to go to the other one.', role: 'Field', roleTip: 'From their occupation or position on Wikidata; if several, the one their description names first (pope and monarch win). It is a deduction, not a statement of the source.', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
+            button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', orDate: 'or', goOther: 'Go to: {k} (as when searching for it)', timeUnknown: 'Time unknown', notYet: 'Relative to the clock', notYetVal: 'has not happened yet: {d} to go', notYetTip: 'The clock shows an earlier date: it is drawn because time is running and it appears as the clock arrives. With the clock stopped only what has already happened is shown (the last year).', dDays: '{n} days', dDay: '1 day', dMonths: '{n} months', dYears: '{n} years', otherDates: 'The source also gives', otherDatesTip: 'Wikidata states several dates for the same thing (sources disagree). Click to go to the other one.', role: 'Field', roleTip: 'From their occupation or position on Wikidata; if several, the one their description names first (pope and monarch win). It is a deduction, not a statement of the source.', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
             basisUtc: 'UTC/GMT', basisLocal: 'official local time (UTC{off})', noPlace: 'no place', empty: 'No sourced events near this instant at this scale. Zoom in or change the year.',
             none: 'No events loaded yet.', outOfRange: 'Dated events are shown between year 1 and today.',
             shown: 'The closest to the clock ({n}). At this scale only the most notable: more appear as you zoom in.',
@@ -1381,13 +1412,21 @@ function fillRows(body, rows) {
     });
 }
 let infoSeq = 0;      // cada ficha nueva invalida la imagen que aun estuviera llegando para la anterior
-function showInfo(title, rows) {
+// opts (fichas de suceso): head = nodo que va arriba (las fechas); more = filas de la «i»; rel = simbolo de fiabilidad; ev = el suceso (para rehacerla)
+let INFO_MORE_OPEN = false;     // la «i» abierta o cerrada se recuerda entre fichas (durante la sesion)
+function showInfo(title, rows, opts) {
     infoSeq++;
-    lastInfo = { title, rows };
+    const o = opts || {};
+    lastInfo = { title, rows, ev: o.ev || null };
     $('info-title').textContent = title;
     const body = $('info-body');
     body.textContent = '';
+    if (o.head) body.appendChild(o.head);
     fillRows(body, rows);
+    const rel = $('info-rel'); rel.textContent = ''; if (o.rel) rel.appendChild(o.rel);
+    const more = $('info-more'); more.textContent = ''; const btn = $('info-more-btn');
+    if (o.more && o.more.length) { fillRows(more, o.more); btn.hidden = false; more.hidden = !INFO_MORE_OPEN; btn.setAttribute('aria-expanded', String(INFO_MORE_OPEN)); }
+    else { btn.hidden = true; more.hidden = true; }
     $('info').style.display = 'block';
     if (panelsUI) panelsUI.touch('info');
 }
@@ -1436,6 +1475,7 @@ function showStar(i) {
     rows[rows.length - 1].note = t('star.note');
     showInfo(name || ('HIP ' + hip), rows);
 }
+$('info-more-btn').addEventListener('click', () => { INFO_MORE_OPEN = $('info-more').hidden; $('info-more').hidden = !INFO_MORE_OPEN; $('info-more-btn').setAttribute('aria-expanded', String(INFO_MORE_OPEN)); });
 const hideInfo = () => { $('info').style.display = 'none'; clearHighlight(); if (SPOT && SPOT.sticky) spotlight(null); };   // el foco de lo elegido se va con su ficha (el de la lista, no: se recorre cambiando de epoca)
 
 /* ------------------------------------------------------------------ */
@@ -3342,10 +3382,15 @@ async function infoImageFor(qid, given) {
     if (!meta || meta.none || seq !== infoSeq) return;
     const fig = el('figure', { class: 'info-pic' });
     const a = el('a', { href: meta.page, target: '_blank', rel: 'noopener' }); a.appendChild(el('img', { src: meta.thumb, alt: '', referrerpolicy: 'no-referrer' })); fig.appendChild(a);
-    const cap = el('figcaption', {}); cap.appendChild(document.createTextNode(fmt('search.img', { a: meta.artist, l: '' }).replace(/ · $/, ' · ')));
+    const cap = el('span', {}); cap.appendChild(document.createTextNode(meta.artist + ' · '));
     cap.appendChild(meta.licenseUrl ? el('a', { href: meta.licenseUrl, target: '_blank', rel: 'noopener', text: meta.license }) : document.createTextNode(meta.license));
     cap.appendChild(document.createTextNode(' · ')); cap.appendChild(el('a', { href: meta.page, target: '_blank', rel: 'noopener', text: t('search.imgSrc') }));
-    fig.appendChild(cap);
+    // El credito de la imagen: en la «i» si la ficha la tiene (el creador, 2026-11-13); si no, al pie como antes. La imagen enlaza siempre a su
+    // pagina de Commons y lleva el credito como titulo (al pasar el raton).
+    a.title = meta.artist + ' · ' + meta.license + ' · Wikimedia Commons';
+    const more = $('info-more');
+    if (!$('info-more-btn').hidden) { const row = el('div', { class: 'row' }, [el('b', { text: t('infoImage') + ': ' }), cap]); more.insertBefore(row, more.firstChild); }
+    else { const fc = el('figcaption', {}); fc.appendChild(document.createTextNode(t('infoImage') + ': ')); fc.appendChild(cap); fig.appendChild(fc); }
     const body = $('info-body'); body.insertBefore(fig, body.firstChild);
 }
 
@@ -3427,6 +3472,7 @@ function applyStrings() {
     document.documentElement.lang = lang;
     document.querySelectorAll('[data-i18n]').forEach((n) => { n.textContent = t(n.dataset.i18n); });
     document.querySelectorAll('.kofi').forEach((a) => { a.title = t('donate'); a.setAttribute('aria-label', t('donate')); });   // en la linea de tiempo es solo un ♥
+    $('info-more-btn').title = t('infoMore'); $('info-more-btn').setAttribute('aria-label', t('infoMore'));
     $('tl-jumps-btn').title = t('tlJumpsTip'); $('tl-keys-btn').title = t('tlKeysTip'); $('tl-info-btn').title = t('tlInfoTip');
     $('tl-keys-btn').setAttribute('aria-label', t('tlKeysTip')); $('tl-info-btn').setAttribute('aria-label', t('tlInfoTip'));
     document.querySelectorAll('[data-i18n-placeholder]').forEach((n) => { n.placeholder = t(n.dataset.i18nPlaceholder); });
@@ -3632,7 +3678,7 @@ panelsUI = (function () {
     function applyAction(a, dir) {
         if (a.type === 'move') { setOffset(a.id, dir === 'undo' ? a.from : a.to, true); reclamp(a.id); return; }
         if (a.id === 'info') {
-            if (dir === 'undo' && a.snap) { showInfo(a.snap.info.title, a.snap.info.rows); if (a.snap.key) setHighlightKey(a.snap.key); } else if (dir === 'redo') hideInfo();
+            if (dir === 'undo' && a.snap) { if (a.snap.info.ev) showEvent(a.snap.info.ev); else showInfo(a.snap.info.title, a.snap.info.rows); if (a.snap.key) setHighlightKey(a.snap.key); } else if (dir === 'redo') hideInfo();
             return;
         }
         setGone(a.id, dir === 'redo'); noteKeep(a.id, dir === 'redo');
@@ -4998,7 +5044,103 @@ function evGoTo(g) {
         after: () => { SEL.keepYbp = state.ybp; showEvent(g); spotlight(g.properties.id, true); } });
 }
 var INFO_EV = null;   // suceso de la ficha abierta (para redibujarla si llega su papel)
-function showEvent(f) { INFO_EV = f; showInfo(evName(f), eventRows(f)); const w = (f.properties.sources || []).find((x) => x.kind === 'wikidata'); if (w) infoImageFor(w.id); }
+function showEvent(f) {
+    INFO_EV = f; const c = evCard(f);
+    showInfo(evName(f), c.rows, { head: c.head, more: c.more, rel: c.rel, ev: f });
+    const w = (f.properties.sources || []).find((x) => x.kind === 'wikidata'); if (w) infoImageFor(w.id);
+    evPairFill(f, c.head);
+}
+
+/* ---- Ficha de suceso (el creador, 2026-11-13) ----
+   Arriba, las fechas: cada una con su clase (Nacimiento, Muerte...) al 100 % y su hora en un cajoncito («?» si la fuente no la da). En una
+   persona salen las dos, en orden; la que no es esta ficha, mas tenue y tocable: lleva alli como el buscador (giro, fecha, ficha). Las otras
+   fechas que da la fuente para lo mismo (Jesus: 30 o 33), tambien tocables. Al lado del titulo, el simbolo de fiabilidad; en la «i», en que
+   se basa, estado, fuente, cita y credito de la imagen. */
+const REL_LEVEL = { raw: 1, community: 2, reviewed: 3, consensus: 4 };
+const EV_RECON = new Set(['reconstruction', 'model', 'speculation']);
+/** Simbolo de fiabilidad (reutilizable): 4 barras = nivel de revision; color = en que se basa. Lo que no es prueba directa (reconstruccion,
+ *  modelo, especulacion) lo dice ademas con palabras: la diferencia entre evidencia y reconstruccion queda a la vista (regla 3). */
+function relChip(status, evidence) {
+    const lv = REL_LEVEL[status] || 1; const NS = 'http://www.w3.org/2000/svg';
+    const chip = el('span', { class: 'rel-chip ev-' + (evidence || 'none'), role: 'img' });
+    const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 17 14'); svg.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 4; i++) { const r = document.createElementNS(NS, 'rect'); r.setAttribute('x', String(1 + i * 4)); r.setAttribute('y', String(10 - i * 3)); r.setAttribute('width', '3'); r.setAttribute('height', String(3 + i * 3)); r.setAttribute('rx', '0.6'); r.setAttribute('class', i < lv ? 'on' : 'off'); svg.appendChild(r); }
+    chip.appendChild(svg);
+    if (EV_RECON.has(evidence)) chip.appendChild(el('span', { class: 'rel-w', text: t('ev.' + evidence) }));
+    const tip = t('events.status') + ': ' + t('events.verif.st.' + status) + ' · ' + t('evidence') + ': ' + t('ev.' + evidence);
+    chip.title = tip; chip.setAttribute('aria-label', tip);
+    return chip;
+}
+const evIsoText = (tm) => String(tm.iso || '').replace(/T.*$/, '') + (tm.calendar === 'julian' ? ' (' + t('clock.julian') + ')' : '');
+/** Cajoncito de la hora: la de la fuente (y en que se basa, al pasar el raton) o «?» si no la da. */
+function evTimeBox(tm) {
+    if (tm.instant) {
+        const basis = tm.instant.basis === 'utc' ? t('events.basisUtc') : fmt('events.basisLocal', { off: (tm.instant.utc_offset_minutes >= 0 ? '+' : '−') + Math.abs(tm.instant.utc_offset_minutes / 60) });
+        const b = el('span', { class: 'ev-dl-tm', text: String(tm.instant.clock_text || '').replace(/ UTC$/, ' UT') });
+        b.title = t('events.timeBasis') + ': ' + basis + ' · ±' + nf().format(tm.instant.uncertainty_s) + ' s'; return b;
+    }
+    const b = el('span', { class: 'ev-dl-tm unk', text: '?' }); b.title = tm.precision === 'day' ? t('events.timeOfDay') + ': ' + t('events.noTime') : t('events.timeUnknown'); return b;
+}
+/** Una linea de fecha. cur: la de esta ficha (al 100 %); si no, tenue y tocable (lleva a ese suceso). alt: otra fecha que da la fuente para lo mismo. */
+function evDateLine(g, cur, alt) {
+    const tm = g.properties.time; const kind = t('events.kind.' + evKind(g));
+    const kids = [el('img', { class: 'ev-dl-ico', alt: '', 'aria-hidden': 'true', src: evIconUrl(evDrawKey(g)) })];
+    kids.push(alt ? el('span', { class: 'ev-dl-or', text: t('events.orDate') }) : el('span', { class: 'ev-dl-k', text: kind }));
+    kids.push(el('span', { class: 'ev-dl-d', text: evIsoText(tm) }), evTimeBox(tm));
+    const line = el('div', { class: 'ev-dl ' + (cur ? 'cur' : 'other') }, kids);
+    line.dataset.a = String(ChronosTimed.span(g).a);
+    if (!cur) {
+        line.tabIndex = 0; line.setAttribute('role', 'button');
+        line.title = alt ? t('events.otherDatesTip') : fmt('events.goOther', { k: kind.toLowerCase() });
+        const go = () => evGoTo(g); line.addEventListener('click', go); line.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') go(); });
+    }
+    return line;
+}
+const PERSON_ID = /^(wd\.q\d+)\.(birth|death)(?:\.\d+)?$/;
+function evCard(f) {
+    const p = f.properties;
+    const head = el('div', { class: 'ev-dates' }, [evDateLine(f, true, false)]);
+    const base = String(p.id).replace(/\.\d+$/, '');
+    const sibs = events.byId ? [...events.byId.values()].filter((g) => g !== f && (g.properties.id === base || String(g.properties.id).startsWith(base + '.'))) : [];
+    sibs.forEach((g) => head.appendChild(evDateLine(g, false, true)));
+    // la otra fecha de la persona (nacer / morir): sitio reservado en su orden; se rellena al llegar (evPairFill)
+    const m = PERSON_ID.exec(String(p.id));
+    if (m) {
+        const otherKind = m[2] === 'birth' ? 'death' : 'birth';
+        const ph = el('div', { class: 'ev-dl other pending' }, [el('img', { class: 'ev-dl-ico', alt: '', 'aria-hidden': 'true', src: evIconUrl(otherKind) }), el('span', { class: 'ev-dl-k', text: t('events.kind.' + otherKind) }), el('span', { class: 'ev-dl-d', text: '…' })]);
+        if (otherKind === 'birth') head.insertBefore(ph, head.firstChild); else head.appendChild(ph);
+    }
+    const rows = [];
+    if (clockFull()) { const ahead = ChronosTimed.span(f).a - clock.jd; if (ahead > 0) rows.push({ label: t('events.notYet'), value: fmt('events.notYetVal', { d: evSpanText(ahead) }), title: t('events.notYetTip') }); }
+    const role = evRole(f); const rd = role && ChronosEventIcons.ROLES.find((r) => r.id === role);
+    if (rd) rows.push({ label: t('events.role'), value: rd[lang] || rd.en, icon: evIconUrl(evDrawKey(f)), title: t('events.roleTip') });
+    if (p.description && (p.description[lang] || p.description.en)) rows.push({ label: t('events.note'), value: p.description[lang] || p.description.en });
+    const more = [{ label: t('evidence'), badge: p.evidence }, { label: t('events.status'), value: t('events.verif.st.' + p.status) }];
+    (p.sources || []).forEach((src) => {
+        const href = src.kind === 'wikidata' ? 'https://www.wikidata.org/wiki/' + src.id : src.kind === 'url' ? src.id : null;
+        const row = { label: t('source'), value: src.kind === 'wikidata' ? 'Wikidata ' + src.id : src.id }; if (href) row.href = href; more.push(row);
+        if (src.citation) more.push({ label: t('events.citation'), value: src.citation });
+    });
+    return { head, rows, more, rel: relChip(p.status, p.evidence) };
+}
+/** Rellena la otra fecha de la persona: de lo ya cargado o, si no, del indice del buscador y su trozo de sucesos (se carga). */
+async function evPairFill(f, head) {
+    const m = PERSON_ID.exec(String(f.properties.id)); if (!m) return;
+    const otherId = m[1] + '.' + (m[2] === 'birth' ? 'death' : 'birth');
+    const ph = head.querySelector('.ev-dl.pending'); const stale = () => INFO_EV !== f || !head.isConnected;
+    let g = events.byId && events.byId.get(otherId);
+    if (!g) {
+        try { await srchEnsure(); } catch (e) { /* sin indice: no se puede saber */ }
+        const e = (SRCH.entries || []).find((x) => x.id === otherId);
+        const y = e ? parseInt(String(e.iso || '').match(/^-?\d+/), 10) : NaN;
+        if (Number.isFinite(y)) { try { await eventsLoadRange(y, y); } catch (err) { /* sin red: queda sin la otra fecha */ } }
+        g = events.byId && events.byId.get(otherId);
+    }
+    if (stale()) return;
+    if (!g) { if (ph) ph.remove(); return; }      // vive (sin muerte registrada) o no esta en nuestros datos
+    const line = evDateLine(g, false, false);
+    if (ph) ph.replaceWith(line); else head.appendChild(line);
+}
 
 // Desde la lista de sucesos o un aviso: el mismo giro breve que el buscador, sin cambiar el zoom (y sin fundido: la fecha no cambia)
 function eventFocus(f) {
