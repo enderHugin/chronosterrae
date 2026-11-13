@@ -127,14 +127,18 @@ check('windowForGlide: dentro del tramo (nunca mayor que el), cada suceso se que
 check('windowForGlide: hacia atras la ventana larga queda del lado contrario', () => { const w = T.windowForGlide(3652.5, -1); return w.futureDays > w.pastDays && w.flowing === true; });
 check('windowForGlide: escala con el tramo (100 años -> unos 40 años; 30 dias -> unos 12) y un tramo corto usa la ventana normal', () => {
     const a = T.windowForGlide(36525, 1).pastDays / 365.25; const b = T.windowForGlide(30, 1).pastDays; const c = T.windowForGlide(3, 1);
-    return Math.abs(a - 40) < 0.01 && Math.abs(b - 12) < 1e-9 && c.flowing === false && c.pastDays === T.BASE_HALF_DAYS ? true : [a, b, JSON.stringify(c)].join(' ');
+    return Math.abs(a - 40) < 0.01 && Math.abs(b - 12) < 1e-9 && c.flowing === false && c.pastDays === T.REST_PAST_DAYS && c.futureDays === 0 ? true : [a, b, JSON.stringify(c)].join(' ');
 });
 check('shrinkWindow: f=1 la deja igual; f=0 vuelve a la normal; en medio es monotona y nunca mayor que la original', () => {
     const w = T.windowForGlide(3652.5, 1); const one = T.shrinkWindow(w, 1); const zero = T.shrinkWindow(w, 0);
     let prev = Infinity; for (let i = 10; i >= 0; i--) { const p = T.shrinkWindow(w, i / 10).pastDays; if (p > prev + 1e-9 || p > w.pastDays + 1e-9) return i; prev = p; }
-    return one.pastDays === w.pastDays && one.futureDays === w.futureDays && zero.flowing === false && zero.pastDays === T.BASE_HALF_DAYS ? true : JSON.stringify({ one, zero });
+    return one.pastDays === w.pastDays && one.futureDays === T.REST_FUTURE_DAYS && zero.flowing === false && zero.pastDays === T.REST_PAST_DAYS ? true : JSON.stringify({ one, zero });
 });
-check('shrinkWindow: una ventana ya normal o invalida sigue siendo la normal', () => T.shrinkWindow({ flowing: false, pastDays: 5, futureDays: 5 }, 1).flowing === false && T.shrinkWindow(null, 1).pastDays === T.BASE_HALF_DAYS && T.shrinkWindow(T.windowForGlide(3652.5, 1), NaN).flowing === false);
+check('shrinkWindow: al acabar un barrido hacia delante lo de delante se cierra al momento (era anticipo); hacia atras la estela, que queda en el futuro, se acorta poco a poco', () => {
+    const f = T.shrinkWindow(T.windowForGlide(3652.5, 1), 0.7); const wb = T.windowForGlide(3652.5, -1); const b = T.shrinkWindow(wb, 0.7);
+    return f.futureDays === 0 && b.futureDays > 0 && b.futureDays < wb.futureDays ? true : JSON.stringify({ f, b });
+});
+check('shrinkWindow: una ventana ya normal o invalida sigue siendo la normal', () => T.shrinkWindow({ flowing: false, pastDays: 5, futureDays: 5 }, 1).flowing === false && T.shrinkWindow(null, 1).pastDays === T.REST_PAST_DAYS && T.shrinkWindow(T.windowForGlide(3652.5, 1), NaN).flowing === false);
 
 console.log(fails ? '\n' + fails + ' FALLO(S)' : '\nTodo en orden (glide).');
 process.exit(fails ? 1 : 0);

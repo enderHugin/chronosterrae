@@ -73,7 +73,7 @@ sale y cuánto se puede fiar de él.
 - **Reloj** con horas, minutos y segundos (tiempo real, pausa, acelerado, atrás), enlazado al deslizador.
 - **Sucesos con hora conocida y avisos**: nacimientos, muertes, composiciones, obras, descubrimientos…
   El alcance decide qué se ve (umbral de importancia según el zoom, un marcador por celda: nada se satura) y
-  **la ventana temporal es proporcional a la velocidad del tiempo**: parado se ven ±6 meses; con el tiempo corriendo, un suceso
+  **la ventana temporal es proporcional a la velocidad del tiempo**: parado se ve lo ocurrido en el último año y nada que aún no haya pasado; con el tiempo corriendo, un suceso
   permanece unos 6 s *de pantalla* (como mucho 100 años de ventana), así que a 1 año/s se ven los de unos 5 años atrás, sin exigir
   día y hora. Los iconos son opacos (hasta 2026-11-11 se desvanecían en cuatro niveles según su antigüedad; ya no) y, cuanto más larga la ventana, más
   alto el umbral de importancia: a gran velocidad solo lo significativo. Al aparecer, cada icono entra con su gesto (las espadas se

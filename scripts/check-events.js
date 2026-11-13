@@ -199,7 +199,7 @@ const mk = (id, imp, lng, lat, jd, precision = 'day', extra = {}) => ({
 });
 {
     const jd0 = jdOf(1810, 3, 1);
-    const feats = [mk('grande', 0.95, 20, 52, jd0), mk('medio', 0.6, 21, 52.2, jd0 + 100), mk('pequeño', 0.3, 22, 52.4, jd0 - 50), mk('lejano', 0.99, 20, 52, jd0 + 400), mk('sinlugar', 0.99, null, null, jd0)];
+    const feats = [mk('grande', 0.95, 20, 52, jd0), mk('medio', 0.6, 21, 52.2, jd0 - 100), mk('pequeño', 0.3, 22, 52.4, jd0 - 50), mk('lejano', 0.99, 20, 52, jd0 + 400), mk('sinlugar', 0.99, null, null, jd0)];
     const sel = (viewMeters, extra) => T.selectVisible(feats, { jd: jd0, viewMeters, ...extra }).map((f) => f.properties.id);
     check('seleccion: con el globo entero solo salen los muy notorios', () => JSON.stringify(sel(2e7)) === '["grande"]');
     check('seleccion: al acercarse aparecen los de notoriedad media y, muy cerca, todos los de la ventana', () => sel(5e5).includes('medio') && !sel(5e5).includes('pequeño') && sel(1e4).includes('pequeño'));
@@ -229,12 +229,22 @@ const mk = (id, imp, lng, lat, jd, precision = 'day', extra = {}) => ({
 /* ---------- Ventana segun la velocidad del tiempo y desvanecido ---------- */
 {
     const YEAR_S = 31557600;
-    check('ventana: con tiempo parado o lento (hasta 1 mes/s) vale el minimo de siempre, simetrico y sin «flowing»', () => [0, 1, 3600, 86400, 2629800].every((r) => { const w = T.windowFor(r); return w.pastDays === 183 && w.futureDays === 183 && w.flowing === false; }));
+    check('ventana: con tiempo parado o lento (hasta 1 mes/s) vale la de reposo: el ultimo año y NADA por llegar, sin «flowing»', () => [0, 1, 3600, 86400, 2629800].every((r) => { const w = T.windowFor(r); return w.pastDays === 365 && w.futureDays === 0 && w.flowing === false; }));
+    check('reposo: lo que aun no ha ocurrido no se dibuja (el creador, 2026-11-13: el atentado de Estambul del 1-1-2017 salia con el reloj el 9-7-2016) y lo de hace 11 meses si', () => {
+        const atentado = mk('estambul2017', 0.9, 29, 41, jdOf(2017, 1, 1, 1, 15)); const pasado = mk('hace11m', 0.9, 30, 41, jdOf(2015, 8, 9));
+        const at = (jd) => T.selectVisible([atentado, pasado], { jd, viewMeters: 1e4, ...T.windowFor(0) }).map((f) => f.properties.id).sort().join();
+        const r = [at(jdOf(2016, 7, 9, 12)), at(jdOf(2016, 12, 31, 23)), at(jdOf(2017, 1, 1, 1, 15)), at(jdOf(2017, 3, 1))];
+        return JSON.stringify(r) === JSON.stringify(['hace11m', '', 'estambul2017', 'estambul2017']) ? true : r.join(' | ');
+    });
+    check('ventana: al parar el reloj (moving=false) lo de delante se cierra al momento aunque la velocidad medida siga alta; la estela sigue', () => {
+        const a = T.windowFor(YEAR_S, false); const b = T.windowFor(-YEAR_S, false);
+        return a.futureDays === 0 && a.pastDays === T.windowFor(YEAR_S).pastDays && b.pastDays === 365 && b.futureDays === T.windowFor(-YEAR_S).futureDays ? true : JSON.stringify([a, b]);
+    });
     check('ventana: a 1 año/s el pasado es proporcional a la velocidad (6 s reales) y por delante queda un margen corto', () => {
-        const w = T.windowFor(YEAR_S); return Math.abs(w.pastDays - YEAR_S * 6 / 86400) < 1e-6 && w.flowing && w.futureDays >= 30 && w.futureDays < w.pastDays / 4;
+        const w = T.windowFor(YEAR_S); return Math.abs(w.pastDays - YEAR_S * 6 / 86400) < 1e-6 && w.flowing && Math.abs(w.futureDays - YEAR_S * T.AHEAD_S / 86400) < 1e-6 && w.futureDays < w.pastDays / 4;
     });
     check('ventana: doblar la velocidad dobla la ventana (mientras no llegue al tope)', () => Math.abs(T.windowFor(2 * YEAR_S).pastDays / T.windowFor(YEAR_S).pastDays - 2) < 1e-9);
-    check('ventana: hacia atras es el espejo (la ventana larga queda del lado de donde viene el tiempo)', () => { const a = T.windowFor(YEAR_S); const b = T.windowFor(-YEAR_S); return a.pastDays === b.futureDays && a.futureDays === b.pastDays; });
+    check('ventana: hacia atras es el espejo (la ventana larga queda del lado de donde viene el tiempo) y el pasado no baja del año de reposo', () => { const a = T.windowFor(YEAR_S); const b = T.windowFor(-YEAR_S); return a.pastDays === b.futureDays && b.pastDays === Math.max(365, a.futureDays); });
     check('ventana: tiene tope (100 años) aunque la velocidad sea enorme', () => T.windowFor(1e12).pastDays === T.MAX_PAST_DAYS && T.windowFor(-1e12).futureDays === T.MAX_PAST_DAYS);
     check('ventana: velocidades absurdas (NaN, Infinity, undefined) no rompen: caen en el minimo o en el tope', () => T.windowFor(NaN).flowing === false && T.windowFor(undefined).flowing === false && Number.isFinite(T.windowFor(Infinity).pastDays));
     check('umbral por ventana: no baja nunca al alargarla y sube de 0 a 0.78', () => {
@@ -255,9 +265,9 @@ const mk = (id, imp, lng, lat, jd, precision = 'day', extra = {}) => ({
     check('antiguedad: un suceso aun por llegar se mide contra la ventana de futuro', () => { const f = ev('fut', 0.9, -50); return Math.abs(T.ageFraction(f, jdw, 1000, 100) - 0.5) < 1e-6; });
     const evs = [ev('hace1a', 0.9, 365), ev('hace5a', 0.9, 5 * 365, 11), ev('hace20a', 0.9, 20 * 365, 12), ev('menor', 0.3, 100, 13), ev('manana', 0.9, -10, 14)];
     const pick = (o) => T.selectVisible(evs, { jd: jdw, viewMeters: 1e4, ...o }).map((f) => f.properties.id).sort().join();
-    check('ventana por velocidad: con tiempo parado solo se ve lo de ±6 meses; a 1 año/s entra lo de hace 5 años y sigue fuera lo de hace 20', () => {
+    check('ventana por velocidad: con tiempo parado solo lo del ultimo año (no lo de mañana); a 1 año/s entra lo de hace 5 años y sigue fuera lo de hace 20', () => {
         const still = pick({ ...T.windowFor(0) }); const fast = pick({ ...T.windowFor(YEAR_S) });
-        return still === 'manana,menor' && fast === 'hace1a,hace5a,manana' ? true : still + ' | ' + fast;
+        return still === 'hace1a,menor' && fast === 'hace1a,hace5a,manana' ? true : still + ' | ' + fast;
     });
     check('ventana por velocidad: a mas velocidad solo los significativos (el de importancia 0.3 deja de verse)', () => !pick({ ...T.windowFor(YEAR_S) }).includes('menor') && pick({ ...T.windowFor(0) }).includes('menor'));
     check('ventana por velocidad: a 10 años/s (ventana de 60 años) solo salen los muy notorios', () => {
@@ -287,6 +297,9 @@ const mk = (id, imp, lng, lat, jd, precision = 'day', extra = {}) => ({
     check('medidor: al parar baja despacio (a los ~3 s queda ~la mitad) y a los 20 s es casi nada', () => {
         const m = T.createMotion(); feed(m, 365.25, 0, 2000, 16, jdw); const v0 = m.rate(2000); const r1 = m.rate(2000 + 400 + 2500) / v0; const r2 = m.rate(22000) / v0;
         return r1 > 0.4 && r1 < 0.6 && r2 < 0.01 ? true : [r1, r2].join();
+    });
+    check('medidor: moving() es cierto mientras llegan notas y falso en cuanto dejan de llegar (la velocidad medida tarda en bajar; esto no)', () => {
+        const m = T.createMotion(); feed(m, 365.25, 0, 2000, 16, jdw); return m.moving(2000) && !m.moving(2000 + 500) && Math.abs(m.rate(2000 + 500)) > 0.5 * YEAR_S && !T.createMotion().moving(0);
     });
     check('medidor: tiempo real (1 s/s) queda dentro del minimo de ventana', () => { const m = T.createMotion(); feed(m, 1 / 86400, 0, 3000, 50, jdw); return T.windowFor(m.rate(3000)).flowing === false; });
     check('medidor: entradas invalidas se ignoran sin romper; reset lo deja a cero', () => {

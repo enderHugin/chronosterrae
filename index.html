@@ -205,17 +205,10 @@
         .custom-pop .custom-msg { flex-basis: 100%; font-size: 11px; color: var(--muted); }
         .custom-pop .custom-msg.warn { color: var(--err); }
         #step-hint.warn { color: var(--warn); }
-        #presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
-        #presets .btn { padding: 4px 9px; font-size: 12px; }
-        #credits { font-size: 10.5px; color: var(--muted); line-height: 1.35; margin-top: 4px; }
-        #credits a { color: var(--muted); }
         .kofi { background: #29abe0; color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font: 700 13px var(--font-ui); }
 
-        #tl-toggle { display: none; }
         @media (max-width: 760px), (max-height: 520px) {
-            #tl-toggle { display: inline-block; }
             #timeline { padding: 8px 12px 6px; }
-            #timeline.tl-collapsed #step-row, #timeline.tl-collapsed #presets, #timeline.tl-collapsed #credits, #timeline.tl-collapsed .kofi { display: none; }
             #time-label { font-size: 19px; min-width: 0; }
         }
         @media (max-height: 820px) { .toast:nth-child(n+3) { display: none; } }   /* con poca altura, como mucho dos avisos a la vez */
@@ -391,11 +384,8 @@
         #time-label { line-height: 1.25; white-space: nowrap; }
         #time-sub { min-height: 15px; line-height: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         #key-step { height: 24px; box-sizing: border-box; }
-        #credits { line-height: 14px; }
         .kofi { display: inline-block; height: 28px; line-height: 28px; box-sizing: border-box; padding-top: 0; padding-bottom: 0; }
-        #presets .btn { height: 25px; box-sizing: border-box; padding-top: 0; padding-bottom: 0; }
         #slider { height: 16px; }
-        #step-row { min-height: 26px; }
         #clock[hidden] { display: flex !important; visibility: hidden; }
         #era-badge { height: 20px; box-sizing: border-box; line-height: 17px; white-space: nowrap; vertical-align: top; }
         #era-badge[hidden] { display: inline-block !important; visibility: hidden; }
@@ -411,14 +401,11 @@
             #time-row > div:first-child { min-width: 0; grid-column: 1; grid-row: 1; }
             #clock { grid-column: 2; grid-row: 1; }
             #time-input { grid-column: 1; grid-row: 2; min-width: 0; width: 100%; }
-            #tl-toggle { grid-column: 2; grid-row: 2; }
-            #time-row > .kofi { grid-column: 1 / -1; grid-row: 3; text-align: center; }
         }
         /* Apaisado (ancho de sobra, poca altura): todo en una fila para no gastar alto */
         @media (min-width: 761px) and (max-height: 520px) {
             #time-row { grid-template-columns: minmax(0, 1fr) auto 150px auto; }
-            #clock { grid-column: 2; grid-row: 1; } #time-input { grid-column: 3; grid-row: 1; } #tl-toggle { grid-column: 4; grid-row: 1; }
-            #time-row > .kofi { grid-column: 1 / -1; grid-row: 2; }
+            #clock { grid-column: 2; grid-row: 1; } #time-input { grid-column: 3; grid-row: 1; }
         }
         /* Pantalla pequena (vertical u horizontal): los controles del mapa en una fila, que ocupa menos alto */
         @media (max-width: 760px), (max-height: 520px) {
@@ -430,11 +417,102 @@
            (menos alto) y la pila de recuadros les deja su sitio por debajo */
         @media (max-width: 760px) {
             #time-input { grid-column: 1 / 3; width: calc(100% - 56px); }
-            #tl-toggle { grid-column: 2; justify-self: end; width: 48px; }
             #era-badge { letter-spacing: 0.02em; font-size: 10.5px; padding: 0 6px; }
             #dock { bottom: calc(var(--bot-h, 180px) + var(--ctrl-h, 0px)); }
             #dock-r { margin-bottom: 0; }
         }
+        /* Linea de tiempo compacta y de tamaño FIJO (el creador, 2026-11-13: "hemos regresado al problema de cambio de tamaño cuando cambio de
+           epoca", "reducir el espacio sin quitar opciones", "le ahorramos al usuario claustrofobia").
+           - A la vista solo la fecha, el reloj, la casilla y el deslizador. Lo demas, en botones que abren una ventanita ENCIMA de la linea de
+             tiempo (no la agrandan): «Épocas» (saltos rapidos, cada uno con el diseño de SU epoca, como los resultados del buscador), teclado
+             (pasos de ← → y RePág/AvPág) e «i» (lo que ves ahora y fuentes y licencias).
+           - Ninguna fila salta de linea: rejilla de columnas fijas; lo que no cabe se recorta (…). La altura no depende de la letra de la epoca:
+             la letra de epoca queda en el año y la insignia; los controles van con letra de sistema. */
+        #timeline { padding: 8px 14px 6px; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+        #timeline #clock-time, #timeline #clock-sub, #timeline #time-input, #timeline select, #timeline .btn, #step-row, #credits, #tl-scene, #slider-ruler .lb { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+        #time-row { display: grid !important; grid-template-columns: 190px minmax(0, 1fr) 140px auto 34px 34px 32px; align-items: center; gap: 6px 8px; flex-wrap: nowrap; }
+        #time-row > div:first-child { min-width: 0; overflow: hidden; grid-column: 1; grid-row: 1; }
+        #clock { grid-column: 2; grid-row: 1; min-width: 0; overflow: hidden; }
+        #clock-time, #clock-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #clock-controls { flex-wrap: nowrap; }
+        #time-input { grid-column: 3; grid-row: 1; width: 100% !important; min-width: 0; }
+        #tl-jumps { grid-column: 4; grid-row: 1; } #tl-keys { grid-column: 5; grid-row: 1; } #tl-info { grid-column: 6; grid-row: 1; }
+        #time-row > .kofi { grid-column: 7; grid-row: 1; width: 32px; height: 32px; line-height: 32px; padding: 0; text-align: center; overflow: hidden; white-space: nowrap; font-size: 0; }
+        #time-row > .kofi::before { content: '♥'; font-size: 16px; }
+        #time-label { font-size: 22px; overflow: hidden; text-overflow: ellipsis; }
+        #slider { margin: 6px 0 0; }
+        /* el reloj vacio (tiempo profundo: no hay dia ni hora) guarda la altura de su primera linea: si no, la fila encoge 20 px al cambiar de epoca */
+        #clock-time { min-height: 20px; }
+        /* Ventanitas: se colocan respecto a la linea de tiempo (encima, alineadas a su derecha), no al boton: asi nunca se salen de la pantalla */
+        .tl-menu { position: static; }
+        #timeline .menu-pop { top: auto; left: auto; right: 0; bottom: calc(100% + 8px); max-width: min(560px, calc(100vw - 28px)); max-height: min(62vh, 560px); overflow: auto; box-sizing: border-box; }
+        #timeline.tl-pop { z-index: 26; }        /* con una abierta, la linea de tiempo pasa por encima de las columnas de recuadros */
+        #timeline .menu-btn { height: 32px; box-sizing: border-box; }
+        #tl-jumps-btn { padding: 0 10px; white-space: nowrap; }
+        #timeline .tl-ico { width: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+        #timeline .tl-ico::after { content: none; }
+        #timeline .tl-ico svg { width: 19px; height: 19px; display: block; }
+        .tl-pop-h { font: 700 11px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); padding: 4px 6px 2px; }
+        .tl-pop-h + .tl-pop-h, #tl-scene + .tl-pop-h { margin-top: 6px; border-top: 1px solid color-mix(in srgb, var(--text) 15%, transparent); padding-top: 8px; }
+        /* Saltos: cada uno con el diseño ENTERO de su epoca (color, letra...), no el de la epoca que marca el reloj (el creador, 2026-11-13) */
+        #presets { width: 310px; }
+        #presets .tl-jump { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: auto; min-height: 36px; padding: 6px 10px; text-align: left;
+            background: var(--bg); color: var(--text); border: 1px solid transparent; border-left: 4px solid var(--accent); border-radius: var(--btn-radius, 6px); }
+        #presets .tl-jump:hover, #presets .tl-jump:focus-visible { background: color-mix(in srgb, var(--accent) 20%, var(--bg)); color: var(--text); }
+        #presets .tl-jump[aria-current="true"] { box-shadow: inset 0 0 0 2px var(--accent); }
+        #presets .tj-name { font-family: var(--font); font-weight: var(--h-weight, 700); font-style: var(--h-style, normal); letter-spacing: var(--h-spacing, 0); text-transform: var(--h-transform, none); font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #presets .tj-era { flex: 0 1 auto; min-width: 0; max-width: 48%; overflow: hidden; text-overflow: ellipsis; font: 600 10.5px/1.5 var(--font-ui); padding: 0 6px; border-radius: 9px; background: var(--accent); color: var(--bg); white-space: nowrap; }
+        /* Teclado */
+        #tl-keys-pop { width: 330px; }
+        #tl-keys-pop #step-row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 10px; align-items: center; margin: 0; padding: 6px; font-size: 12.5px; color: var(--text); white-space: normal; }
+        #tl-keys-pop #step-hint { grid-column: 1 / -1; color: var(--muted); }
+        #tl-keys-pop #page-label { margin-left: 0; }
+        #tl-keys-pop select { height: 30px; }
+        /* Lo que ves ahora + fuentes y licencias */
+        #tl-info-pop { width: 520px; }
+        #tl-scene { font-size: 12.5px; line-height: 1.45; color: var(--text); padding: 2px 6px 4px; }
+        #tl-scene.warn { color: var(--warn); }
+        #credits { font-size: 12px; line-height: 1.45; color: var(--text); padding: 2px 6px 4px; }
+        #credits .cr-line + .cr-line { margin-top: 3px; }
+        #credits a { color: var(--accent); }
+        /* Atribucion visible al aparecer una fuente (OSMF: puede plegarse tras 5 s y seguir a mano en un boton «i»): una linea dentro del panel,
+           sobre la regla, que no tapa el mapa ni cambia el tamaño, y se va sola a los 6 s */
+        #tl-peek { position: absolute; right: 12px; bottom: 5px; max-width: calc(100% - 24px); padding: 1px 8px; border-radius: 6px; background: var(--bg); color: var(--muted); font: 600 11px/16px system-ui, -apple-system, 'Segoe UI', sans-serif; pointer-events: none; opacity: 1; transition: opacity 0.5s; box-shadow: 0 0 0 1px color-mix(in srgb, var(--text) 12%, transparent); }
+        #tl-peek[hidden] { display: block !important; opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0s 0.5s; }
+        @media (max-width: 760px) {
+            #time-row { grid-template-columns: minmax(0, 1fr) 84px 40px 40px 32px; }
+            #time-row > div:first-child { grid-column: 1; grid-row: 1; }
+            #clock { grid-column: 2 / -1; grid-row: 1; }
+            #time-input { grid-column: 1; grid-row: 2; }
+            #tl-jumps { grid-column: 2; grid-row: 2; } #tl-keys { grid-column: 3; grid-row: 2; } #tl-info { grid-column: 4; grid-row: 2; }
+            #time-row > .kofi { grid-column: 5; grid-row: 2; justify-self: end; }
+            #time-label { font-size: 18px; }
+            #timeline .tl-ico { width: 40px; }
+            #tl-jumps-btn { width: 84px; padding: 0 6px; }
+            #timeline .menu-pop { width: auto; left: 0; right: 0; max-width: none; }
+            /* el reloj del movil: el desplegable de velocidad cede ancho, «Ahora» no se corta */
+            #clock-controls { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; }
+            #clock-controls .custom-wrap { min-width: 0; } #clock-rate { width: 100%; min-width: 0; }
+            #tl-peek { white-space: normal; }
+        }
+        @media (pointer: coarse) { #timeline .menu-btn { height: 40px; min-height: 40px; } #presets .tl-jump { min-height: 44px; } }
+        @media (min-width: 761px) and (max-width: 900px) {
+            #time-row { grid-template-columns: 150px minmax(0, 1fr) 120px auto 34px 34px 32px; }
+            #time-label { font-size: 19px; }
+        }
+        #tl-peek { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        @media (max-width: 760px) { #tl-peek { white-space: normal; } }
+        /* Movil apaisado (poca altura): todo en UNA fila, y las ventanitas caben en lo que queda por encima (--tl-room lo mide el JS) */
+        @media (max-height: 520px) {
+            #time-row { grid-template-columns: minmax(0, 1fr) auto 110px 84px 40px 40px 32px; }
+            #time-row > div:first-child { grid-column: 1; grid-row: 1; }
+            #clock { grid-column: 2; grid-row: 1; }
+            #time-input { grid-column: 3; grid-row: 1; }
+            #tl-jumps { grid-column: 4; grid-row: 1; } #tl-keys { grid-column: 5; grid-row: 1; } #tl-info { grid-column: 6; grid-row: 1; }
+            #time-row > .kofi { grid-column: 7; grid-row: 1; }
+            #tl-jumps-btn { width: 84px; padding: 0 6px; }
+        }
+        #timeline .menu-pop { max-height: min(560px, var(--tl-room, 62vh)); }
     </style>
 </head>
 <body>
@@ -608,14 +686,26 @@
                 </div>
             </div>
             <input id="time-input" type="text" data-i18n-placeholder="timePlaceholder" aria-label="Go to a date" autocomplete="off">
-            <button class="btn" id="tl-toggle" type="button" aria-expanded="false" aria-controls="step-row presets credits">&#8943;</button>
+            <!-- Lo que no es fecha ni deslizador va en ventanitas que se abren encima (el creador, 2026-11-13: "le ahorramos al usuario claustrofobia") -->
+            <div class="menu tl-menu" id="tl-jumps">
+                <button class="btn menu-btn" id="tl-jumps-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="presets" data-i18n="tlJumps"></button>
+                <div class="menu-pop panel" id="presets" role="group" hidden></div>
+            </div>
+            <div class="menu tl-menu" id="tl-keys">
+                <button class="btn menu-btn tl-ico" id="tl-keys-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="tl-keys-pop"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2.2"/><path d="M6 9.5h.01M9.3 9.5h.01M12.6 9.5h.01M15.9 9.5h.01M18.2 9.5h.01M6 12.5h.01M9.3 12.5h.01M12.6 12.5h.01M15.9 12.5h.01M18.2 12.5h.01M8 15.2h8" stroke-width="2"/></svg></button>
+                <div class="menu-pop panel" id="tl-keys-pop" role="group" hidden>
+                    <div id="step-row"><label for="key-step" id="step-label"></label><span class="custom-wrap"><select id="key-step"></select></span><span id="step-hint"></span><label for="page-step" id="page-label"></label><span class="custom-wrap"><select id="page-step"></select></span></div>
+                </div>
+            </div>
+            <div class="menu tl-menu" id="tl-info">
+                <button class="btn menu-btn tl-ico" id="tl-info-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="tl-info-pop"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 10.8v6" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="7.4" r="1.25" fill="currentColor" stroke="none"/></svg></button>
+                <div class="menu-pop panel" id="tl-info-pop" role="group" hidden><div class="tl-pop-h" data-i18n="sceneTitle"></div><div id="tl-scene"></div><div class="tl-pop-h" data-i18n="creditsTitle"></div><div id="credits"></div></div>
+            </div>
             <a class="kofi" href="https://ko-fi.com/jaimeluisolguinmesina" target="_blank" rel="noopener" data-i18n="donate"></a>
         </div>
         <input id="slider" type="range" min="0" max="10000" value="0" step="1" aria-label="Time" dir="ltr" aria-describedby="step-row">
         <div id="slider-ruler" aria-hidden="true"></div>
-        <div id="step-row"><label for="key-step" id="step-label"></label><span class="custom-wrap"><select id="key-step"></select></span><span id="step-hint"></span><label for="page-step" id="page-label"></label><span class="custom-wrap"><select id="page-step"></select></span></div>
-        <div id="presets"></div>
-        <div id="credits"></div>
+        <div id="tl-peek" aria-hidden="true" hidden></div>
     </div>
 
     <noscript>ChronosTerrae needs JavaScript.</noscript>
@@ -713,6 +803,8 @@ const parsePrefs = (raw) => {
     if (Number.isInteger(p.et) && p.et >= 0 && p.et <= 16383) out.et = p.et;   // tipos de suceso OCULTOS por el usuario (mascara de bits, un bit por grupo de map/event-icons.js)
     if (Number.isInteger(p.vf) && p.vf >= 0 && p.vf <= 127) out.vf = p.vf;   // filtros de verificacion de sucesos (mascara de bits)
     if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
+    if (p.tl === 0 || p.tl === 1) out.tl = p.tl;   // linea de tiempo: 1 desplegada (pasos, saltos, creditos); por defecto plegada
+    if (Number.isInteger(p.pg) && p.pg >= 0 && p.pg <= 7) out.pg = p.pg;   // notas cerradas por el usuario que no deben volver solas (1 estado, 2 fondo espacial, 4 sistema solar)
     return out;
 };
 const readPrefs = () => {
@@ -733,7 +825,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined, tl: prefs.tl, pg: prefs.pg || undefined };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -746,7 +838,7 @@ const savePrefs = (patch) => {
 /* ------------------------------------------------------------------ */
 const i18n = {
     es: {
-        donate: 'Apoyar el proyecto', searchPlaceholder: 'Buscar persona, suceso, edificio, imperio…',
+        donate: 'Apoyar el proyecto', tlJumps: 'Épocas', tlJumpsTip: 'Saltos rápidos a fechas señaladas (cada uno con el aspecto de su época)', tlKeysTip: 'Teclado: cuánto mueven ← → y RePág/AvPág', tlInfoTip: 'Lo que ves ahora; fuentes y licencias', sceneTitle: 'Lo que ves ahora', creditsTitle: 'Fuentes y licencias', creditsPeek: 'Fuentes', notesBack: 'Volver a mostrar las notas que cerraste', searchPlaceholder: 'Buscar persona, suceso, edificio, imperio…',
         search: {
             loading: 'Cargando el índice…', none: 'Nada con «{q}».', fail: 'No se pudo cargar el índice de búsqueda: {err}',
             kind: { person: 'Persona', event: 'Suceso', built: 'Construcción', polity: 'Entidad política' },
@@ -857,7 +949,7 @@ const i18n = {
             layout: { title: 'Posición de los recuadros', note: 'Ctrl+Z deshace y Ctrl+Mayús+Z (o Ctrl+Y) rehace ocultar y mover recuadros. En pantallas táctiles hay botones de deshacer y rehacer.' }
         },
         events: {
-            button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', otherDates: 'La fuente da también', otherDatesTip: 'Wikidata declara varias fechas para lo mismo (no hay acuerdo entre las fuentes). Toca para ir a la otra.', role: 'Ámbito', roleTip: 'Según su ocupación o cargo en Wikidata; si tiene varios, el que antes nombra su descripción (papa y monarca mandan). Es una deducción, no un dato de la fuente.', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
+            button: 'Sucesos', title: 'Sucesos cerca de este instante', kindLabel: 'Clase', notYet: 'Respecto al reloj', notYetVal: 'aún no ha ocurrido: falta {d}', notYetTip: 'El reloj marca una fecha anterior: se ve porque el tiempo corre y aparece al llegar. Con el reloj parado solo se ve lo ya ocurrido (el último año).', dDays: '{n} días', dDay: '1 día', dMonths: '{n} meses', dYears: '{n} años', otherDates: 'La fuente da también', otherDatesTip: 'Wikidata declara varias fechas para lo mismo (no hay acuerdo entre las fuentes). Toca para ir a la otra.', role: 'Ámbito', roleTip: 'Según su ocupación o cargo en Wikidata; si tiene varios, el que antes nombra su descripción (papa y monarca mandan). Es una deducción, no un dato de la fuente.', when: 'Fecha', timeBasis: 'Hora referida a', timeOfDay: 'Hora del día', noTime: 'desconocida: la fuente solo da el día', note: 'Nota', status: 'Estado', citation: 'Cita',
             basisUtc: 'UTC/GMT', basisLocal: 'hora oficial del lugar (UTC{off})', noPlace: 'sin lugar', empty: 'No hay sucesos con fuente cerca de este instante a esta escala. Acércate o cambia de año.',
             none: 'No hay sucesos cargados todavía.', outOfRange: 'Los sucesos con fecha se muestran entre los años 1 y hoy.',
             shown: 'Los más cercanos al reloj ({n}). A esta escala solo los más notorios: al acercarte aparecen más.',
@@ -962,7 +1054,7 @@ const i18n = {
         }
     },
     en: {
-        donate: 'Support the project', searchPlaceholder: 'Search a person, event, building, empire…',
+        donate: 'Support the project', tlJumps: 'Eras', tlJumpsTip: 'Quick jumps to landmark dates (each in the look of its era)', tlKeysTip: 'Keyboard: how far ← → and PgUp/PgDn move', tlInfoTip: 'What you are seeing; sources and licences', sceneTitle: 'What you are seeing', creditsTitle: 'Sources and licences', creditsPeek: 'Sources', notesBack: 'Show again the notes you closed', searchPlaceholder: 'Search a person, event, building, empire…',
         search: {
             loading: 'Loading the index…', none: 'Nothing for “{q}”.', fail: 'Could not load the search index: {err}',
             kind: { person: 'Person', event: 'Event', built: 'Building', polity: 'Polity' },
@@ -1073,7 +1165,7 @@ const i18n = {
             layout: { title: 'Box positions', note: 'Ctrl+Z undoes and Ctrl+Shift+Z (or Ctrl+Y) redoes hiding and moving boxes. Touch screens get undo and redo buttons.' }
         },
         events: {
-            button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', otherDates: 'The source also gives', otherDatesTip: 'Wikidata states several dates for the same thing (sources disagree). Click to go to the other one.', role: 'Field', roleTip: 'From their occupation or position on Wikidata; if several, the one their description names first (pope and monarch win). It is a deduction, not a statement of the source.', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
+            button: 'Events', title: 'Events near this instant', kindLabel: 'Kind', notYet: 'Relative to the clock', notYetVal: 'has not happened yet: {d} to go', notYetTip: 'The clock shows an earlier date: it is drawn because time is running and it appears as the clock arrives. With the clock stopped only what has already happened is shown (the last year).', dDays: '{n} days', dDay: '1 day', dMonths: '{n} months', dYears: '{n} years', otherDates: 'The source also gives', otherDatesTip: 'Wikidata states several dates for the same thing (sources disagree). Click to go to the other one.', role: 'Field', roleTip: 'From their occupation or position on Wikidata; if several, the one their description names first (pope and monarch win). It is a deduction, not a statement of the source.', when: 'Date', timeBasis: 'Time refers to', timeOfDay: 'Time of day', noTime: 'unknown: the source only gives the day', note: 'Note', status: 'Status', citation: 'Quote',
             basisUtc: 'UTC/GMT', basisLocal: 'official local time (UTC{off})', noPlace: 'no place', empty: 'No sourced events near this instant at this scale. Zoom in or change the year.',
             none: 'No events loaded yet.', outOfRange: 'Dated events are shown between year 1 and today.',
             shown: 'The closest to the clock ({n}). At this scale only the most notable: more appear as you zoom in.',
@@ -1255,7 +1347,9 @@ const state = { paleo: null, ybp: prefs.ybp !== undefined ? prefs.ybp : 250e6, d
                landData: null, bordersData: null, landError: null, bordersError: null, bordersLoading: false };
 
 let statusTimer = null;
+let STATUS_SCENE = false;      // lo que hay en #status es un aviso de la escena (renderStatus), no un mensaje suelto
 function setStatus(level, message, autoHideMs) {
+    STATUS_SCENE = false;
     const el = $('status');
     el.className = 'panel visible ' + level;
     el.textContent = message;
@@ -2199,7 +2293,11 @@ function renderStatus() {
     if (NAT.on) messages.push(t('naturalNote'));
     else if (NAT.failed) messages.push(t('naturalFail'));
     else if (DETAIL.error && detailMode()) { level = 'warn'; messages.push(fmt('detailFail', { err: DETAIL.error.message })); }
-    if (messages.length) setStatus(level, messages.join(' '));
+    // La nota de lo que se ve (costas, fronteras, Tierra natural...) ya no sale sola: esta en la «i» de la linea de tiempo (el creador,
+    // 2026-11-13: "necesito que esto no aparezca si no se le pide"). Solo se muestra por su cuenta si es un AVISO (algo fallo o tarda).
+    const sc = $('tl-scene'); sc.textContent = messages.join(' '); sc.classList.toggle('warn', level !== 'ok');
+    if (messages.length && level !== 'ok') { setStatus(level, messages.join(' ')); STATUS_SCENE = true; }
+    else if (STATUS_SCENE) { clearStatus(); STATUS_SCENE = false; }
     renderCredits();
 }
 
@@ -2210,7 +2308,7 @@ async function updateScene({ immediate = false } = {}) {
     if (token !== sceneToken) return;   // llegó otra petición mientras el mapa arrancaba
     const ybp = state.ybp;
     scheduleBorders(immediate);         // en paralelo: no esperan a las costas
-    const slow = setTimeout(() => { if (token === sceneToken) setStatus('warn', t('loadingLand')); }, 350);
+    const slow = setTimeout(() => { if (token === sceneToken) { setStatus('warn', t('loadingLand')); STATUS_SCENE = true; } }, 350);
     try {
         const L = await loadLand(ybp);
         // Una respuesta de una petición ya superada se pinta igualmente (así se ve avanzar el mapa
@@ -2851,7 +2949,7 @@ function srchRender(msg, onlyTail) {
         const era = srchEra(e);
         if (era) {
             const v = ChronosEras.cssVars(era, state.dark, 2) || {};
-            ['--bg', '--text', '--muted', '--accent', '--font', '--font-ui', '--h-weight', '--h-transform', '--h-spacing', '--h-style', '--btn-radius'].forEach((k) => { if (v[k]) li.style.setProperty(k, v[k]); });
+            ERA_ITEM_VARS.forEach((k) => { if (v[k]) li.style.setProperty(k, v[k]); });
             row.appendChild(el('span', { class: 'sr-era', text: ChronosEras.labelOf(era, lang) }));
         }
         txt.appendChild(row); txt.appendChild(el('div', { class: 'sr-sub', text: srchSub(e) }));
@@ -3031,7 +3129,11 @@ function srchTarget(e) {
     return { id: e.id, center, year: Number.isFinite(y) ? y : undefined, mark: center ? { layers: e.kind === 'built' ? ChronosBuilt.LAYER_IDS : ['events-circle'], built: e.kind === 'built', id: e.id, at: center, feature } : null, apply: () => {
         // primero el año (desde tiempo profundo el reloj aun no existe: lo crea setTime) y despues el dia exacto si el reloj lo alcanza
         if (Number.isFinite(y) && (!clockUsable() || ybpToYear(state.ybp) !== y)) setTime(yearToYbp(y), { immediate: true });
-        if (clockUsable() && Number.isFinite(e.jd) && e.jd >= clockMinJD() && e.jd <= realNowJD()) clockSet(e.jd, { user: true });
+        // con hora, el JD del indice va redondeado a 0,01 dia (hasta ~7 min ANTES del instante): se cae justo despues, que con el reloj parado
+        // no se dibuja lo que aun no ha ocurrido
+        // (un dia sin hora va a mediodia UT, JD entero, y se deja tal cual)
+        const jd = Number.isFinite(e.jd) && e.kind !== 'built' && Math.abs(e.jd - Math.round(e.jd)) > 1e-6 ? e.jd + 0.0051 : e.jd;
+        if (clockUsable() && Number.isFinite(jd) && jd >= clockMinJD() && jd <= realNowJD()) clockSet(jd, { user: true });
     } };
 }
 /**
@@ -3228,50 +3330,42 @@ async function infoImageFor(qid, given) {
 /* ------------------------------------------------------------------ */
 /* Textos, créditos, presets                                          */
 /* ------------------------------------------------------------------ */
+// Fuentes y licencias: en la ventanita «i» de la linea de tiempo, una por linea. Cuando aparece una fuente que aun no se habia citado (al
+// cargar, o al acercarse y entrar el detalle de OpenStreetMap), su nombre se ve 6 s sobre la regla (#tl-peek) y se pliega solo: lo permite
+// la guia de atribucion de la OSMF ("automatically after five seconds"; "from an '(i)' button"), y no tapa nada.
+const CREDITS = { seen: new Set(), peekT: 0 };
 function renderCredits() {
     const box = $('credits');
     box.textContent = '';
+    const fresh = [];
+    const line = (key, short, label) => {
+        const d = el('div', { class: 'cr-line' }, [el('b', { text: label + ': ' })]); box.appendChild(d);
+        if (!CREDITS.seen.has(key)) { CREDITS.seen.add(key); fresh.push(short); }
+        return d;
+    };
+    const a = (d, href, text) => d.appendChild(el('a', { href, target: '_blank', rel: 'noopener', text }));
+    const tx = (d, x) => d.appendChild(document.createTextNode(x));
     const rigid = state.land && state.land.type === 'rigid';
-    box.appendChild(document.createTextNode(t('creditsLand') + ': '));
-    if (rigid) {
-        box.appendChild(el('a', { href: 'https://www.gplates.org/', target: '_blank', rel: 'noopener', text: 'GPlates Web Service' }));
-        box.appendChild(document.createTextNode(' · ' + CFG.model));
-    } else {
-        box.appendChild(el('a', { href: 'https://doi.org/10.5281/zenodo.7994000', target: '_blank', rel: 'noopener', text: 'PaleoMAP PaleoCoastlines' }));
-        box.appendChild(document.createTextNode(' (Kocsis & Scotese, CC BY 4.0)'));
-    }
-    box.appendChild(document.createTextNode('   |   ' + t('creditsBorders') + ': '));
-    if (state.borders && state.borders.source === 'ne') {
-        box.appendChild(el('a', { href: 'https://www.naturalearthdata.com/', target: '_blank', rel: 'noopener', text: 'Natural Earth' }));
-        box.appendChild(document.createTextNode(' (' + (lang === 'es' ? 'dominio público' : 'public domain') + ')'));
-    } else {
-        box.appendChild(el('a', { href: 'https://github.com/aourednik/historical-basemaps', target: '_blank', rel: 'noopener', text: 'historical-basemaps' }));
-        box.appendChild(document.createTextNode(' (A. Ourednik, GPL-3.0)'));
-    }
-    if (NAT.on) {
-        box.appendChild(document.createTextNode('   |   ' + t('creditsNatural') + ': '));
-        box.appendChild(el('a', { href: 'https://earthdata.nasa.gov/gibs/', target: '_blank', rel: 'noopener', text: 'NASA GIBS' }));
-        box.appendChild(document.createTextNode(' · Blue Marble Shaded Relief and Bathymetry (MODIS)'));
-    }
-    if (window.ChronosMilkyWay && ChronosMilkyWay.state() === 'ready') {
-        box.appendChild(document.createTextNode('   |   ' + t('creditsSky') + ': ' + t('creditsSkyText')));
-        box.appendChild(el('a', { href: 'https://svs.gsfc.nasa.gov/4851/', target: '_blank', rel: 'noopener', text: 'NASA/GSFC SVS 4851' }));
-        box.appendChild(document.createTextNode(' · ESA/Gaia/DPAC'));
-    }
-    if (BUILT.on && BUILT.table) {
-        box.appendChild(document.createTextNode('   |   ' + t('built.credits') + ': '));
-        box.appendChild(el('a', { href: 'https://www.wikidata.org/', target: '_blank', rel: 'noopener', text: 'Wikidata' }));
-        box.appendChild(document.createTextNode(' (CC0)'));
-    }
+    let d;
+    if (rigid) { d = line('land-rigid', 'GPlates', t('creditsLand')); a(d, 'https://www.gplates.org/', 'GPlates Web Service'); tx(d, ' · ' + CFG.model); }
+    else { d = line('land-paleo', 'PaleoMAP (CC BY 4.0)', t('creditsLand')); a(d, 'https://doi.org/10.5281/zenodo.7994000', 'PaleoMAP PaleoCoastlines'); tx(d, ' (Kocsis & Scotese, CC BY 4.0)'); }
+    if (state.borders && state.borders.source === 'ne') { d = line('borders-ne', 'Natural Earth', t('creditsBorders')); a(d, 'https://www.naturalearthdata.com/', 'Natural Earth'); tx(d, ' (' + (lang === 'es' ? 'dominio público' : 'public domain') + ')'); }
+    else { d = line('borders-hb', 'historical-basemaps (GPL-3.0)', t('creditsBorders')); a(d, 'https://github.com/aourednik/historical-basemaps', 'historical-basemaps'); tx(d, ' (A. Ourednik, GPL-3.0)'); }
+    if (NAT.on) { d = line('natural', 'NASA GIBS', t('creditsNatural')); a(d, 'https://earthdata.nasa.gov/gibs/', 'NASA GIBS'); tx(d, ' · Blue Marble Shaded Relief and Bathymetry (MODIS)'); }
+    if (window.ChronosMilkyWay && ChronosMilkyWay.state() === 'ready') { d = line('sky', 'NASA/GSFC · ESA/Gaia', t('creditsSky')); tx(d, t('creditsSkyText')); a(d, 'https://svs.gsfc.nasa.gov/4851/', 'NASA/GSFC SVS 4851'); tx(d, ' · ESA/Gaia/DPAC'); }
+    if (BUILT.on && BUILT.table) { d = line('built', 'Wikidata (CC0)', t('built.credits')); a(d, 'https://www.wikidata.org/', 'Wikidata'); tx(d, ' (CC0)'); }
     if (DETAIL.shown) {
-        box.appendChild(document.createTextNode('   |   ' + t('creditsDetail') + ': '));
-        box.appendChild(el('a', { href: 'https://openfreemap.org', target: '_blank', rel: 'noopener', text: 'OpenFreeMap' }));
-        box.appendChild(document.createTextNode(' © '));
-        box.appendChild(el('a', { href: 'https://www.openmaptiles.org/', target: '_blank', rel: 'noopener', text: 'OpenMapTiles' }));
-        box.appendChild(document.createTextNode(' · '));
-        box.appendChild(el('a', { href: 'https://www.openstreetmap.org/copyright', target: '_blank', rel: 'noopener', text: '© OpenStreetMap' }));
-        box.appendChild(document.createTextNode(' (ODbL)'));
+        d = line('detail', '© OpenStreetMap · OpenFreeMap', t('creditsDetail'));
+        a(d, 'https://openfreemap.org', 'OpenFreeMap'); tx(d, ' © '); a(d, 'https://www.openmaptiles.org/', 'OpenMapTiles'); tx(d, ' · '); a(d, 'https://www.openstreetmap.org/copyright', '© OpenStreetMap'); tx(d, ' (ODbL)');
     }
+    if (fresh.length) creditsPeek(fresh);
+}
+function creditsPeek(names) {
+    const pk = $('tl-peek');
+    const prev = pk.hidden ? [] : (pk.dataset.names || '').split('\u0001').filter(Boolean);
+    const all = prev.concat(names.filter((n) => !prev.includes(n)));
+    pk.dataset.names = all.join('\u0001'); pk.textContent = t('creditsPeek') + ': ' + all.join(' · ');
+    pk.hidden = false; clearTimeout(CREDITS.peekT); CREDITS.peekT = setTimeout(() => { pk.hidden = true; }, 6000);
 }
 
 // Mismo sentido que el slider: de izquierda (pasado remoto) a derecha (hoy).
@@ -3286,11 +3380,22 @@ const PRESETS = [
     { label: () => t('today'), ybp: -(CFG.nowYear - CFG.present), now: true }
 ];
 
+// Variables de epoca que lleva consigo cada elemento que se pinta con SU epoca (resultados del buscador, saltos de la linea de tiempo)
+const ERA_ITEM_VARS = ['--bg', '--text', '--muted', '--accent', '--font', '--font-ui', '--h-weight', '--h-transform', '--h-spacing', '--h-style', '--btn-radius'];
+function eraItemStyle(node, year) {
+    if (!window.ChronosEras || !Number.isFinite(year)) return null;
+    const era = ChronosEras.at(year); const v = ChronosEras.cssVars(era, state.dark, 2) || {};
+    ERA_ITEM_VARS.forEach((k) => { if (v[k]) node.style.setProperty(k, v[k]); });
+    return era;
+}
+/** Saltos rapidos: cada uno con el diseño de la epoca a la que lleva (el creador, 2026-11-13: como los resultados del buscador). */
 function renderPresets() {
     const box = $('presets');
     box.textContent = '';
     PRESETS.forEach((p) => {
-        const b = el('button', { class: 'btn', type: 'button', text: p.label() });
+        const b = el('button', { class: 'btn tl-jump', type: 'button' }, [el('span', { class: 'tj-name', text: p.label() })]);
+        const era = eraItemStyle(b, ybpToYear(p.ybp));
+        if (era) b.appendChild(el('span', { class: 'tj-era', text: ChronosEras.labelOf(era, lang) }));
         b.addEventListener('click', () => { if (p.now && sky.ready) clockNow(); else if (!glideToYear(p.ybp)) { if (glide) glide.cancel(); setTime(p.ybp, { immediate: true }); } });
         box.appendChild(b);
     });
@@ -3299,6 +3404,9 @@ function renderPresets() {
 function applyStrings() {
     document.documentElement.lang = lang;
     document.querySelectorAll('[data-i18n]').forEach((n) => { n.textContent = t(n.dataset.i18n); });
+    document.querySelectorAll('.kofi').forEach((a) => { a.title = t('donate'); a.setAttribute('aria-label', t('donate')); });   // en la linea de tiempo es solo un ♥
+    $('tl-jumps-btn').title = t('tlJumpsTip'); $('tl-keys-btn').title = t('tlKeysTip'); $('tl-info-btn').title = t('tlInfoTip');
+    $('tl-keys-btn').setAttribute('aria-label', t('tlKeysTip')); $('tl-info-btn').setAttribute('aria-label', t('tlInfoTip'));
     document.querySelectorAll('[data-i18n-placeholder]').forEach((n) => { n.placeholder = t(n.dataset.i18nPlaceholder); });
     renderPresets();
     renderCredits();
@@ -3489,7 +3597,12 @@ panelsUI = (function () {
         if (on) { gone.add(id); e.setAttribute('data-pgone', '1'); } else { gone.delete(id); e.removeAttribute('data-pgone'); }
         scan();
     }
-    function userHide(id) { if (gone.has(id)) return; setGone(id, true); history.push({ type: 'hide', id }); }
+    // Notas que, cerradas, NO vuelven solas aunque cambie su texto (el creador, 2026-11-13: "las cierras y cuando cambias algo vuelven a
+    // aparecer"). Se recuerda entre visitas; se reabren desde Ajustes o con deshacer. La ficha (info, solar-info) si vuelve: es lo que eliges.
+    const NOTE_BIT = { status: 1, 'space-note': 2, 'solar-note': 4 };
+    const notesClosed = () => prefs.pg || 0;
+    function noteKeep(id, on) { const b = NOTE_BIT[id]; if (!b) return; savePrefs({ pg: on ? (notesClosed() | b) : (notesClosed() & ~b) }); }
+    function userHide(id) { if (gone.has(id)) return; setGone(id, true); noteKeep(id, true); history.push({ type: 'hide', id }); }
     function closeInfo() {                  // la × de la ficha: se puede deshacer (vuelve la ficha y el resaltado del mapa)
         if (lastInfo && $('info').style.display === 'block') history.push({ type: 'hide', id: 'info', snap: { info: lastInfo, key: GAP.sel } });
         hideInfo();
@@ -3500,7 +3613,7 @@ panelsUI = (function () {
             if (dir === 'undo' && a.snap) { showInfo(a.snap.info.title, a.snap.info.rows); if (a.snap.key) setHighlightKey(a.snap.key); } else if (dir === 'redo') hideInfo();
             return;
         }
-        setGone(a.id, dir === 'redo');
+        setGone(a.id, dir === 'redo'); noteKeep(a.id, dir === 'redo');
     }
 
     /* ---- Asas: mover y ocultar ---- */
@@ -3574,7 +3687,9 @@ panelsUI = (function () {
                 ensureTools(id);
                 const prev = known[id] || { shown: false, sig: null };
                 const sig = sigOf(id, e);
-                if (gone.has(id) && prev.sig !== null && sig !== prev.sig && sig.trim()) setGone(id, false);   // contenido nuevo: el que se oculto era el anterior
+                // contenido nuevo: el que se oculto era el anterior. Pero una nota cerrada a mano sigue cerrada (salvo un aviso de error o advertencia)
+                const sticky = NOTE_BIT[id] && (notesClosed() & NOTE_BIT[id]) && !(id === 'status' && /\b(warn|error)\b/.test(e.className));
+                if (gone.has(id) && prev.sig !== null && sig !== prev.sig && sig.trim() && !sticky) setGone(id, false);
                 const shown = e.getClientRects().length > 0 && getComputedStyle(e).visibility !== 'hidden' && sig.trim().length > 0 && !e.hasAttribute('data-pgone');
                 if (sig.trim()) e.removeAttribute('data-pempty'); else e.setAttribute('data-pempty', '1');
                 if (id === 'status') ah.setProtected('status', /\b(warn|error)\b/.test(e.className));
@@ -3618,6 +3733,11 @@ panelsUI = (function () {
             c.addEventListener('change', () => { ah.setPinned(id, c.checked); savePrefs({ pp: P.pinsToMask(ah.pinned()) }); });
             lab.append(c, document.createTextNode(t('ui.pins.' + id))); pins.appendChild(lab);
         });
+        if (notesClosed()) {      // reabrir las notas cerradas a mano
+            const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = t('notesBack');
+            b.addEventListener('click', () => { Object.keys(NOTE_BIT).forEach((id) => { if (gone.has(id)) setGone(id, false); }); savePrefs({ pg: 0 }); renderSettings(); });
+            pins.appendChild(b);
+        }
         if (typesReady) { typesRender(); rolesRender(); animRender(); eraRender(); }
     }
     function setSettingsOpen(open) {
@@ -3631,6 +3751,7 @@ panelsUI = (function () {
 
     const api = { touch: (id) => { if (byId(id) && byId(id).getClientRects().length) ah.touch(id); }, closeInfo, texts, scan, history, autoHide: ah, offsets, setSettingsOpen };
     P.IDS.forEach((id) => { if (offsets[id]) setOffset(id, offsets[id], false); });
+    Object.keys(NOTE_BIT).forEach((id) => { if (notesClosed() & NOTE_BIT[id]) setGone(id, true); });   // cerradas en otra visita: siguen cerradas
     return api;
 })();
 panelsUI.texts(); panelsUI.scan();
@@ -4233,12 +4354,17 @@ function renderClock() {
     if (!ok) return;
     const c = ChronosSky.jdToCalendar(clock.jd, 'auto');
     const month = new Date(2001, c.month - 1, 1).toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { month: 'short' });
-    $('clock-time').textContent = c.day + ' ' + month + ' ' + formatYear(c.year) + ' · ' + pad2(c.hour) + ':' + pad2(c.minute) + ':' + pad2(Math.floor(c.second)) + ' UT'
-        + (c.calendar === 'julian' ? ' (' + t('clock.julian') + ')' : '');
+    // Con poco ancho (movil, iPad vertical) la linea no cabe y se cortaba el final ("UT (juliano)"): el año va sin «d.C.» (ya lo dice la
+    // fecha grande de al lado; «a.C.» se queda) y el calendario pasa al principio de la segunda linea. Nunca se pierde.
+    const narrow = box.clientWidth > 0 && box.clientWidth < 300;
+    const jul = c.calendar === 'julian' ? t('clock.julian') : '';
+    $('clock-time').textContent = c.day + ' ' + month + ' ' + (narrow && c.year >= 1 ? String(c.year) : formatYear(c.year)) + ' · ' + pad2(c.hour) + ':' + pad2(c.minute) + ':' + pad2(Math.floor(c.second)) + ' UT'
+        + (jul && !narrow ? ' (' + jul + ')' : '');
     const lon = map.getCenter().wrap().lng;
     const l = ChronosSky.jdToCalendar(clock.jd + lon / 360, 'auto');
     let sub = fmt('clock.solar', { t: pad2(l.hour) + ':' + pad2(l.minute) + ':' + pad2(Math.floor(l.second)), lon: nf().format(Math.round(lon * 10) / 10) });
     if (clock.live) sub += ' · ' + fmt('clock.device', { t: new Date().toLocaleTimeString(lang === 'es' ? 'es-ES' : 'en-GB') });
+    if (jul && narrow) sub = jul + ' · ' + sub;
     $('clock-sub').textContent = sub;
 }
 
@@ -4749,7 +4875,7 @@ function evWindow() {
     const now = performance.now();
     if (glideOn()) { const i = glide.info(); return ChronosTimed.windowForGlide(i.spanDays, i.dir); }
     if (glideState.win && now - glideState.endT < GLIDE_TAIL_MS) return ChronosTimed.shrinkWindow(glideState.win, 1 - (now - glideState.endT) / GLIDE_TAIL_MS);
-    return ChronosTimed.windowFor(evMotion.rate(now));
+    return ChronosTimed.windowFor(evMotion.rate(now), evMotion.moving(now));
 }
 function eventsDraw() {
     if (!window.ChronosTimed || !map.getSource || !map.getSource('events')) return;
@@ -4794,6 +4920,13 @@ function evPush() {
     clearTimeout(EV_ENTER.timer); EV_ENTER.timer = entering ? setTimeout(evPush, ChronosEventIcons.animMode(EVA.mode).enterStepMs || 90) : 0;
 }
 
+/** Duracion en dias, en palabras redondas: «17 días», «5 meses», «3 años». */
+function evSpanText(days) {
+    if (days < 1.5) return t('events.dDay');
+    if (days < 61) return fmt('events.dDays', { n: Math.round(days) });
+    if (days < 730) return fmt('events.dMonths', { n: Math.round(days / 30.44) });
+    return fmt('events.dYears', { n: nf().format(Math.round(days / 365.25)) });
+}
 function eventDateText(f) {
     const tm = f.properties.time;
     const cal = tm.calendar === 'julian' ? ' (' + t('clock.julian') + ')' : '';
@@ -4808,6 +4941,8 @@ function eventRows(f) {
     const role = evRole(f); const rd = role && ChronosEventIcons.ROLES.find((r) => r.id === role);
     if (rd) rows.push({ label: t('events.role'), value: rd[lang] || rd.en, icon: evIconUrl(evDrawKey(f)), title: t('events.roleTip') });
     rows.push({ label: t('events.when'), value: eventDateText(f) });
+    // Si se ve antes de su fecha (con el tiempo corriendo hay un margen breve por delante), se dice: lo que se muestra no es presente (regla 3)
+    if (clockFull()) { const ahead = ChronosTimed.span(f).a - clock.jd; if (ahead > 0) rows.push({ label: t('events.notYet'), value: fmt('events.notYetVal', { d: evSpanText(ahead) }), title: t('events.notYetTip') }); }
     // La fuente da VARIAS fechas para lo mismo (registros hermanos .2, .3...: Jesus de Nazaret muere el 7-4-30 o el 3-4-33 segun Wikidata):
     // se dicen todas, para no dar por cierta una sola (regla 3). Tocar una lleva a esa fecha.
     const base = String(p.id).replace(/\.\d+$/, '');
@@ -4833,6 +4968,8 @@ function evGoTo(g) {
     const tm = g.properties.time; const m = /^(-?\d+)(?:-(\d{2}))?(?:-(\d{2}))?$/.exec(String(tm.iso || '').split('/')[0]);
     const year = m ? parseInt(m[1], 10) : Math.round(ybpToYear((tm.start_ybp + tm.end_ybp) / 2));
     let jd = NaN; if (m && m[2] && m[3]) { try { jd = ChronosSky.calendarToJD({ year, month: parseInt(m[2], 10), day: parseInt(m[3], 10) }, tm.calendar === 'julian' ? 'julian' : 'gregorian').jd + 0.5; } catch (e) { jd = NaN; } }
+    // nunca antes de que ocurra (con el reloj parado no se dibuja lo que aun no ha pasado): con hora, su instante; sin dia, el centro de su tramo
+    const sp = ChronosTimed.span(g); jd = sp.timed ? sp.a : Number.isFinite(jd) ? Math.max(jd, sp.a) : (sp.a + sp.b) / 2;
     srchGo({ id: g.properties.id, center: g.geometry ? g.geometry.coordinates : null, year,
         mark: g.geometry ? { layers: ['events-circle'], id: g.properties.id, at: g.geometry.coordinates } : null,
         apply: () => { setTime(yearToYbp(year), { immediate: true }); if (Number.isFinite(jd) && clockUsable()) clockSet(jd, { user: true }); },
@@ -4873,11 +5010,11 @@ function renderEventsPanel() {
     if (!clockFull()) { $('events-note').textContent = t('events.outOfRange'); return; }
     const status = events.index === null && !events.seed.length ? t('events.none') : '';
     const floor = ChronosTimed.importanceFloor(viewMeters());
-    const half = 183;
+    const rest = ChronosTimed.restWindow();       // la misma que el mapa con el reloj parado: lo del ultimo año, nada por llegar
     const items = events.vis.filter((f) => {
         if (f.properties.importance < floor) return false;
         const sp = ChronosTimed.span(f);
-        return sp.b >= clock.jd - half && sp.a <= clock.jd + half;
+        return sp.b >= clock.jd - rest.pastDays && sp.a <= clock.jd + rest.futureDays;
     }).map((f) => ({ f, d: Math.abs(ChronosTimed.span(f).a - clock.jd) })).sort((a, b) => a.d - b.d || b.f.properties.importance - a.f.properties.importance).slice(0, 40);
     items.forEach(({ f }) => {
         const li = el('li', { tabindex: '0', role: 'button' }, [
@@ -5193,8 +5330,11 @@ const menus = (() => {
     const list = [...document.querySelectorAll('.menu')].map((root) => ({ root, btn: root.querySelector('.menu-btn'), pop: root.querySelector('.menu-pop') }));
     const items = (m) => [...m.pop.querySelectorAll('button')].filter((b) => !b.hidden && !b.disabled);
     function setOpen(m, open, focusFirst) {
+        if (open && m.onOpen) m.onOpen();
         m.pop.hidden = !open; m.btn.setAttribute('aria-expanded', String(open));
         if (open) { list.forEach((o) => { if (o !== m) setOpen(o, false); }); if (focusFirst) { const it = items(m)[0]; if (it) it.focus(); } }
+        // las de la linea de tiempo se abren hacia arriba: mientras haya una abierta, la linea de tiempo va por encima de los recuadros
+        const tl = $('timeline'); tl.classList.toggle('tl-pop', [...tl.querySelectorAll('.menu-pop')].some((p) => !p.hidden));
     }
     const closeAll = () => list.forEach((m) => setOpen(m, false));
     list.forEach((m) => {
@@ -5202,6 +5342,7 @@ const menus = (() => {
         m.btn.addEventListener('keydown', (e) => { if (e.key === 'ArrowDown') { e.preventDefault(); setOpen(m, true, true); } });
         m.pop.addEventListener('click', (e) => { if (e.target.closest('button')) setTimeout(() => setOpen(m, false), 0); });
         m.pop.addEventListener('keydown', (e) => {
+            if (e.target.closest('select, input, textarea') && e.key !== 'Escape') return;    // las flechas son del desplegable de pasos, no del menu
             const it = items(m); const i = it.indexOf(document.activeElement);
             if (e.key === 'ArrowDown') { e.preventDefault(); it[(i + 1) % it.length].focus(); }
             else if (e.key === 'ArrowUp') { e.preventDefault(); it[(i - 1 + it.length) % it.length].focus(); }
@@ -5210,8 +5351,11 @@ const menus = (() => {
     });
     document.addEventListener('pointerdown', (e) => { list.forEach((m) => { if (!m.pop.hidden && !m.root.contains(e.target)) setOpen(m, false); }); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
-    return { closeAll, list };
+    const byId = (id) => list.find((m) => m.root.id === id);
+    return { closeAll, list, byId };
 })();
+// Los saltos se pintan al abrir: cada uno con su epoca y con el tema (claro/oscuro) que haya en ese momento
+menus.byId('tl-jumps').onOpen = renderPresets;
 
 /** Mide la barra superior y la linea de tiempo y se lo da al CSS (--top-h, --bot-h): las columnas de recuadros ocupan exactamente lo que queda entre ambas. */
 function layoutMeasure() {
@@ -5219,20 +5363,11 @@ function layoutMeasure() {
     const st = document.documentElement.style;
     st.setProperty('--top-h', Math.ceil(tb.bottom + 8) + 'px');
     st.setProperty('--bot-h', Math.ceil(window.innerHeight - tl.top + 8) + 'px');
+    st.setProperty('--tl-room', Math.max(120, Math.floor(tl.top - 16)) + 'px');      // alto libre encima de la linea de tiempo (sus ventanitas)
     const cb = document.querySelector('.maplibregl-ctrl-bottom-right');
     const ch = cb ? cb.getBoundingClientRect().height : 0;
     st.setProperty('--ctrl-h', (ch > 0 ? Math.ceil(ch + 8) : 0) + 'px');
 }
-/** Linea de tiempo plegable en pantallas pequenas: por defecto solo lo esencial (fecha, deslizador, reloj); el boton "..." muestra pasos, atajos y creditos. */
-function timelineCollapse(on) {
-    $('timeline').classList.toggle('tl-collapsed', on);
-    $('tl-toggle').setAttribute('aria-expanded', String(!on));
-    layoutMeasure();
-}
-$('tl-toggle').addEventListener('click', () => timelineCollapse(!$('timeline').classList.contains('tl-collapsed')));
-const onCompact = () => timelineCollapse(COMPACT.matches);
-if (COMPACT.addEventListener) COMPACT.addEventListener('change', onCompact);
-onCompact();
 window.addEventListener('resize', layoutMeasure);
 if (typeof ResizeObserver === 'function') { new ResizeObserver(() => rulerRender()).observe($('slider')); }
 if (typeof ResizeObserver === 'function') { const ro = new ResizeObserver(layoutMeasure); ro.observe($('topbar')); ro.observe($('timeline')); const cb = document.querySelector('.maplibregl-ctrl-bottom-right'); if (cb) ro.observe(cb); }

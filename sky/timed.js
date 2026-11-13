@@ -48,9 +48,10 @@
      * @returns registros a dibujar, los mas notorios primero
      */
     function selectVisible(feats, o) {
-        const half = o.halfWindowDays === undefined ? BASE_HALF_DAYS : o.halfWindowDays;
+        const half = o.halfWindowDays;
         const flowing = o.pastDays !== undefined || o.futureDays !== undefined;
-        const past = o.pastDays !== undefined ? o.pastDays : half; const future = o.futureDays !== undefined ? o.futureDays : half;
+        const past = o.pastDays !== undefined ? o.pastDays : half !== undefined ? half : REST_PAST_DAYS;
+        const future = o.futureDays !== undefined ? o.futureDays : half !== undefined ? half : REST_FUTURE_DAYS;
         const floor = Math.max(importanceFloor(o.viewMeters), flowing ? windowImportance(Math.max(past, future)) : 0);
         const max = o.max || 60; const cell = o.cellPx || 48;
         const lo = o.jd - past; const hi = o.jd + future;
@@ -88,12 +89,20 @@
 
     /* ---------------------------- Ventana segun la velocidad del tiempo ---------------------------- */
     // Un suceso no se ve «en su dia y hora» (con el tiempo pasando deprisa no se veria ninguno): se ve mientras dura la ventana, que crece con la
-    // velocidad a la que fluye el tiempo. Con tiempo lento o parado vale el minimo de siempre (±6 meses, simetrico).
-    const BASE_HALF_DAYS = 183;
+    // velocidad a la que fluye el tiempo. Con tiempo lento o parado: lo ocurrido en el ULTIMO AÑO y nada que aun no haya pasado.
+    // (Antes era ±183 dias, simetrico; el creador, 2026-11-13: «Estoy en 2016 y aparece atentado del 2017?». El reloj marca lo que ya ha
+    // ocurrido: lo de despues no se dibuja como si fuera presente.)
+    const REST_PAST_DAYS = 365;
+    const REST_FUTURE_DAYS = 0;
+    const BASE_HALF_DAYS = 183;             // solo para quien pida una ventana simetrica explicita (halfWindowDays); ya no es la de reposo
     const HOLD_S = 6;                       // segundos REALES que un suceso permanece en pantalla mientras el tiempo fluye
     const MAX_PAST_DAYS = 36525;            // tope: 100 años
-    const AHEAD_MIN_DAYS = 30;
+    const AHEAD_S = 0.2;                    // margen por delante con el tiempo corriendo: lo que avanza el reloj en 0,2 s reales (que el icono no llegue tarde
+                                            // por el redibujado, que va cada 60-150 ms), no meses de anticipo
     const MAX_RATE = 3.2e9;                 // tope de la velocidad medida (s simulados por s reales): ~100 años/s
+
+    /** Ventana con el tiempo parado o lento: el ultimo año hacia atras, nada hacia delante. */
+    function restWindow() { return { pastDays: REST_PAST_DAYS, futureDays: REST_FUTURE_DAYS, flowing: false }; }
 
     /** Importancia minima segun lo larga que sea la ventana (dias): cuanto mas tiempo se muestra a la vez, solo lo mas significativo. */
     function windowImportance(days) {
@@ -108,12 +117,14 @@
      * @returns { pastDays, futureDays, flowing } dias hacia el pasado y hacia el futuro de la fecha del reloj. Con el tiempo fluyendo deprisa
      *   la ventana larga queda DETRAS (de donde viene el tiempo) y por delante solo un margen corto, para que los sucesos aparezcan al llegar.
      */
-    function windowFor(rate) {
+    // moving = false: el reloj ya no avanza (la velocidad medida aun decae): el lado de delante se cierra al momento —nada por llegar— y solo la
+    // estela, el lado del que viene el tiempo, se va acortando. Hacia atras, el lado de delante es el pasado y no baja del de reposo (un año).
+    function windowFor(rate, moving) {
         const r = Number.isFinite(rate) ? Math.max(-MAX_RATE, Math.min(MAX_RATE, rate)) : 0;
         const behind = Math.min(MAX_PAST_DAYS, Math.abs(r) * HOLD_S / 86400);
-        if (behind <= BASE_HALF_DAYS) return { pastDays: BASE_HALF_DAYS, futureDays: BASE_HALF_DAYS, flowing: false };
-        const ahead = Math.max(AHEAD_MIN_DAYS, behind / 8);
-        return r >= 0 ? { pastDays: behind, futureDays: ahead, flowing: true } : { pastDays: ahead, futureDays: behind, flowing: true };
+        if (behind <= REST_PAST_DAYS) return restWindow();
+        const ahead = moving === false ? 0 : Math.min(behind, Math.abs(r) * AHEAD_S / 86400);
+        return r >= 0 ? { pastDays: behind, futureDays: Math.max(REST_FUTURE_DAYS, ahead), flowing: true } : { pastDays: Math.max(REST_PAST_DAYS, ahead), futureDays: behind, flowing: true };
     }
 
     // Salto del reloj ANIMADO (map/glide.js): el reloj barre de una fecha a otra y los sucesos del tramo se ven pasar. Cada suceso se queda visible
@@ -123,16 +134,17 @@
     /** Ventana durante un barrido de spanDays dias en el sentido dir (+1 adelante, -1 atras). */
     function windowForGlide(spanDays, dir) {
         const S = Math.abs(Number.isFinite(spanDays) ? spanDays : 0);
-        if (S < GLIDE_MIN_DAYS) return { pastDays: BASE_HALF_DAYS, futureDays: BASE_HALF_DAYS, flowing: false };
+        if (S < GLIDE_MIN_DAYS) return restWindow();
         const behind = GLIDE_HOLD * S; const ahead = Math.max(1, behind / 8);
         return dir >= 0 ? { pastDays: behind, futureDays: ahead, flowing: true } : { pastDays: ahead, futureDays: behind, flowing: true };
     }
     /** Va cerrando una ventana larga hasta la normal (f = 1 entera, f = 0 normal): al acabar el barrido los sucesos mas antiguos se van primero. */
     function shrinkWindow(win, f) {
         const x = Math.max(0, Math.min(1, Number.isFinite(f) ? f : 0));
-        if (!win || !win.flowing || x === 0) return { pastDays: BASE_HALF_DAYS, futureDays: BASE_HALF_DAYS, flowing: false };
-        const mix = (v) => BASE_HALF_DAYS + (v - BASE_HALF_DAYS) * x;
-        return { pastDays: mix(win.pastDays), futureDays: mix(win.futureDays), flowing: true };
+        if (!win || !win.flowing || x === 0) return restWindow();
+        const mix = (v, base) => base + (v - base) * x;
+        const fwd = win.futureDays <= win.pastDays;       // barrido hacia delante: lo de delante era anticipo, no estela; al parar se cierra ya
+        return { pastDays: mix(win.pastDays, REST_PAST_DAYS), futureDays: fwd ? REST_FUTURE_DAYS : mix(win.futureDays, REST_FUTURE_DAYS), flowing: true };
     }
 
     /** Distancia relativa (0 = ahora, 1 = borde de la ventana) del suceso a la fecha jd; 0 si jd cae dentro de su tramo. */
@@ -171,6 +183,8 @@
                 last = { jd, t: nowMs };
             },
             rate(nowMs) { return decayed(nowMs); },
+            /** ¿Sigue moviendose el reloj (ultima nota hace menos de gapMs)? La velocidad medida tarda en bajar; esto no. */
+            moving(nowMs) { return !!last && nowMs - last.t <= gapMs; },
             reset() { last = null; v = 0; vT = 0; }
         };
     }
@@ -235,5 +249,5 @@
         return keys;
     }
 
-    return { span, isTimed, importanceFloor, selectVisible, notices, formatCountdown, shardKeys, dedupeAgainst, LEADS_S, windowFor, windowForGlide, shrinkWindow, GLIDE_HOLD, GLIDE_MIN_DAYS, windowImportance, ageFraction, fadeAlpha, createMotion, BASE_HALF_DAYS, HOLD_S, MAX_PAST_DAYS, MAX_RATE };
+    return { span, isTimed, importanceFloor, selectVisible, notices, formatCountdown, shardKeys, dedupeAgainst, LEADS_S, windowFor, windowForGlide, shrinkWindow, restWindow, GLIDE_HOLD, GLIDE_MIN_DAYS, windowImportance, ageFraction, fadeAlpha, createMotion, BASE_HALF_DAYS, REST_PAST_DAYS, REST_FUTURE_DAYS, AHEAD_S, HOLD_S, MAX_PAST_DAYS, MAX_RATE };
 });
