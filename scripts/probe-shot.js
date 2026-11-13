@@ -13,8 +13,9 @@ const SUITE = [
     { id: 'pirineos-2026', year: 2026, lng: -1.35, lat: 43.05, zoom: 11 },
     { id: 'europa-1606', year: 1606, lng: 10, lat: 48, zoom: 3.3 },
     // Costa del color politico sobre la Tierra natural (2026-11-13: «estas costas aun no estan bien coloreadas o definidas»). Modo `costa`.
-    { id: 'costa-natural-iberia-1924', costa: true, year: 1924, lng: 3, lat: 40.5, zoom: 4.7 },
-    { id: 'costa-natural-valencia-1924', costa: true, year: 1924, lng: 1.2, lat: 39.4, zoom: 6.2 },
+    // (por debajo de zoom 4,6 —4,2 si ya estaba— no hay detalle de OpenStreetMap y se ve la imagen de NASA; por encima, el agua de OSM pone la costa)
+    { id: 'costa-natural-iberia-1924', costa: true, year: 1924, lng: 3, lat: 40.5, zoom: 4.3 },
+    { id: 'costa-natural-valencia-1924', costa: true, year: 1924, lng: 1.5, lat: 39.6, zoom: 4.55 },
     { id: 'estrecho-2026', year: 2026, lng: -5.6, lat: 36, zoom: 8 },
     { id: 'europa-1945-lejos', year: 1945, lng: 12, lat: 50, zoom: 3 },
     { id: 'europa-1945', year: 1945, lng: 12, lat: 50, zoom: 4 },
