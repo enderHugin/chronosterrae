@@ -37,25 +37,28 @@ const ROLES = [
     ['writer', [['Q36180', 'writer'], ['Q49757', 'poet'], ['Q201788', 'historian']], ['writer', 'poet', 'novelist', 'playwright', 'author', 'essayist', 'dramatist', 'journalist',
         'historian', 'historiographer', 'chronicler', 'philologist', 'scholar', 'humanist', 'rhetorician', 'translator', 'educator', 'pedagogue']],
     // Ciencia: «scientist» SOLO tal cual (sin subclases: su arbol, 2.770 clases, mete historiadores, fillogos, pedagogos... y Guru Nanak salia
-    // con matraz) y las ciencias naturales, la medicina y la economia con sus subclases. Revisado con review.tsv el 2026-11-13.
+    // con matraz) y las ciencias naturales y la medicina con sus subclases. Revisado con review.tsv el 2026-11-13. Sin «economist» (2026-11-13,
+    // segunda revision): metia a Kofi Annan, a ministros de Hacienda y a banqueros con matraz.
     ['scientist', [['Q901', 'scientist', 'exact'], ['Q169470', 'physicist'], ['Q593644', 'chemist'], ['Q864503', 'biologist'], ['Q11063', 'astronomer'], ['Q170790', 'mathematician'],
-        ['Q520549', 'geologist'], ['Q18805', 'naturalist'], ['Q2374149', 'botanist'], ['Q350979', 'zoologist'], ['Q39631', 'physician'], ['Q188094', 'economist'], ['Q212980', 'psychologist'],
-        ['Q82594', 'computer scientist']], ['scientist', 'physicist', 'chemist', 'biologist', 'astronomer', 'mathematician', 'naturalist', 'geologist', 'botanist', 'zoologist', 'physician', 'economist',
+        ['Q520549', 'geologist'], ['Q18805', 'naturalist'], ['Q2374149', 'botanist'], ['Q350979', 'zoologist'], ['Q39631', 'physician'], ['Q212980', 'psychologist'],
+        ['Q82594', 'computer scientist']], ['scientist', 'physicist', 'chemist', 'biologist', 'astronomer', 'mathematician', 'naturalist', 'geologist', 'botanist', 'zoologist', 'physician',
         'cosmologist', 'astrophysicist', 'psychologist', 'psychiatrist', 'neurologist', 'neuroscientist', 'archaeologist', 'anthropologist', 'sociologist', 'linguist', 'geographer', 'biochemist', 'microbiologist', 'geneticist',
         'meteorologist', 'paleontologist', 'palaeontologist', 'ornithologist', 'entomologist', 'pharmacologist', 'immunologist', 'virologist', 'bacteriologist', 'surgeon']],
     ['philosopher', [['Q4964182', 'philosopher']], ['philosopher']],
     ['religious', [['Q42603', 'priest'], ['Q29182', 'bishop'], ['Q733786', 'monk'], ['Q133485', 'rabbi'], ['Q1234713', 'theologian'], ['Q2259532', 'cleric']], ['priest', 'bishop', 'archbishop', 'cardinal', 'monk', 'nun', 'friar', 'abbot', 'abbess', 'rabbi', 'imam', 'missionary', 'theologian', 'saint', 'prophet', 'preacher', 'pastor', 'cleric', 'clergyman',
         'evangelist', 'apostle', 'martyr', 'disciple', 'deacon', 'patriarch', 'hermit', 'mystic', 'ayatollah', 'mullah', 'mufti', 'lama', 'guru', 'reverend',
-        'religious leader', 'islamic scholar', 'spiritual leader', 'reformation', 'reformer']],
-    ['explorer', [['Q11900058', 'explorer']], ['explorer', 'navigator', 'conquistador', 'astronaut', 'cosmonaut']],
+        'religious leader', 'islamic scholar', 'spiritual leader', 'reformation', 'protestant reformer', 'religious reformer']],   // «reformer» a secas no: «social reformer» (Florence Nightingale)
+    ['explorer', [['Q11900058', 'explorer']], ['explorer', 'navigator', 'conquistador', 'astronaut', 'cosmonaut', 'mountaineer']],
     ['architect', [['Q42973', 'architect']], ['architect']],
     ['inventor', [['Q205375', 'inventor'], ['Q81096', 'engineer']], ['inventor', 'engineer']],
-    ['military', [['Q47064', 'military personnel']], ['general', 'admiral', 'military', 'soldier', 'commander', 'marshal', 'officer']],
+    ['military', [['Q47064', 'military personnel']], ['general', 'admiral', 'military', 'soldier', 'commander', 'marshal', 'officer', 'revolutionary', 'guerrilla']],
     ['politician', [['Q82955', 'politician']], ['politician', 'statesman', 'stateswoman', 'president', 'prime minister', 'diplomat', 'revolutionary', 'activist', 'lawyer',
-        'leader', 'head of state', 'ruler', 'chancellor', 'premier', 'governor', 'senator', 'mayor', 'dictator', 'founding father', 'supreme leader']],
+        'leader', 'head of state', 'ruler', 'chancellor', 'premier', 'governor', 'senator', 'mayor', 'dictator', 'founding father', 'supreme leader',
+        'secretarygeneral', 'directorgeneral', 'governorgeneral', 'attorneygeneral', 'secretary of', 'minister of', 'ambassador']],
     ['actor', [['Q33999', 'actor'], ['Q2526255', 'film director']], ['actor', 'actress', 'film director', 'filmmaker', 'director', 'comedian']],
     ['musician', [['Q639669', 'musician'], ['Q177220', 'singer']], ['singer', 'musician', 'pianist', 'violinist', 'guitarist', 'rapper', 'conductor', 'songwriter']],
-    ['athlete', [['Q2066131', 'athlete']], ['footballer', 'athlete', 'player', 'cyclist', 'boxer', 'swimmer', 'racing driver', 'sprinter', 'chess']]
+    ['athlete', [['Q2066131', 'athlete']], ['footballer', 'athlete', 'player', 'cyclist', 'boxer', 'swimmer', 'racing driver', 'sprinter', 'chess', 'martialartist',
+        'wrestler', 'runner', 'tennis', 'golfer', 'skier', 'gymnast', 'basketball', 'baseball', 'kickboxer', 'decathlete', 'jockey', 'fencer', 'rower', 'skater']]
 ];
 // Personas conocidas para revisar el resultado a ojo en el manifiesto: QID escrito de memoria y VERIFICADO por su etiqueta en cada build
 // (si la etiqueta no coincide, se dice y no cuenta). El papel esperado es lo que cualquiera diria; no es una prueba que haga fallar el build.
@@ -64,7 +67,9 @@ const KNOWN = [
     ['Q989', 'John Paul II', 'pope'], ['Q5593', 'Pablo Picasso', 'painter'], ['Q692', 'William Shakespeare', 'writer'], ['Q9682', 'Elizabeth II', 'monarch'],
     ['Q517', 'Napoleon', 'monarch'], ['Q8016', 'Winston Churchill', 'politician'], ['Q7186', 'Marie Curie', 'scientist'], ['Q762', 'Leonardo da Vinci', 'painter'],
     ['Q255', 'Ludwig van Beethoven', 'composer'], ['Q1035', 'Charles Darwin', 'scientist'], ['Q868', 'Aristotle', 'philosopher'],
-    ['Q57336', 'Ali Khamenei', 'politician'], ['Q2039', 'Livy', 'writer'], ['Q83322', 'Guru Nanak', 'religious']   // salio «ciencia» (el creador, 2026-11-13): descripcion sin oficio y reserva que ponia ciencia antes que politica
+    ['Q57336', 'Ali Khamenei', 'politician'], ['Q2039', 'Livy', 'writer'], ['Q83322', 'Guru Nanak', 'religious'],   // salio «ciencia» (el creador, 2026-11-13): descripcion sin oficio y reserva que ponia ciencia antes que politica
+    // segunda revision del 2026-11-13 (QID tomados de review.tsv, con su descripcion; la etiqueta se comprueba en el build)
+    ['Q1254', 'Kofi Annan', 'politician'], ['Q5809', 'Che Guevara', 'military'], ['Q174979', 'Alan Shepard', 'explorer']
 ];
 
 // Reserva cuando nada lo decide (ni la descripcion ni el orden de sus ocupaciones en Wikidata): los papeles publicos (gobernar, una iglesia,
@@ -79,9 +84,26 @@ const MONARCH_WORDS = ROLES.find((r) => r[0] === 'monarch')[2];
 // Realeza que no reino (consortes, principes): su descripcion la nombra aunque no tengan cargo de monarca. El papel se llama «Realeza».
 const ROYAL_WORDS = MONARCH_WORDS.concat(['prince', 'princess', 'consort']);
 // Religion por la descripcion aunque no tenga cargo u oficio religioso en Wikidata (Guru Nanak: «First Sikh Guru and founder of Sikhism»)
-const RELIGIOUS_DESC = ['guru', 'prophet', 'apostle', 'saint', 'ayatollah', 'imam', 'rabbi', 'bishop', 'archbishop', 'cardinal', 'monk', 'nun', 'priest', 'theologian', 'religious leader', 'spiritual leader', 'mystic', 'reformation'];
-// «drag queen», «beauty queen»: no es realeza
-const words = (description) => (' ' + String(description || '').toLowerCase().replace(/[^a-z\u00c0-\u024f ]+/g, ' ') + ' ').replace(/ (drag|beauty|dancing|homecoming) queens? /g, ' ');
+const RELIGIOUS_DESC = ['cleric', 'guru', 'prophet', 'apostle', 'saint', 'ayatollah', 'imam', 'rabbi', 'bishop', 'archbishop', 'cardinal', 'monk', 'nun', 'priest', 'theologian', 'religious leader', 'spiritual leader', 'mystic', 'reformation'];
+// Exploradores por la descripcion (astronautas: Mae Jemison, «American doctor and NASA astronaut», no tiene la ocupacion «explorer»)
+const EXPLORER_DESC = ['explorer', 'navigator', 'conquistador', 'astronaut', 'cosmonaut', 'mountaineer'];
+// Palabras de papel demasiado genericas para decir «es otra cosa» (Geronimo, «leader of the Bedonkohe Apache», es militar; un «comic book
+// artist», escritor): cuentan para elegir entre lo que tiene, no para quitarle el papel. Papa, tampoco: «Pope of Alexandria» es religion.
+const WEAK_WORDS = ['leader', 'activist', 'lawyer', 'officer', 'player', 'artist', 'scholar', 'educator', 'director', 'commander', 'author', 'ruler', 'pope'];
+// Oficios que no son ninguno de nuestros papeles. Si la descripcion nombra uno (y ningun papel que tenga), NO se adivina el papel por sus
+// ocupaciones: Bezos, Nadella o Buffett salian «ciencia» por «computer scientist» o «economist»; un asesino en serie y Snowden, tambien
+// (revision del 2026-11-13). Se queda el icono de nacer/morir de siempre: mejor generico que equivocado (regla 3).
+const OTHER_WORDS = ['businessman', 'businesswoman', 'businessperson', 'business magnate', 'magnate', 'tycoon', 'entrepreneur', 'executive', 'ceo',
+    'investor', 'banker', 'financier', 'industrialist', 'manufacturer', 'merchant', 'philanthropist', 'economist', 'accountant', 'serial killer', 'murderer',
+    'criminal', 'gangster', 'mobster', 'whistleblower', 'socialite', 'television personality', 'media personality', 'internet personality', 'youtuber', 'co founder'];
+// «drag queen», «beauty queen»: no es realeza. «Secretary-General», «attorney general»: no es un general. «Chief executive officer»: no es militar.
+const words = (description) => (' ' + String(description || '').toLowerCase().replace(/[^a-z\u00c0-\u024f ]+/g, ' ') + ' ').replace(/ (drag|beauty|dancing|homecoming) queens? /g, ' ')
+    .replace(/ (secretary|director|governor|attorney|solicitor|surgeon|inspector|postmaster) generals? /g, ' $1general ').replace(/ chief (executive|operating|financial|technology) officers? /g, ' ceo ')
+    .replace(/ (recording|hip hop|r b) artists? /g, ' musician ')
+    .replace(/ (sitar|sarangi|sarod|tabla|veena|shehnai|oud|piano|guitar|violin|cello|flute|saxophone|trumpet|drum|drums|bass|harp|organ|keyboard|banjo|harmonica|clarinet|oboe) players? /g, ' musician ')
+    .replace(/ director of /g, ' directorof ').replace(/ martial artists? /g, ' martialartist ').replace(/ con artists? /g, ' criminal ');   // «artist» a secas es pintura
+// cualquier «-ologo» es ciencia (fisiologo, oftalmologo, sismologo...), menos el teologo
+const OLOGIST = / (?!theolog)[a-z]+ologists? /;
 const hasWord = (d, w) => d.indexOf(' ' + w + ' ') >= 0 || d.indexOf(' ' + w + 's ') >= 0;
 /**
  * Elige el papel: papa si lo fue; monarca si lo fue y su descripcion lo dice; si no, entre los candidatos (y la realeza que nombra la descripcion),
@@ -93,6 +115,7 @@ function pickRole(candidates0, description, firstOcc) {
     const own = new Set(candidates0 || []); const candidates = new Set(own);
     if (ROYAL_WORDS.some((w) => hasWord(d, w))) candidates.add('monarch');
     if (RELIGIOUS_DESC.some((w) => hasWord(d, w))) candidates.add('religious');
+    if (EXPLORER_DESC.some((w) => hasWord(d, w))) candidates.add('explorer');
     const cand = ROLES.filter(([r]) => candidates.has(r));
     if (!cand.length) return null;
     const dom = DOMINANT.find((r) => candidates.has(r)); if (dom) return { role: dom, via: 'cargo' };
@@ -101,10 +124,14 @@ function pickRole(candidates0, description, firstOcc) {
     for (const [r, , ws] of cand) {
         for (const w of (r === 'monarch' ? ROYAL_WORDS : ws)) {
             const at = d.indexOf(' ' + w + ' ') >= 0 ? d.indexOf(' ' + w + ' ') : d.indexOf(' ' + w + 's ');
-            if (at >= 0 && (!best || at < best.at)) best = { role: r, at, via: 'descripcion' };
+            // a igualdad (la misma palabra en dos papeles: «revolutionary»), politica: militar solo si no tiene papel politico (Che Guevara)
+            if (at >= 0 && (!best || at < best.at || (at === best.at && r === 'politician'))) best = { role: r, at, via: 'descripcion' };
         }
+        if (r === 'scientist') { const at = d.search(OLOGIST); if (at >= 0 && (!best || at < best.at)) best = { role: r, at, via: 'descripcion' }; }
     }
     if (best) return best;
+    // La descripcion dice OTRA cosa: un oficio que no es de los nuestros, o un papel que no consta en sus ocupaciones. No se adivina.
+    if (OTHER_WORDS.some((w) => hasWord(d, w)) || ROLES.some(([r, , ws]) => !candidates.has(r) && ws.some((w) => !WEAK_WORDS.includes(w) && hasWord(d, w)))) return null;
     const occ = (firstOcc || []).find((r) => candidates.has(r)); if (occ) return { role: occ, via: 'primera ocupacion' };
     return { role: FALLBACK.find((r) => candidates.has(r)) || cand[0][0], via: 'prioridad' };
 }
