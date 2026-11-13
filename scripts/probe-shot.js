@@ -61,6 +61,9 @@ const SUITE = [
     { id: 'movil-390x844-ajustes', diseno: true, abrir: ['ajustes'], vp: { width: 390, height: 844, touch: true }, year: 1939, lng: 15, lat: 50, zoom: 3 },
     { id: 'movil-menu-capas', diseno: true, abrir: ['menu-capas'], vp: { width: 390, height: 844, touch: true }, year: 1939, lng: 15, lat: 50, zoom: 3 },
     { id: 'tableta-768x1024-sucesos-ajustes', diseno: true, events: true, abrir: ['ajustes'], vp: { width: 768, height: 1024, touch: true }, year: 1215, lng: 5, lat: 48, zoom: 3.4 },
+    // Linea de tiempo compacta (2026-11-13): sus ventanitas abiertas, en tableta (la del creador) y en movil
+    { id: 'tableta-834x1194-epocas', diseno: true, abrir: ['epocas'], vp: { width: 834, height: 1194, touch: true }, year: 1500, lng: 10, lat: 45, zoom: 3 },
+    { id: 'movil-390x844-info', diseno: true, abrir: ['info-tl'], vp: { width: 390, height: 844, touch: true }, year: 100, lng: 15, lat: 40, zoom: 3 },
     { id: 'portatil-1024x768-todo-abierto', diseno: true, events: true, abrir: ['ajustes', 'ficha'], vp: { width: 1024, height: 768 }, year: 1939, lng: 15, lat: 50, zoom: 4 }
 ];
 
@@ -171,6 +174,8 @@ async function runSuite(page, out, only) {
                 if (a.includes('ajustes')) panelsUI.setSettingsOpen(true);
                 if (a.includes('ficha')) showInfo('Ficha de prueba con un titulo largo', Array.from({ length: 10 }, (_, i) => ({ label: 'Campo ' + i, value: 'valor de ejemplo '.repeat(4) })));
                 if (a.includes('menu-capas')) document.getElementById('menu-layers-btn').click();
+                if (a.includes('epocas')) document.getElementById('tl-jumps-btn').click();     // saltos de la linea de tiempo, cada uno con su epoca
+                if (a.includes('info-tl')) document.getElementById('tl-info-btn').click();     // lo que ves ahora + fuentes y licencias
             }, v.abrir);
             if (v.run) await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});   // el cielo (efemerides) carga aparte
             if (v.run) {   // el reloj avanza por su punto de entrada real (clockSet) a v.yearsPerSec; se mide la ventana y se fotografia sin esperar (al parar, la ventana vuelve a la minima en ~2,5 s)
