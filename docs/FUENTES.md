@@ -22,8 +22,8 @@ Este documento es el inventario. Reglas para mantenerlo:
 | **Cliopatria** (Seshat) | Polígonos por entidad con `FromYear`/`ToYear` (una fila por cada cambio), Wikidata por fila | −3400 a 2024 | **CC BY 4.0**: `LICENSE.md` del repo [Seshat-Global-History-Databank/cliopatria](https://github.com/Seshat-Global-History-Databank/cliopatria), commit `5f43337` (2026-10-03), leído 2026-11-14 | Sí, con atribución | **Verificada y medida** (abajo) |
 | historical-basemaps (A. Ourednik) | Instantáneas en 54 años de mapa; también pueblos sin estado | −123000 a 2010 | GPL-3.0 (`LICENSE` del repo, commit fijado `da7a4b7`) | No: en ejecución | En uso |
 | Natural Earth | Países actuales; tierra actual | Hoy | Dominio público ([condiciones](https://www.naturalearthdata.com/about/terms-of-use/)) | Sí | En uso (desde 2016) |
-| OpenHistoricalMap | Fronteras y lugares fechados (`start_decdate`/`end_decdate`), teselas vectoriales | Desigual: lo que hayan mapeado | CC0 (verificado 2026-11-13) | Sí | Pendiente: medir cobertura |
-| CShapes 2.0 | Fronteras de estados con fecha de cambio | 1886 a hoy | **No clara**: el paquete de R es GPL; la del conjunto de datos no se ha encontrado | — | Pendiente de sonda |
+| OpenHistoricalMap | Fronteras y lugares fechados (`start_decdate`/`end_decdate`), teselas vectoriales | Desigual: lo que hayan mapeado | **CC0 salvo lo marcado**: «Except where otherwise noted, OpenHistoricalMap data is dedicated to the public domain under a Creative Commons CC0 dedication». Algunos elementos van con CC BY o CC BY-SA «as noted in license=* tags on individual elements» ([copyright](https://www.openhistoricalmap.org/copyright), sonda 2026-11-14) | Sí lo CC0; hay que mirar la etiqueta `license` de cada elemento | Verificada. Teselas: responden con CORS `*`. Pendiente: medir cobertura |
+| CShapes 2.0 | Fronteras de estados con fecha de cambio | 1886 a hoy | **CC BY-NC-SA 4.0**: «licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License» ([CShapes](https://icr.ethz.ch/data/cshapes/), sonda 2026-11-14) | **No**: no comercial y «compartir igual» chocan con MIT | Descartada para el repo |
 | COW Territorial Change v6 | Cambios territoriales fechados | 1816 a 2018 | **Restringida**: «Users agree not to distribute the dataset to any third party without written permission» y «not to be used for any commercial activity» ([condiciones COW](https://correlatesofwar.org/?p=66), leído 2026-11-14) | **No** | Descartada sin permiso escrito |
 
 **Cliopatria medida (2026-11-14, fichero `cliopatria_polities_only_v021.geojson`):**
@@ -40,7 +40,7 @@ Eso es justo lo que pide el creador para las guerras: ver la frontera cambiar fe
 
 | Fuente | Qué da | Cobertura | Licencia | ¿Al repo? | Estado |
 |---|---|---|---|---|---|
-| **UCDP** (Uppsala) | GED: cada episodio de violencia con fecha y su precisión (`date_prec` 1–5), lugar y su precisión (`where_prec` 1–7), muertes (mín./mejor/máx.). Conflict Termination: **inicio y fin** de cada conflicto y cómo acabó. ACD: conflictos por año | GED 1989–2025; ACD 1946–2025 | **CC BY 4.0**: «licensed under CC BY 4.0… free to use and redistribute them provided you cite the relevant publications» ([descargas UCDP](https://ucdp.uu.se/downloads/), leído 2026-11-14) | Sí, con cita | **Verificada**; API pendiente de sonda |
+| **UCDP** (Uppsala) | GED: cada episodio de violencia con fecha y su precisión (`date_prec` 1–5), lugar y su precisión (`where_prec` 1–7), muertes (mín./mejor/máx.). Conflict Termination: **inicio y fin** de cada conflicto y cómo acabó. ACD: conflictos por año | GED 1989–2025; ACD 1946–2025 | **CC BY 4.0**: «licensed under CC BY 4.0… free to use and redistribute them provided you cite the relevant publications» ([descargas UCDP](https://ucdp.uu.se/downloads/), leído 2026-11-14) | Sí, con cita | **Verificada**. Su API contesta 401 sin credenciales; no se piden claves (regla 5): se usan las descargas CSV |
 | COW Inter-State War | Guerras entre estados con fechas | 1816–2007 | Las mismas condiciones restrictivas de COW | **No** | Descartada sin permiso |
 | Wikidata | Inicio y fin (P580/P582), causa (P828), efecto (P1542), parte de (P361) | Toda la historia, desigual | CC0 | Sí | En uso (1.393 sucesos con intervalo) |
 
@@ -49,24 +49,25 @@ Eso es justo lo que pide el creador para las guerras: ver la frontera cambiar fe
 | Fuente | Qué da | Cobertura | Licencia | ¿Al repo? | Estado |
 |---|---|---|---|---|---|
 | Wikidata | Nacimiento y muerte, lugares, ocupaciones | — | CC0 | Sí | En uso |
-| **Base de personas notables** (Laouenan et al., *Scientific Data* 2022, [doi:10.1038/s41597-022-01369-4](https://doi.org/10.1038/s41597-022-01369-4)) | 2,2 millones de personas, contrastadas entre varias ediciones de Wikipedia y Wikidata | −3500 a 2018 | **No verificada**: el portal [recherche.data.gouv.fr](https://recherche.data.gouv.fr/en/dataset/a-brief-history-of-human-time) dice «etalab-2.0» para su propio contenido, no para el fichero. Datos: [doi:10.21410/7E4/YLG6YR](https://doi.org/10.21410/7E4/YLG6YR), V2 | — | Pendiente de sonda (el portal de Sciences Po no deja leerlo desde aquí) |
-| GND (Deutsche Nationalbibliothek, vía lobid) | Ficheros de autoridad: fechas de vida con fuente bibliotecaria | — | Pendiente (la página bloquea lectores automáticos) | — | Pendiente de sonda |
+| **Base de personas notables** (Laouenan et al., *Scientific Data* 2022, [doi:10.1038/s41597-022-01369-4](https://doi.org/10.1038/s41597-022-01369-4)) | 2,2 millones de personas, contrastadas entre varias ediciones de Wikipedia y Wikidata | −3500 a 2018 | **CC BY-SA 4.0**: el `termsOfUse` del conjunto en Sciences Po enlaza a by-sa/4.0 y dice «All datasets included in this folder are subject to CC-BY-SA licensing» (sonda 2026-11-14). Datos: [doi:10.21410/7E4/YLG6YR](https://doi.org/10.21410/7E4/YLG6YR), versión 2 (3-4-2023) | **No** («compartir igual»). **Sí para contrastar** en Actions, publicando solo las discrepancias | Verificada |
+| GND (Deutsche Nationalbibliothek, vía lobid) | Ficheros de autoridad: fechas de vida con fuente bibliotecaria | — | La página de la API no dice licencia | — | La API responde (JSON, CORS `*`). Licencia pendiente: buscar la página concreta |
 
 ## Lugares
 
 | Fuente | Qué da | Licencia | ¿Al repo? | Estado |
 |---|---|---|---|---|
-| Pleiades | Lugares del mundo antiguo, con periodos | **CC BY 3.0**: «Sharing and remixing permitted under terms of the Creative Commons Attribution 3.0 License» ([versión 3.1](https://pleiades.stoa.org/news/blog/now-available-pleiades-datasets-3.1)) | Sí | **Verificada** |
+| Pleiades | Lugares del mundo antiguo, con periodos | **CC BY 3.0**: «Sharing and remixing permitted under terms of the Creative Commons Attribution 3.0 License» ([versión 3.1](https://pleiades.stoa.org/news/blog/now-available-pleiades-datasets-3.1)). El aviso enlaza a la versión de EE. UU. de la licencia; el `LICENSE` de su repo de datos es «Attribution 3.0 Unported» | Sí | **Verificada** |
 | GeoNames | 12 millones de lugares actuales | **CC BY 4.0**: «licensed under a Creative Commons Attribution 4.0 License» ([about](https://www.geonames.org/about.html)) | Sí | **Verificada** |
-| World Historical Gazetteer | Lugares históricos enlazados | Pendiente | — | Pendiente de sonda |
+| World Historical Gazetteer | Lugares históricos enlazados | Su portada no dice licencia (sonda 2026-11-14) | — | Pendiente: buscar la licencia de cada colección |
 
 ## Sucesos naturales y astronómicos
 
 | Fuente | Qué da | Licencia | ¿Al repo? | Estado |
 |---|---|---|---|---|
-| NOAA NCEI, terremotos significativos | Desde el 2150 a. C.; entra si hubo ≥ 10 muertos, daños moderados, M ≥ 7,5, intensidad ≥ X o tsunami. [doi:10.7289/V5TD9V7K](https://doi.org/10.7289/V5TD9V7K) | La página solo pide citar; no dice licencia. Es obra federal de EE. UU., que suele ser de dominio público, **sin comprobar** | — | Pendiente de sonda (API HazEL) |
-| Smithsonian GVP, volcanes del Holoceno | Volcanes y erupciones con evidencia graduada. v5.3.6 (26-5-2026), [doi:10.5479/si.GVP.VOTW5-2025.5.3](https://doi.org/10.5479/si.GVP.VOTW5-2025.5.3) | La página no dice licencia; pide citar versión y fecha | — | Pendiente |
-| NASA, eclipses (Espenak) | Eclipses de −1999 a 3000 | Pendiente | — | Pendiente de sonda |
+| NOAA NCEI, terremotos significativos | Desde el 2150 a. C.; entra si hubo ≥ 10 muertos, daños moderados, M ≥ 7,5, intensidad ≥ X o tsunami. [doi:10.7289/V5TD9V7K](https://doi.org/10.7289/V5TD9V7K) | La página solo pide citar: «Please cite this data/database as doi: 10.7289/V5TD9V7K». No dice licencia. Es obra federal de EE. UU., que suele ser de dominio público, **sin comprobar** | — | **La API HazEL responde** con CORS `*`: fecha (desde −2150), lugar, coordenadas y magnitud (sonda 2026-11-14). Licencia pendiente |
+| Smithsonian GVP, volcanes del Holoceno | Volcanes y erupciones con evidencia graduada. v5.3.6 (26-5-2026), [doi:10.5479/si.GVP.VOTW5-2025.5.3](https://doi.org/10.5479/si.GVP.VOTW5-2025.5.3) | La página no dice licencia; pide citar versión y fecha | — | Pendiente (contesta 403 a lectores automáticos) |
+| NASA, eclipses (Espenak) | Eclipses de −1999 a 3000 | Su página de catálogo no dice licencia | — | Pendiente |
+| Seshat, EventKG | Variables de sociedades; grafo de sucesos | Sus portadas no dicen licencia (sonda 2026-11-14) | — | Pendiente: buscar su página de licencia |
 
 ## Primer contraste: fronteras de la web frente a Cliopatria
 
@@ -104,6 +105,6 @@ El informe completo, con 30 desacuerdos por año, está en la rama `sources` (`c
 
 ## Próximos contrastes (propuestos)
 
-1. **Fechas de personas**: Wikidata frente a la base de personas notables o la GND, cuando la sonda confirme sus licencias. La discrepancia se marca en la ficha, sin corregir sola.
+1. **Fechas de personas**: Wikidata frente a la base de personas notables. Ya se puede: es CC BY-SA, así que el contraste corre en Actions y solo publica las discrepancias. Después, la GND, cuando se confirme su licencia. La discrepancia se marca en la ficha, sin corregir sola.
 2. **Guerras**: inicio y fin en Wikidata frente a UCDP Conflict Termination (desde 1946).
 3. **Fronteras recientes**: historical-basemaps frente a OpenHistoricalMap, donde OHM tenga cobertura.
