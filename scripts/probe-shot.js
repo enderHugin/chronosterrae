@@ -12,6 +12,9 @@ const { chromium } = require('playwright');
 const SUITE = [
     { id: 'pirineos-2026', year: 2026, lng: -1.35, lat: 43.05, zoom: 11 },
     { id: 'europa-1606', year: 1606, lng: 10, lat: 48, zoom: 3.3 },
+    // Costa del color politico sobre la Tierra natural (2026-11-13: «estas costas aun no estan bien coloreadas o definidas»). Modo `costa`.
+    { id: 'costa-natural-iberia-1924', costa: true, year: 1924, lng: 3, lat: 40.5, zoom: 4.7 },
+    { id: 'costa-natural-valencia-1924', costa: true, year: 1924, lng: 1.2, lat: 39.4, zoom: 6.2 },
     { id: 'estrecho-2026', year: 2026, lng: -5.6, lat: 36, zoom: 8 },
     { id: 'europa-1945-lejos', year: 1945, lng: 12, lat: 50, zoom: 3 },
     { id: 'europa-1945', year: 1945, lng: 12, lat: 50, zoom: 4 },
@@ -147,7 +150,7 @@ async function runSuite(page, out, only) {
     const rows = [];
     for (const dark of [true, false]) {
         await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark);
-        for (const v of SUITE.filter((x) => (only === 'diseno' ? x.diseno : (!x.diseno && (!only || (only === 'iconos' ? x.events : x.names)))))) {
+        for (const v of SUITE.filter((x) => (only === 'diseno' ? x.diseno : only === 'costa' ? x.costa : (!x.diseno && (!only || (only === 'iconos' ? x.events : x.names)))))) {
             if (v.vp) { await page.setViewportSize({ width: v.vp.width, height: v.vp.height }); await page.waitForTimeout(800); }
             await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
             await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
@@ -271,7 +274,7 @@ async function runSuite(page, out, only) {
     await page.goto(url, { waitUntil: 'load' });
     await page.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
     await page.evaluate(() => { if (window.eventIconsAnimate) eventIconsAnimate(false); });   // la animacion de los iconos impide que el mapa llegue a idle: las capturas son de un fotograma fijo
-    if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos' || process.argv[4] === 'diseno') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : process.argv[4] === 'diseno' ? 'diseno' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
+    if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos' || process.argv[4] === 'diseno' || process.argv[4] === 'costa') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : process.argv[4] === 'diseno' ? 'diseno' : process.argv[4] === 'costa' ? 'costa' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
     if (!diag) { await runSuite(page, out); await browser.close(); return; }
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
     await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [lng, lat, zoom]);
