@@ -14,6 +14,10 @@ const SUITE = [
     { id: 'europa-1606', year: 1606, lng: 10, lat: 48, zoom: 3.3 },
     // Costa del color politico sobre la Tierra natural (2026-11-13: «estas costas aun no estan bien coloreadas o definidas»). Modo `costa`.
     // (por debajo de zoom 4,6 —4,2 si ya estaba— no hay detalle de OpenStreetMap y se ve la imagen de NASA; por encima, el agua de OSM pone la costa)
+    // Leyenda viva (2026-11-13), modo `leyenda`: abierta y con una fila señalada (cable, anillo, nombre), en tableta y en movil
+    { id: 'leyenda-tableta-1939', leyenda: true, abrir: ['leyenda'], senalar: true, vp: { width: 834, height: 1194, touch: true }, year: 1939, lng: 12, lat: 48, zoom: 4.2 },
+    { id: 'leyenda-movil-1939', leyenda: true, abrir: ['leyenda'], senalar: true, vp: { width: 390, height: 844, touch: true }, year: 1939, lng: 12, lat: 48, zoom: 3.6 },
+    { id: 'leyenda-escritorio-1879', leyenda: true, abrir: ['leyenda'], senalar: true, year: 1879, lng: 15, lat: 30, zoom: 1.6 },
     { id: 'costa-natural-iberia-1924', costa: true, year: 1924, lng: 3, lat: 40.5, zoom: 4.3 },
     { id: 'costa-natural-valencia-1924', costa: true, year: 1924, lng: 1.5, lat: 39.6, zoom: 4.55 },
     { id: 'estrecho-2026', year: 2026, lng: -5.6, lat: 36, zoom: 8 },
@@ -151,7 +155,7 @@ async function runSuite(page, out, only) {
     const rows = [];
     for (const dark of [true, false]) {
         await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark);
-        for (const v of SUITE.filter((x) => (only === 'diseno' ? x.diseno : only === 'costa' ? x.costa : (!x.diseno && (!only || (only === 'iconos' ? x.events : x.names)))))) {
+        for (const v of SUITE.filter((x) => (only === 'diseno' ? x.diseno : only === 'costa' ? x.costa : only === 'leyenda' ? x.leyenda : (!x.diseno && (!only || (only === 'iconos' ? x.events : x.names)))))) {
             if (v.vp) { await page.setViewportSize({ width: v.vp.width, height: v.vp.height }); await page.waitForTimeout(800); }
             await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
             await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
@@ -180,7 +184,14 @@ async function runSuite(page, out, only) {
                 if (a.includes('menu-capas')) document.getElementById('menu-layers-btn').click();
                 if (a.includes('epocas')) document.getElementById('tl-jumps-btn').click();     // saltos de la linea de tiempo, cada uno con su epoca
                 if (a.includes('info-tl')) document.getElementById('tl-info-btn').click();     // lo que ves ahora + fuentes y licencias
+                if (a.includes('leyenda')) { if (!LG.open) lgSet(true, false); }                // leyenda viva (puntos de color por defecto)
             }, v.abrir);
+            if (v.senalar) {        // leyenda: se espera a que tenga filas y se señala la del medio (cable fuerte, anillo, nombre)
+                await page.waitForFunction(() => LG.open && LG.rows.length > 0, null, { timeout: 30000 }).catch(() => {});
+                await page.waitForTimeout(1200);
+                await page.evaluate(() => { lgRender(); const it = LG.rows[Math.floor(LG.rows.length / 2)]; if (it) lgHot(it.id); });
+                await page.waitForTimeout(600);
+            }
             if (v.run) await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});   // el cielo (efemerides) carga aparte
             if (v.run) {   // el reloj avanza por su punto de entrada real (clockSet) a v.yearsPerSec; se mide la ventana y se fotografia sin esperar (al parar, la ventana vuelve a la minima en ~2,5 s)
                 ventana = await page.evaluate(async (yps) => {
@@ -227,7 +238,7 @@ async function runSuite(page, out, only) {
             rows.push({ name, ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
             if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
             if (v.tipos) await page.evaluate(() => { typesSet(0, false); typesRender(); panelsUI.setSettingsOpen(false); });
-            if (v.abrir) await page.evaluate(() => { panelsUI.setSettingsOpen(false); hideInfo(); menus.closeAll(); });
+            if (v.abrir) await page.evaluate(() => { panelsUI.setSettingsOpen(false); hideInfo(); menus.closeAll(); if (typeof LG !== 'undefined' && LG.open) lgSet(false, false); });
             if (v.vp) { await page.setViewportSize({ width: 1280, height: 800 }); await page.waitForTimeout(500); }
             if (v.events) await page.evaluate(() => { if (events.open) document.getElementById('btn-events').click(); });
             fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));   // parcial: si el proceso muere, queda lo medido hasta aqui
@@ -275,7 +286,7 @@ async function runSuite(page, out, only) {
     await page.goto(url, { waitUntil: 'load' });
     await page.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
     await page.evaluate(() => { if (window.eventIconsAnimate) eventIconsAnimate(false); });   // la animacion de los iconos impide que el mapa llegue a idle: las capturas son de un fotograma fijo
-    if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos' || process.argv[4] === 'diseno' || process.argv[4] === 'costa') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : process.argv[4] === 'diseno' ? 'diseno' : process.argv[4] === 'costa' ? 'costa' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
+    if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos' || process.argv[4] === 'diseno' || process.argv[4] === 'costa' || process.argv[4] === 'leyenda') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : process.argv[4] === 'diseno' ? 'diseno' : process.argv[4] === 'costa' ? 'costa' : process.argv[4] === 'leyenda' ? 'leyenda' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
     if (!diag) { await runSuite(page, out); await browser.close(); return; }
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
     await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [lng, lat, zoom]);

@@ -7,7 +7,7 @@ on:
       lng: { description: 'longitud (vacio = serie fija)', default: '' }
       lat: { description: 'latitud', default: '' }
       zoom: { description: 'zoom', default: '' }
-      nombres: { description: "si = solo las vistas de nombres geograficos; iconos = solo las vistas de iconos de sucesos; diseno = solo epocas y maquetacion (movil, tableta); costa = color politico contra la costa con la Tierra natural; buscar = el buscador (lista, vuelo, ficha, imagenes)", default: '' }
+      nombres: { description: "si = solo las vistas de nombres geograficos; iconos = solo las vistas de iconos de sucesos; diseno = solo epocas y maquetacion (movil, tableta); costa = color politico contra la costa con la Tierra natural; leyenda = leyenda viva abierta y señalando; buscar = el buscador (lista, vuelo, ficha, imagenes)", default: '' }
   # Revision rutinaria: cada vez que se publica la web, se fotografia la serie fija de vistas (ver SUITE en scripts/probe-shot.js).
   workflow_run:
     workflows: ['Publicar web (Pages)']
@@ -52,6 +52,8 @@ jobs:
             node scripts/probe-shot.js https://enderhugin.github.io/chronosterrae/ /tmp/shots diseno > /tmp/shot.log 2>&1 || true
           elif [ "$NOMBRES" = "costa" ]; then
             node scripts/probe-shot.js https://enderhugin.github.io/chronosterrae/ /tmp/shots costa > /tmp/shot.log 2>&1 || true
+          elif [ "$NOMBRES" = "leyenda" ]; then
+            node scripts/probe-shot.js https://enderhugin.github.io/chronosterrae/ /tmp/shots leyenda > /tmp/shot.log 2>&1 || true
           elif [ -n "$NOMBRES" ]; then
             node scripts/probe-shot.js https://enderhugin.github.io/chronosterrae/ /tmp/shots nombres > /tmp/shot.log 2>&1 || true
           elif [ -n "$LNG" ] && [ -n "$LAT" ] && [ -n "$ZOOM" ]; then

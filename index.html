@@ -543,6 +543,53 @@
             #tl-jumps-btn { width: 84px; padding: 0 6px; }
         }
         #timeline .menu-pop { max-height: min(560px, var(--tl-room, 62vh)); }
+
+        /* Leyenda viva (el creador, 2026-11-13): columna estrecha al margen derecho con los iconos que se ven AHORA, cada fila a la altura de
+           su punto; el nombre se despliega al señalarla; un cable punteado une fila y punto (al señalar, o siempre y tenues si se elige). */
+        :root { --lg-w: 50px; }
+        @media (max-width: 760px) { :root { --lg-w: 46px; } }
+        body.lg-on #dock { right: calc(14px + var(--lg-w)); }
+        body.lg-on .maplibregl-ctrl-bottom-right .maplibregl-ctrl { margin-right: calc(14px + var(--lg-w)) !important; }
+        #legend { position: absolute; right: 0; top: var(--top-h, 60px); bottom: var(--bot-h, 180px); width: var(--lg-w); z-index: 12; box-sizing: border-box; padding: 0; display: flex; flex-direction: column;
+            background: color-mix(in srgb, var(--bg) 62%, transparent); border: 1px solid color-mix(in srgb, var(--text) 18%, transparent); border-right: 0; border-radius: 10px 0 0 10px; }
+        #legend[hidden] { display: none; }
+        #lg-head { flex: none; height: 34px; margin: 4px 4px 2px; padding: 0; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); background: transparent; color: var(--text);
+            font: 700 12px/1 var(--font-ui); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+        #lg-head .lg-cap { font-size: 9px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; }
+        #lg-head[aria-expanded="true"] { background: var(--accent); color: var(--bg); }
+        #lg-head[aria-expanded="true"] .lg-cap { color: var(--bg); }
+        #lg-list { position: relative; flex: 1 1 auto; margin: 0; padding: 0; list-style: none; min-height: 0; }
+        .lg-row { position: absolute; left: 0; right: 0; height: var(--lg-row, 34px); display: flex; align-items: center; justify-content: center; }
+        .lg-btn { position: relative; width: 38px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .lg-btn:hover, .lg-btn:focus-visible, .lg-row.hot .lg-btn { background: color-mix(in srgb, var(--accent) 28%, transparent); outline: none; }
+        .lg-ico { width: 28px; height: 28px; display: block; pointer-events: none; }
+        .lg-name { position: absolute; right: calc(100% + 6px); top: 50%; transform: translateY(-50%); display: none; white-space: nowrap; max-width: min(320px, 70vw); overflow: hidden; text-overflow: ellipsis;
+            padding: 3px 10px; border-radius: 12px; background: var(--bg); color: var(--text); border: 1.5px solid var(--accent); font: 600 12.5px/1.35 var(--font-ui); box-shadow: 0 2px 10px rgba(0,0,0,0.35); pointer-events: none; text-align: left; }
+        .lg-name .lg-date { margin-left: 6px; font-weight: 500; color: var(--muted); }
+        .lg-row.hot .lg-name { display: block; }
+        #lg-extra { flex: none; height: 22px; box-sizing: border-box; text-align: center; font: 700 11px/1 var(--font-ui); color: var(--muted); padding: 5px 0 6px; cursor: help; }   /* su sitio, siempre: si apareciera despues de medir, las filas se saldrian */
+        #lg-pop { position: absolute; right: calc(100% + 8px); top: 0; width: 290px; max-width: calc(100vw - var(--lg-w) - 24px); max-height: 100%; overflow: auto; box-sizing: border-box; padding: 10px 12px; font-size: 12.5px; line-height: 1.45; z-index: 2; }
+        #lg-pop[hidden] { display: none; }
+        #lg-pop h3 { margin: 0 0 6px; font: 700 12px/1.3 var(--font-ui); text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+        #lg-pop .lg-why { margin: 0 0 6px; }
+        #lg-pop fieldset { border: 0; margin: 8px 0 0; padding: 8px 0 0; border-top: 1px solid color-mix(in srgb, var(--text) 15%, transparent); }
+        #lg-pop legend { font-weight: 700; padding: 0; margin-bottom: 2px; }
+        #lg-pop label { display: flex; align-items: center; gap: 6px; margin: 3px 0; cursor: pointer; }
+        #lg-pop .lg-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8px; }
+        #lg-pop .lg-close { margin-top: 10px; width: 100%; }
+        /* Cables: una capa SVG sobre el mapa; se esconden mientras el globo se mueve y se recalculan al parar (nada cada fotograma) */
+        #lg-wires { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; overflow: visible; }
+        #lg-wires[hidden], #lg-wires.moving { display: none; }
+        #lg-wires path { fill: none; stroke: var(--text); stroke-opacity: 0.28; stroke-width: 1.1; stroke-dasharray: 1.2 3.2; stroke-linecap: round; }
+        #lg-wires path.hot { stroke: var(--accent); stroke-opacity: 1; stroke-width: 2.4; stroke-dasharray: 0.1 4.4; }
+        #lg-wires path.hot-under { stroke: var(--bg); stroke-opacity: 0.85; stroke-width: 5; stroke-dasharray: none; }
+        #lg-wires circle.hot { fill: none; stroke: var(--accent); stroke-width: 2.6; }
+        #lg-wires circle.hot-under { fill: none; stroke: var(--bg); stroke-width: 5.5; stroke-opacity: 0.85; }
+        body.solar-on #legend, body.solar-on #lg-wires { display: none; }
+        @media (pointer: coarse) { .lg-btn { width: 40px; height: 38px; } }
+        .maplibregl-ctrl-legend .maplibregl-ctrl-icon { display: flex; align-items: center; justify-content: center; }
+        .maplibregl-ctrl-legend svg { width: 18px; height: 18px; display: block; }
+        .maplibregl-ctrl-legend[aria-pressed="true"] { background: var(--accent) !important; color: var(--bg); }
     </style>
 </head>
 <body>
@@ -754,6 +801,7 @@
 <script src="./map/changes.js"></script>
 <script src="./map/panels.js"></script>
 <script src="./map/event-icons.js"></script>
+<script src="./map/legend.js"></script>
 <script src="./map/built.js"></script>
 <script src="./map/search.js"></script>
 <script src="./map/glide.js"></script>
@@ -837,6 +885,7 @@ const parsePrefs = (raw) => {
     if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
     if (p.tl === 0 || p.tl === 1) out.tl = p.tl;   // linea de tiempo: 1 desplegada (pasos, saltos, creditos); por defecto plegada
     if (Number.isInteger(p.pg) && p.pg >= 0 && p.pg <= 7) out.pg = p.pg;   // notas cerradas por el usuario que no deben volver solas (1 estado, 2 fondo espacial, 4 sistema solar)
+    ['lg', 'lgw', 'lgd'].forEach((k) => { if (p[k] === 0 || p[k] === 1) out[k] = p[k]; });   // leyenda viva: abierta, cables siempre, puntos en el globo
     return out;
 };
 const readPrefs = () => {
@@ -857,7 +906,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined, tl: prefs.tl, pg: prefs.pg || undefined };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined, tl: prefs.tl, pg: prefs.pg || undefined, lg: prefs.lg, lgw: prefs.lgw, lgd: prefs.lgd };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -870,6 +919,10 @@ const savePrefs = (patch) => {
 /* ------------------------------------------------------------------ */
 const i18n = {
     es: {
+        lgBtn: 'Leyenda: qué es cada icono', lgTitle: 'Leyenda', lgOpts: 'Qué se ve y por qué; opciones', lgClose: 'Cerrar leyenda', lgWires: 'Cables', lgWPoint: 'Al señalar uno', lgWAlways: 'Siempre (tenues)',
+        lgDots: 'Puntos de color en el globo (los iconos, en esta lista)', lgShow: 'Mostrar', lgMore: '+{n}', lgMoreTip: '{n} más en pantalla, menos notorios: acércate o filtra', lgTap: 'Toca otra vez para abrir',
+        lgWhyRest: 'Del último año', lgWhyFlow: 'Del tramo de tiempo que acaba de pasar', lgWhyN: '{s} de {t} sucesos: a esta escala solo los de notoriedad {f} o más, y uno por zona para que no se amontonen. Acércate para ver más.',
+        lgWhyAll: '{s} sucesos: todos los que hay a esta escala.', lgWhyNone: 'Ningún suceso a la vista en esta fecha y escala.', lgWhyBuilt: 'Construcciones: las más conocidas a esta escala ({b} a la vista).', lgEmpty: 'Nada a la vista',
         donate: 'Apoyar el proyecto', infoImage: 'Imagen', infoMore: 'En qué se basa, estado, fuente y cita', tlJumps: 'Épocas', tlJumpsTip: 'Saltos rápidos a fechas señaladas (cada uno con el aspecto de su época)', tlKeysTip: 'Teclado: cuánto mueven ← → y RePág/AvPág', tlInfoTip: 'Lo que ves ahora; fuentes y licencias', sceneTitle: 'Lo que ves ahora', creditsTitle: 'Fuentes y licencias', creditsPeek: 'Fuentes', notesBack: 'Volver a mostrar las notas que cerraste', searchPlaceholder: 'Buscar persona, suceso, edificio, imperio…',
         search: {
             loading: 'Cargando el índice…', none: 'Nada con «{q}».', fail: 'No se pudo cargar el índice de búsqueda: {err}',
@@ -1086,6 +1139,10 @@ const i18n = {
         }
     },
     en: {
+        lgBtn: 'Legend: what each icon is', lgTitle: 'Legend', lgOpts: 'What is shown and why; options', lgClose: 'Close legend', lgWires: 'Leader lines', lgWPoint: 'When pointing at one', lgWAlways: 'Always (faint)',
+        lgDots: 'Coloured dots on the globe (the icons, in this list)', lgShow: 'Show', lgMore: '+{n}', lgMoreTip: '{n} more on screen, less notable: zoom in or filter', lgTap: 'Tap again to open',
+        lgWhyRest: 'From the last year', lgWhyFlow: 'From the stretch of time just passed', lgWhyN: '{s} of {t} events: at this scale only those with notability {f} or more, and one per area so they do not pile up. Zoom in to see more.',
+        lgWhyAll: '{s} events: all there are at this scale.', lgWhyNone: 'No events in view at this date and scale.', lgWhyBuilt: 'Structures: the best known at this scale ({b} in view).', lgEmpty: 'Nothing in view',
         donate: 'Support the project', infoImage: 'Image', infoMore: 'What it is based on, status, source and citation', tlJumps: 'Eras', tlJumpsTip: 'Quick jumps to landmark dates (each in the look of its era)', tlKeysTip: 'Keyboard: how far ← → and PgUp/PgDn move', tlInfoTip: 'What you are seeing; sources and licences', sceneTitle: 'What you are seeing', creditsTitle: 'Sources and licences', creditsPeek: 'Sources', notesBack: 'Show again the notes you closed', searchPlaceholder: 'Search a person, event, building, empire…',
         search: {
             loading: 'Loading the index…', none: 'Nothing for “{q}”.', fail: 'Could not load the search index: {err}',
@@ -1711,12 +1768,33 @@ mapReady.then(() => {
 // Se desactiva el zoom por doble clic de MapLibre para que no compita con esto.
 map.doubleClickZoom.disable();
 let lastTap = null;
+// Tipo de puntero del ultimo toque o clic en el mapa (raton, dedo, lapiz): el margen para acertar a un icono depende de el
+let MAP_PTR = matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse';
+map.getCanvasContainer().addEventListener('pointerdown', (e) => { MAP_PTR = e.pointerType || 'mouse'; }, { capture: true, passive: true });
+const PICK_R = { mouse: 3, pen: 12, touch: 22 };          // caja de busqueda alrededor del punto
+const PICK_MAX = { mouse: 18, pen: 22, touch: 28 };       // distancia maxima del centro del icono (pasado eso, se toca el pais o la costa)
+/**
+ * Elemento tocable mas cercano a `point` entre `layers` (puntos): con el raton, practicamente el pixel; con el dedo, hasta PICK_R.touch px
+ * alrededor (el dedo tapa lo que toca y su punto de contacto baila). Gana el de centro mas cercano. null si no hay ninguno.
+ */
+function mapPickNear(point, layers) {
+    layers = (layers || []).filter((l) => map.getLayer(l)); if (!layers.length) return null;
+    const r = PICK_R[MAP_PTR] !== undefined ? PICK_R[MAP_PTR] : PICK_R.mouse;
+    const hits = map.queryRenderedFeatures([[point.x - r, point.y - r], [point.x + r, point.y + r]], { layers });
+    let best = null; let bd = Infinity;
+    for (const h of hits) {
+        if (!h.geometry || h.geometry.type !== 'Point') continue;
+        const p = map.project(h.geometry.coordinates); const d = Math.hypot(p.x - point.x, p.y - point.y);
+        if (d < bd && d <= (PICK_MAX[MAP_PTR] || PICK_MAX.mouse)) { bd = d; best = h; }
+    }
+    return best;
+}
 map.on('click', (e) => {
     const now = performance.now();
     const again = lastTap && now - lastTap.t < 350 && Math.hypot(e.point.x - lastTap.x, e.point.y - lastTap.y) < 24;
     lastTap = again ? null : { t: now, x: e.point.x, y: e.point.y };
     if (!again) return;
-    const ev = map.getLayer('events-circle') ? map.queryRenderedFeatures(e.point, { layers: ['events-circle'] })[0] : null;
+    const ev = map.getLayer('events-circle') ? mapPickNear(e.point, ['events-circle']) : null;
     map.easeTo({ center: ev && ev.geometry ? ev.geometry.coordinates : e.lngLat, duration: 600 });   // doble clic sobre un suceso: centrado en el suceso
 });
 
@@ -2620,13 +2698,15 @@ map.on('mousemove', (e) => { hoverPt = e.point; if (!hoverRaf) hoverRaf = reques
 /* Suceso bajo el raton (solo con raton: en pantallas tactiles no hay «pasar por encima») */
 const EVH = { id: null, raf: 0, coords: null };
 const evColor = (icon) => { const c = ChronosEventIcons.COLORS[icon] || '#888888'; const st = evIconStyle(); return st && st.tint.amt > 0 ? ChronosEras.mix(c, st.tint.color, Math.min(st.tint.amt, 0.35)) : c; };
+var LG_HOT_SELF = false;      // la leyenda pone el resplandor de su fila: que no se lo devuelva a si misma
 function evHoverSet(f) {
     const id = f ? f.properties.id : null; if (id === EVH.id) return;
     EVH.id = id; EVH.coords = f && f.geometry ? f.geometry.coordinates.slice() : null;
+    if (typeof lgFromMap === 'function' && !LG_HOT_SELF) lgFromMap(id);
     const src = map.getSource('events-hover');
     if (src) src.setData(f ? { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: f.geometry, properties: f.properties }] } : emptyFC());
     const chip = $('ev-hover');
-    if (!f) { chip.hidden = true; return; }
+    if (!f || LG_HOT_SELF) { chip.hidden = true; return; }     // señalado desde la leyenda: el nombre ya va en su fila (y el cable lo tacharia)
     chip.textContent = f.properties.name || ''; chip.style.setProperty('--ev', evColor(f.properties.icon)); chip.hidden = !chip.textContent;
     evHoverPlace();
 }
@@ -2837,9 +2917,10 @@ const BUH = { id: null, coords: null };
 function buHoverSet(f) {
     const id = f ? f.properties.id : null; if (id === BUH.id) return;
     BUH.id = id; BUH.coords = f && f.geometry ? f.geometry.coordinates.slice() : null;
+    if (typeof lgFromMap === 'function' && !LG_HOT_SELF && (id || !EVH.id)) lgFromMap(id);
     if (EVH.id) return;
     const chip = $('ev-hover');
-    if (!f) { chip.hidden = true; return; }
+    if (!f || LG_HOT_SELF) { chip.hidden = true; return; }
     const y = f.properties.d ? ChronosBuilt.dateText({ iso: f.properties.d, precision: f.properties.p }, formatYear) : '';
     chip.textContent = (f.properties.n || '') + (y ? ' · ' + y : ''); chip.style.setProperty('--ev', ChronosBuilt.CHIP); chip.hidden = !chip.textContent;
     chipPlace(chip, map.project(BUH.coords), 16);
@@ -2851,7 +2932,11 @@ $('btn-center').setAttribute('aria-pressed', String(CENTER.on));
 $('btn-center').addEventListener('click', () => { CENTER.on = !CENTER.on; $('btn-center').setAttribute('aria-pressed', String(CENTER.on)); savePrefs({ cc: CENTER.on }); });
 map.on('click', (e) => {
     if (!map.getLayer('borders-fill')) return;
-    const hit = map.queryRenderedFeatures(e.point, { layers: ['events-circle', 'live-points', ...(map.getLayer('built-icons') && BUILT.on ? ChronosBuilt.LAYER_IDS : []), 'borders-fill', 'land-fill', 'margin-fill'] })[0];
+    // Primero lo que se toca (sucesos, puntos en vivo, construcciones) con margen para el dedo; si no hay nada cerca, lo de debajo
+    // (pais, costa). Antes era solo el pixel exacto: con el dedo se caia al pais (el creador, 2026-11-13: «no termina de discernir si
+    // estas tocando en el globo o en el icono»).
+    const near = mapPickNear(e.point, ['events-circle', 'live-points', ...(map.getLayer('built-icons') && BUILT.on ? ChronosBuilt.LAYER_IDS : [])]);
+    const hit = near || map.queryRenderedFeatures(e.point, { layers: ['borders-fill', 'land-fill', 'margin-fill'].filter((l) => map.getLayer(l)) })[0];
     if (bordersStale() && hit && hit.layer.id === 'borders-fill') return;   // se ve el mapa de la instantanea anterior hasta que llegue la nueva
     clearHighlight(); setHoverKey(null);
     if (!hit) { hideInfo(); selRemember(null); return; }
@@ -4780,6 +4865,7 @@ function evLayersAdd() {
     // foco del buscador: estas opacidades se atenuan para todos menos el elegido (spotSet las registra y aplica el foco que haya)
     spotSet('events-dot', 'circle-opacity', EI.dotFade(seen)); spotSet('events-dot', 'circle-stroke-opacity', EI.dotFade(seen));
     ['bob', 'shake'].forEach((g) => spotSet('events-icon-' + g, 'icon-opacity', EI.iconFade(1)));
+    if (typeof lgDotsApply === 'function') lgDotsApply();      // leyenda con puntos de color: las capas se rehacen al cambiar de estilo
     evAnimApply(EVA.phase);
     eventsRefresh();
     detailApply();
@@ -4861,6 +4947,213 @@ function eventsVisApply() {
     events.vis = etMask ? events.all.filter(shown) : events.all;
     events.visTimed = etMask ? events.timed.filter(shown) : events.timed;
 }
+/* ------------------------------------------------------------------ */
+/* Leyenda viva (el creador, 2026-11-13)                                */
+/* ------------------------------------------------------------------ */
+// Columna al margen derecho con los iconos que se ven AHORA (sucesos y construcciones), cada uno a la altura de su punto; al señalar una
+// fila: su nombre y fecha, un cable fuerte hasta el punto, un anillo en el y el resto de iconos atenuado (el mismo foco del buscador).
+// Cables: «al señalar uno» (por defecto) o «siempre» (tenues). Con «puntos de color», el globo pinta puntos y los iconos quedan en la lista.
+// Coste: nada mientras el globo se mueve (los cables se esconden); al parar, una pasada sobre lo dibujado (<= 80 sucesos) y lo que haya
+// puesto MapLibre de construcciones. La logica (que filas, donde, por donde va el cable) esta en map/legend.js con sus pruebas.
+var LG = { open: prefs.lg === 1, always: prefs.lgw === 1, dots: prefs.lgd !== 0, rows: [], extra: 0, hot: null, touchHot: null, timer: 0, sig: '', lastPointer: 'mouse', ms: 0 };
+const LG_DOT_RADIUS = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 3.6, 1, 5.6];
+const lgRowH = () => (matchMedia('(pointer: coarse)').matches ? 40 : 34);
+(function lgBuild() {
+    const box = el('aside', { id: 'legend', class: 'panel' }, [
+        el('button', { id: 'lg-head', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'lg-pop' }, [el('span', { id: 'lg-n', text: '0' }), el('span', { class: 'lg-cap', text: '≡ ?' })]),
+        el('ul', { id: 'lg-list' }), el('div', { id: 'lg-extra' }), el('div', { id: 'lg-pop', class: 'panel' })
+    ]);
+    box.hidden = true;
+    document.body.appendChild(box); box.querySelector('#lg-pop').hidden = true;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.id = 'lg-wires'; svg.setAttribute('aria-hidden', 'true'); svg.hidden = true; document.body.appendChild(svg);
+    box.querySelector('#lg-head').addEventListener('click', () => { const pop = $('lg-pop'); const open = pop.hidden; if (open) lgPopRender(); pop.hidden = !open; $('lg-head').setAttribute('aria-expanded', String(open)); });
+})();
+class LegendControl {
+    onAdd() {
+        const c = document.createElement('div'); c.className = 'maplibregl-ctrl maplibregl-ctrl-group';
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'maplibregl-ctrl-legend'; this._b = b;
+        b.innerHTML = '<span class="maplibregl-ctrl-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="6" r="1.6" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="5" cy="18" r="1.6" fill="currentColor" stroke="none"/><path d="M10 6h10M10 12h10M10 18h10"/></svg></span>';
+        b.addEventListener('click', () => lgSet(!LG.open, true));
+        c.appendChild(b); this.texts(); return c;
+    }
+    onRemove() { if (this._b) this._b.parentNode.remove(); }
+    texts() { if (!this._b) return; this._b.title = this._b.ariaLabel = t('lgBtn'); this._b.setAttribute('aria-pressed', String(LG.open)); }
+}
+const legendControl = new LegendControl();
+map.addControl(legendControl, 'bottom-right');
+
+function lgSet(open, persist) {
+    LG.open = !!open; if (persist) savePrefs({ lg: LG.open ? 1 : 0 });
+    document.body.classList.toggle('lg-on', LG.open);
+    $('legend').hidden = !LG.open; $('lg-wires').hidden = !LG.open;
+    if (!LG.open) { $('lg-pop').hidden = true; $('lg-head').setAttribute('aria-expanded', 'false'); lgHot(null); LG.sig = ''; }
+    legendControl.texts(); lgDotsApply();
+    if (LG.open) lgSchedule(0);
+}
+/** Puntos de color en el globo en vez de iconos (con la leyenda abierta y la opcion puesta): mas limpio y mas ligero (sin capas de simbolos). */
+function lgDotsApply() {
+    if (!map.getLayer || !map.getLayer('events-dot')) return;
+    const on = LG.open && LG.dots; const EI = ChronosEventIcons; const seen = ['coalesce', ['get', 'ent'], 1];
+    ['events-icon-bob', 'events-icon-shake', 'events-pulse'].forEach((l) => { if (map.getLayer(l)) map.setLayoutProperty(l, 'visibility', on ? 'none' : 'visible'); });
+    spotSet('events-dot', 'circle-opacity', on ? seen : EI.dotFade(seen)); spotSet('events-dot', 'circle-stroke-opacity', on ? seen : EI.dotFade(seen));
+    map.setPaintProperty('events-dot', 'circle-radius', on ? LG_DOT_RADIUS : EI.DOT_RADIUS);
+}
+function lgSchedule(ms) {
+    if (!LG.open) return;
+    clearTimeout(LG.timer);
+    LG.timer = setTimeout(() => { LG.timer = 0; if (map.isMoving && map.isMoving()) return; lgRender(); }, ms === undefined ? 250 : ms);
+}
+// Lo que se ve ahora: sucesos dibujados (en pantalla y en la cara visible del globo) y construcciones que MapLibre ha colocado.
+function lgCollect(maxX) {
+    const H = map.getContainer().clientHeight; const items = [];
+    const front = (lng, lat) => {
+        const p = map.project([lng, lat]); if (!(p.x >= 0 && p.x <= maxX && p.y >= 0 && p.y <= H)) return null;
+        const q = map.unproject(p); if (Math.abs(q.lat - lat) > 0.3 || Math.abs((((q.lng - lng) % 360) + 540) % 360 - 180) > 0.3) return null;   // al otro lado del globo
+        return p;
+    };
+    if (clockFull()) (events.shown || []).forEach((f) => {
+        if (!f.geometry) return; const p = front(f.geometry.coordinates[0], f.geometry.coordinates[1]); if (!p) return;
+        items.push({ id: f.properties.id, kind: 'e', f, x: p.x, y: p.y, importance: f.properties.importance || 0 });
+    });
+    if (BUILT.on) {
+        const layers = ChronosBuilt.LAYER_IDS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, 'visibility') !== 'none');
+        if (layers.length) map.queryRenderedFeatures({ layers }).forEach((h) => {
+            if (!h.geometry || !h.properties || !h.properties.id) return; const p = front(h.geometry.coordinates[0], h.geometry.coordinates[1]); if (!p) return;
+            items.push({ id: h.properties.id, kind: 'b', props: h.properties, geom: h.geometry, x: p.x, y: p.y, importance: h.properties.i || 0 });
+        });
+    }
+    return items;
+}
+function lgIcon(it) {
+    if (it.kind === 'e') return evIconUrl(evDrawKey(it.f));
+    const fam = it.props.f || 'other';
+    if (!builtIcoCache.has(fam)) { const c = document.createElement('canvas'); c.width = c.height = 52; ChronosBuilt.draw(c.getContext('2d'), fam, 40, { x: 6, y: 6 }); builtIcoCache.set(fam, c.toDataURL()); }
+    return builtIcoCache.get(fam);
+}
+function lgText(it) {
+    if (it.kind === 'e') return { name: evName(it.f), date: String(it.f.properties.time.iso || '').replace(/T.*$/, '') };
+    const p = it.props; return { name: p.n || '', date: p.d ? ChronosBuilt.dateText({ iso: p.d, precision: p.p }, formatYear) : '' };
+}
+function lgRender() {
+    if (!LG.open) return;
+    const t0 = performance.now();
+    const box = $('legend'); const list = $('lg-list'); const lr = list.getBoundingClientRect(); const br = box.getBoundingClientRect();
+    const rowH = lgRowH(); list.style.setProperty('--lg-row', rowH + 'px');
+    const max = Math.max(0, Math.floor(lr.height / rowH));
+    const cr = map.getContainer().getBoundingClientRect();
+    const items = lgCollect(br.left - cr.left - 4);
+    const pick = ChronosLegend.pickRows(items, { max });
+    const ys = ChronosLegend.placeRows(pick.rows.map((it) => it.y + cr.top - lr.top), 0, lr.height, rowH);
+    pick.rows.forEach((it, i) => { it.rowY = ys[i]; it.ax = br.left + 2; it.ay = lr.top + ys[i] + rowH / 2; it.px = it.x + cr.left; it.py = it.y + cr.top; });
+    LG.rows = pick.rows; LG.extra = pick.extra;
+    $('lg-n').textContent = String(items.length);
+    const ex = $('lg-extra'); ex.textContent = pick.extra ? fmt('lgMore', { n: pick.extra }) : ''; ex.title = pick.extra ? fmt('lgMoreTip', { n: pick.extra }) : '';
+    const sig = pick.rows.map((it) => it.id + '@' + Math.round(it.rowY)).join('|') + '#' + lang;
+    if (sig !== LG.sig) {                       // solo se rehace la lista si cambio (no se pierde la fila bajo el puntero)
+        LG.sig = sig; list.textContent = '';
+        pick.rows.forEach((it) => list.appendChild(lgRow(it)));
+    }
+    if (LG.hot && !pick.rows.some((it) => it.id === LG.hot)) lgHot(null);
+    if (LG.touchHot && !pick.rows.some((it) => it.id === LG.touchHot)) LG.touchHot = null;
+    list.querySelectorAll('.lg-row').forEach((li) => li.classList.toggle('hot', li.dataset.id === LG.hot));
+    lgWires();
+    if (!$('lg-pop').hidden) lgPopRender();
+    LG.ms = performance.now() - t0;
+}
+function lgRow(it) {
+    const tx = lgText(it);
+    const li = el('li', { class: 'lg-row' }); li.dataset.id = it.id; li.style.top = Math.round(it.rowY) + 'px';
+    const b = el('button', { type: 'button', class: 'lg-btn', 'aria-label': tx.name + (tx.date ? ' · ' + tx.date : '') }, [
+        el('img', { class: 'lg-ico', alt: '', 'aria-hidden': 'true', src: lgIcon(it) }),
+        el('span', { class: 'lg-name' }, [document.createTextNode(tx.name), tx.date ? el('span', { class: 'lg-date', text: tx.date }) : null].filter(Boolean))
+    ]);
+    b.addEventListener('pointerdown', (e) => { LG.lastPointer = e.pointerType || 'mouse'; });
+    b.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') lgHot(it.id); });
+    b.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') lgHot(null); });
+    b.addEventListener('focus', () => { if (LG.lastPointer === 'mouse') lgHot(it.id); });
+    b.addEventListener('blur', () => { if (LG.hot === it.id && LG.lastPointer === 'mouse') lgHot(null); });
+    b.addEventListener('click', () => {
+        // tactil: el primer toque señala (nombre, cable, foco); el segundo abre la ficha. Raton y teclado: abre a la primera.
+        if (LG.lastPointer !== 'mouse' && LG.touchHot !== it.id) { LG.touchHot = it.id; lgHot(it.id); return; }
+        LG.touchHot = null; lgOpen(it);
+    });
+    li.appendChild(b); return li;
+}
+function lgOpen(it) {
+    if (it.kind === 'e') { const f = events.byId.get(it.id) || it.f; showEvent(f); selRemember('e', it.id); return; }
+    selRemember('b', it.id); builtFull().then(() => { const f = BUILT.byId && BUILT.byId.get(it.id); if (f) showBuilt(f); });
+}
+/** Fila señalada (o null). fromMap: la señala el raton desde el globo (el foco y el resplandor ya los pone el mapa). */
+function lgHot(id, fromMap) {
+    id = id || null;
+    const prev = LG.hot; LG.hot = id;
+    document.querySelectorAll('#lg-list .lg-row').forEach((li) => li.classList.toggle('hot', li.dataset.id === id));
+    if (!fromMap && prev !== id) {
+        const it = id ? LG.rows.find((r) => r.id === id) : null;
+        spotHover(id);
+        LG_HOT_SELF = true;
+        try {
+            if (it && it.kind === 'e') { buHoverSet(null); evHoverSet(it.f); }
+            else if (it) { evHoverSet(null); buHoverSet({ properties: it.props, geometry: it.geom }); }
+            else { evHoverSet(null); buHoverSet(null); }
+        } finally { LG_HOT_SELF = false; }
+    }
+    lgWires();
+}
+function lgFromMap(id) { if (!LG.open) return; lgHot(id && LG.rows.some((r) => r.id === id) ? id : null, true); }
+function lgWires() {
+    const svg = $('lg-wires'); if (!svg) return;
+    const NS = 'http://www.w3.org/2000/svg'; const parts = [];
+    const path = (it, cls) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', ChronosLegend.wirePath(it.px, it.py, it.ax, it.ay)); p.setAttribute('class', cls); return p; };
+    if (LG.open && LG.always) LG.rows.forEach((it) => { if (it.id !== LG.hot) parts.push(path(it, '')); });
+    const hot = LG.open && LG.hot ? LG.rows.find((r) => r.id === LG.hot) : null;
+    if (hot) {
+        parts.push(path(hot, 'hot-under'), path(hot, 'hot'));
+        [['hot-under', 15], ['hot', 15]].forEach(([cls, r]) => { const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', hot.px); c.setAttribute('cy', hot.py); c.setAttribute('r', r); c.setAttribute('class', cls); parts.push(c); });
+    }
+    svg.replaceChildren(...parts);
+}
+function lgPopRender() {
+    const pop = $('lg-pop'); pop.textContent = '';
+    const win = evWindow(); const floor = ChronosTimed.importanceFloor(viewMeters());
+    let inWin = 0;
+    if (clockFull()) for (const f of events.vis) { const sp = ChronosTimed.span(f); if (sp.b >= clock.jd - win.pastDays && sp.a <= clock.jd + win.futureDays) inWin++; }
+    const shownE = LG.rows.filter((r) => r.kind === 'e').length + 0; const allE = (events.shown || []).length; const nb = LG.rows.filter((r) => r.kind === 'b').length;
+    pop.appendChild(el('h3', { text: t('lgTitle') + ' · ' + (win.flowing ? t('lgWhyFlow') : t('lgWhyRest')) }));
+    const why = !inWin ? t('lgWhyNone') : allE < inWin ? fmt('lgWhyN', { s: allE, t: inWin, f: nf().format(floor) }) : fmt('lgWhyAll', { s: allE });
+    pop.appendChild(el('p', { class: 'lg-why', text: why }));
+    if (BUILT.on) pop.appendChild(el('p', { class: 'lg-why', text: fmt('lgWhyBuilt', { b: nb }) }));
+    void shownE;
+    // cables
+    const fw = el('fieldset', {}, [el('legend', { text: t('lgWires') })]);
+    [[false, 'lgWPoint'], [true, 'lgWAlways']].forEach(([v, k]) => {
+        const r = el('input', { type: 'radio', name: 'lg-w' }); r.checked = LG.always === v;
+        r.addEventListener('change', () => { LG.always = v; savePrefs({ lgw: v ? 1 : 0 }); lgWires(); });
+        fw.appendChild(el('label', {}, [r, document.createTextNode(t(k))]));
+    });
+    pop.appendChild(fw);
+    // puntos en el globo
+    const fd = el('fieldset', {}); const cd = el('input', { type: 'checkbox' }); cd.checked = LG.dots;
+    cd.addEventListener('change', () => { LG.dots = cd.checked; savePrefs({ lgd: LG.dots ? 1 : 0 }); lgDotsApply(); });
+    fd.appendChild(el('label', {}, [cd, document.createTextNode(t('lgDots'))])); pop.appendChild(fd);
+    // filtro: el mismo de Ajustes (tipos de suceso), una sola fuente
+    const ff = el('fieldset', {}, [el('legend', { text: t('lgShow') })]); const grid = el('div', { class: 'lg-groups' });
+    ChronosEventIcons.GROUPS.forEach((g, i) => {
+        const c = el('input', { type: 'checkbox' }); c.checked = !(etMask & (1 << i));
+        c.addEventListener('change', () => { typesSet(c.checked ? etMask & ~(1 << i) : etMask | (1 << i), true); lgSchedule(300); });
+        const ico = el('img', { class: 'ev-ico', alt: '', 'aria-hidden': 'true', src: evIconUrl(g.icons[0]) }); ico.style.cssText = 'width:18px;height:18px';
+        grid.appendChild(el('label', {}, [c, ico, document.createTextNode(g[lang] || g.en)]));
+    });
+    ff.appendChild(grid); pop.appendChild(ff);
+    const close = el('button', { type: 'button', class: 'btn lg-close', text: t('lgClose') }); close.addEventListener('click', () => lgSet(false, true)); pop.appendChild(close);
+}
+map.on('movestart', () => { if (LG.open) $('lg-wires').classList.add('moving'); });
+map.on('moveend', () => { if (!LG.open) return; $('lg-wires').classList.remove('moving'); lgSchedule(120); });
+map.on('idle', () => lgSchedule(200));
+window.addEventListener('resize', () => lgSchedule(200));
+map.on('touchstart', () => { if (LG.touchHot) { LG.touchHot = null; lgHot(null); } });
+lgSet(LG.open, false);
+
 function typesSet(mask, persist) {
     etMask = Math.max(0, Math.min(ChronosEventIcons.GROUP_ALL_MASK, mask | 0));
     if (persist) savePrefs({ et: etMask });
@@ -4967,6 +5260,7 @@ function eventsDraw() {
     clearTimeout(events.decay); const tail = !glideOn() && glideState.win && performance.now() - glideState.endT < GLIDE_TAIL_MS;
     if (win.flowing || tail) events.decay = setTimeout(eventsRefresh, glideOn() || tail ? 100 : 600);
     if (events.open) renderEventsPanel();
+    if (typeof lgSchedule === 'function') lgSchedule(300);
 }
 
 // Pinta los sucesos elegidos. Los recien llegados hacen su entrada animada (fotogramas pre-dibujados): mientras alguno este entrando se vuelve
