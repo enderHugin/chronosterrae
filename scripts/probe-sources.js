@@ -43,7 +43,13 @@ const TARGETS = [
     { id: 'noaa-earthquakes', what: 'terremotos significativos (-2150-)', licence_url: 'https://www.ncei.noaa.gov/products/natural-hazards/tsunamis-earthquakes-volcanoes/earthquakes', data_url: 'https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?minYear=-2150&maxYear=-1000', expect: json('items') },
     { id: 'gvp', what: 'volcanes y erupciones del Holoceno (Smithsonian)', licence_url: 'https://volcano.si.edu/gvp_votw.cfm' },
     { id: 'eventkg', what: 'sucesos (grafo de conocimiento)', licence_url: 'https://eventkg.l3s.uni-hannover.de/' },
-    { id: 'nasa-eclipses', what: 'eclipses -1999..3000 (Espenak)', licence_url: 'https://eclipse.gsfc.nasa.gov/SEcat5/SEcatalog.html' }
+    { id: 'nasa-eclipses', what: 'eclipses -1999..3000 (Espenak)', licence_url: 'https://eclipse.gsfc.nasa.gov/SEcat5/SEcatalog.html' },
+    // Segunda ronda (2026-11-14, «si no estas seguro busca mas fuentes»)
+    { id: 'hced', what: 'batallas y sucesos de guerra con coordenadas, -1468..2003 (Miller 2022)', licence_url: 'https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/6ZFC0V', expect: json('data.latestVersion') },
+    { id: 'histogis', what: 'unidades politicas y administrativas de Europa con fechas, ~1815-1919', licence_url: 'https://arche.acdh.oeaw.ac.at/browser/oeaw_detail/105578' },
+    { id: 'eventkg-zenodo', what: 'sucesos (grafo de conocimiento), registro de Zenodo', licence_url: 'https://zenodo.org/api/records/10424118', expect: json('metadata.license') },
+    { id: 'gnd-dnb', what: 'personas (GND): nota de la DNB sobre CC0', licence_url: 'https://www.dnb.de/EN/Ueber-uns/Presse/ArchivPM2015/metadatenCC0.html' },
+    { id: 'cliopatria-zenodo', what: 'fronteras (Cliopatria), registro de Zenodo', licence_url: 'https://zenodo.org/api/records/13363121', expect: json('metadata.license') }
 ];
 
 async function get(url) {
@@ -68,7 +74,7 @@ async function main() {
         const lic = await get(t.licence_url);
         const row = { id: t.id, what: t.what, licence_url: t.licence_url, licence_page: { ok: lic.ok, status: lic.status, error: lic.error, final_url: lic.final_url, ms: lic.ms, bytes: lic.bytes }, licence_found: lic.ok ? licenceFindings(lic.text) : null };
         if (lic.ok && t.expect && !t.data_url) row.licence_page.shape_ok = t.expect(lic.text);
-        if (lic.ok && /api\.github\.com|data\.sciencespo/.test(t.licence_url)) row.licence_json_excerpt = lic.text.slice(0, 1500);
+        if (lic.ok && /api\.github\.com|data\.sciencespo|dataverse|zenodo\.org\/api/.test(t.licence_url)) row.licence_json_excerpt = lic.text.slice(0, 4000);
         if (t.data_url) {
             const d = await get(t.data_url);
             row.data = { url: t.data_url, ok: d.ok, status: d.status, error: d.error, ms: d.ms, bytes: d.bytes, type: d.type, cors: d.cors, shape_ok: d.ok && t.expect ? t.expect(d.text) : undefined, sample: d.ok && /json/.test(d.type || '') ? d.text.slice(0, 800) : undefined };
