@@ -5133,8 +5133,11 @@ async function evPairFill(f, head) {
     let g = events.byId && events.byId.get(otherId);
     if (!g) {
         try { await srchEnsure(); } catch (e) { /* sin indice: no se puede saber */ }
-        const e = (SRCH.entries || []).find((x) => x.id === otherId);
-        const y = e ? parseInt(String(e.iso || '').match(/^-?\d+/), 10) : NaN;
+        // el indice del buscador tiene UNA entrada por persona (su nacimiento, con la muerte en `d`; o su muerte si no hay lugar de nacimiento)
+        const qid = m[1].slice(3).toUpperCase(); const want = m[2] === 'birth' ? 'death' : 'birth';
+        const e = (SRCH.entries || []).find((x) => x.kind === 'person' && x.qid === qid);
+        const iso = !e ? null : e.icon === want ? e.iso : want === 'death' && e.icon === 'birth' ? e.d : null;
+        const y = iso ? parseInt(String(iso).match(/^-?\d+/), 10) : NaN;
         if (Number.isFinite(y)) { try { await eventsLoadRange(y, y); } catch (err) { /* sin red: queda sin la otra fecha */ } }
         g = events.byId && events.byId.get(otherId);
     }
