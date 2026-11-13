@@ -35,7 +35,7 @@ const ROLES = [
     ['composer', [['Q36834', 'composer']], ['composer']],
     ['painter', [['Q1028181', 'painter'], ['Q1281618', 'sculptor']], ['painter', 'sculptor', 'artist', 'engraver', 'illustrator']],
     ['writer', [['Q36180', 'writer'], ['Q49757', 'poet'], ['Q201788', 'historian']], ['writer', 'poet', 'novelist', 'playwright', 'author', 'essayist', 'dramatist', 'journalist',
-        'historian', 'historiographer', 'chronicler', 'philologist', 'scholar', 'humanist', 'rhetorician', 'translator', 'educator', 'pedagogue']],
+        'historian', 'historiographer', 'chronicler', 'philologist', 'scholar', 'humanist', 'rhetorician', 'translator', 'educator', 'pedagogue', 'editor', 'publisher']],
     // Ciencia: «scientist» SOLO tal cual (sin subclases: su arbol, 2.770 clases, mete historiadores, fillogos, pedagogos... y Guru Nanak salia
     // con matraz) y las ciencias naturales y la medicina con sus subclases. Revisado con review.tsv el 2026-11-13. Sin «economist» (2026-11-13,
     // segunda revision): metia a Kofi Annan, a ministros de Hacienda y a banqueros con matraz.
@@ -67,7 +67,7 @@ const KNOWN = [
     ['Q989', 'John Paul II', 'pope'], ['Q5593', 'Pablo Picasso', 'painter'], ['Q692', 'William Shakespeare', 'writer'], ['Q9682', 'Elizabeth II', 'monarch'],
     ['Q517', 'Napoleon', 'monarch'], ['Q8016', 'Winston Churchill', 'politician'], ['Q7186', 'Marie Curie', 'scientist'], ['Q762', 'Leonardo da Vinci', 'painter'],
     ['Q255', 'Ludwig van Beethoven', 'composer'], ['Q1035', 'Charles Darwin', 'scientist'], ['Q868', 'Aristotle', 'philosopher'],
-    ['Q57336', 'Ali Khamenei', 'politician'], ['Q2039', 'Livy', 'writer'], ['Q83322', 'Guru Nanak', 'religious'],   // salio «ciencia» (el creador, 2026-11-13): descripcion sin oficio y reserva que ponia ciencia antes que politica
+    ['Q57336', 'Ali Khamenei', 'politician'], ['Q2039', 'Titus Livius', 'writer'], ['Q83322', 'Guru Nanak', 'religious'],   // salio «ciencia» (el creador, 2026-11-13): descripcion sin oficio y reserva que ponia ciencia antes que politica
     // segunda revision del 2026-11-13 (QID tomados de review.tsv, con su descripcion; la etiqueta se comprueba en el build)
     ['Q1254', 'Kofi Annan', 'politician'], ['Q5809', 'Che Guevara', 'military'], ['Q174979', 'Alan Shepard', 'explorer']
 ];
@@ -89,7 +89,7 @@ const RELIGIOUS_DESC = ['cleric', 'guru', 'prophet', 'apostle', 'saint', 'ayatol
 const EXPLORER_DESC = ['explorer', 'navigator', 'conquistador', 'astronaut', 'cosmonaut', 'mountaineer'];
 // Palabras de papel demasiado genericas para decir «es otra cosa» (Geronimo, «leader of the Bedonkohe Apache», es militar; un «comic book
 // artist», escritor): cuentan para elegir entre lo que tiene, no para quitarle el papel. Papa, tampoco: «Pope of Alexandria» es religion.
-const WEAK_WORDS = ['leader', 'activist', 'lawyer', 'officer', 'player', 'artist', 'scholar', 'educator', 'director', 'commander', 'author', 'ruler', 'pope'];
+const WEAK_WORDS = ['leader', 'activist', 'lawyer', 'officer', 'player', 'artist', 'scholar', 'educator', 'director', 'commander', 'author', 'ruler', 'pope', 'editor', 'publisher'];
 // Oficios que no son ninguno de nuestros papeles. Si la descripcion nombra uno (y ningun papel que tenga), NO se adivina el papel por sus
 // ocupaciones: Bezos, Nadella o Buffett salian «ciencia» por «computer scientist» o «economist»; un asesino en serie y Snowden, tambien
 // (revision del 2026-11-13). Se queda el icono de nacer/morir de siempre: mejor generico que equivocado (regla 3).
