@@ -1,0 +1,379 @@
+{
+ "generated_at": "2026-11-13T23:56:11.108Z",
+ "note": "licence_found = frases de la propia pagina, no conclusiones; licence_found [] = la pagina se leyo y no menciona ninguna licencia buscada; licence_page.ok false = no se pudo leer (no es lo mismo)",
+ "results": [
+  {
+   "id": "ucdp",
+   "what": "conflictos (GED 1989-, fin de conflictos)",
+   "licence_url": "https://ucdp.uu.se/downloads/",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://ucdp.uu.se/downloads/",
+    "ms": 1628,
+    "bytes": 138438
+   },
+   "licence_found": [
+    {
+     "licence": "CC BY 4.0",
+     "excerpt": "t UCDP datasets. Each entry includes a codebook and, where available, a version history. All datasets are free of charge and licensed under CC BY 4.0 — you are free to use and redistribute them provided you cite the relevant publications listed with each dataset. For programmatic or bulk"
+    },
+    {
+     "licence": "pide cita",
+     "excerpt": "level of individual villages, with temporal durations disaggregated to single, individual days. Available as CSV Excel R Stata --> Codebook Please cite • Shawn Davies, Therése Pettersson, Magnus Öberg, Organized violence 1989–2025, and violent political protests, Journal of Peace Research ,"
+    }
+   ],
+   "data": {
+    "url": "https://ucdpapi.pcr.uu.se/api/gedevents/25.1?pagesize=1",
+    "ok": false,
+    "status": 401,
+    "ms": 1149,
+    "bytes": 65,
+    "type": "text/plain; charset=utf-8",
+    "cors": null
+   }
+  },
+  {
+   "id": "cliopatria",
+   "what": "fronteras (polities -3400..2024, CC BY 4.0 medido en su LICENSE.md)",
+   "licence_url": "https://raw.githubusercontent.com/Seshat-Global-History-Databank/cliopatria/main/LICENSE.md",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://raw.githubusercontent.com/Seshat-Global-History-Databank/cliopatria/main/LICENSE.md",
+    "ms": 125,
+    "bytes": 404
+   },
+   "licence_found": [
+    {
+     "licence": "CC BY 4.0",
+     "excerpt": "# License This data is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/), which permits use, sharing, adaptation, distribution and reproduction"
+    }
+   ]
+  },
+  {
+   "id": "seshat",
+   "what": "variables de sociedades historicas",
+   "licence_url": "https://seshat-db.com/",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://seshat-db.com/",
+    "ms": 1254,
+    "bytes": 142885
+   },
+   "licence_found": []
+  },
+  {
+   "id": "ohm",
+   "what": "fronteras y lugares fechados (OpenHistoricalMap)",
+   "licence_url": "https://www.openhistoricalmap.org/copyright",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://www.openhistoricalmap.org/copyright",
+    "ms": 588,
+    "bytes": 20568
+   },
+   "licence_found": [
+    {
+     "licence": "CC0",
+     "excerpt": "on of open geospatial data. Except where otherwise noted, OpenHistoricalMap data is dedicated to the public domain under a Creative Commons CC0 dedication. To the extent that what you use is in the public domain, you are free to copy, distribute, transmit, and adapt it for any purpo"
+    },
+    {
+     "licence": "CC BY-SA",
+     "excerpt": "tures under copyright. These features are available under an open license, such as Creative Commons Attribution (CC BY) or Creative Commons Attribution-ShareAlike (CC BY-SA), as noted in license=* tags on individual elements. To the extent that you use any significant portion of the database that is c"
+    },
+    {
+     "licence": "dominio publico",
+     "excerpt": "gements OpenHistoricalMap is a collection of open geospatial data. Except where otherwise noted, OpenHistoricalMap data is dedicated to the public domain under a Creative Commons CC0 dedication. To the extent that what you use is in the public domain, you are free to copy, distribute, transmi"
+    }
+   ],
+   "data": {
+    "url": "https://vtiles.openhistoricalmap.org/maps/osm/0/0/0.pbf",
+    "ok": true,
+    "status": 200,
+    "ms": 1008,
+    "bytes": 5092784,
+    "type": "application/x-protobuf",
+    "cors": "*"
+   }
+  },
+  {
+   "id": "cshapes",
+   "what": "fronteras de estados 1886-",
+   "licence_url": "https://icr.ethz.ch/data/cshapes/",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://icr.ethz.ch/data/cshapes/",
+    "ms": 790,
+    "bytes": 26838
+   },
+   "licence_found": [
+    {
+     "licence": "NC (no comercial)",
+     "excerpt": "tions 36 (1). License CShapes by Schvitz, Rüegger, Girardin, Cederman, Weidmann, Gleditsch is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License . This research has benefited from generous financial support from the Swiss National Science Foundati"
+    },
+    {
+     "licence": "pide cita",
+     "excerpt": "dic distances in the file are computed annually, for January 1st of the respective year. Citation When using this dataset in your research, please cite the following publication: Schvitz, Guy, Seraina Rüegger, Luc Girardin, Lars-Erik Cederman, Nils Weidmann, and Kristian Skrede Gleditsch. 2"
+    }
+   ]
+  },
+  {
+   "id": "notable-people",
+   "what": "personas (Laouenan et al. 2022, 2,2 M)",
+   "licence_url": "https://data.sciencespo.fr/api/datasets/:persistentId/?persistentId=doi:10.21410/7E4/YLG6YR",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://data.sciencespo.fr/api/datasets/:persistentId/?persistentId=doi:10.21410/7E4/YLG6YR",
+    "ms": 824,
+    "bytes": 8813,
+    "shape_ok": true
+   },
+   "licence_found": [
+    {
+     "licence": "CC BY-SA",
+     "excerpt": "ed and should not be used directly or under the full responsibility of users.\\n \\n\\n \\n All datasets included in this folder are subject to CC-BY-SA licensing.\\n \"}}]},{\"typeName\":\"subject\",\"multiple\":true,\"typeClass\":\"controlledVocabulary\",\"value\":[\"Social Sciences\"]},{\"typeName\":\"keywo"
+    }
+   ],
+   "licence_json_excerpt": "{\"status\":\"OK\",\"data\":{\"id\":2135,\"identifier\":\"7E4/YLG6YR\",\"persistentUrl\":\"https://doi.org/10.21410/7E4/YLG6YR\",\"protocol\":\"doi\",\"authority\":\"10.21410\",\"separator\":\"/\",\"publisher\":\"data.sciencespo\",\"publicationDate\":\"2022-03-16\",\"storageIdentifier\":\"file://10.21410/7E4/YLG6YR\",\"metadataLanguage\":\"en\",\"datasetType\":\"dataset\",\"locks\":[],\"latestVersion\":{\"id\":3173,\"datasetId\":2135,\"datasetPersistentId\":\"doi:10.21410/7E4/YLG6YR\",\"datasetType\":\"dataset\",\"storageIdentifier\":\"file://10.21410/7E4/YLG6YR\",\"versionNumber\":2,\"internalVersionNumber\":4,\"versionMinorNumber\":3,\"versionState\":\"RELEASED\",\"latestVersionPublishingState\":\"RELEASED\",\"deaccessionLink\":\"\",\"lastUpdateTime\":\"2023-04-03T11:36:49Z\",\"releaseTime\":\"2023-04-03T11:36:49Z\",\"createTime\":\"2023-04-03T11:36:42Z\",\"publicationDate\":\"2022-03-16\",\"citationDate\":\"2022-03-16\",\"termsOfUse\":\"<a href=\\\"https://creativecommons.org/licenses/by-sa/4.0/\\\" rel=\\\"nofollow\\\" target=\\\"_blank\\\"><img alt=\\\"Licence CC-BY-SA\\\" src=\\\"https://licensebuttons.net/l/by-sa/4.0/88x31.png\\\"></a>\",\"fileAccessRequest\":true,\"metadataBlocks\":{\"citation\":{\"displayName\":\"Citation Metadata\",\"name\":\"citation\",\"fields\":[{\"typeName\":\"title\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"A Brief History of Human Time - Codes & Datasets\"},{\"typeName\":\"alternativeURL\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"https://medialab.github.io/bhht-datascape/\"},{\"typeName\":\"author\",\"multiple\":true,\"typeClass\":\"compound\",\"value\":[{\"authorName\":{\"typeName\":\"authorName\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"LAOUENAN, Morgane\"},\"authorAffiliation\":{\"typeName\":\"authorAffiliation\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"CNRS, Centre d'Economie de la Sorbonne and LIEPP-Sciences Po\"},\"authorIdentifierScheme\":{\"typeName\":\"authorIdentifierScheme\",\"multiple\":false,\"typeClass\":\"controlledVocabulary\",\"value\":\"ORCID\"},\"authorIdentifier\":{\"typeName\":\"authorIdentifier\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"0000-0003-4741-561X\"}},{\"authorName\":{\"typeName\":\"authorName\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"BHARGAVA, Palaash\"},\"authorAffiliation\":{\"typeName\":\"authorAffiliation\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"Columbia University\"}},{\"authorName\":{\"typeName\":\"authorName\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"EYMEOUD, Jean-Benoît\"},\"authorAffiliation\":{\"typeName\":\"authorAffiliation\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"LIEPP-Sciences Po\"}},{\"authorName\":{\"typeName\":\"authorName\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"GERGAUD, Olivier\"},\"authorAffiliation\":{\"typeName\":\"authorAffiliation\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"KEDGE Business School and LIEPP-Sciences Po\"}},{\"authorName\":{\"typeName\":\"authorName\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"PLIQUE, Guillaume\"},\"authorAffiliation\":{\"typeName\":\"authorAffiliation\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"médialab-Sciences Po\"},\"authorIdentifierScheme\":{\"typeName\":\"authorIdentifierScheme\",\"multiple\":false,\"typeClass\":\"controlledVocabulary\",\"value\":\"ORCID\"},\"authorIdentifier\":{\"typeName\":\"authorIdentifier\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"0000-0003-4916-8472\"}},{\"authorName\":{\"typeName\":\"authorName\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"WASMER, Etienne\"},\"authorAffiliation\":{\"typeName\":\"authorAffiliation\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"NYU Abu Dhabi and LIEPP-Sciences Po\"}}]},{\"typeName\":\"datasetContact\",\"multiple\":true,\"typeClass\":\"compound\",\"value\":[{\"datasetContactName\":{\"typeName\":\"datasetContactName\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"PLIQUE, Guillaume\"},\"datasetContactAffiliation\":{\"typeName\":\"datasetContactAffiliation\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"Sciences Po Paris\"},\"datasetContactEmail\":{\"typeName\":\"datasetContactEmail\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"guillaume.plique@sciencespo.fr\"}}]},{\"typeName\":\"dsDescription\",\"multiple\":true,\"typeClass\":\"compo"
+  },
+  {
+   "id": "gnd-lobid",
+   "what": "personas (fichero de autoridades GND)",
+   "licence_url": "https://lobid.org/gnd/api",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://lobid.org/gnd/api",
+    "ms": 868,
+    "bytes": 14174
+   },
+   "licence_found": [],
+   "data": {
+    "url": "https://lobid.org/gnd/search?q=Albert+Einstein&filter=type:Person&format=json&size=1",
+    "ok": true,
+    "status": 200,
+    "ms": 1126,
+    "bytes": 52872,
+    "type": "application/json",
+    "cors": "*",
+    "shape_ok": true,
+    "sample": "{\n  \"@context\" : \"https://lobid.org/gnd/context.jsonld\",\n  \"id\" : \"https://lobid.org/gnd/search?q=Albert+Einstein&filter=type:Person&format=json&size=1\",\n  \"totalItems\" : 251,\n  \"member\" : [ {\n    \"gender\" : [ {\n      \"id\" : \"https://d-nb.info/standards/vocab/gnd/gender#male\",\n      \"label\" : \"Männlich\"\n    } ],\n    \"dateOfDeath\" : [ \"1955-04-18\" ],\n    \"placeOfDeath\" : [ {\n      \"id\" : \"https://d-nb.info/gnd/4103300-0\",\n      \"label\" : \"Princeton, NJ\"\n    } ],\n    \"familialRelationship\" : [ {\n      \"id\" : \"https://d-nb.info/gnd/118810928\",\n      \"label\" : \"Einstein, Eduard\"\n    }, {\n      \"id\" : \"https://d-nb.info/gnd/143075845\",\n      \"label\" : \"Einstein, Hans Albert\"\n    }, {\n      \"id\" : \"https://d-nb.info/gnd/118688405\",\n      \"label\" : \"Einstein-Marić, Mileva\"\n    }, {\n      \"id\" : \""
+   }
+  },
+  {
+   "id": "pleiades",
+   "what": "lugares antiguos",
+   "licence_url": "https://api.github.com/repos/isawnyu/pleiades.datasets/license",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://api.github.com/repos/isawnyu/pleiades.datasets/license",
+    "ms": 271,
+    "bytes": 27731,
+    "shape_ok": true
+   },
+   "licence_found": [],
+   "licence_json_excerpt": "{\"name\":\"LICENSE\",\"path\":\"LICENSE\",\"sha\":\"1a16e05564d2aaa880bbe9e506a0a0226d8742cc\",\"size\":19467,\"url\":\"https://api.github.com/repos/isawnyu/pleiades.datasets/contents/LICENSE?ref=main\",\"html_url\":\"https://github.com/isawnyu/pleiades.datasets/blob/main/LICENSE\",\"git_url\":\"https://api.github.com/repos/isawnyu/pleiades.datasets/git/blobs/1a16e05564d2aaa880bbe9e506a0a0226d8742cc\",\"download_url\":\"https://raw.githubusercontent.com/isawnyu/pleiades.datasets/main/LICENSE\",\"type\":\"file\",\"content\":\"Q3JlYXRpdmUgQ29tbW9ucyBMZWdhbCBDb2RlCgpBdHRyaWJ1dGlvbiAzLjAg\\nVW5wb3J0ZWQKCiAgICBDUkVBVElWRSBDT01NT05TIENPUlBPUkFUSU9OIElT\\nIE5PVCBBIExBVyBGSVJNIEFORCBET0VTIE5PVCBQUk9WSURFCiAgICBMRUdB\\nTCBTRVJWSUNFUy4gRElTVFJJQlVUSU9OIE9GIFRISVMgTElDRU5TRSBET0VT\\nIE5PVCBDUkVBVEUgQU4KICAgIEFUVE9STkVZLUNMSUVOVCBSRUxBVElPTlNI\\nSVAuIENSRUFUSVZFIENPTU1PTlMgUFJPVklERVMgVEhJUwogICAgSU5GT1JN\\nQVRJT04gT04gQU4gIkFTLUlTIiBCQVNJUy4gQ1JFQVRJVkUgQ09NTU9OUyBN\\nQUtFUyBOTyBXQVJSQU5USUVTCiAgICBSRUdBUkRJTkcgVEhFIElORk9STUFU\\nSU9OIFBST1ZJREVELCBBTkQgRElTQ0xBSU1TIExJQUJJTElUWSBGT1IKICAg\\nIERBTUFHRVMgUkVTVUxUSU5HIEZST00gSVRTIFVTRS4KCkxpY2Vuc2UKClRI\\nRSBXT1JLIChBUyBERUZJTkVEIEJFTE9XKSBJUyBQUk9WSURFRCBVTkRFUiBU\\nSEUgVEVSTVMgT0YgVEhJUyBDUkVBVElWRQpDT01NT05TIFBVQkxJQyBMSUNF\\nTlNFICgiQ0NQTCIgT1IgIkxJQ0VOU0UiKS4gVEhFIFdPUksgSVMgUFJPVEVD\\nVEVEIEJZCkNPUFlSSUdIVCBBTkQvT1IgT1RIRVIgQVBQTElDQUJMRSBMQVcu\\nIEFOWSBVU0UgT0YgVEhFIFdPUksgT1RIRVIgVEhBTiBBUwpBVVRIT1JJWkVE\\nIFVOREVSIFRISVMgTElDRU5TRSBPUiBDT1BZUklHSFQgTEFXIElTIFBST0hJ\\nQklURUQuCgpCWSBFWEVSQ0lTSU5HIEFOWSBSSUdIVFMgVE8gVEhFIFdPUksg\\nUFJPVklERUQgSEVSRSwgWU9VIEFDQ0VQVCBBTkQgQUdSRUUKVE8gQkUgQk9V\\nTkQgQlkgVEhFIFRFUk1TIE9GIFRISVMgTElDRU5TRS4gVE8gVEhFIEVYVEVO\\nVCBUSElTIExJQ0VOU0UgTUFZCkJFIENPTlNJREVSRUQgVE8gQkUgQSBDT05U\\nUkFDVCwgVEhFIExJQ0VOU09SIEdSQU5UUyBZT1UgVEhFIFJJR0hUUwpDT05U\\nQUlORUQgSEVSRSBJTiBDT05TSURFUkFUSU9OIE9GIFlPVVIgQUNDRVBUQU5D\\nRSBPRiBTVUNIIFRFUk1TIEFORApDT05ESVRJT05TLgoKMS4gRGVmaW5pdGlv\\nbnMKCiBhLiAiQWRhcHRhdGlvbiIgbWVhbnMgYSB3b3JrIGJhc2VkIHVwb24g\\ndGhlIFdvcmssIG9yIHVwb24gdGhlIFdvcmsgYW5kCiAgICBvdGhlciBwcmUt\\nZXhpc3Rpbmcgd29ya3MsIHN1Y2ggYXMgYSB0cmFuc2xhdGlvbiwgYWRhcHRh\\ndGlvbiwKICAgIGRlcml2YXRpdmUgd29yaywgYXJyYW5nZW1lbnQgb2YgbXVz\\naWMgb3Igb3RoZXIgYWx0ZXJhdGlvbnMgb2YgYQogICAgbGl0ZXJhcnkgb3Ig\\nYXJ0aXN0aWMgd29yaywgb3IgcGhvbm9ncmFtIG9yIHBlcmZvcm1hbmNlIGFu\\nZCBpbmNsdWRlcwogICAgY2luZW1hdG9ncmFwaGljIGFkYXB0YXRpb25zIG9y\\nIGFueSBvdGhlciBmb3JtIGluIHdoaWNoIHRoZSBXb3JrIG1heSBiZQogICAg\\ncmVjYXN0LCB0cmFuc2Zvcm1lZCwgb3IgYWRhcHRlZCBpbmNsdWRpbmcgaW4g\\nYW55IGZvcm0gcmVjb2duaXphYmx5CiAgICBkZXJpdmVkIGZyb20gdGhlIG9y\\naWdpbmFsLCBleGNlcHQgdGhhdCBhIHdvcmsgdGhhdCBjb25zdGl0dXRlcyBh\\nCiAgICBDb2xsZWN0aW9uIHdpbGwgbm90IGJlIGNvbnNpZGVyZWQgYW4gQWRh\\ncHRhdGlvbiBmb3IgdGhlIHB1cnBvc2Ugb2YKICAgIHRoaXMgTGljZW5zZS4g\\nRm9yIHRoZSBhdm9pZGFuY2Ugb2YgZG91YnQsIHdoZXJlIHRoZSBXb3JrIGlz\\nIGEgbXVzaWNhbAogICAgd29yaywgcGVyZm9ybWFuY2Ugb3IgcGhvbm9ncmFt\\nLCB0aGUgc3luY2hyb25pemF0aW9uIG9mIHRoZSBXb3JrIGluCiAgICB0aW1l\\nZC1yZWxhdGlvbiB3aXRoIGEgbW92aW5nIGltYWdlICgic3luY2hpbmciKSB3\\naWxsIGJlIGNvbnNpZGVyZWQgYW4KICAgIEFkYXB0YXRpb24gZm9yIHRoZSBw\\ndXJwb3NlIG9mIHRoaXMgTGljZW5zZS4KIGIuICJDb2xsZWN0aW9uIiBtZWFu\\ncyBhIGNvbGxlY3Rpb24gb2YgbGl0ZXJhcnkgb3IgYXJ0aXN0aWMgd29ya3Ms\\nIHN1Y2ggYXMKICAgIGVuY3ljbG9wZWRpYXMgYW5kIGFudGhvbG9naWVzLCBv\\nciBwZXJmb3JtYW5jZXMsIHBob25vZ3JhbXMgb3IKICAgIGJyb2FkY2FzdHMs\\nIG9yIG90aGVyIHdvcmtzIG9yIHN1YmplY3QgbWF0dGVyIG90aGVyIHRoYW4g\\nd29ya3MgbGlzdGVkCiAgICBpbiBTZWN0aW9uIDEoZikgYmVsb3csIHdoaWNo\\nLCBieSByZWFzb24gb2YgdGhlIHNlbGVjdGlvbiBhbmQKICAgIGFycmFuZ2Vt\\nZW50IG9mIHRoZWlyIGNvbnRlbnRzLCBjb25zdGl0dXRlIGludGVsbGVjdHVh\\nbCBjcmVhdGlvbnMsIGluCiAgICB3aGljaCB0aGUgV29yayBpcyBpbmNsdWRl\\nZCBpbiBpdHMgZW50aXJldHkgaW4gdW5tb2RpZmllZCBmb3JtIGFsb25nCiAg\\nICB3aXRoIG9uZSBvciBtb3JlIG90aGVyIGNvbnRyaWJ1dGlvbnMsIGVhY2gg\\nY29uc3RpdHV0aW5nIHNlcGFyYXRlIGFuZAogICAgaW5kZXBlbmRlbnQgd29y\\na3MgaW4gdGhlbXNlbHZlcywgd2hpY2ggdG9nZXRoZXIgYXJlIGFzc2VtYmxl\\nZCBpbnRvIGEKICAgIGNvbGxlY3RpdmUgd2hvbGUuIEEgd29yayB0aGF0IGNv\\nbnN0aXR1dGVzIGEgQ29sbGVjdGlvbiB3aWxsIG5vdCBiZQogICAgY29uc2lk\\nZXJlZCBhbiBBZGFwdGF0aW9uIChhcyBkZ"
+  },
+  {
+   "id": "geonames",
+   "what": "lugares actuales",
+   "licence_url": "https://www.geonames.org/about.html",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://www.geonames.org/about.html",
+    "ms": 1145,
+    "bytes": 42739
+   },
+   "licence_found": [
+    {
+     "licence": "CC BY 4.0",
+     "excerpt": "at marc@geonames.org . GeoNames is a project of Unxos GmbH , Tutilostrasse 17d, 9011 St. Gallen, Switzerland. This work is licensed under a Creative Commons Attribution 4.0 License . info@geonames.org by unxos gmbh GeoNames Home • Postal Codes • Download / Webservice • Forum • Blog • Sitemap"
+    }
+   ]
+  },
+  {
+   "id": "whg",
+   "what": "lugares historicos (World Historical Gazetteer)",
+   "licence_url": "https://whgazetteer.org/",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://whgazetteer.org/",
+    "ms": 940,
+    "bytes": 71480
+   },
+   "licence_found": []
+  },
+  {
+   "id": "noaa-earthquakes",
+   "what": "terremotos significativos (-2150-)",
+   "licence_url": "https://www.ncei.noaa.gov/products/natural-hazards/tsunamis-earthquakes-volcanoes/earthquakes",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://www.ncei.noaa.gov/products/natural-hazards/tsunamis-earthquakes-volcanoes/earthquakes",
+    "ms": 341,
+    "bytes": 32437
+   },
+   "licence_found": [
+    {
+     "licence": "pide cita",
+     "excerpt": "10 or more deaths, Magnitude 7.5 or greater, Modified Mercalli Intensity of X or greater, or earthquakes that generated tsunamis. Citation Please cite this data/database as doi: 10.7289/V5TD9V7K Access Tools Earthquake Image Database Use the Natural Hazards Image Database to browse signifi"
+    }
+   ],
+   "data": {
+    "url": "https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?minYear=-2150&maxYear=-1000",
+    "ok": true,
+    "status": 200,
+    "ms": 189,
+    "bytes": 2114,
+    "type": "application/json",
+    "cors": "*",
+    "shape_ok": true,
+    "sample": "{\"items\":[{\"id\":1,\"year\":-2150,\"locationName\":\"JORDAN:  BAB-A-DARAA,AL-KARAK\",\"latitude\":31.1,\"longitude\":35.5,\"eqMagnitude\":7.3,\"damageAmountOrder\":3,\"eqMagUnk\":7.3,\"publish\":true,\"country\":\"JORDAN\",\"regionCode\":140},{\"id\":2,\"year\":-2000,\"locationName\":\"SYRIA:  UGARIT\",\"latitude\":35.683,\"longitude\":35.8,\"intensity\":10,\"deathsAmountOrder\":3,\"tsunamiEventId\":1,\"publish\":true,\"deathsAmountOrderTotal\":3,\"country\":\"SYRIA\",\"regionCode\":140},{\"id\":3,\"year\":-2000,\"locationName\":\"TURKMENISTAN:  W\",\"latitude\":38,\"longitude\":58.2,\"eqDepth\":18,\"eqMagnitude\":7.1,\"intensity\":10,\"deaths\":1,\"deathsAmountOrder\":1,\"damageAmountOrder\":1,\"housesDestroyedAmountOrder\":1,\"eqMagMs\":7.1,\"publish\":true,\"deathsTotal\":1,\"deathsAmountOrderTotal\":1,\"damageAmountOrderTotal\":1,\"housesDestroyedAmountOrderTotal\":1,\"countr"
+   }
+  },
+  {
+   "id": "gvp",
+   "what": "volcanes y erupciones del Holoceno (Smithsonian)",
+   "licence_url": "https://volcano.si.edu/gvp_votw.cfm",
+   "licence_page": {
+    "ok": false,
+    "status": 403,
+    "final_url": "https://volcano.si.edu/gvp_votw.cfm",
+    "ms": 117,
+    "bytes": 46625
+   },
+   "licence_found": null
+  },
+  {
+   "id": "eventkg",
+   "what": "sucesos (grafo de conocimiento)",
+   "licence_url": "https://eventkg.l3s.uni-hannover.de/",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://eventkg.l3s.uni-hannover.de/",
+    "ms": 1328,
+    "bytes": 16967
+   },
+   "licence_found": []
+  },
+  {
+   "id": "nasa-eclipses",
+   "what": "eclipses -1999..3000 (Espenak)",
+   "licence_url": "https://eclipse.gsfc.nasa.gov/SEcat5/SEcatalog.html",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://eclipse.gsfc.nasa.gov/SEcat5/SEcatalog.html",
+    "ms": 218,
+    "bytes": 31533
+   },
+   "licence_found": []
+  },
+  {
+   "id": "hced",
+   "what": "batallas y sucesos de guerra con coordenadas, -1468..2003 (Miller 2022)",
+   "licence_url": "https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/6ZFC0V",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/6ZFC0V",
+    "ms": 377,
+    "bytes": 22864,
+    "shape_ok": true
+   },
+   "licence_found": [
+    {
+     "licence": "CC0",
+     "excerpt": "-28\",\"citationDate\":\"2022-08-28\",\"isLinked\":true,\"effectiveDatasetFileCountLimit\":1000,\"datasetFileUploadsAvailable\":965,\"license\":{\"name\":\"CC0 1.0\",\"uri\":\"http://creativecommons.org/publicdomain/zero/1.0\",\"iconUri\":\"https://licensebuttons.net/p/zero/1.0/88x31.png\",\"rightsIdentifier"
+    }
+   ],
+   "licence_json_excerpt": "{\"status\":\"OK\",\"data\":{\"id\":6434087,\"identifier\":\"DVN/6ZFC0V\",\"persistentUrl\":\"https://doi.org/10.7910/DVN/6ZFC0V\",\"protocol\":\"doi\",\"authority\":\"10.7910\",\"separator\":\"/\",\"publisher\":\"Harvard Dataverse\",\"publicationDate\":\"2022-08-28\",\"storageIdentifier\":\"s3://10.7910/DVN/6ZFC0V\",\"effectiveDatasetFileCountLimit\":1000,\"datasetFileUploadsAvailable\":965,\"datasetType\":\"dataset\",\"isLinked\":true,\"locks\":[],\"latestVersion\":{\"id\":610303,\"datasetId\":6434087,\"datasetPersistentId\":\"doi:10.7910/DVN/6ZFC0V\",\"datasetType\":\"dataset\",\"storageIdentifier\":\"s3://10.7910/DVN/6ZFC0V\",\"versionNumber\":5,\"internalVersionNumber\":4,\"versionMinorNumber\":0,\"versionState\":\"RELEASED\",\"latestVersionPublishingState\":\"RELEASED\",\"UNF\":\"UNF:6:mLoMFOPMGwRvKxdHx19JDA==\",\"lastUpdateTime\":\"2026-01-21T03:19:21Z\",\"releaseTime\":\"2026-01-21T03:19:21Z\",\"createTime\":\"2026-01-21T03:18:49Z\",\"publicationDate\":\"2022-08-28\",\"citationDate\":\"2022-08-28\",\"isLinked\":true,\"effectiveDatasetFileCountLimit\":1000,\"datasetFileUploadsAvailable\":965,\"license\":{\"name\":\"CC0 1.0\",\"uri\":\"http://creativecommons.org/publicdomain/zero/1.0\",\"iconUri\":\"https://licensebuttons.net/p/zero/1.0/88x31.png\",\"rightsIdentifier\":\"CC0-1.0\",\"rightsIdentifierScheme\":\"SPDX\",\"schemeUri\":\"https://spdx.org/licenses/\",\"languageCode\":\"en\"},\"fileAccessRequest\":true,\"metadataBlocks\":{\"citation\":{\"displayName\":\"Citation Metadata\",\"name\":\"citation\",\"fields\":[{\"typeName\":\"title\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"Historical Conflict Event Dataset\"},{\"typeName\":\"author\",\"multiple\":true,\"typeClass\":\"compound\",\"value\":[{\"authorName\":{\"typeName\":\"authorName\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"Miller, Charles\"},\"authorAffiliation\":{\"typeName\":\"authorAffiliation\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"Australian National University\"},\"authorIdentifierScheme\":{\"typeName\":\"authorIdentifierScheme\",\"multiple\":false,\"typeClass\":\"controlledVocabulary\",\"value\":\"ORCID\"},\"authorIdentifier\":{\"typeName\":\"authorIdentifier\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"0000-0001-6484-8906\"}}]},{\"typeName\":\"datasetContact\",\"multiple\":true,\"typeClass\":\"compound\",\"value\":[{\"datasetContactName\":{\"typeName\":\"datasetContactName\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"Miller, Charles\"},\"datasetContactEmail\":{\"typeName\":\"datasetContactEmail\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"charles.miller@anu.edu.au\"}}]},{\"typeName\":\"dsDescription\",\"multiple\":true,\"typeClass\":\"compound\",\"value\":[{\"dsDescriptionValue\":{\"typeName\":\"dsDescriptionValue\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"The full Historical Conflict Event Dataset plus replication files for geolocation, statistical models, wars and an explainer file\"}}]},{\"typeName\":\"subject\",\"multiple\":true,\"typeClass\":\"controlledVocabulary\",\"value\":[\"Social Sciences\"]},{\"typeName\":\"keyword\",\"multiple\":true,\"typeClass\":\"compound\",\"value\":[{\"keywordValue\":{\"typeName\":\"keywordValue\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"warfare, history, conflict, peace, security\"}}]},{\"typeName\":\"publication\",\"multiple\":true,\"typeClass\":\"compound\",\"value\":[{\"publicationCitation\":{\"typeName\":\"publicationCitation\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"Conflict Events Worldwide Since 1468BC: Introducing the Historical Conflict Event Dataset, Journal of Conflict Resolution, Online First View 15th August 2022\"},\"publicationURL\":{\"typeName\":\"publicationURL\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"https://journals.sagepub.com/doi/10.1177/00220027221119085\"}}]},{\"typeName\":\"depositor\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"Miller, Charles\"},{\"typeName\":\"dateOfDeposit\",\"multiple\":false,\"typeClass\":\"primitive\",\"value\":\"2022-08-28\"}]}},\"files\":[{\"label\":\"Comparison with Brecke.R\",\"restricted\":false,\"version\":1,\"datasetVersionId\":610303,\"dataFile\":{\"id\":6434099,\"persistentId\":\"\",\"filename\":\"Comparison with Brecke.R\",\"contentType\":\"type/x-r-syntax\",\"friendlyType\":\"R Syntax\",\"filesize\":2551,\"storageIdentifier\":\"s3://dvn"
+  },
+  {
+   "id": "histogis",
+   "what": "unidades politicas y administrativas de Europa con fechas, ~1815-1919",
+   "licence_url": "https://arche.acdh.oeaw.ac.at/browser/oeaw_detail/105578",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://arche.acdh.oeaw.ac.at/browser/metadata/105578",
+    "ms": 2693,
+    "bytes": 80393
+   },
+   "licence_found": [
+    {
+     "licence": "CC BY 4.0",
+     "excerpt": "//arche.acdh.oeaw.ac.at/api/105578 , https://hdl.handle.net/21.11115/0000-000C-E12A-7 , https://id.acdh.oeaw.ac.at/histogis acdh:hasLicense CC BY 4.0 acdh:hasLicenseSummary CC BY 4.0: 2531 acdh:hasLicensor Austrian Centre for Digital Humanities acdh:hasMetadataCreator Peter Andorfer acdh:"
+    }
+   ]
+  },
+  {
+   "id": "eventkg-zenodo",
+   "what": "sucesos (grafo de conocimiento), registro de Zenodo",
+   "licence_url": "https://zenodo.org/api/records/10424118",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://zenodo.org/api/records/10424118",
+    "ms": 540,
+    "bytes": 6428,
+    "shape_ok": true
+   },
+   "licence_found": [
+    {
+     "licence": "CC BY-SA",
+     "excerpt": "\"acronym\": \"ESWC\", \"dates\": \"3-7 June 2018\", \"place\": \"Heraklion, Greece\", \"url\": \"https://2018.eswc-conferences.org/\"}, \"license\": {\"id\": \"cc-by-sa-4.0\"}, \"grants\": [{\"code\": \"812997\", \"internal_id\": \"10.13039/501100000780::812997\", \"funder\": {\"name\": \"European Commission\", \"doi\": \"10.1"
+    }
+   ],
+   "licence_json_excerpt": "{\"created\": \"2023-12-22T14:34:49.226138+00:00\", \"modified\": \"2023-12-22T14:34:49.411658+00:00\", \"id\": 10424118, \"conceptrecid\": \"1112283\", \"doi\": \"10.5281/zenodo.10424118\", \"conceptdoi\": \"10.5281/zenodo.1112283\", \"doi_url\": \"https://doi.org/10.5281/zenodo.10424118\", \"metadata\": {\"title\": \"EventKG\", \"doi\": \"10.5281/zenodo.10424118\", \"publication_date\": \"2023-12-22\", \"description\": \"<p>The EventKG is a multilingual resource incorporating event-centric information extracted from several large-scale knowledge graphs such as Wikidata, DBpedia and YAGO, as well as less structured sources such as the Wikipedia Current Events Portal and Wikipedia event lists in 15 languages. The EventKG is an extensible event-centric resource modelled in RDF. It relies on Open Data and best practices to make event data spread across different sources available through a common representation and reusable for a variety of novel algorithms and real-world applications.</p>\", \"access_right\": \"open\", \"creators\": [{\"name\": \"Gottschalk, Simon\", \"affiliation\": \"L3S Research Center\", \"orcid\": \"0000-0003-2576-4640\"}, {\"name\": \"Demidova, Elena\", \"affiliation\": \"L3S Research Center\", \"orcid\": \"0000-0002-5134-9072\"}], \"keywords\": [\"events\", \"multilingual\", \"temporal relations\"], \"version\": \"3.2\", \"references\": [\"Gottschalk, Simon, and Elena Demidova. \\\"EventKG: A Multilingual Event-centric Temporal Knowledge Graph.\\\" Extended Semantic Web Conference. Springer, Cham, 2018.\", \"Gottschalk, Simon, and Elena Demidova. \\\"EventKG\\u2013the hub of event knowledge on the web\\u2013and biographical timeline generation.\\\" Semantic Web 10.6 (2019): 1039-1070.\"], \"language\": \"eng\", \"resource_type\": {\"title\": \"Dataset\", \"type\": \"dataset\"}, \"journal\": {\"issue\": \"6\", \"pages\": \"1039-1070\", \"title\": \"Semantic Web Journal\", \"volume\": \"10\"}, \"meeting\": {\"title\": \"Extended Semantic Web Conference\", \"acronym\": \"ESWC\", \"dates\": \"3-7 June 2018\", \"place\": \"Heraklion, Greece\", \"url\": \"https://2018.eswc-conferences.org/\"}, \"license\": {\"id\": \"cc-by-sa-4.0\"}, \"grants\": [{\"code\": \"812997\", \"internal_id\": \"10.13039/501100000780::812997\", \"funder\": {\"name\": \"European Commission\", \"doi\": \"10.13039/501100000780\", \"acronym\": \"EC\"}, \"title\": \"Cross-lingual Event-centric Open Analytics Research Academy\", \"acronym\": \"Cleopatra\", \"program\": \"H2020-EU.1.3.\", \"url\": \"https://cordis.europa.eu/projects/812997\"}, {\"code\": \"339233\", \"internal_id\": \"10.13039/501100000780::339233\", \"funder\": {\"name\": \"European Commission\", \"doi\": \"10.13039/501100000780\", \"acronym\": \"EC\"}, \"title\": \"Foundations for Temporal Retrieval, Exploration and Analytics in Web Archives\", \"acronym\": \"ALEXANDRIA\", \"program\": \"FP7-IDEAS-ERC\", \"url\": \"https://cordis.europa.eu/projects/339233\"}], \"communities\": [{\"id\": \"eu\"}], \"relations\": {\"version\": [{\"index\": 5, \"is_last\": true, \"parent\": {\"pid_type\": \"recid\", \"pid_value\": \"1112283\"}}]}, \"notes\": \"<p>Version 3.2.</p>\"}, \"title\": \"EventKG\", \"links\": {\"self\": \"https://zenodo.org/api/records/10424118\", \"self_html\": \"https://zenodo.org/records/10424118\", \"preview_html\": \"https://zenodo.org/records/10424118?preview=1\", \"doi\": \"https://doi.org/10.5281/zenodo.10424118\", \"self_doi\": \"https://doi.org/10.5281/zenodo.10424118\", \"self_doi_html\": \"https://zenodo.org/doi/10.5281/zenodo.10424118\", \"reserve_doi\": \"https://zenodo.org/api/records/10424118/draft/pids/doi\", \"parent\": \"https://zenodo.org/api/records/1112283\", \"parent_html\": \"https://zenodo.org/records/1112283\", \"parent_doi\": \"https://doi.org/10.5281/zenodo.1112283\", \"parent_doi_html\": \"https://zenodo.org/doi/10.5281/zenodo.1112283\", \"self_iiif_manifest\": \"https://zenodo.org/api/iiif/record:10424118/manifest\", \"self_iiif_sequence\": \"https://zenodo.org/api/iiif/record:10424118/sequence/default\", \"files\": \"https://zenodo.org/api/records/10424118/files\", \"media_files\": \"https://zenodo.org/api/records/10424118/media-files\", \"latest\": \"https://zenodo.org/api/records/10424118/versions/latest\", \"latest_html\": \"https://zenodo.org/records/10424118/latest\""
+  },
+  {
+   "id": "gnd-dnb",
+   "what": "personas (GND): nota de la DNB sobre CC0",
+   "licence_url": "https://www.dnb.de/EN/Ueber-uns/Presse/ArchivPM2015/metadatenCC0.html",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://www.dnb.de/EN/Ueber-uns/Presse/ArchivPM2015/metadatenCC0.html",
+    "ms": 1181,
+    "bytes": 37484
+   },
+   "licence_found": [
+    {
+     "licence": "CC0",
+     "excerpt": "DNB - Press - Metadata available free of charge from 1 July under CC0 \"/> \" /> Navigation and service Go to: Content Main Menu Search Servicemeu Deutsch Sign language Barrier-free offers Simple language Help a"
+    }
+   ]
+  },
+  {
+   "id": "cliopatria-zenodo",
+   "what": "fronteras (Cliopatria), registro de Zenodo",
+   "licence_url": "https://zenodo.org/api/records/13363121",
+   "licence_page": {
+    "ok": true,
+    "status": 200,
+    "final_url": "https://zenodo.org/api/records/13363121",
+    "ms": 216,
+    "bytes": 4170,
+    "shape_ok": true
+   },
+   "licence_found": [
+    {
+     "licence": "CC BY 4.0",
+     "excerpt": "rce_type\": \"software\", \"scheme\": \"url\"}], \"version\": \"v0.0.1\", \"resource_type\": {\"title\": \"Dataset\", \"type\": \"dataset\"}, \"license\": {\"id\": \"cc-by-4.0\"}, \"relations\": {\"version\": [{\"index\": 0, \"is_last\": false, \"parent\": {\"pid_type\": \"recid\", \"pid_value\": \"13363120\"}}]}}, \"title\": \"Cliopat"
+    }
+   ],
+   "licence_json_excerpt": "{\"created\": \"2024-08-22T19:21:27.093449+00:00\", \"modified\": \"2024-12-07T21:14:56.049194+00:00\", \"id\": 13363121, \"conceptrecid\": \"13363120\", \"doi\": \"10.5281/zenodo.13363121\", \"conceptdoi\": \"10.5281/zenodo.13363120\", \"doi_url\": \"https://doi.org/10.5281/zenodo.13363121\", \"metadata\": {\"title\": \"Cliopatria - A geospatial database of world-wide political entities from 3400BCE to 2024CE\", \"doi\": \"10.5281/zenodo.13363121\", \"publication_date\": \"2024-08-22\", \"description\": \"<p>Update data file and README and LICENSE in preparation for Zenodo and paper release.</p>\", \"access_right\": \"open\", \"creators\": [{\"name\": \"Chalstrey, Ed\", \"affiliation\": \"The Alan Turing Institute\", \"orcid\": \"0000-0003-2560-1294\"}, {\"name\": \"Bennett, James\", \"affiliation\": \"University of Washington\", \"orcid\": \"0000-0003-3051-1672\"}, {\"name\": \"Mutch, Erin\", \"affiliation\": \"University of California, Merced\", \"orcid\": \"0009-0006-8726-3744\"}], \"related_identifiers\": [{\"identifier\": \"https://github.com/Seshat-Global-History-Databank/cliopatria/tree/v0.0.1\", \"relation\": \"isSupplementTo\", \"resource_type\": \"software\", \"scheme\": \"url\"}], \"version\": \"v0.0.1\", \"resource_type\": {\"title\": \"Dataset\", \"type\": \"dataset\"}, \"license\": {\"id\": \"cc-by-4.0\"}, \"relations\": {\"version\": [{\"index\": 0, \"is_last\": false, \"parent\": {\"pid_type\": \"recid\", \"pid_value\": \"13363120\"}}]}}, \"title\": \"Cliopatria - A geospatial database of world-wide political entities from 3400BCE to 2024CE\", \"links\": {\"self\": \"https://zenodo.org/api/records/13363121\", \"self_html\": \"https://zenodo.org/records/13363121\", \"preview_html\": \"https://zenodo.org/records/13363121?preview=1\", \"doi\": \"https://doi.org/10.5281/zenodo.13363121\", \"self_doi\": \"https://doi.org/10.5281/zenodo.13363121\", \"self_doi_html\": \"https://zenodo.org/doi/10.5281/zenodo.13363121\", \"reserve_doi\": \"https://zenodo.org/api/records/13363121/draft/pids/doi\", \"parent\": \"https://zenodo.org/api/records/13363120\", \"parent_html\": \"https://zenodo.org/records/13363120\", \"parent_doi\": \"https://doi.org/10.5281/zenodo.13363120\", \"parent_doi_html\": \"https://zenodo.org/doi/10.5281/zenodo.13363120\", \"self_iiif_manifest\": \"https://zenodo.org/api/iiif/record:13363121/manifest\", \"self_iiif_sequence\": \"https://zenodo.org/api/iiif/record:13363121/sequence/default\", \"files\": \"https://zenodo.org/api/records/13363121/files\", \"media_files\": \"https://zenodo.org/api/records/13363121/media-files\", \"latest\": \"https://zenodo.org/api/records/13363121/versions/latest\", \"latest_html\": \"https://zenodo.org/records/13363121/latest\", \"versions\": \"https://zenodo.org/api/records/13363121/versions\", \"draft\": \"https://zenodo.org/api/records/13363121/draft\", \"access_links\": \"https://zenodo.org/api/records/13363121/access/links\", \"access_grants\": \"https://zenodo.org/api/records/13363121/access/grants\", \"access_users\": \"https://zenodo.org/api/records/13363121/access/users\", \"access_request\": \"https://zenodo.org/api/records/13363121/access/request\", \"access\": \"https://zenodo.org/api/records/13363121/access\", \"communities\": \"https://zenodo.org/api/records/13363121/communities\", \"communities-suggestions\": \"https://zenodo.org/api/records/13363121/communities-suggestions\", \"request_deletion\": \"https://zenodo.org/api/records/13363121/request-deletion\", \"file_modification\": \"https://zenodo.org/api/records/13363121/file-modification\", \"quota_increase\": \"https://zenodo.org/api/records/13363121/quota-increase\", \"requests\": \"https://zenodo.org/api/records/13363121/requests\"}, \"updated\": \"2024-12-07T21:14:56.049194+00:00\", \"recid\": \"13363121\", \"revision\": 8, \"files\": [{\"id\": \"a8c6af25-774f-462e-9e31-f2faa518ec6a\", \"key\": \"Seshat-Global-History-Databank/cliopatria-v0.0.1.zip\", \"size\": 49215745, \"checksum\": \"md5:f032678cf767fb4a8e5ae977ba3e665d\", \"links\": {\"self\": \"https://zenodo.org/api/records/13363121/files/Seshat-Global-History-Databank/cliopatria-v0.0.1.zip/content\"}}], \"swh\": {}, \"owners\": [{\"id\": \"237801\"}], \"status\": \"published\", \"stats\": {\"downloads\": 3251, \"unique_downloads\": 1896, \"views\": 6562, "
+  }
+ ]
+}

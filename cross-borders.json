@@ -1,0 +1,7594 @@
+{
+ "generated_at": "2026-11-13T23:56:36.467Z",
+ "method": "rejilla de 0.5 grados sobre la tierra actual (Natural Earth, sin Antartida), pesada por area; IoU por entidad sin emparejar nombres",
+ "grid_points": 61546,
+ "years": [
+  {
+   "year": -3000,
+   "hb_entities": 25,
+   "clio_entities": 4,
+   "land_pct": {
+    "both": 0.1,
+    "only_hb": 26.2,
+    "only_clio": 0,
+    "neither": 73.7
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 26.3
+   },
+   "disagreements": []
+  },
+  {
+   "year": -2000,
+   "hb_entities": 45,
+   "clio_entities": 4,
+   "land_pct": {
+    "both": 0.7,
+    "only_hb": 82.9,
+    "only_clio": 0,
+    "neither": 16.3
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 82.8,
+    "desacuerdo": 0.6,
+    "clio_mas_detallado": 0.3
+   },
+   "disagreements": [
+    {
+     "hb": "Indus valley civilization",
+     "clio_best": "Indus Valley Civilization [Q42534]",
+     "iou": 0.61,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0.25,
+     "size": 241
+    }
+   ]
+  },
+  {
+   "year": -1500,
+   "hb_entities": 68,
+   "clio_entities": 11,
+   "land_pct": {
+    "both": 1,
+    "only_hb": 94.7,
+    "only_clio": 0,
+    "neither": 4.3
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 94.9,
+    "desacuerdo": 0.5,
+    "hb_mas_detallado": 0.2,
+    "clio_mas_detallado": 0.1
+   },
+   "disagreements": [
+    {
+     "hb": "Kush",
+     "clio_best": "New Kingdom of Egypt [Q180568]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.42,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0.58,
+     "size": 107
+    },
+    {
+     "hb": "Assyria",
+     "clio_best": "Mitanni [Q178665]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.3,
+     "clio_share_in_hb": 0.28,
+     "hb_land_without_clio": 0.51,
+     "size": 56
+    },
+    {
+     "hb": "Babylonia",
+     "clio_best": "Babylonia [Q47690]",
+     "iou": 0.57,
+     "hb_share_in_clio": 0.68,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0.2,
+     "size": 42
+    }
+   ]
+  },
+  {
+   "year": -1000,
+   "hb_entities": 69,
+   "clio_entities": 12,
+   "land_pct": {
+    "both": 1.1,
+    "only_hb": 94.6,
+    "only_clio": 0,
+    "neither": 4.3
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 94.2,
+    "desacuerdo": 1.3,
+    "hb_mas_detallado": 0.2
+   },
+   "disagreements": [
+    {
+     "hb": "Zhoa",
+     "clio_best": "Zhou Dynasty [Q35216]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.53,
+     "size": 380
+    },
+    {
+     "hb": "Kush",
+     "clio_best": "Kingdom of Kush [Q241790]",
+     "iou": 0.64,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0.21,
+     "size": 107
+    },
+    {
+     "hb": "Wu",
+     "clio_best": "Zhou Dynasty [Q35216]",
+     "iou": 0.13,
+     "hb_share_in_clio": 0.49,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0.51,
+     "size": 70
+    }
+   ]
+  },
+  {
+   "year": -700,
+   "hb_entities": 73,
+   "clio_entities": 31,
+   "land_pct": {
+    "both": 2.2,
+    "only_hb": 93.5,
+    "only_clio": 0,
+    "neither": 4.3
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 92.8,
+    "clio_mas_detallado": 0.9,
+    "desacuerdo": 1.9,
+    "hb_mas_detallado": 0.1
+   },
+   "disagreements": [
+    {
+     "hb": "Arameans",
+     "clio_best": "Neo-Assyrian Empire [Q10914393]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.14,
+     "hb_land_without_clio": 0.7,
+     "size": 138
+    },
+    {
+     "hb": "Hittites",
+     "clio_best": "Neo-Assyrian Empire [Q10914393]",
+     "iou": 0.18,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0.33,
+     "size": 130
+    },
+    {
+     "hb": "Kush",
+     "clio_best": "Kingdom of Kush [Q241790]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.45,
+     "hb_land_without_clio": 0.21,
+     "size": 107
+    },
+    {
+     "hb": "Urartu",
+     "clio_best": "Neo-Assyrian Empire [Q10914393]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.19,
+     "hb_land_without_clio": 0.39,
+     "size": 91
+    },
+    {
+     "hb": "Egypt",
+     "clio_best": "Kingdom of Kush [Q241790]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.31,
+     "hb_land_without_clio": 0.33,
+     "size": 86
+    },
+    {
+     "hb": "Wu",
+     "clio_best": "Wu [Q274488]",
+     "iou": 0.51,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0.24,
+     "size": 70
+    },
+    {
+     "hb": "Phrygians",
+     "clio_best": "Phrygia [Q32579]",
+     "iou": 0.53,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0.19,
+     "size": 57
+    },
+    {
+     "hb": "Kingdom of David and Solomon",
+     "clio_best": "Neo-Assyrian Empire [Q10914393]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.13,
+     "hb_land_without_clio": 0.25,
+     "size": 50
+    },
+    {
+     "hb": "Babylonia",
+     "clio_best": "Neo-Assyrian Empire [Q10914393]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.1,
+     "hb_land_without_clio": 0.16,
+     "size": 42
+    },
+    {
+     "hb": "Greek city-states",
+     "clio_best": "Greek City-States [Q148837]",
+     "iou": 0.32,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0.52,
+     "size": 41
+    }
+   ]
+  },
+  {
+   "year": -500,
+   "hb_entities": 74,
+   "clio_entities": 48,
+   "land_pct": {
+    "both": 5.4,
+    "only_hb": 74.5,
+    "only_clio": 0.7,
+    "neither": 19.5
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 73.6,
+    "acuerdo": 4.4,
+    "clio_mas_detallado": 1.2,
+    "hb_mas_detallado": 0.2,
+    "desacuerdo": 0.3
+   },
+   "disagreements": [
+    {
+     "hb": "Greek city-states",
+     "clio_best": "Greek City-States [Q148837]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.3,
+     "clio_share_in_hb": 0.48,
+     "hb_land_without_clio": 0.48,
+     "size": 73
+    },
+    {
+     "hb": "Saba",
+     "clio_best": "Sabaeans [Q940785]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0.5,
+     "size": 33
+    },
+    {
+     "hb": "Gandhāra",
+     "clio_best": "Achaemenid Empire [Q389688]",
+     "iou": 0,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.5,
+     "size": 13
+    },
+    {
+     "hb": "Etrurians",
+     "clio_best": "Etruscans [Q17161]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.4,
+     "hb_land_without_clio": 0.27,
+     "size": 11
+    },
+    {
+     "hb": "Boii",
+     "clio_best": "Etruscans [Q17161]",
+     "iou": 0.26,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.32,
+     "hb_land_without_clio": 0.4,
+     "size": 11
+    }
+   ]
+  },
+  {
+   "year": -400,
+   "hb_entities": 76,
+   "clio_entities": 35,
+   "land_pct": {
+    "both": 6.6,
+    "only_hb": 82.8,
+    "only_clio": 0.5,
+    "neither": 10.1
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 81.9,
+    "acuerdo": 4.4,
+    "clio_mas_detallado": 1.2,
+    "desacuerdo": 1.6,
+    "hb_mas_detallado": 0.2
+   },
+   "disagreements": [
+    {
+     "hb": "Scythians",
+     "clio_best": "Scythia [Q131802]",
+     "iou": 0.33,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0.6,
+     "size": 394
+    },
+    {
+     "hb": "Magadha",
+     "clio_best": "Magadha - Shaishunaga dynasty [Q972165]",
+     "iou": 0.51,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0.24,
+     "size": 206
+    },
+    {
+     "hb": "Greek city-states",
+     "clio_best": "Greek City-States [Q148837]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0.27,
+     "size": 42
+    },
+    {
+     "hb": "Greek colonies",
+     "clio_best": "Greek City-States [Q148837]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.3,
+     "clio_share_in_hb": 0.23,
+     "hb_land_without_clio": 0.46,
+     "size": 39
+    },
+    {
+     "hb": "Boii",
+     "clio_best": "Etruscans [Q17161]",
+     "iou": 0.26,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.32,
+     "hb_land_without_clio": 0.4,
+     "size": 11
+    },
+    {
+     "hb": "Etrurians",
+     "clio_best": "Etruscans [Q17161]",
+     "iou": 0.32,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.36,
+     "hb_land_without_clio": 0.28,
+     "size": 10
+    }
+   ]
+  },
+  {
+   "year": -323,
+   "hb_entities": 68,
+   "clio_entities": 38,
+   "land_pct": {
+    "both": 6.4,
+    "only_hb": 68.1,
+    "only_clio": 1.2,
+    "neither": 24.3
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 66.1,
+    "acuerdo": 3.7,
+    "clio_mas_detallado": 1.9,
+    "desacuerdo": 2.7,
+    "hb_mas_detallado": 0.1
+   },
+   "disagreements": [
+    {
+     "hb": "Hindu kingdoms and republics",
+     "clio_best": "Nanda Empire [Q949268]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0.33,
+     "hb_land_without_clio": 0.62,
+     "size": 495
+    },
+    {
+     "hb": "Magadha",
+     "clio_best": "Nanda Empire [Q949268]",
+     "iou": 0.51,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.64,
+     "hb_land_without_clio": 0.28,
+     "size": 408
+    },
+    {
+     "hb": "Qataban",
+     "clio_best": "Hadhramaut [Q1517159]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.19,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0.7,
+     "size": 79
+    },
+    {
+     "hb": "Cappadocia",
+     "clio_best": "Macedonian Empire [Q83958]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.26,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.58,
+     "size": 65
+    },
+    {
+     "hb": "Atropatene",
+     "clio_best": "Kingdom of Armenia [Q208404]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.36,
+     "hb_land_without_clio": 0.1,
+     "size": 62
+    },
+    {
+     "hb": "Bosporan Kingdom",
+     "clio_best": "Scythia [Q131802]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.06,
+     "hb_land_without_clio": 0.51,
+     "size": 27
+    },
+    {
+     "hb": "Greek city-states",
+     "clio_best": "Greek City-States [Q148837]",
+     "iou": 0.13,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.19,
+     "hb_land_without_clio": 0.54,
+     "size": 25
+    },
+    {
+     "hb": "Rome",
+     "clio_best": "Etruscans [Q17161]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.29,
+     "hb_land_without_clio": 0,
+     "size": 5
+    }
+   ]
+  },
+  {
+   "year": -300,
+   "hb_entities": 73,
+   "clio_entities": 40,
+   "land_pct": {
+    "both": 7.1,
+    "only_hb": 67.2,
+    "only_clio": 1.4,
+    "neither": 24.2
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 66.1,
+    "clio_mas_detallado": 4.5,
+    "desacuerdo": 3,
+    "hb_mas_detallado": 0.7
+   },
+   "disagreements": [
+    {
+     "hb": "Mauryan Empire",
+     "clio_best": "Maurya Empire [Q62943]",
+     "iou": 0.49,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.57,
+     "hb_land_without_clio": 0.2,
+     "size": 626
+    },
+    {
+     "hb": "Kingdom of Antigonus",
+     "clio_best": "Seleucid Empire [Q705904]",
+     "iou": 0.08,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0.1,
+     "size": 228
+    },
+    {
+     "hb": "Qin",
+     "clio_best": "Qin [Q1471995]",
+     "iou": 0.49,
+     "hb_share_in_clio": 0.68,
+     "clio_share_in_hb": 0.64,
+     "hb_land_without_clio": 0.31,
+     "size": 195
+    },
+    {
+     "hb": "Qataban",
+     "clio_best": "Hadhramaut [Q1517159]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.19,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0.7,
+     "size": 79
+    },
+    {
+     "hb": "Cappadocia",
+     "clio_best": "Kingdom of Lysimachus [Q32133]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.18,
+     "hb_land_without_clio": 0.37,
+     "size": 65
+    },
+    {
+     "hb": "Atropatene",
+     "clio_best": "Kingdom of Armenia [Q208404]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.36,
+     "hb_land_without_clio": 0.1,
+     "size": 62
+    },
+    {
+     "hb": "Bosporan Kingdom",
+     "clio_best": "Scythia [Q131802]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.06,
+     "hb_land_without_clio": 0.51,
+     "size": 27
+    },
+    {
+     "hb": "Greek city-states",
+     "clio_best": "Greek City-States [Q148837]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.27,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0.51,
+     "size": 20
+    },
+    {
+     "hb": "Roman Republic",
+     "clio_best": "Roman Republic [Q175881]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.65,
+     "hb_land_without_clio": 0.12,
+     "size": 13
+    }
+   ]
+  },
+  {
+   "year": -200,
+   "hb_entities": 86,
+   "clio_entities": 39,
+   "land_pct": {
+    "both": 11.3,
+    "only_hb": 81.2,
+    "only_clio": 0.3,
+    "neither": 7.1
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 77.8,
+    "hb_mas_detallado": 3.7,
+    "desacuerdo": 7.6,
+    "clio_mas_detallado": 3,
+    "acuerdo": 0.5
+   },
+   "disagreements": [
+    {
+     "hb": "Mauryan Empire",
+     "clio_best": "Maurya Empire [Q62943]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0.53,
+     "size": 898
+    },
+    {
+     "hb": "Yuezhi",
+     "clio_best": "Yuezhi [Q467985]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.27,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0.67,
+     "size": 854
+    },
+    {
+     "hb": "Bactria",
+     "clio_best": "Greco-Bactrian Kingdom [Q488880]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.3,
+     "clio_share_in_hb": 0.74,
+     "hb_land_without_clio": 0.58,
+     "size": 553
+    },
+    {
+     "hb": "minor states",
+     "clio_best": "Seleucid Empire [Q705904]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.11,
+     "hb_land_without_clio": 0.1,
+     "size": 222
+    },
+    {
+     "hb": "Rome",
+     "clio_best": "Roman Republic [Q175881]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.66,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0.32,
+     "size": 168
+    },
+    {
+     "hb": "Parthia",
+     "clio_best": "Seleucid Empire [Q705904]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.16,
+     "hb_land_without_clio": 0,
+     "size": 155
+    },
+    {
+     "hb": "Kingdom of Syphax",
+     "clio_best": "Roman Republic [Q175881]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.25,
+     "hb_land_without_clio": 0.48,
+     "size": 97
+    },
+    {
+     "hb": "Min-Yue",
+     "clio_best": "Minyue [Q1936158]",
+     "iou": 0.53,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0,
+     "size": 79
+    },
+    {
+     "hb": "Qataban",
+     "clio_best": "Hadhramaut [Q1517159]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.19,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0.7,
+     "size": 79
+    },
+    {
+     "hb": "Nan-Yue",
+     "clio_best": "Nanyue [Q827040]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.45,
+     "hb_land_without_clio": 0.21,
+     "size": 60
+    },
+    {
+     "hb": "Macedon and Hellenic League",
+     "clio_best": "Antigonid Macedonia [Q237325]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.51,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0.21,
+     "size": 46
+    },
+    {
+     "hb": "Carthage",
+     "clio_best": "Carthage [Q2429397]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.5,
+     "hb_land_without_clio": 0.14,
+     "size": 29
+    },
+    {
+     "hb": "Kingdom of Gala",
+     "clio_best": "Roman Republic [Q175881]",
+     "iou": 0.08,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.08,
+     "hb_land_without_clio": 0.31,
+     "size": 27
+    },
+    {
+     "hb": "?",
+     "clio_best": "Greek City-States [Q148837]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.32,
+     "clio_share_in_hb": 0.16,
+     "hb_land_without_clio": 0.57,
+     "size": 14
+    },
+    {
+     "hb": "Dardania",
+     "clio_best": "Antigonid Macedonia [Q237325]",
+     "iou": 0.11,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.13,
+     "hb_land_without_clio": 0.6,
+     "size": 11
+    },
+    {
+     "hb": "Pergamon",
+     "clio_best": "Seleucid Empire [Q705904]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.55,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.11,
+     "size": 7
+    }
+   ]
+  },
+  {
+   "year": -100,
+   "hb_entities": 84,
+   "clio_entities": 38,
+   "land_pct": {
+    "both": 10,
+    "only_hb": 61.4,
+    "only_clio": 2.4,
+    "neither": 26.3
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 57.8,
+    "desacuerdo": 4.7,
+    "clio_mas_detallado": 4.1,
+    "hb_mas_detallado": 3.8,
+    "acuerdo": 1
+   },
+   "disagreements": [
+    {
+     "hb": "Xiongnu",
+     "clio_best": "Xiongnu [Q188836]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.42,
+     "hb_land_without_clio": 0.55,
+     "size": 1045
+    },
+    {
+     "hb": "Mauryan Empire",
+     "clio_best": "Shunga Empire [Q651377]",
+     "iou": 0.32,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.62,
+     "hb_land_without_clio": 0.28,
+     "size": 554
+    },
+    {
+     "hb": "Saces",
+     "clio_best": "Xiongnu [Q188836]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.2,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0.68,
+     "size": 196
+    },
+    {
+     "hb": "Numidia",
+     "clio_best": "Kingdom of Numidia [Q156173]",
+     "iou": 0.46,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.66,
+     "hb_land_without_clio": 0.4,
+     "size": 109
+    },
+    {
+     "hb": "Maan",
+     "clio_best": "Minaeans [Q1177379]",
+     "iou": 0.55,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0.29,
+     "size": 70
+    },
+    {
+     "hb": "Nabatean Kingdom",
+     "clio_best": "Nabataeans [Q220594]",
+     "iou": 0.37,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.66,
+     "hb_land_without_clio": 0.52,
+     "size": 56
+    },
+    {
+     "hb": "Saba",
+     "clio_best": "Minaeans [Q1177379]",
+     "iou": 0.18,
+     "hb_share_in_clio": 0.52,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0.22,
+     "size": 30
+    }
+   ]
+  },
+  {
+   "year": -1,
+   "hb_entities": 79,
+   "clio_entities": 44,
+   "land_pct": {
+    "both": 11.7,
+    "only_hb": 55.1,
+    "only_clio": 2,
+    "neither": 31.2
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 52.7,
+    "acuerdo": 6.2,
+    "desacuerdo": 5.2,
+    "hb_mas_detallado": 1.5,
+    "clio_mas_detallado": 1.2
+   },
+   "disagreements": [
+    {
+     "hb": "Xiongnu",
+     "clio_best": "Xiongnu [Q188836]",
+     "iou": 0.44,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0.49,
+     "size": 1177
+    },
+    {
+     "hb": "Saka Kingdom",
+     "clio_best": "Indo-Scythians [Q240123]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0.03,
+     "size": 387
+    },
+    {
+     "hb": "Suren Kingdom",
+     "clio_best": "Indo-Scythians [Q240123]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.36,
+     "hb_land_without_clio": 0.02,
+     "size": 293
+    },
+    {
+     "hb": "Satavahanihara",
+     "clio_best": "Satavahana Dynasty [Q5257]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.5,
+     "hb_land_without_clio": 0.31,
+     "size": 208
+    },
+    {
+     "hb": "Armenia",
+     "clio_best": "Kingdom of Armenia [Q208404]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.63,
+     "hb_land_without_clio": 0.07,
+     "size": 69
+    },
+    {
+     "hb": "Koguryo",
+     "clio_best": "Goguryeo [Q28370]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0,
+     "size": 53
+    },
+    {
+     "hb": "Silla",
+     "clio_best": "Mahan [Q421372]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0,
+     "size": 25
+    },
+    {
+     "hb": "Odrysian Kingdom",
+     "clio_best": "Roman Empire [Q12544]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.49,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.04,
+     "size": 22
+    },
+    {
+     "hb": "Monte Albán",
+     "clio_best": "Zapotec Civilization [Q844750]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.4,
+     "size": 19
+    },
+    {
+     "hb": "Judea",
+     "clio_best": "Judea [Q104028]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.39,
+     "hb_land_without_clio": 0.61,
+     "size": 15
+    },
+    {
+     "hb": "Bosporian Kingdom",
+     "clio_best": "Cimmerian Bosporus [Q321371]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0.11,
+     "size": 6
+    }
+   ]
+  },
+  {
+   "year": 100,
+   "hb_entities": 83,
+   "clio_entities": 41,
+   "land_pct": {
+    "both": 11.2,
+    "only_hb": 53.9,
+    "only_clio": 3.4,
+    "neither": 31.5
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 52,
+    "acuerdo": 6.5,
+    "hb_mas_detallado": 1.3,
+    "desacuerdo": 4,
+    "clio_mas_detallado": 1.2
+   },
+   "disagreements": [
+    {
+     "hb": "Saka Kingdom",
+     "clio_best": "Kushan Empire [Q25979]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.34,
+     "hb_land_without_clio": 0.01,
+     "size": 387
+    },
+    {
+     "hb": "Hindu kingdoms",
+     "clio_best": "Kushan Empire [Q25979]",
+     "iou": 0.08,
+     "hb_share_in_clio": 0.18,
+     "clio_share_in_hb": 0.13,
+     "hb_land_without_clio": 0.66,
+     "size": 378
+    },
+    {
+     "hb": "Suren Kingdom",
+     "clio_best": "Kushan Empire [Q25979]",
+     "iou": 0.18,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.24,
+     "hb_land_without_clio": 0,
+     "size": 293
+    },
+    {
+     "hb": "Kushan Empire",
+     "clio_best": "Kushan Empire [Q25979]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.27,
+     "hb_land_without_clio": 0.23,
+     "size": 264
+    },
+    {
+     "hb": "Satavahanihara",
+     "clio_best": "Satavahana Dynasty [Q5257]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.5,
+     "hb_land_without_clio": 0.31,
+     "size": 208
+    },
+    {
+     "hb": "Armenia",
+     "clio_best": "Kingdom of Armenia [Q208404]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.68,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0.06,
+     "size": 73
+    },
+    {
+     "hb": "Southern Xiongnu",
+     "clio_best": "Southern Xiongnu [Q188836]",
+     "iou": 0.11,
+     "hb_share_in_clio": 0.2,
+     "clio_share_in_hb": 0.21,
+     "hb_land_without_clio": 0.57,
+     "size": 61
+    },
+    {
+     "hb": "Koguryo",
+     "clio_best": "Goguryeo [Q28370]",
+     "iou": 0.32,
+     "hb_share_in_clio": 0.44,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0,
+     "size": 40
+    },
+    {
+     "hb": "Boihaenum",
+     "clio_best": "Roman Empire [Q12544]",
+     "iou": 0,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.69,
+     "size": 22
+    },
+    {
+     "hb": "Monte Albán",
+     "clio_best": "Zapotec Civilization [Q844750]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.4,
+     "size": 19
+    },
+    {
+     "hb": "Pomeranian culture ",
+     "clio_best": "Goths [Q42193]",
+     "iou": 0.13,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.16,
+     "hb_land_without_clio": 0.6,
+     "size": 15
+    }
+   ]
+  },
+  {
+   "year": 200,
+   "hb_entities": 69,
+   "clio_entities": 42,
+   "land_pct": {
+    "both": 11.1,
+    "only_hb": 52.3,
+    "only_clio": 5.4,
+    "neither": 31.2
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 50.9,
+    "acuerdo": 6.7,
+    "hb_mas_detallado": 1.4,
+    "desacuerdo": 3.1,
+    "clio_mas_detallado": 1.2
+   },
+   "disagreements": [
+    {
+     "hb": "Saka Kingdom",
+     "clio_best": "Kushan Empire [Q25979]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.3,
+     "hb_land_without_clio": 0.01,
+     "size": 387
+    },
+    {
+     "hb": "Magadha",
+     "clio_best": "Kushan Empire [Q25979]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0.44,
+     "size": 310
+    },
+    {
+     "hb": "Suren Kingdom",
+     "clio_best": "Kushan Empire [Q25979]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.21,
+     "hb_land_without_clio": 0,
+     "size": 293
+    },
+    {
+     "hb": "Satavahanihara",
+     "clio_best": "Satavahana Dynasty [Q5257]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0.31,
+     "size": 208
+    },
+    {
+     "hb": "Armenia",
+     "clio_best": "Kingdom of Armenia [Q208404]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.68,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0.06,
+     "size": 73
+    },
+    {
+     "hb": "Koguryo",
+     "clio_best": "Goguryeo [Q28370]",
+     "iou": 0.46,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.63,
+     "hb_land_without_clio": 0,
+     "size": 40
+    },
+    {
+     "hb": "Boihaenum",
+     "clio_best": "Roman Empire [Q12544]",
+     "iou": 0,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.69,
+     "size": 22
+    },
+    {
+     "hb": "Monte Albán",
+     "clio_best": "Zapotec Civilization [Q844750]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.4,
+     "size": 19
+    }
+   ]
+  },
+  {
+   "year": 300,
+   "hb_entities": 71,
+   "clio_entities": 43,
+   "land_pct": {
+    "both": 10,
+    "only_hb": 53.2,
+    "only_clio": 3,
+    "neither": 33.7
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 51.8,
+    "acuerdo": 3.1,
+    "hb_mas_detallado": 4.8,
+    "clio_mas_detallado": 1.9,
+    "desacuerdo": 1.8
+   },
+   "disagreements": [
+    {
+     "hb": "Suren Kingdom",
+     "clio_best": "Sasanian Empire [Q1661685]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.55,
+     "clio_share_in_hb": 0.17,
+     "hb_land_without_clio": 0,
+     "size": 293
+    },
+    {
+     "hb": "Satavahanihara",
+     "clio_best": "Vakataka Kingdom [Q1501306]",
+     "iou": 0.33,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.53,
+     "hb_land_without_clio": 0.46,
+     "size": 208
+    },
+    {
+     "hb": "Han Zhao",
+     "clio_best": "Western Jin [Q7352]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0.67,
+     "size": 123
+    },
+    {
+     "hb": "Armenia",
+     "clio_best": "Kingdom of Armenia [Q208404]",
+     "iou": 0.51,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0.05,
+     "size": 88
+    },
+    {
+     "hb": "Koguryo",
+     "clio_best": "Goguryeo [Q28370]",
+     "iou": 0.46,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.63,
+     "hb_land_without_clio": 0,
+     "size": 40
+    },
+    {
+     "hb": "Monte Albán",
+     "clio_best": "Zapotec Civilization [Q844750]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.4,
+     "size": 19
+    }
+   ]
+  },
+  {
+   "year": 400,
+   "hb_entities": 79,
+   "clio_entities": 53,
+   "land_pct": {
+    "both": 11.8,
+    "only_hb": 54.5,
+    "only_clio": 2.9,
+    "neither": 30.8
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 52.9,
+    "acuerdo": 5.6,
+    "clio_mas_detallado": 2.8,
+    "hb_mas_detallado": 1.9,
+    "desacuerdo": 3.1
+   },
+   "disagreements": [
+    {
+     "hb": "Suren Kingdom",
+     "clio_best": "Sasanian Empire [Q1661685]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0,
+     "size": 344
+    },
+    {
+     "hb": "Sixteen Kingdoms",
+     "clio_best": "Northern Wei [Q875305]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0.17,
+     "size": 343
+    },
+    {
+     "hb": "Hunnic Empire",
+     "clio_best": "Huns [Q45813]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0.35,
+     "hb_land_without_clio": 0.41,
+     "size": 279
+    },
+    {
+     "hb": "Satavahanihara",
+     "clio_best": "Vakataka Kingdom [Q1501306]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.42,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0.14,
+     "size": 160
+    },
+    {
+     "hb": "Caucasian Alans",
+     "clio_best": "Huns [Q45813]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.77,
+     "clio_share_in_hb": 0.14,
+     "hb_land_without_clio": 0.23,
+     "size": 85
+    },
+    {
+     "hb": "Northern Liang",
+     "clio_best": "Northern Liang [Q1539360]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.52,
+     "clio_share_in_hb": 0.7,
+     "hb_land_without_clio": 0.13,
+     "size": 52
+    },
+    {
+     "hb": "Hadramaut",
+     "clio_best": "Himyarite Kingdom [Q289577]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0.62,
+     "size": 38
+    },
+    {
+     "hb": "Monte Albán",
+     "clio_best": "Zapotec Civilization [Q844750]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.4,
+     "size": 19
+    },
+    {
+     "hb": "Visigoths",
+     "clio_best": "Eastern Roman Empire [Q12544]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 18
+    }
+   ]
+  },
+  {
+   "year": 500,
+   "hb_entities": 87,
+   "clio_entities": 58,
+   "land_pct": {
+    "both": 13.7,
+    "only_hb": 53.6,
+    "only_clio": 3.6,
+    "neither": 29.1
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 52.4,
+    "clio_mas_detallado": 5.4,
+    "hb_mas_detallado": 2.4,
+    "acuerdo": 4.6,
+    "desacuerdo": 2.4
+   },
+   "disagreements": [
+    {
+     "hb": "Toba Wei",
+     "clio_best": "Northern Wei [Q875305]",
+     "iou": 0.54,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0,
+     "size": 449
+    },
+    {
+     "hb": "Vakataka",
+     "clio_best": "Vakataka Kingdom [Q1501306]",
+     "iou": 0.44,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0.03,
+     "size": 174
+    },
+    {
+     "hb": "Franks",
+     "clio_best": "Salian Franks [Q939852]",
+     "iou": 0.61,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.8,
+     "hb_land_without_clio": 0,
+     "size": 101
+    },
+    {
+     "hb": "Kurykans",
+     "clio_best": "Rouran Khaganate [Q155361]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.62,
+     "size": 60
+    },
+    {
+     "hb": "Burgundians",
+     "clio_best": "Burgundian Kingdom [Q13590051]",
+     "iou": 0.61,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.8,
+     "hb_land_without_clio": 0,
+     "size": 41
+    },
+    {
+     "hb": "Saxons",
+     "clio_best": "Saxons [Q101985]",
+     "iou": 0.29,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.54,
+     "hb_land_without_clio": 0.19,
+     "size": 35
+    },
+    {
+     "hb": "Champa",
+     "clio_best": "Chámpa [Q216786]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0.1,
+     "size": 30
+    },
+    {
+     "hb": "Kadambas",
+     "clio_best": "Kadamba Empire [Q1479952]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.26,
+     "hb_land_without_clio": 0.39,
+     "size": 27
+    },
+    {
+     "hb": "Silla",
+     "clio_best": "Goguryeo [Q28370]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.66,
+     "clio_share_in_hb": 0.12,
+     "hb_land_without_clio": 0,
+     "size": 24
+    },
+    {
+     "hb": "Turingians",
+     "clio_best": "Salian Franks [Q939852]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.1,
+     "hb_land_without_clio": 0.05,
+     "size": 24
+    },
+    {
+     "hb": "Vishnu-Kundins",
+     "clio_best": "Late Pallava Empire [Q466803]",
+     "iou": 0.2,
+     "hb_share_in_clio": 0.26,
+     "clio_share_in_hb": 0.46,
+     "hb_land_without_clio": 0.61,
+     "size": 22
+    },
+    {
+     "hb": "Basques",
+     "clio_best": "Visigothic Kingdom [Q126936]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0.52,
+     "size": 20
+    },
+    {
+     "hb": "Monte Albán",
+     "clio_best": "Zapotec Civilization [Q844750]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.4,
+     "size": 19
+    },
+    {
+     "hb": "Western Gangas",
+     "clio_best": "Kalabhra Dynasty [Q2572901]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.19,
+     "hb_land_without_clio": 0.47,
+     "size": 17
+    }
+   ]
+  },
+  {
+   "year": 600,
+   "hb_entities": 83,
+   "clio_entities": 75,
+   "land_pct": {
+    "both": 12.7,
+    "only_hb": 56.5,
+    "only_clio": 5,
+    "neither": 25.9
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 55.5,
+    "acuerdo": 8.3,
+    "clio_mas_detallado": 2.6,
+    "hb_mas_detallado": 1.2,
+    "desacuerdo": 1.6
+   },
+   "disagreements": [
+    {
+     "hb": "Kanauj",
+     "clio_best": "Maukhari Dynasty [Q12448145]",
+     "iou": 0.33,
+     "hb_share_in_clio": 0.51,
+     "clio_share_in_hb": 0.49,
+     "hb_land_without_clio": 0.49,
+     "size": 163
+    },
+    {
+     "hb": "Shaskanka",
+     "clio_best": "Maukhari Dynasty [Q12448145]",
+     "iou": 0.3,
+     "hb_share_in_clio": 0.58,
+     "clio_share_in_hb": 0.38,
+     "hb_land_without_clio": 0.4,
+     "size": 108
+    },
+    {
+     "hb": "Makkura",
+     "clio_best": "Alodia [Q449639]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0.25,
+     "size": 79
+    },
+    {
+     "hb": "Pallavas",
+     "clio_best": "Chalukya Dynasty [Q1395011]",
+     "iou": 0.21,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.37,
+     "hb_land_without_clio": 0.3,
+     "size": 74
+    },
+    {
+     "hb": "Chen-La",
+     "clio_best": "Chenla [Q1057118]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.57,
+     "hb_land_without_clio": 0,
+     "size": 50
+    },
+    {
+     "hb": "Kamarupa",
+     "clio_best": "Kamarupa Kingdom [Q1194765]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.55,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0.45,
+     "size": 49
+    },
+    {
+     "hb": "Lombard principalities",
+     "clio_best": "Kingdom of Italy [Q172579]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0,
+     "size": 45
+    },
+    {
+     "hb": "Champa",
+     "clio_best": "Chámpa [Q216786]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.7,
+     "hb_land_without_clio": 0,
+     "size": 36
+    },
+    {
+     "hb": "Silla",
+     "clio_best": "Silla [Q28456]",
+     "iou": 0.62,
+     "hb_share_in_clio": 0.77,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0,
+     "size": 24
+    },
+    {
+     "hb": "Monte Albán",
+     "clio_best": "Zapotec Civilization [Q844750]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.4,
+     "size": 19
+    },
+    {
+     "hb": "Saxons",
+     "clio_best": "Saxons [Q101985]",
+     "iou": 0.49,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.56,
+     "hb_land_without_clio": 0.07,
+     "size": 18
+    },
+    {
+     "hb": "Frisians",
+     "clio_best": "Kingdom of the Franks [Q146246]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.55,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0.3,
+     "size": 12
+    },
+    {
+     "hb": "Slavs",
+     "clio_best": "Avar Khaganate [Q68962]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Ostrogoths",
+     "clio_best": "Bavarians [Q13048507]",
+     "iou": 0.13,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.16,
+     "hb_land_without_clio": 0.15,
+     "size": 9
+    }
+   ]
+  },
+  {
+   "year": 700,
+   "hb_entities": 127,
+   "clio_entities": 72,
+   "land_pct": {
+    "both": 17.7,
+    "only_hb": 65,
+    "only_clio": 3.5,
+    "neither": 13.8
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 62.8,
+    "hb_mas_detallado": 8.9,
+    "clio_mas_detallado": 3.7,
+    "desacuerdo": 6.6,
+    "acuerdo": 0.7
+   },
+   "disagreements": [
+    {
+     "hb": "Umayyad Caliphate",
+     "clio_best": "Umayyad Caliphate [Q8575586]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.12,
+     "hb_land_without_clio": 0.02,
+     "size": 545
+    },
+    {
+     "hb": "Western Gokturk Khaganate",
+     "clio_best": "Turks [Q2118293]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.2,
+     "clio_share_in_hb": 0.36,
+     "hb_land_without_clio": 0.62,
+     "size": 544
+    },
+    {
+     "hb": "Frankish Kingdom",
+     "clio_best": "(Merovingian Empire) [Q146246]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0.02,
+     "size": 198
+    },
+    {
+     "hb": "Uyghurs",
+     "clio_best": "Tang Dynasty [Q9683]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.08,
+     "hb_land_without_clio": 0,
+     "size": 180
+    },
+    {
+     "hb": "Kingdom of Sind",
+     "clio_best": "Umayyad Caliphate [Q8575586]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.39,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.61,
+     "size": 153
+    },
+    {
+     "hb": "Karluks",
+     "clio_best": "Tang Dynasty [Q9683]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0.28,
+     "size": 147
+    },
+    {
+     "hb": "minor states under Indian influence",
+     "clio_best": "Srivijaya [Q234197]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.68,
+     "clio_share_in_hb": 0.56,
+     "hb_land_without_clio": 0.26,
+     "size": 116
+    },
+    {
+     "hb": "Swedes",
+     "clio_best": "Scandinavian minor kingdoms [Q1275225]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.74,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0.26,
+     "size": 98
+    },
+    {
+     "hb": "Koguryo",
+     "clio_best": "Tang Dynasty [Q9683]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0.32,
+     "size": 90
+    },
+    {
+     "hb": "Makkura",
+     "clio_best": "Makuria [Q829356]",
+     "iou": 0.26,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.44,
+     "hb_land_without_clio": 0.25,
+     "size": 79
+    },
+    {
+     "hb": "Avars",
+     "clio_best": "Avar Khaganate [Q68962]",
+     "iou": 0.55,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0.12,
+     "size": 77
+    },
+    {
+     "hb": "Pallavas",
+     "clio_best": "Chalukya Dynasty [Q1395011]",
+     "iou": 0.11,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.13,
+     "hb_land_without_clio": 0.15,
+     "size": 74
+    },
+    {
+     "hb": "Kingdom of Kapisa",
+     "clio_best": "Turk Shahis [Q654380]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.32,
+     "hb_land_without_clio": 0.32,
+     "size": 52
+    },
+    {
+     "hb": "Danube Bulgars",
+     "clio_best": "First Bulgarian Empire [Q203817]",
+     "iou": 0.21,
+     "hb_share_in_clio": 0.34,
+     "clio_share_in_hb": 0.34,
+     "hb_land_without_clio": 0.36,
+     "size": 52
+    },
+    {
+     "hb": "Hindu states",
+     "clio_best": "Kamarupa Kingdom [Q1194765]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.74,
+     "hb_land_without_clio": 0.47,
+     "size": 49
+    },
+    {
+     "hb": "Nobatia",
+     "clio_best": "Makuria [Q829356]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.54,
+     "hb_land_without_clio": 0.16,
+     "size": 48
+    },
+    {
+     "hb": "Bulgars",
+     "clio_best": "Khazaria [Q173282]",
+     "iou": 0.11,
+     "hb_share_in_clio": 0.66,
+     "clio_share_in_hb": 0.12,
+     "hb_land_without_clio": 0.22,
+     "size": 45
+    },
+    {
+     "hb": "Lombard principalities",
+     "clio_best": "Kingdom of Italy [Q172579]",
+     "iou": 0.5,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.6,
+     "hb_land_without_clio": 0,
+     "size": 45
+    },
+    {
+     "hb": "Kingdom of Kashmir",
+     "clio_best": "Karkota Dynasty [Q466433]",
+     "iou": 0.49,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.65,
+     "hb_land_without_clio": 0.31,
+     "size": 38
+    },
+    {
+     "hb": "Champa",
+     "clio_best": "Chenla [Q1057118]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0,
+     "size": 36
+    },
+    {
+     "hb": "Magyars",
+     "clio_best": "Khazaria [Q173282]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0.33,
+     "size": 32
+    },
+    {
+     "hb": "Dvaravati",
+     "clio_best": "Lavo Kingdom [Q1332305]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.33,
+     "hb_land_without_clio": 0.27,
+     "size": 21
+    },
+    {
+     "hb": "Cantia",
+     "clio_best": "Kingdom of Mercia [Q105092]",
+     "iou": 0.38,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0,
+     "size": 21
+    },
+    {
+     "hb": "Mataram",
+     "clio_best": "Sunda Kingdom [Q1469742]",
+     "iou": 0.21,
+     "hb_share_in_clio": 0.24,
+     "clio_share_in_hb": 0.62,
+     "hb_land_without_clio": 0.57,
+     "size": 21
+    },
+    {
+     "hb": "Visigothic Kingdom",
+     "clio_best": "Visigothic Kingdom [Q126936]",
+     "iou": 0.06,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.07,
+     "hb_land_without_clio": 0,
+     "size": 19
+    },
+    {
+     "hb": "Saxons",
+     "clio_best": "Saxons [Q101985]",
+     "iou": 0.46,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0.07,
+     "size": 18
+    },
+    {
+     "hb": "Cheras",
+     "clio_best": "Pandya Dynasty [Q844910]",
+     "iou": 0.13,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0.18,
+     "hb_land_without_clio": 0.5,
+     "size": 16
+    },
+    {
+     "hb": "Frisians",
+     "clio_best": "(Merovingian Empire) [Q146246]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.55,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0,
+     "size": 12
+    },
+    {
+     "hb": "Georgian Kingdom",
+     "clio_best": "Principality of Iberia [Q199389]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.64,
+     "hb_land_without_clio": 0,
+     "size": 12
+    },
+    {
+     "hb": "Slavs",
+     "clio_best": "Carantania [Q501754]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.39,
+     "hb_land_without_clio": 0.2,
+     "size": 10
+    }
+   ]
+  },
+  {
+   "year": 800,
+   "hb_entities": 117,
+   "clio_entities": 81,
+   "land_pct": {
+    "both": 21.1,
+    "only_hb": 61.1,
+    "only_clio": 2.8,
+    "neither": 15
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 57,
+    "acuerdo": 11.1,
+    "clio_mas_detallado": 9.1,
+    "desacuerdo": 4,
+    "hb_mas_detallado": 1
+   },
+   "disagreements": [
+    {
+     "hb": "Hindu states",
+     "clio_best": "Rashtrakuta Dynasty [Q856691]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.29,
+     "clio_share_in_hb": 0.28,
+     "hb_land_without_clio": 0.43,
+     "size": 280
+    },
+    {
+     "hb": "Gurjara Pratihara",
+     "clio_best": "Gurjara-Pratihara Dynasty [Q5324]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.5,
+     "hb_land_without_clio": 0.23,
+     "size": 220
+    },
+    {
+     "hb": "Aghlabid Emirate",
+     "clio_best": "Rustamid dynasty [Q940123]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0.08,
+     "size": 202
+    },
+    {
+     "hb": "Srivijaya Empire",
+     "clio_best": "Srivijaya [Q234197]",
+     "iou": 0.58,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0.21,
+     "size": 166
+    },
+    {
+     "hb": "Palas",
+     "clio_best": "Pala Empire [Q668412]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0.53,
+     "hb_land_without_clio": 0.32,
+     "size": 140
+    },
+    {
+     "hb": "Nan Chao",
+     "clio_best": "Nanzhao [Q1045322]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.48,
+     "hb_land_without_clio": 0.24,
+     "size": 130
+    },
+    {
+     "hb": "Northmen",
+     "clio_best": "Scandinavian minor kingdoms [Q213649]",
+     "iou": 0.3,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.41,
+     "hb_land_without_clio": 0.47,
+     "size": 98
+    },
+    {
+     "hb": "Chen-La",
+     "clio_best": "Water Chenla [Q1057118]",
+     "iou": 0.6,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0,
+     "size": 81
+    },
+    {
+     "hb": "minor Hindu and Buddhist states",
+     "clio_best": "Srivijaya [Q234197]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0.53,
+     "size": 73
+    },
+    {
+     "hb": "Ghana",
+     "clio_best": "Ghana Empire [Q206789]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.5,
+     "size": 65
+    },
+    {
+     "hb": "Magyars",
+     "clio_best": "First Bulgarian Empire [Q203817]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.26,
+     "clio_share_in_hb": 0.29,
+     "hb_land_without_clio": 0.65,
+     "size": 63
+    },
+    {
+     "hb": "Chauhans",
+     "clio_best": "Gurjara-Pratihara Dynasty [Q5324]",
+     "iou": 0.06,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.07,
+     "hb_land_without_clio": 0.65,
+     "size": 41
+    },
+    {
+     "hb": "Bulgars",
+     "clio_best": "First Bulgarian Empire [Q203817]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0.18,
+     "size": 40
+    },
+    {
+     "hb": "Pallava state",
+     "clio_best": "Pandya Dynasty [Q844910]",
+     "iou": 0.26,
+     "hb_share_in_clio": 0.34,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.41,
+     "size": 40
+    },
+    {
+     "hb": "Champa",
+     "clio_best": "Chámpa [Q216786]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.7,
+     "hb_land_without_clio": 0,
+     "size": 33
+    },
+    {
+     "hb": "Pyu state",
+     "clio_best": "Pyu City-States [Q1627675]",
+     "iou": 0.5,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0.27,
+     "size": 32
+    },
+    {
+     "hb": "Dvaravati",
+     "clio_best": "Lavo Kingdom [Q1332305]",
+     "iou": 0.3,
+     "hb_share_in_clio": 0.68,
+     "clio_share_in_hb": 0.35,
+     "hb_land_without_clio": 0.32,
+     "size": 21
+    },
+    {
+     "hb": "Papal States",
+     "clio_best": "(Kingdom of the Franks) [Q146246]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.07,
+     "size": 10
+    },
+    {
+     "hb": "Celtic kingdoms",
+     "clio_best": "Kingdom of Northumbria [Q107299]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0.45,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Welsh",
+     "clio_best": "Brythons [Q849967]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0,
+     "size": 5
+    }
+   ]
+  },
+  {
+   "year": 900,
+   "hb_entities": 135,
+   "clio_entities": 117,
+   "land_pct": {
+    "both": 20.5,
+    "only_hb": 71.4,
+    "only_clio": 0.3,
+    "neither": 7.8
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 65.2,
+    "desacuerdo": 12,
+    "clio_mas_detallado": 8.4,
+    "acuerdo": 4.4,
+    "hb_mas_detallado": 1.9
+   },
+   "disagreements": [
+    {
+     "hb": "Abbasid Caliphate",
+     "clio_best": "Abbasid Caliphate [Q12536]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.32,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0.42,
+     "size": 1695
+    },
+    {
+     "hb": "Oghuz Turks",
+     "clio_best": "Kimek-Kipchak confederation [Q2477776]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.29,
+     "clio_share_in_hb": 0.8,
+     "hb_land_without_clio": 0.45,
+     "size": 1261
+    },
+    {
+     "hb": "Saffarids",
+     "clio_best": "Samanid Empire [Q486181]",
+     "iou": 0.38,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.47,
+     "hb_land_without_clio": 0,
+     "size": 551
+    },
+    {
+     "hb": "Samanid Empire",
+     "clio_best": "Samanid Empire [Q486181]",
+     "iou": 0.38,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.46,
+     "hb_land_without_clio": 0.17,
+     "size": 513
+    },
+    {
+     "hb": "Aghlabid Emirate",
+     "clio_best": "Rustamid dynasty [Q940123]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0.08,
+     "size": 202
+    },
+    {
+     "hb": "Gurjara Pratihara",
+     "clio_best": "Gurjara-Pratihara Dynasty [Q5324]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.29,
+     "size": 176
+    },
+    {
+     "hb": "Palas",
+     "clio_best": "Pala Empire [Q668412]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0.29,
+     "size": 142
+    },
+    {
+     "hb": "Nan Chao",
+     "clio_best": "Nanzhao [Q1045322]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.26,
+     "clio_share_in_hb": 0.32,
+     "hb_land_without_clio": 0.68,
+     "size": 130
+    },
+    {
+     "hb": "Avars",
+     "clio_best": "Principality of Hungary [Q2899771]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.44,
+     "hb_land_without_clio": 0.14,
+     "size": 71
+    },
+    {
+     "hb": "Ghana",
+     "clio_best": "Ghana Empire [Q206789]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.5,
+     "size": 65
+    },
+    {
+     "hb": "Banas",
+     "clio_best": "Rashtrakuta Dynasty [Q856691]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.42,
+     "clio_share_in_hb": 0.1,
+     "hb_land_without_clio": 0.58,
+     "size": 63
+    },
+    {
+     "hb": "Magyars",
+     "clio_best": "First Bulgarian Empire [Q203817]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.17,
+     "hb_land_without_clio": 0.63,
+     "size": 62
+    },
+    {
+     "hb": "Chauhans",
+     "clio_best": "Gurjara-Pratihara Dynasty [Q5324]",
+     "iou": 0.06,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.07,
+     "hb_land_without_clio": 0.63,
+     "size": 41
+    },
+    {
+     "hb": "Pallava",
+     "clio_best": "Chola Empire [Q6806806]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.39,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0.27,
+     "size": 40
+    },
+    {
+     "hb": "Multan",
+     "clio_best": "Gurjara-Pratihara Dynasty [Q5324]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.1,
+     "hb_land_without_clio": 0.15,
+     "size": 36
+    },
+    {
+     "hb": "Croatian kingdom",
+     "clio_best": "East Franks [Q153080]",
+     "iou": 0.06,
+     "hb_share_in_clio": 0.32,
+     "clio_share_in_hb": 0.06,
+     "hb_land_without_clio": 0.19,
+     "size": 33
+    },
+    {
+     "hb": "Pagan",
+     "clio_best": "Pyu City-States [Q1627675]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.53,
+     "hb_land_without_clio": 0.12,
+     "size": 32
+    },
+    {
+     "hb": "Mercia",
+     "clio_best": "Kingdom of Wessex [Q105313]",
+     "iou": 0.38,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.65,
+     "hb_land_without_clio": 0.02,
+     "size": 24
+    },
+    {
+     "hb": "Arakan",
+     "clio_best": "Chandra Dynasty [Q5032034]",
+     "iou": 0.5,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.64,
+     "hb_land_without_clio": 0.3,
+     "size": 21
+    },
+    {
+     "hb": "Serbia",
+     "clio_best": "First Bulgarian Empire [Q203817]",
+     "iou": 0.06,
+     "hb_share_in_clio": 0.41,
+     "clio_share_in_hb": 0.06,
+     "hb_land_without_clio": 0.23,
+     "size": 16
+    },
+    {
+     "hb": "Pechenegs",
+     "clio_best": "Kievan Rus' [Q1108445]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0.3,
+     "size": 13
+    },
+    {
+     "hb": "Cholas",
+     "clio_best": "Rashtrakuta Dynasty [Q856691]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0,
+     "size": 12
+    },
+    {
+     "hb": "Celtic kingdoms",
+     "clio_best": "Kingdom of Northumbria [Q107299]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Northumbria",
+     "clio_best": "Danelaw [Q339271]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.17,
+     "hb_land_without_clio": 0,
+     "size": 4
+    },
+    {
+     "hb": "Chelmia",
+     "clio_best": "Principality of Serbia [Q1311990]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.19,
+     "hb_land_without_clio": 0.4,
+     "size": 4
+    }
+   ]
+  },
+  {
+   "year": 1000,
+   "hb_entities": 129,
+   "clio_entities": 132,
+   "land_pct": {
+    "both": 18.2,
+    "only_hb": 54.9,
+    "only_clio": 3.5,
+    "neither": 23.4
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 50.6,
+    "clio_mas_detallado": 7.9,
+    "acuerdo": 7.6,
+    "desacuerdo": 4.8,
+    "hb_mas_detallado": 2.3
+   },
+   "disagreements": [
+    {
+     "hb": "Fatimid Caliphate",
+     "clio_best": "Fatimid Caliphate [Q160307]",
+     "iou": 0.58,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0.23,
+     "size": 595
+    },
+    {
+     "hb": "Peshemegs",
+     "clio_best": "Oghuz Turks [Q2118293]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.24,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.55,
+     "size": 441
+    },
+    {
+     "hb": "Xixia",
+     "clio_best": "Qocho Kingdom [Q2662180]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.34,
+     "clio_share_in_hb": 0.38,
+     "hb_land_without_clio": 0.16,
+     "size": 240
+    },
+    {
+     "hb": "Nan Chao",
+     "clio_best": "Kingdom of Dali [Q26472]",
+     "iou": 0.54,
+     "hb_share_in_clio": 0.66,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0.19,
+     "size": 134
+    },
+    {
+     "hb": "Palas",
+     "clio_best": "Pala Empire [Q668412]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.63,
+     "hb_land_without_clio": 0.41,
+     "size": 129
+    },
+    {
+     "hb": "Buyid Emirate",
+     "clio_best": "Ghaznavid Empire [Q12844800]",
+     "iou": 0.08,
+     "hb_share_in_clio": 0.51,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0.05,
+     "size": 117
+    },
+    {
+     "hb": "Kalinga",
+     "clio_best": "Western Chalukya Empire [Q14624218]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.41,
+     "clio_share_in_hb": 0.11,
+     "hb_land_without_clio": 0.59,
+     "size": 66
+    },
+    {
+     "hb": "Ghana",
+     "clio_best": "Ghana Empire [Q206789]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.5,
+     "size": 65
+    },
+    {
+     "hb": "Senas",
+     "clio_best": "Kamarupa Kingdom [Q1194765]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.33,
+     "hb_land_without_clio": 0.27,
+     "size": 58
+    },
+    {
+     "hb": "Annam",
+     "clio_best": "Ngô Dynasty [Q703919]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0.43,
+     "size": 51
+    },
+    {
+     "hb": "Armenia",
+     "clio_best": "Hamdanid Emirates [Q837187]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.13,
+     "hb_land_without_clio": 0.01,
+     "size": 51
+    },
+    {
+     "hb": "Chauhans",
+     "clio_best": "Chauhan Dynasty [Q1068371]",
+     "iou": 0.3,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.35,
+     "hb_land_without_clio": 0.3,
+     "size": 41
+    },
+    {
+     "hb": "Dvaravati",
+     "clio_best": "Lavo Kingdom [Q1332305]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.32,
+     "hb_land_without_clio": 0.28,
+     "size": 24
+    },
+    {
+     "hb": "Scotland",
+     "clio_best": "Kingdom of Alba [Q1991742]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.7,
+     "hb_land_without_clio": 0,
+     "size": 17
+    },
+    {
+     "hb": "Castilla",
+     "clio_best": "Kingdom of Castile [Q179293]",
+     "iou": 0.59,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0,
+     "size": 13
+    },
+    {
+     "hb": "Serbia",
+     "clio_best": "Kingdom of Croatia [Q858841]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.68,
+     "clio_share_in_hb": 0.27,
+     "hb_land_without_clio": 0,
+     "size": 12
+    },
+    {
+     "hb": "Navarre",
+     "clio_best": "County of Ribagorza [Q1297894]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Arran",
+     "clio_best": "Shirvan [Q638064]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.25,
+     "hb_land_without_clio": 0,
+     "size": 4
+    }
+   ]
+  },
+  {
+   "year": 1100,
+   "hb_entities": 139,
+   "clio_entities": 146,
+   "land_pct": {
+    "both": 23.5,
+    "only_hb": 55.7,
+    "only_clio": 0.8,
+    "neither": 20
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 51,
+    "clio_mas_detallado": 9,
+    "acuerdo": 7,
+    "desacuerdo": 9.8,
+    "hb_mas_detallado": 2.3
+   },
+   "disagreements": [
+    {
+     "hb": "Seljuk Empire",
+     "clio_best": "Great Seljuk Empire [Q3708094]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.51,
+     "hb_land_without_clio": 0.09,
+     "size": 663
+    },
+    {
+     "hb": "Karkhanids",
+     "clio_best": "Eastern Kara-Khanids [Q494354]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.29,
+     "clio_share_in_hb": 0.56,
+     "hb_land_without_clio": 0.02,
+     "size": 563
+    },
+    {
+     "hb": "Ghaznavid Emirate",
+     "clio_best": "Great Seljuk Empire [Q3708094]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.55,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0,
+     "size": 373
+    },
+    {
+     "hb": "Byzantine Empire",
+     "clio_best": "Byzantine Empire [Q112039853]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.63,
+     "hb_land_without_clio": 0.02,
+     "size": 260
+    },
+    {
+     "hb": "Kingdom of Sukhotai",
+     "clio_best": "Pagan Kingdom [Q888574]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.49,
+     "hb_land_without_clio": 0.37,
+     "size": 248
+    },
+    {
+     "hb": "Xixia",
+     "clio_best": "Western Xia [Q7427]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.49,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.07,
+     "size": 240
+    },
+    {
+     "hb": "Western Chalukyas",
+     "clio_best": "Western Chalukya Empire [Q14624218]",
+     "iou": 0.57,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0.04,
+     "size": 215
+    },
+    {
+     "hb": "Oghuz",
+     "clio_best": "Kimek-Kipchak confederation [Q2477776]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.11,
+     "hb_land_without_clio": 0.09,
+     "size": 199
+    },
+    {
+     "hb": "minor Hindu and Buddhist states",
+     "clio_best": "Srivijaya [Q234197]",
+     "iou": 0.18,
+     "hb_share_in_clio": 0.29,
+     "clio_share_in_hb": 0.32,
+     "hb_land_without_clio": 0.66,
+     "size": 173
+    },
+    {
+     "hb": "Srivijaya Empire",
+     "clio_best": "Srivijaya [Q234197]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.65,
+     "hb_land_without_clio": 0.27,
+     "size": 158
+    },
+    {
+     "hb": "Hindu kingdoms",
+     "clio_best": "Ghaznavid Empire [Q12844800]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.52,
+     "clio_share_in_hb": 0.2,
+     "hb_land_without_clio": 0.15,
+     "size": 150
+    },
+    {
+     "hb": "Volga Bulgars",
+     "clio_best": "Kimek-Kipchak confederation [Q2477776]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.08,
+     "hb_land_without_clio": 0.34,
+     "size": 135
+    },
+    {
+     "hb": "Nan Chao",
+     "clio_best": "Kingdom of Dali [Q26472]",
+     "iou": 0.54,
+     "hb_share_in_clio": 0.66,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0.18,
+     "size": 134
+    },
+    {
+     "hb": "Soomra Emirate",
+     "clio_best": "Ghaznavid Empire [Q12844800]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.16,
+     "hb_land_without_clio": 0,
+     "size": 117
+    },
+    {
+     "hb": "Pratiharas",
+     "clio_best": "Gahadavala Dynasty [Q1147823]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.42,
+     "clio_share_in_hb": 0.54,
+     "hb_land_without_clio": 0.38,
+     "size": 91
+    },
+    {
+     "hb": "Ghana",
+     "clio_best": "Ghana Empire [Q206789]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.5,
+     "size": 65
+    },
+    {
+     "hb": "Senas",
+     "clio_best": "Kamarupa Kingdom [Q1194765]",
+     "iou": 0.26,
+     "hb_share_in_clio": 0.42,
+     "clio_share_in_hb": 0.41,
+     "hb_land_without_clio": 0.39,
+     "size": 58
+    },
+    {
+     "hb": "Alans",
+     "clio_best": "Halych-Volhynia occupation [Q239502]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.29,
+     "hb_land_without_clio": 0.3,
+     "size": 56
+    },
+    {
+     "hb": "Paramas",
+     "clio_best": "Paramara Dynasty [Q7135130]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.15,
+     "size": 53
+    },
+    {
+     "hb": "Chandellas",
+     "clio_best": "Gahadavala Dynasty [Q1147823]",
+     "iou": 0.29,
+     "hb_share_in_clio": 0.52,
+     "clio_share_in_hb": 0.39,
+     "hb_land_without_clio": 0.1,
+     "size": 53
+    },
+    {
+     "hb": "Đại Việt",
+     "clio_best": "Ngô Dynasty [Q703919]",
+     "iou": 0.37,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0.41,
+     "size": 51
+    },
+    {
+     "hb": "Chauhans",
+     "clio_best": "Chauhan Dynasty [Q1068371]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0.49,
+     "hb_land_without_clio": 0.13,
+     "size": 41
+    },
+    {
+     "hb": "Korea",
+     "clio_best": "Liao Dynasty [Q4958]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0,
+     "size": 26
+    },
+    {
+     "hb": "Muscat",
+     "clio_best": "Great Seljuk Empire [Q3708094]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.22,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.67,
+     "size": 25
+    },
+    {
+     "hb": "Takrur",
+     "clio_best": "Takrur [Q2272880]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.36,
+     "hb_land_without_clio": 0.57,
+     "size": 22
+    },
+    {
+     "hb": "Scotland",
+     "clio_best": "Kingdom of Alba [Q1991742]",
+     "iou": 0.58,
+     "hb_share_in_clio": 0.77,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0,
+     "size": 17
+    },
+    {
+     "hb": "Karakalpaks",
+     "clio_best": "Principality of Ryazan [Q269109]",
+     "iou": 0.29,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.39,
+     "hb_land_without_clio": 0,
+     "size": 16
+    },
+    {
+     "hb": "Serbia",
+     "clio_best": "Kingdom of Hungary [Q171150]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0.37,
+     "size": 12
+    },
+    {
+     "hb": "Papal States",
+     "clio_best": "(Holy Roman Empire) [Q12548]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.07,
+     "size": 11
+    },
+    {
+     "hb": "Navarre",
+     "clio_best": "Kingdom of Castile [Q179293]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.07,
+     "hb_land_without_clio": 0,
+     "size": 11
+    }
+   ]
+  },
+  {
+   "year": 1200,
+   "hb_entities": 129,
+   "clio_entities": 138,
+   "land_pct": {
+    "both": 23.2,
+    "only_hb": 62.9,
+    "only_clio": 0.8,
+    "neither": 13.2
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 60.4,
+    "desacuerdo": 13.6,
+    "clio_mas_detallado": 7.1,
+    "acuerdo": 2.5,
+    "hb_mas_detallado": 2.5
+   },
+   "disagreements": [
+    {
+     "hb": "Kara Khitai Khaganate",
+     "clio_best": "Kara-Khitans [Q862304]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.2,
+     "size": 1395
+    },
+    {
+     "hb": "Cuman Khanates",
+     "clio_best": "Kimek-Kipchak confederation [Q2477776]",
+     "iou": 0.44,
+     "hb_share_in_clio": 0.66,
+     "clio_share_in_hb": 0.57,
+     "hb_land_without_clio": 0.16,
+     "size": 809
+    },
+    {
+     "hb": "Fatimid Caliphate",
+     "clio_best": "Ayyubid Sultanate [Q180114]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.51,
+     "hb_land_without_clio": 0.27,
+     "size": 595
+    },
+    {
+     "hb": "Sultanate of Delhi",
+     "clio_best": "Ghurid Dynasty [Q199443]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.19,
+     "clio_share_in_hb": 0.1,
+     "hb_land_without_clio": 0.25,
+     "size": 375
+    },
+    {
+     "hb": "Ghaznavid Emirate",
+     "clio_best": "Ghurid Dynasty [Q199443]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.41,
+     "hb_land_without_clio": 0,
+     "size": 373
+    },
+    {
+     "hb": "Byzantine Empire",
+     "clio_best": "Byzantine Empire [Q112039853]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.39,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0.01,
+     "size": 265
+    },
+    {
+     "hb": "Xixia",
+     "clio_best": "Western Xia [Q7427]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.49,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.12,
+     "size": 240
+    },
+    {
+     "hb": "Almohad Caliphate",
+     "clio_best": "Almohad Caliphate [Q199688]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.49,
+     "hb_land_without_clio": 0.09,
+     "size": 215
+    },
+    {
+     "hb": "Other Rus Principalities",
+     "clio_best": "Principality of Chernigov [Q1322662]",
+     "iou": 0.26,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0,
+     "size": 177
+    },
+    {
+     "hb": "Volga Bulgars",
+     "clio_best": "Kimek-Kipchak confederation [Q2477776]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0.34,
+     "size": 153
+    },
+    {
+     "hb": "Nan Chao",
+     "clio_best": "Kingdom of Dali [Q26472]",
+     "iou": 0.54,
+     "hb_share_in_clio": 0.66,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0.14,
+     "size": 134
+    },
+    {
+     "hb": "Harapunchai",
+     "clio_best": "Khmer Empire [Q201705]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.28,
+     "hb_land_without_clio": 0.15,
+     "size": 118
+    },
+    {
+     "hb": "Khwarazmian dynasty",
+     "clio_best": "Ghurid Dynasty [Q199443]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.1,
+     "hb_land_without_clio": 0,
+     "size": 117
+    },
+    {
+     "hb": "Bagan",
+     "clio_best": "Pagan Kingdom [Q888574]",
+     "iou": 0.32,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.43,
+     "hb_land_without_clio": 0.43,
+     "size": 108
+    },
+    {
+     "hb": "Principality of Vladimir-Suzdal",
+     "clio_best": "Principality of Rostov-Suzdal [Q83546]",
+     "iou": 0.46,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0.23,
+     "size": 102
+    },
+    {
+     "hb": "Poland",
+     "clio_best": "Duchy of Sandomierz [Q16933165]",
+     "iou": 0.32,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0.03,
+     "size": 99
+    },
+    {
+     "hb": "Kingdom of France",
+     "clio_best": "(Kingdom of England) [Q179876]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.17,
+     "hb_land_without_clio": 0,
+     "size": 76
+    },
+    {
+     "hb": "Principality of Galicia-Volhynia",
+     "clio_best": "Principality of Halych [Q3403551]",
+     "iou": 0.33,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0,
+     "size": 73
+    },
+    {
+     "hb": "Buyid dynasty",
+     "clio_best": "Lohara Dynasty [Q1315339]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.42,
+     "clio_share_in_hb": 0.37,
+     "hb_land_without_clio": 0.01,
+     "size": 65
+    },
+    {
+     "hb": "Ghana",
+     "clio_best": "Ghana Empire [Q206789]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.5,
+     "size": 65
+    },
+    {
+     "hb": "East Java",
+     "clio_best": "Kediri Kingdom [Q756895]",
+     "iou": 0.33,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.61,
+     "size": 53
+    },
+    {
+     "hb": "Đại Việt",
+     "clio_best": "Ngô Dynasty [Q703919]",
+     "iou": 0.37,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0,
+     "size": 51
+    },
+    {
+     "hb": "Armenia",
+     "clio_best": "Great Seljuk Empire [Q3708094]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0,
+     "size": 51
+    },
+    {
+     "hb": "Kamarupa",
+     "clio_best": "Kingdom of Dali [Q26472]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0.51,
+     "size": 46
+    },
+    {
+     "hb": "Celtic kingdoms",
+     "clio_best": "(Kingdom of England) [Q179876]",
+     "iou": 0.08,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0.47,
+     "size": 30
+    },
+    {
+     "hb": "Principality of Kyiv",
+     "clio_best": "Principality of Kiev [Q1483430]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0,
+     "size": 30
+    },
+    {
+     "hb": "Muscat",
+     "clio_best": "Mahdids [Q1884830]",
+     "iou": 0.62,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0.11,
+     "size": 25
+    },
+    {
+     "hb": "Takrur",
+     "clio_best": "Takrur [Q2272880]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.36,
+     "hb_land_without_clio": 0.57,
+     "size": 22
+    },
+    {
+     "hb": "Scotland",
+     "clio_best": "Kingdom of Alba [Q1991742]",
+     "iou": 0.58,
+     "hb_share_in_clio": 0.77,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0,
+     "size": 17
+    },
+    {
+     "hb": "Castilla",
+     "clio_best": "Kingdom of Castile [Q179293]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.26,
+     "hb_land_without_clio": 0,
+     "size": 13
+    }
+   ]
+  },
+  {
+   "year": 1279,
+   "hb_entities": 113,
+   "clio_entities": 129,
+   "land_pct": {
+    "both": 29.8,
+    "only_hb": 50.3,
+    "only_clio": 0.8,
+    "neither": 19.1
+   },
+   "hb_land_by_kind_pct": {
+    "hb_mas_detallado": 21.5,
+    "sin_equivalente": 47.4,
+    "clio_mas_detallado": 8.1,
+    "desacuerdo": 2.2,
+    "acuerdo": 0.9
+   },
+   "disagreements": [
+    {
+     "hb": "Novgorod",
+     "clio_best": "Mongol Empire [Q12557]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.44,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.55,
+     "size": 295
+    },
+    {
+     "hb": "Sukhothai",
+     "clio_best": "Sukhothai Kingdom [Q863279]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.41,
+     "clio_share_in_hb": 0.72,
+     "hb_land_without_clio": 0.04,
+     "size": 156
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0.54,
+     "size": 116
+    },
+    {
+     "hb": "Hadramaut",
+     "clio_best": "Rasulid Dynasty [Q2132267]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.33,
+     "hb_land_without_clio": 0.6,
+     "size": 102
+    },
+    {
+     "hb": "Đại Việt",
+     "clio_best": "Khmer Empire [Q201705]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.18,
+     "hb_land_without_clio": 0,
+     "size": 77
+    },
+    {
+     "hb": "Kediri",
+     "clio_best": "Singhasari [Q2060657]",
+     "iou": 0.33,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.61,
+     "size": 53
+    },
+    {
+     "hb": "Orissa",
+     "clio_best": "Kakatiya Dynasty [Q2086556]",
+     "iou": 0.18,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0,
+     "size": 42
+    },
+    {
+     "hb": "Teutonic Knights",
+     "clio_best": "Teutonic Order [Q48189]",
+     "iou": 0.58,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.23,
+     "size": 35
+    },
+    {
+     "hb": "Chola Empire",
+     "clio_best": "Pandya Empire [Q844910]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.28,
+     "hb_land_without_clio": 0.19,
+     "size": 31
+    },
+    {
+     "hb": "Serbia",
+     "clio_best": "Kingdom of Serbia [Q241748]",
+     "iou": 0.57,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0.03,
+     "size": 26
+    },
+    {
+     "hb": "Granada",
+     "clio_best": "Emirate of Granada [Q238445]",
+     "iou": 0.5,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.64,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Sardinia",
+     "clio_best": "Republic of Pisa [Q1365493]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.51,
+     "hb_land_without_clio": 0,
+     "size": 7
+    },
+    {
+     "hb": "Venice",
+     "clio_best": "Republic of Venice [Q4948]",
+     "iou": 0.51,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.63,
+     "hb_land_without_clio": 0.15,
+     "size": 5
+    }
+   ]
+  },
+  {
+   "year": 1300,
+   "hb_entities": 113,
+   "clio_entities": 151,
+   "land_pct": {
+    "both": 29.3,
+    "only_hb": 47.4,
+    "only_clio": 1,
+    "neither": 22.4
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 11.5,
+    "sin_equivalente": 44.2,
+    "desacuerdo": 7.7,
+    "clio_mas_detallado": 10,
+    "hb_mas_detallado": 3.4
+   },
+   "disagreements": [
+    {
+     "hb": "Khanate of the Golden Horde",
+     "clio_best": "Golden Horde [Q79965]",
+     "iou": 0.54,
+     "hb_share_in_clio": 0.68,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0.23,
+     "size": 1694
+    },
+    {
+     "hb": "Ryazan",
+     "clio_best": "Golden Horde [Q79965]",
+     "iou": 0.11,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.12,
+     "hb_land_without_clio": 0.04,
+     "size": 423
+    },
+    {
+     "hb": "Pagan",
+     "clio_best": "Shan States [Q4765854]",
+     "iou": 0.3,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0.25,
+     "size": 236
+    },
+    {
+     "hb": "Srivijaya Empire",
+     "clio_best": "Majapahit [Q49326]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0.19,
+     "size": 201
+    },
+    {
+     "hb": "Sukhothai",
+     "clio_best": "Sukhothai Kingdom [Q863279]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.64,
+     "hb_land_without_clio": 0.01,
+     "size": 156
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.8,
+     "hb_land_without_clio": 0.54,
+     "size": 116
+    },
+    {
+     "hb": "Hadramaut",
+     "clio_best": "Rasulid Dynasty [Q2132267]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.33,
+     "hb_land_without_clio": 0.6,
+     "size": 102
+    },
+    {
+     "hb": "Đại Việt",
+     "clio_best": "Khmer Empire [Q201705]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.18,
+     "hb_land_without_clio": 0,
+     "size": 77
+    },
+    {
+     "hb": "Sweden",
+     "clio_best": "Kingdom of Sweden [Q34]",
+     "iou": 0.46,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0.34,
+     "size": 71
+    },
+    {
+     "hb": "Kediri",
+     "clio_best": "Majapahit [Q49326]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.16,
+     "hb_land_without_clio": 0.61,
+     "size": 53
+    },
+    {
+     "hb": "Aragón",
+     "clio_best": "Crown of Aragon [Q204920]",
+     "iou": 0.56,
+     "hb_share_in_clio": 0.66,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0.05,
+     "size": 43
+    },
+    {
+     "hb": "Orissa",
+     "clio_best": "Kakatiya Dynasty [Q2086556]",
+     "iou": 0.18,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0,
+     "size": 42
+    },
+    {
+     "hb": "Teutonic Knights",
+     "clio_best": "Teutonic Order [Q48189]",
+     "iou": 0.58,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.23,
+     "size": 35
+    },
+    {
+     "hb": "Chola Empire",
+     "clio_best": "Pandya Empire [Q844910]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.28,
+     "hb_land_without_clio": 0.19,
+     "size": 31
+    },
+    {
+     "hb": "Raška",
+     "clio_best": "Kingdom of Serbia [Q241748]",
+     "iou": 0.33,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.51,
+     "hb_land_without_clio": 0,
+     "size": 26
+    },
+    {
+     "hb": "Georgia",
+     "clio_best": "Golden Horde [Q79965]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Granada",
+     "clio_best": "Emirate of Granada [Q238445]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.62,
+     "hb_land_without_clio": 0,
+     "size": 10
+    }
+   ]
+  },
+  {
+   "year": 1400,
+   "hb_entities": 115,
+   "clio_entities": 157,
+   "land_pct": {
+    "both": 27.4,
+    "only_hb": 50.7,
+    "only_clio": 1.1,
+    "neither": 20.8
+   },
+   "hb_land_by_kind_pct": {
+    "clio_mas_detallado": 13.5,
+    "sin_equivalente": 46.3,
+    "acuerdo": 6.2,
+    "desacuerdo": 10.1,
+    "hb_mas_detallado": 1.9
+   },
+   "disagreements": [
+    {
+     "hb": "White Horde",
+     "clio_best": "Golden Horde [Q79965]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.63,
+     "hb_land_without_clio": 0.4,
+     "size": 1205
+    },
+    {
+     "hb": "Chagatai Khanate",
+     "clio_best": "Chagatai Khanate [Q487829]",
+     "iou": 0.53,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0.02,
+     "size": 709
+    },
+    {
+     "hb": "Blue Horde",
+     "clio_best": "Blue Horde [Q644979]",
+     "iou": 0.5,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0.03,
+     "size": 591
+    },
+    {
+     "hb": "Poland-Lithuania",
+     "clio_best": "Grand Duchy of Lithuania [Q49683]",
+     "iou": 0.57,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0,
+     "size": 291
+    },
+    {
+     "hb": "Novgorod",
+     "clio_best": "Novgorod Republic [Q151536]",
+     "iou": 0.37,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.44,
+     "hb_land_without_clio": 0.16,
+     "size": 284
+    },
+    {
+     "hb": "Pagan",
+     "clio_best": "Shan States [Q4765854]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.3,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0.25,
+     "size": 236
+    },
+    {
+     "hb": "Srivijaya Empire",
+     "clio_best": "Majapahit [Q49326]",
+     "iou": 0.49,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.57,
+     "hb_land_without_clio": 0.07,
+     "size": 201
+    },
+    {
+     "hb": "Ottoman Empire",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0.01,
+     "size": 126
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.54,
+     "hb_share_in_clio": 0.74,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0.25,
+     "size": 116
+    },
+    {
+     "hb": "Hadramaut",
+     "clio_best": "Rasulid Dynasty [Q2132267]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.33,
+     "hb_land_without_clio": 0.6,
+     "size": 102
+    },
+    {
+     "hb": "Sukhothai",
+     "clio_best": "Lan Xang [Q853477]",
+     "iou": 0.2,
+     "hb_share_in_clio": 0.41,
+     "clio_share_in_hb": 0.29,
+     "hb_land_without_clio": 0,
+     "size": 82
+    },
+    {
+     "hb": "Đại Việt",
+     "clio_best": "Lan Xang [Q853477]",
+     "iou": 0.38,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.45,
+     "hb_land_without_clio": 0,
+     "size": 77
+    },
+    {
+     "hb": "Seljuk Caliphate",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.2,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.26,
+     "hb_land_without_clio": 0.01,
+     "size": 75
+    },
+    {
+     "hb": "Kediri",
+     "clio_best": "Majapahit [Q49326]",
+     "iou": 0.13,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.13,
+     "hb_land_without_clio": 0.27,
+     "size": 53
+    },
+    {
+     "hb": "Aragón",
+     "clio_best": "Crown of Aragon [Q204920]",
+     "iou": 0.59,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0.05,
+     "size": 43
+    },
+    {
+     "hb": "Teutonic Knights",
+     "clio_best": "Teutonic Order [Q48189]",
+     "iou": 0.61,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.72,
+     "hb_land_without_clio": 0.2,
+     "size": 38
+    },
+    {
+     "hb": "Byzantine Empire",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.06,
+     "hb_share_in_clio": 0.25,
+     "clio_share_in_hb": 0.07,
+     "hb_land_without_clio": 0.02,
+     "size": 37
+    },
+    {
+     "hb": "Chola Empire",
+     "clio_best": "Vijayanagara Empire [Q167639]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.18,
+     "hb_land_without_clio": 0.28,
+     "size": 31
+    },
+    {
+     "hb": "Bosnia",
+     "clio_best": "Kingdom of Bosnia [Q2980623]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.44,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0,
+     "size": 26
+    },
+    {
+     "hb": "Chimú Empire",
+     "clio_best": "Chimu Empire [Q581741]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.41,
+     "hb_land_without_clio": 0.54,
+     "size": 26
+    },
+    {
+     "hb": "Beylik of Aydin",
+     "clio_best": "Beylik of Teke [Q373988]",
+     "iou": 0.3,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0,
+     "size": 21
+    },
+    {
+     "hb": "Bulgar Khanate",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0,
+     "size": 20
+    },
+    {
+     "hb": "Granada",
+     "clio_best": "Emirate of Granada [Q238445]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.62,
+     "hb_land_without_clio": 0,
+     "size": 10
+    }
+   ]
+  },
+  {
+   "year": 1492,
+   "hb_entities": 1307,
+   "clio_entities": 136,
+   "land_pct": {
+    "both": 29.6,
+    "only_hb": 55.4,
+    "only_clio": 1,
+    "neither": 13.9
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 52.1,
+    "clio_mas_detallado": 12.1,
+    "acuerdo": 10.4,
+    "desacuerdo": 8.5,
+    "hb_mas_detallado": 2
+   },
+   "disagreements": [
+    {
+     "hb": "White Horde",
+     "clio_best": "Kazakh Khanate [Q1433867]",
+     "iou": 0.46,
+     "hb_share_in_clio": 0.58,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0.08,
+     "size": 873
+    },
+    {
+     "hb": "Mamluke Sultanate",
+     "clio_best": "Mamluk Sultanate [Q282428]",
+     "iou": 0.59,
+     "hb_share_in_clio": 0.74,
+     "clio_share_in_hb": 0.74,
+     "hb_land_without_clio": 0.23,
+     "size": 476
+    },
+    {
+     "hb": "Golden Horde",
+     "clio_best": "Nogai Horde [Q631210]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.29,
+     "clio_share_in_hb": 0.5,
+     "hb_land_without_clio": 0.2,
+     "size": 389
+    },
+    {
+     "hb": "Oirat Confederation",
+     "clio_best": "Khanate of Sibir [Q190513]",
+     "iou": 0.13,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0.39,
+     "size": 275
+    },
+    {
+     "hb": "Quechua",
+     "clio_best": "Inca Empire [Q28573]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.53,
+     "hb_land_without_clio": 0.65,
+     "size": 252
+    },
+    {
+     "hb": "Songhai",
+     "clio_best": "Songhai Empire [Q202687]",
+     "iou": 0.44,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0.34,
+     "size": 201
+    },
+    {
+     "hb": "Mali",
+     "clio_best": "Songhai Empire [Q202687]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.39,
+     "hb_land_without_clio": 0.45,
+     "size": 200
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.49,
+     "hb_share_in_clio": 0.58,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0.36,
+     "size": 165
+    },
+    {
+     "hb": "Hadramaut",
+     "clio_best": "Tahirid Sultanate [Q373981]",
+     "iou": 0.21,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.33,
+     "hb_land_without_clio": 0.64,
+     "size": 111
+    },
+    {
+     "hb": "Crimean Khanate",
+     "clio_best": "Golden Horde [Q79965]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0.25,
+     "size": 103
+    },
+    {
+     "hb": "Sind",
+     "clio_best": "Timurid Empire [Q484195]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.08,
+     "hb_land_without_clio": 0.2,
+     "size": 100
+    },
+    {
+     "hb": "Sámi",
+     "clio_best": "(Kalmar Union) [Q62623]",
+     "iou": 0.11,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.12,
+     "hb_land_without_clio": 0.13,
+     "size": 95
+    },
+    {
+     "hb": "Hafsid Caliphate",
+     "clio_best": "Hafsid Dynasty [Q752662]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.56,
+     "hb_land_without_clio": 0.43,
+     "size": 74
+    },
+    {
+     "hb": "Đại Việt",
+     "clio_best": "Lê Dynasty [Q10800789]",
+     "iou": 0.53,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0,
+     "size": 59
+    },
+    {
+     "hb": "Ryazan",
+     "clio_best": "Golden Horde [Q79965]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.2,
+     "hb_land_without_clio": 0,
+     "size": 49
+    },
+    {
+     "hb": "Muscat",
+     "clio_best": "Bahrani Dynasty [Q311341]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0.57,
+     "hb_land_without_clio": 0.67,
+     "size": 38
+    },
+    {
+     "hb": "Mexihcah (Triple Alliance)",
+     "clio_best": "Aztec Triple Alliance [Q2608489]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.5,
+     "hb_land_without_clio": 0.3,
+     "size": 35
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Kongo [Q796583]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.54,
+     "hb_land_without_clio": 0.21,
+     "size": 28
+    },
+    {
+     "hb": "Bijapur",
+     "clio_best": "Bijapur Sultanate [Q83821]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0,
+     "size": 27
+    },
+    {
+     "hb": "Golkonda",
+     "clio_best": "Vijayanagara Empire [Q167639]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.11,
+     "hb_land_without_clio": 0.08,
+     "size": 25
+    },
+    {
+     "hb": "Wari",
+     "clio_best": "Inca Empire [Q28573]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.08,
+     "hb_land_without_clio": 0.31,
+     "size": 19
+    },
+    {
+     "hb": "Venice",
+     "clio_best": "Republic of Venice [Q4948]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0.05,
+     "size": 15
+    },
+    {
+     "hb": "Winikon bä lojon/Xk’ukwits/Ajlumob/Otulob (Ch'ol)",
+     "clio_best": "Later Mayan City-States [Q28567]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.08,
+     "hb_land_without_clio": 0.67,
+     "size": 14
+    },
+    {
+     "hb": "Ñuu Savi (Mixtecapan)",
+     "clio_best": "Aztec Triple Alliance [Q2608489]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0.08,
+     "hb_land_without_clio": 0.69,
+     "size": 12
+    },
+    {
+     "hb": "Shuar-Wampis",
+     "clio_best": "Inca Empire [Q28573]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0.33,
+     "size": 12
+    },
+    {
+     "hb": "Bidar",
+     "clio_best": "Vijayanagara Empire [Q167639]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Arakan",
+     "clio_best": "Kingdom of Mrauk U [Q10791211]",
+     "iou": 0.08,
+     "hb_share_in_clio": 0.3,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0.7,
+     "size": 9
+    },
+    {
+     "hb": "Manteño-Huancavilca",
+     "clio_best": "Inca Empire [Q28573]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0.44,
+     "size": 9
+    },
+    {
+     "hb": "Swiss Confederation",
+     "clio_best": "Swiss Confederation [Q39]",
+     "iou": 0.5,
+     "hb_share_in_clio": 0.58,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0,
+     "size": 8
+    },
+    {
+     "hb": "Nahua (Guerrero)",
+     "clio_best": "Aztec Triple Alliance [Q2608489]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.1,
+     "hb_land_without_clio": 0.29,
+     "size": 7
+    }
+   ]
+  },
+  {
+   "year": 1500,
+   "hb_entities": 139,
+   "clio_entities": 137,
+   "land_pct": {
+    "both": 30.7,
+    "only_hb": 49.8,
+    "only_clio": 1.1,
+    "neither": 18.4
+   },
+   "hb_land_by_kind_pct": {
+    "clio_mas_detallado": 20.5,
+    "sin_equivalente": 45,
+    "acuerdo": 6.5,
+    "hb_mas_detallado": 3.3,
+    "desacuerdo": 5.3
+   },
+   "disagreements": [
+    {
+     "hb": "Mamluke Sultanate",
+     "clio_best": "Mamluk Sultanate [Q282428]",
+     "iou": 0.59,
+     "hb_share_in_clio": 0.74,
+     "clio_share_in_hb": 0.74,
+     "hb_land_without_clio": 0.23,
+     "size": 476
+    },
+    {
+     "hb": "Golden Horde",
+     "clio_best": "Nogai Horde [Q631210]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0.5,
+     "hb_land_without_clio": 0.16,
+     "size": 360
+    },
+    {
+     "hb": "Oirat Confederation",
+     "clio_best": "Khanate of Sibir [Q190513]",
+     "iou": 0.13,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0.39,
+     "size": 275
+    },
+    {
+     "hb": "Islamic states",
+     "clio_best": "Timurid Empire [Q484195]",
+     "iou": 0.06,
+     "hb_share_in_clio": 0.18,
+     "clio_share_in_hb": 0.07,
+     "hb_land_without_clio": 0.61,
+     "size": 260
+    },
+    {
+     "hb": "Songhai",
+     "clio_best": "Songhai Empire [Q202687]",
+     "iou": 0.44,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0.34,
+     "size": 201
+    },
+    {
+     "hb": "Mali",
+     "clio_best": "Songhai Empire [Q202687]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.39,
+     "hb_land_without_clio": 0.45,
+     "size": 200
+    },
+    {
+     "hb": "Hadramaut",
+     "clio_best": "Tahirid Sultanate [Q373981]",
+     "iou": 0.21,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.33,
+     "hb_land_without_clio": 0.64,
+     "size": 111
+    },
+    {
+     "hb": "Crimean Khanate",
+     "clio_best": "Golden Horde [Q79965]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0.25,
+     "size": 104
+    },
+    {
+     "hb": "Hafsid Caliphate",
+     "clio_best": "Hafsid Dynasty [Q752662]",
+     "iou": 0.39,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.56,
+     "hb_land_without_clio": 0.43,
+     "size": 74
+    },
+    {
+     "hb": "Đại Việt",
+     "clio_best": "Lê Dynasty [Q10800789]",
+     "iou": 0.53,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0,
+     "size": 59
+    },
+    {
+     "hb": "Muscat",
+     "clio_best": "Bahrani Dynasty [Q311341]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0.57,
+     "hb_land_without_clio": 0.67,
+     "size": 38
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Kongo [Q796583]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.54,
+     "hb_land_without_clio": 0.21,
+     "size": 28
+    },
+    {
+     "hb": "Bijapur",
+     "clio_best": "Bijapur Sultanate [Q83821]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0,
+     "size": 27
+    },
+    {
+     "hb": "Golkonda",
+     "clio_best": "Vijayanagara Empire [Q167639]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.11,
+     "hb_land_without_clio": 0.08,
+     "size": 25
+    },
+    {
+     "hb": "Venice",
+     "clio_best": "Republic of Venice [Q4948]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0.05,
+     "size": 15
+    },
+    {
+     "hb": "Bidar",
+     "clio_best": "Vijayanagara Empire [Q167639]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Arakan",
+     "clio_best": "Kingdom of Mrauk U [Q10791211]",
+     "iou": 0.08,
+     "hb_share_in_clio": 0.3,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0.7,
+     "size": 9
+    },
+    {
+     "hb": "Swiss Confederation",
+     "clio_best": "Swiss Confederation [Q39]",
+     "iou": 0.5,
+     "hb_share_in_clio": 0.58,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0,
+     "size": 8
+    },
+    {
+     "hb": "Pskov",
+     "clio_best": "Pskov Republic [Q317078]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0,
+     "size": 8
+    },
+    {
+     "hb": "Ryazan",
+     "clio_best": "Ryazan [Q269109]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.46,
+     "hb_land_without_clio": 0,
+     "size": 6
+    }
+   ]
+  },
+  {
+   "year": 1530,
+   "hb_entities": 269,
+   "clio_entities": 130,
+   "land_pct": {
+    "both": 26.5,
+    "only_hb": 34.7,
+    "only_clio": 5.8,
+    "neither": 33
+   },
+   "hb_land_by_kind_pct": {
+    "sin_equivalente": 29.7,
+    "clio_mas_detallado": 11.9,
+    "acuerdo": 7.1,
+    "desacuerdo": 7.9,
+    "hb_mas_detallado": 4.7
+   },
+   "disagreements": [
+    {
+     "hb": "Islamic and Hindu states",
+     "clio_best": "Mughal Empire [Q33296]",
+     "iou": 0.08,
+     "hb_share_in_clio": 0.12,
+     "clio_share_in_hb": 0.2,
+     "hb_land_without_clio": 0.63,
+     "size": 628
+    },
+    {
+     "hb": "Mughal Empire",
+     "clio_best": "Mughal Empire [Q33296]",
+     "iou": 0.46,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0.24,
+     "size": 488
+    },
+    {
+     "hb": "Viceroyalty of New Spain",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.51,
+     "clio_share_in_hb": 0.74,
+     "hb_land_without_clio": 0.4,
+     "size": 442
+    },
+    {
+     "hb": "Khiva Khanate",
+     "clio_best": "Khanate of Bukhara [Q577668]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.25,
+     "clio_share_in_hb": 0.62,
+     "hb_land_without_clio": 0.23,
+     "size": 312
+    },
+    {
+     "hb": "Songhai",
+     "clio_best": "Songhai Empire [Q202687]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.44,
+     "clio_share_in_hb": 0.5,
+     "hb_land_without_clio": 0.56,
+     "size": 235
+    },
+    {
+     "hb": "Kazan Khanate",
+     "clio_best": "Khanate of Sibir [Q190513]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.1,
+     "hb_land_without_clio": 0.34,
+     "size": 180
+    },
+    {
+     "hb": "Bukara Khanate",
+     "clio_best": "Eastern Moghulistan [Q1191125]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.29,
+     "hb_land_without_clio": 0.08,
+     "size": 175
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0.27,
+     "size": 157
+    },
+    {
+     "hb": "Adal",
+     "clio_best": "Adal Sultanate [Q2365048]",
+     "iou": 0.29,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0.67,
+     "size": 106
+    },
+    {
+     "hb": "Senegal",
+     "clio_best": "Mali Empire [Q184536]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.49,
+     "hb_land_without_clio": 0.3,
+     "size": 103
+    },
+    {
+     "hb": "Rajputana",
+     "clio_best": "Mughal Empire [Q33296]",
+     "iou": 0.08,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0.64,
+     "size": 99
+    },
+    {
+     "hb": "Shan states",
+     "clio_best": "Shan States [Q4765854]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.49,
+     "hb_land_without_clio": 0.27,
+     "size": 92
+    },
+    {
+     "hb": "Sámi",
+     "clio_best": "Grand Principality of Moscow [Q170770]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.41,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0.14,
+     "size": 87
+    },
+    {
+     "hb": "Burmese kingdoms",
+     "clio_best": "Shan States [Q4765854]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.28,
+     "hb_land_without_clio": 0,
+     "size": 65
+    },
+    {
+     "hb": "Malacca",
+     "clio_best": "Sultanate of Johor [Q1150344]",
+     "iou": 0.44,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0.3,
+     "size": 61
+    },
+    {
+     "hb": "Crimean Khanate",
+     "clio_best": "Crimean Khanate [Q160440]",
+     "iou": 0.57,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0.29,
+     "size": 52
+    },
+    {
+     "hb": "Laos",
+     "clio_best": "Lan Xang [Q853477]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0,
+     "size": 49
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Kongo [Q796583]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.54,
+     "hb_land_without_clio": 0.21,
+     "size": 28
+    },
+    {
+     "hb": "Golkonda",
+     "clio_best": "Golconda Sultanate [Q1148042]",
+     "iou": 0.49,
+     "hb_share_in_clio": 0.77,
+     "clio_share_in_hb": 0.57,
+     "hb_land_without_clio": 0,
+     "size": 25
+    },
+    {
+     "hb": "Venice",
+     "clio_best": "Republic of Venice [Q4948]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.43,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Florence",
+     "clio_best": "Holy Roman Empire Minor States [Q12548]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Bidar",
+     "clio_best": "Bidar Sultanate [Q669317]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.46,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Savoy",
+     "clio_best": "County of Savoy [Q1232887]",
+     "iou": 0.55,
+     "hb_share_in_clio": 0.77,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0,
+     "size": 9
+    }
+   ]
+  },
+  {
+   "year": 1600,
+   "hb_entities": 638,
+   "clio_entities": 104,
+   "land_pct": {
+    "both": 31.5,
+    "only_hb": 39,
+    "only_clio": 2.9,
+    "neither": 26.6
+   },
+   "hb_land_by_kind_pct": {
+    "clio_mas_detallado": 22.9,
+    "sin_equivalente": 28.5,
+    "desacuerdo": 7.7,
+    "acuerdo": 4.7,
+    "hb_mas_detallado": 6.7
+   },
+   "disagreements": [
+    {
+     "hb": "Savanna hunter-gatherers",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.26,
+     "clio_share_in_hb": 0.12,
+     "hb_land_without_clio": 0.67,
+     "size": 968
+    },
+    {
+     "hb": "Islamic and Hindu states",
+     "clio_best": "Mughal Empire [Q33296]",
+     "iou": 0.25,
+     "hb_share_in_clio": 0.49,
+     "clio_share_in_hb": 0.34,
+     "hb_land_without_clio": 0.25,
+     "size": 628
+    },
+    {
+     "hb": "Khiva Khanate",
+     "clio_best": "Kazakh Khanate [Q1433867]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.25,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0.22,
+     "size": 305
+    },
+    {
+     "hb": "Ayutthaya",
+     "clio_best": "Ayutthaya Kingdom [Q841364]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0,
+     "size": 234
+    },
+    {
+     "hb": "Denmark-Norway",
+     "clio_best": "Denmark-Norway [Q62651]",
+     "iou": 0.59,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.7,
+     "hb_land_without_clio": 0.09,
+     "size": 162
+    },
+    {
+     "hb": "Kanem-Bornu",
+     "clio_best": "Bornu Empire [Q1139762]",
+     "iou": 0.26,
+     "hb_share_in_clio": 0.34,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.66,
+     "size": 160
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.61,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.74,
+     "hb_land_without_clio": 0.17,
+     "size": 157
+    },
+    {
+     "hb": "Vijayanagara",
+     "clio_best": "Bijapur Sultanate [Q83821]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0.53,
+     "hb_land_without_clio": 0.46,
+     "size": 137
+    },
+    {
+     "hb": "Shan states",
+     "clio_best": "First Toungoo Empire [Q23039102]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.4,
+     "hb_land_without_clio": 0.27,
+     "size": 92
+    },
+    {
+     "hb": "Ahmadnagar",
+     "clio_best": "Mughal Empire [Q33296]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0.01,
+     "size": 76
+    },
+    {
+     "hb": "Andean hunter-gatherers",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.64,
+     "size": 63
+    },
+    {
+     "hb": "Malacca",
+     "clio_best": "Sultanate of Johor [Q1150344]",
+     "iou": 0.44,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0.3,
+     "size": 61
+    },
+    {
+     "hb": "Laos",
+     "clio_best": "Lan Xang [Q853477]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0,
+     "size": 49
+    },
+    {
+     "hb": "Caribbean hunter-gatherers",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.21,
+     "size": 48
+    },
+    {
+     "hb": "Bagirmi",
+     "clio_best": "Bornu Empire [Q1139762]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.12,
+     "hb_land_without_clio": 0.65,
+     "size": 36
+    },
+    {
+     "hb": "Pegu",
+     "clio_best": "Ayutthaya Kingdom [Q841364]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.49,
+     "clio_share_in_hb": 0.11,
+     "hb_land_without_clio": 0.09,
+     "size": 33
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Kongo [Q796583]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.54,
+     "hb_land_without_clio": 0.18,
+     "size": 28
+    },
+    {
+     "hb": "Golkonda",
+     "clio_best": "Golconda Sultanate [Q1148042]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.77,
+     "clio_share_in_hb": 0.51,
+     "hb_land_without_clio": 0.19,
+     "size": 25
+    },
+    {
+     "hb": "Tepehuane",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.6,
+     "size": 18
+    },
+    {
+     "hb": "Orissa",
+     "clio_best": "Mughal Empire [Q33296]",
+     "iou": 0,
+     "hb_share_in_clio": 0.22,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.67,
+     "size": 17
+    },
+    {
+     "hb": "Habsburg Netherlands",
+     "clio_best": "Iberian Union [Q377350]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0,
+     "size": 13
+    },
+    {
+     "hb": "Venice",
+     "clio_best": "Republic of Venice [Q4948]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.5,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Dutch Republic",
+     "clio_best": "Dutch Republic [Q170072]",
+     "iou": 0.59,
+     "hb_share_in_clio": 0.77,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Milan",
+     "clio_best": "Iberian Union [Q377350]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Finnmark",
+     "clio_best": "Denmark-Norway [Q62651]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.41,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Bidar",
+     "clio_best": "Bidar Sultanate [Q669317]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.46,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Janabres",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.25,
+     "size": 4
+    }
+   ]
+  },
+  {
+   "year": 1650,
+   "hb_entities": 593,
+   "clio_entities": 124,
+   "land_pct": {
+    "both": 38.2,
+    "only_hb": 32,
+    "only_clio": 2.1,
+    "neither": 27.6
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 17,
+    "clio_mas_detallado": 12.5,
+    "desacuerdo": 11.8,
+    "sin_equivalente": 26.6,
+    "hb_mas_detallado": 2.3
+   },
+   "disagreements": [
+    {
+     "hb": "Viceroyalty of Peru",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.32,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.4,
+     "hb_land_without_clio": 0.31,
+     "size": 1216
+    },
+    {
+     "hb": "Viceroyalty of New Spain",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.66,
+     "clio_share_in_hb": 0.32,
+     "hb_land_without_clio": 0.33,
+     "size": 927
+    },
+    {
+     "hb": "Quazaq Khanate",
+     "clio_best": "Kazakh Khanate [Q1433867]",
+     "iou": 0.55,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0.08,
+     "size": 636
+    },
+    {
+     "hb": "Khiva Khanate",
+     "clio_best": "Khanate of Bukhara [Q577668]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.28,
+     "clio_share_in_hb": 0.62,
+     "hb_land_without_clio": 0.22,
+     "size": 305
+    },
+    {
+     "hb": "Portuguese Brazil",
+     "clio_best": "Portuguese Empire [Q200464]",
+     "iou": 0.51,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.63,
+     "hb_land_without_clio": 0.26,
+     "size": 238
+    },
+    {
+     "hb": "Holy Roman Empire",
+     "clio_best": "(Habsburg Monarchy) [Q66504140]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.71,
+     "hb_land_without_clio": 0,
+     "size": 206
+    },
+    {
+     "hb": "Islamic and Hindu states",
+     "clio_best": "Mughal Empire [Q33296]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.29,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0.56,
+     "size": 163
+    },
+    {
+     "hb": "Ayutthaya",
+     "clio_best": "Ayutthaya Kingdom [Q841364]",
+     "iou": 0.51,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0,
+     "size": 145
+    },
+    {
+     "hb": "Ava",
+     "clio_best": "First Toungoo Empire [Q23039102]",
+     "iou": 0.49,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.57,
+     "hb_land_without_clio": 0.07,
+     "size": 122
+    },
+    {
+     "hb": "Shan states",
+     "clio_best": "First Toungoo Empire [Q23039102]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.31,
+     "hb_land_without_clio": 0.36,
+     "size": 118
+    },
+    {
+     "hb": "Kanem-Bornu",
+     "clio_best": "Bornu Empire [Q1139762]",
+     "iou": 0.5,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.7,
+     "hb_land_without_clio": 0.3,
+     "size": 116
+    },
+    {
+     "hb": "Darfur",
+     "clio_best": "Sultanate of Darfur [Q1474791]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0.28,
+     "size": 115
+    },
+    {
+     "hb": "Dutch Brazil",
+     "clio_best": "Portuguese Empire [Q200464]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0.63,
+     "size": 113
+    },
+    {
+     "hb": "Vijayanagara",
+     "clio_best": "Bijapur Sultanate [Q83821]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.38,
+     "hb_land_without_clio": 0.32,
+     "size": 103
+    },
+    {
+     "hb": "Malaya",
+     "clio_best": "Sultanate of Johor [Q1150344]",
+     "iou": 0.17,
+     "hb_share_in_clio": 0.24,
+     "clio_share_in_hb": 0.38,
+     "hb_land_without_clio": 0.41,
+     "size": 101
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.38,
+     "hb_land_without_clio": 0.15,
+     "size": 92
+    },
+    {
+     "hb": "Golkonda",
+     "clio_best": "Golconda Sultanate [Q1148042]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0.16,
+     "size": 66
+    },
+    {
+     "hb": "Florida",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.67,
+     "size": 61
+    },
+    {
+     "hb": "Wadai",
+     "clio_best": "Wadai Empire [Q1132786]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.29,
+     "hb_land_without_clio": 0.18,
+     "size": 37
+    },
+    {
+     "hb": "Bagirmi",
+     "clio_best": "Wadai Empire [Q1132786]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.25,
+     "hb_land_without_clio": 0,
+     "size": 36
+    },
+    {
+     "hb": "Lan Na",
+     "clio_best": "Ayutthaya Kingdom [Q841364]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.16,
+     "hb_land_without_clio": 0,
+     "size": 36
+    },
+    {
+     "hb": "Andean hunter-gatherers",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.5,
+     "size": 32
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Kongo [Q796583]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.54,
+     "hb_land_without_clio": 0.18,
+     "size": 28
+    },
+    {
+     "hb": "Luxembourg",
+     "clio_best": "Kingdom of Spain [Q29]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0,
+     "size": 18
+    },
+    {
+     "hb": "Oman",
+     "clio_best": "Yarubid dynasty [Q1752110]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.31,
+     "hb_land_without_clio": 0.29,
+     "size": 13
+    },
+    {
+     "hb": "Venice",
+     "clio_best": "Republic of Venice [Q4948]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.56,
+     "hb_land_without_clio": 0,
+     "size": 12
+    },
+    {
+     "hb": "Massachusetts Bay",
+     "clio_best": "English Colonial Empire [Q617219]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.41,
+     "clio_share_in_hb": 0.34,
+     "hb_land_without_clio": 0.47,
+     "size": 12
+    },
+    {
+     "hb": "New Amsterdam",
+     "clio_best": "New Netherland [Q382593]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.27,
+     "hb_land_without_clio": 0.53,
+     "size": 11
+    },
+    {
+     "hb": "Milan",
+     "clio_best": "Kingdom of Spain [Q29]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.49,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Bidar",
+     "clio_best": "Bijapur Sultanate [Q83821]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.07,
+     "hb_land_without_clio": 0,
+     "size": 10
+    }
+   ]
+  },
+  {
+   "year": 1700,
+   "hb_entities": 584,
+   "clio_entities": 114,
+   "land_pct": {
+    "both": 41.7,
+    "only_hb": 28.7,
+    "only_clio": 2.6,
+    "neither": 27
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 18.4,
+    "hb_mas_detallado": 9.1,
+    "clio_mas_detallado": 4.7,
+    "desacuerdo": 13.7,
+    "sin_equivalente": 24.6
+   },
+   "disagreements": [
+    {
+     "hb": "central Asian khanates",
+     "clio_best": "Qing Dynasty [Q8733]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.45,
+     "clio_share_in_hb": 0.24,
+     "hb_land_without_clio": 0,
+     "size": 1564
+    },
+    {
+     "hb": "Viceroyalty of Peru",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.29,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.35,
+     "hb_land_without_clio": 0.31,
+     "size": 1216
+    },
+    {
+     "hb": "Quazaq Khanate",
+     "clio_best": "Kazakh Khanate [Q1433867]",
+     "iou": 0.55,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0.08,
+     "size": 636
+    },
+    {
+     "hb": "Dutch East Indies",
+     "clio_best": "Sultanate of Johor [Q1150344]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.05,
+     "clio_share_in_hb": 0.51,
+     "hb_land_without_clio": 0.7,
+     "size": 520
+    },
+    {
+     "hb": "Khiva Khanate",
+     "clio_best": "Khanate of Bukhara [Q577668]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.26,
+     "clio_share_in_hb": 0.62,
+     "hb_land_without_clio": 0.21,
+     "size": 320
+    },
+    {
+     "hb": "Chukchi",
+     "clio_best": "Tsardom of Russia [Q186096]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0.4,
+     "size": 308
+    },
+    {
+     "hb": "Holy Roman Empire",
+     "clio_best": "Habsburg Monarchy [Q66504140]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.42,
+     "hb_land_without_clio": 0,
+     "size": 199
+    },
+    {
+     "hb": "Ayutthaya",
+     "clio_best": "Ayutthaya Kingdom [Q841364]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0,
+     "size": 143
+    },
+    {
+     "hb": "Austrian Empire",
+     "clio_best": "Habsburg Monarchy [Q66504140]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.66,
+     "clio_share_in_hb": 0.55,
+     "hb_land_without_clio": 0,
+     "size": 141
+    },
+    {
+     "hb": "Shan states",
+     "clio_best": "First Toungoo Empire [Q23039102]",
+     "iou": 0.3,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.37,
+     "hb_land_without_clio": 0.34,
+     "size": 118
+    },
+    {
+     "hb": "Darfur",
+     "clio_best": "Sultanate of Darfur [Q1474791]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0.28,
+     "size": 115
+    },
+    {
+     "hb": "Dutch Brazil",
+     "clio_best": "Portuguese Empire [Q200464]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.18,
+     "hb_land_without_clio": 0.44,
+     "size": 113
+    },
+    {
+     "hb": "Malaya",
+     "clio_best": "Sultanate of Johor [Q1150344]",
+     "iou": 0.18,
+     "hb_share_in_clio": 0.24,
+     "clio_share_in_hb": 0.45,
+     "hb_land_without_clio": 0.41,
+     "size": 101
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.38,
+     "hb_land_without_clio": 0.15,
+     "size": 92
+    },
+    {
+     "hb": "Florida",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.57,
+     "size": 61
+    },
+    {
+     "hb": "Cambodia",
+     "clio_best": "Khmer Empire [Q201705]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0,
+     "size": 54
+    },
+    {
+     "hb": "Lan Na",
+     "clio_best": "Ayutthaya Kingdom [Q841364]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.55,
+     "clio_share_in_hb": 0.17,
+     "hb_land_without_clio": 0,
+     "size": 38
+    },
+    {
+     "hb": "Wadai",
+     "clio_best": "Wadai Empire [Q1132786]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.29,
+     "hb_land_without_clio": 0.18,
+     "size": 37
+    },
+    {
+     "hb": "Andean hunter-gatherers",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.5,
+     "size": 32
+    },
+    {
+     "hb": "Hispaniola (Spain)",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.58,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.04,
+     "size": 25
+    },
+    {
+     "hb": "Luxembourg",
+     "clio_best": "Kingdom of Spain [Q29]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0,
+     "size": 18
+    },
+    {
+     "hb": "New France",
+     "clio_best": "New France [Q170604]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.13,
+     "hb_land_without_clio": 0.67,
+     "size": 16
+    },
+    {
+     "hb": "Oman",
+     "clio_best": "Yarubid dynasty [Q1752110]",
+     "iou": 0.21,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.23,
+     "hb_land_without_clio": 0.29,
+     "size": 13
+    },
+    {
+     "hb": "Finnmark",
+     "clio_best": "Swedish Empire [Q215443]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.41,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 13
+    },
+    {
+     "hb": "Venice",
+     "clio_best": "Republic of Venice [Q4948]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.44,
+     "hb_land_without_clio": 0,
+     "size": 12
+    },
+    {
+     "hb": "Massachusetts Bay",
+     "clio_best": "English Colonial Empire [Q617219]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0.29,
+     "size": 12
+    },
+    {
+     "hb": "New Amsterdam",
+     "clio_best": "English Colonial Empire [Q617219]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.13,
+     "hb_land_without_clio": 0.33,
+     "size": 11
+    },
+    {
+     "hb": "Milan",
+     "clio_best": "Kingdom of Spain [Q29]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.49,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Ceylon",
+     "clio_best": "Dutch Ceylon [Q1841483]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.38,
+     "hb_land_without_clio": 0,
+     "size": 8
+    },
+    {
+     "hb": "Surinam",
+     "clio_best": "New Netherland [Q382593]",
+     "iou": 0.29,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.31,
+     "hb_land_without_clio": 0.2,
+     "size": 5
+    }
+   ]
+  },
+  {
+   "year": 1715,
+   "hb_entities": 600,
+   "clio_entities": 130,
+   "land_pct": {
+    "both": 42.2,
+    "only_hb": 30,
+    "only_clio": 2,
+    "neither": 25.8
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 23.5,
+    "sin_equivalente": 24.2,
+    "desacuerdo": 16.8,
+    "clio_mas_detallado": 5.3,
+    "hb_mas_detallado": 2.4
+   },
+   "disagreements": [
+    {
+     "hb": "Viceroyalty of Peru",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.39,
+     "hb_land_without_clio": 0.33,
+     "size": 1386
+    },
+    {
+     "hb": "Viceroyalty of New Spain",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.39,
+     "hb_land_without_clio": 0.25,
+     "size": 1152
+    },
+    {
+     "hb": "central Asian khanates",
+     "clio_best": "Dzungar Khanate [Q1923401]",
+     "iou": 0.44,
+     "hb_share_in_clio": 0.52,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0.01,
+     "size": 956
+    },
+    {
+     "hb": "Ottoman Empire",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.54,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.65,
+     "hb_land_without_clio": 0.09,
+     "size": 786
+    },
+    {
+     "hb": "Quazaq Khanate",
+     "clio_best": "Kazakh Khanate [Q1433867]",
+     "iou": 0.55,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0.08,
+     "size": 636
+    },
+    {
+     "hb": "Dutch East Indies",
+     "clio_best": "Sultanate of Johor [Q1150344]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.05,
+     "clio_share_in_hb": 0.51,
+     "hb_land_without_clio": 0.7,
+     "size": 520
+    },
+    {
+     "hb": "Khiva Khanate",
+     "clio_best": "Khanate of Bukhara [Q577668]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.25,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0.21,
+     "size": 320
+    },
+    {
+     "hb": "Egypt",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.2,
+     "hb_land_without_clio": 0.22,
+     "size": 240
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.38,
+     "hb_land_without_clio": 0.36,
+     "size": 206
+    },
+    {
+     "hb": "Ayutthaya",
+     "clio_best": "Ayutthaya Kingdom [Q841364]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0,
+     "size": 143
+    },
+    {
+     "hb": "Shan states",
+     "clio_best": "First Toungoo Empire [Q23039102]",
+     "iou": 0.3,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.37,
+     "hb_land_without_clio": 0.34,
+     "size": 118
+    },
+    {
+     "hb": "Darfur",
+     "clio_best": "Sultanate of Darfur [Q1474791]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0.28,
+     "size": 115
+    },
+    {
+     "hb": "Malaya",
+     "clio_best": "Sultanate of Johor [Q1150344]",
+     "iou": 0.18,
+     "hb_share_in_clio": 0.24,
+     "clio_share_in_hb": 0.45,
+     "hb_land_without_clio": 0.41,
+     "size": 101
+    },
+    {
+     "hb": "Laotian states",
+     "clio_best": "Kingdom of Luang Phrabang [Q190165]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0,
+     "size": 81
+    },
+    {
+     "hb": "Holy Roman Empire",
+     "clio_best": "Holy Roman Empire Minor States [Q12548]",
+     "iou": 0.5,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0,
+     "size": 80
+    },
+    {
+     "hb": "Mi'kma'ki",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.3,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.37,
+     "hb_land_without_clio": 0.3,
+     "size": 65
+    },
+    {
+     "hb": "British American colonies",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.29,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.35,
+     "hb_land_without_clio": 0.36,
+     "size": 63
+    },
+    {
+     "hb": "Cambodia",
+     "clio_best": "Khmer Empire [Q201705]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0,
+     "size": 54
+    },
+    {
+     "hb": "Lan Na",
+     "clio_best": "Ayutthaya Kingdom [Q841364]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.55,
+     "clio_share_in_hb": 0.17,
+     "hb_land_without_clio": 0,
+     "size": 38
+    },
+    {
+     "hb": "Wadai",
+     "clio_best": "Wadai Empire [Q1132786]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.29,
+     "hb_land_without_clio": 0.18,
+     "size": 37
+    },
+    {
+     "hb": "Andean hunter-gatherers",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.5,
+     "size": 32
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Lunda [Q1796223]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0.18,
+     "size": 28
+    },
+    {
+     "hb": "Yemen",
+     "clio_best": "Qasimids [Q5261548]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.74,
+     "clio_share_in_hb": 0.31,
+     "hb_land_without_clio": 0.22,
+     "size": 22
+    },
+    {
+     "hb": "Tripolitania",
+     "clio_best": "Karamanli Dynasty [Q1929987]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.43,
+     "hb_land_without_clio": 0.46,
+     "size": 22
+    },
+    {
+     "hb": "Cayenne",
+     "clio_best": "New France [Q170604]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0.47,
+     "size": 19
+    },
+    {
+     "hb": "Cyrenaica",
+     "clio_best": "Karamanli Dynasty [Q1929987]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.21,
+     "hb_land_without_clio": 0.65,
+     "size": 17
+    },
+    {
+     "hb": "Venice",
+     "clio_best": "Republic of Venice [Q4948]",
+     "iou": 0.41,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.56,
+     "hb_land_without_clio": 0.04,
+     "size": 16
+    },
+    {
+     "hb": "Oman",
+     "clio_best": "Yarubid dynasty [Q1752110]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.25,
+     "hb_land_without_clio": 0.29,
+     "size": 13
+    },
+    {
+     "hb": "Austrian Netherlands",
+     "clio_best": "(Habsburg Monarchy) [Q66504140]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Lübeck",
+     "clio_best": "Denmark-Norway [Q62651]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0,
+     "size": 9
+    }
+   ]
+  },
+  {
+   "year": 1783,
+   "hb_entities": 549,
+   "clio_entities": 137,
+   "land_pct": {
+    "both": 52.1,
+    "only_hb": 27.9,
+    "only_clio": 1.9,
+    "neither": 18
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 34.2,
+    "sin_equivalente": 22.4,
+    "desacuerdo": 9.6,
+    "clio_mas_detallado": 7.1,
+    "hb_mas_detallado": 6.8
+   },
+   "disagreements": [
+    {
+     "hb": "Viceroyalty of New Spain",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.18,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.21,
+     "hb_land_without_clio": 0.42,
+     "size": 1312
+    },
+    {
+     "hb": "Viceroyalty of the Río de la Plata",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0.3,
+     "size": 761
+    },
+    {
+     "hb": "Dutch East Indies",
+     "clio_best": "Dutch Republic [Q170072]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.07,
+     "clio_share_in_hb": 0.45,
+     "hb_land_without_clio": 0.69,
+     "size": 520
+    },
+    {
+     "hb": "Quebec",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0.44,
+     "hb_land_without_clio": 0.68,
+     "size": 290
+    },
+    {
+     "hb": "Burma",
+     "clio_best": "Konbaung Dynasty [Q1062422]",
+     "iou": 0.62,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.22,
+     "size": 209
+    },
+    {
+     "hb": "Lahore",
+     "clio_best": "Durrani Empire [Q467627]",
+     "iou": 0.11,
+     "hb_share_in_clio": 0.51,
+     "clio_share_in_hb": 0.12,
+     "hb_land_without_clio": 0.2,
+     "size": 140
+    },
+    {
+     "hb": "Darfur",
+     "clio_best": "Sultanate of Darfur [Q1474791]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0.28,
+     "size": 115
+    },
+    {
+     "hb": "Funj",
+     "clio_best": "Funj Sultanate [Q1475713]",
+     "iou": 0.2,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.26,
+     "hb_land_without_clio": 0.54,
+     "size": 115
+    },
+    {
+     "hb": "Malaya",
+     "clio_best": "Sultanate of Johor [Q1150344]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.2,
+     "clio_share_in_hb": 0.41,
+     "hb_land_without_clio": 0.39,
+     "size": 101
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0.3,
+     "size": 92
+    },
+    {
+     "hb": "Prussia",
+     "clio_best": "Kingdom of Prussia [Q27306]",
+     "iou": 0.56,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0.01,
+     "size": 58
+    },
+    {
+     "hb": "Mysore",
+     "clio_best": "Kingdom of Mysore [Q266923]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.49,
+     "clio_share_in_hb": 0.76,
+     "hb_land_without_clio": 0.33,
+     "size": 44
+    },
+    {
+     "hb": "India",
+     "clio_best": "British Empire [Q8680]",
+     "iou": 0.12,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.14,
+     "hb_land_without_clio": 0,
+     "size": 44
+    },
+    {
+     "hb": "Dutch settlements",
+     "clio_best": "Dutch Cape Colony [Q4807130]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.4,
+     "clio_share_in_hb": 0.36,
+     "hb_land_without_clio": 0.6,
+     "size": 41
+    },
+    {
+     "hb": "Bavaria",
+     "clio_best": "Holy Roman Empire Minor States [Q12548]",
+     "iou": 0.32,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.41,
+     "hb_land_without_clio": 0,
+     "size": 40
+    },
+    {
+     "hb": "Wadai",
+     "clio_best": "Wadai Empire [Q1132786]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.29,
+     "hb_land_without_clio": 0.18,
+     "size": 37
+    },
+    {
+     "hb": "Carnatic",
+     "clio_best": "Carnatic Sultanate [Q3277580]",
+     "iou": 0.55,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.65,
+     "hb_land_without_clio": 0.09,
+     "size": 32
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Lunda [Q1796223]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0.18,
+     "size": 28
+    },
+    {
+     "hb": "Oman",
+     "clio_best": "Sultanate of Oman [Q842]",
+     "iou": 0.37,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.48,
+     "hb_land_without_clio": 0.37,
+     "size": 28
+    },
+    {
+     "hb": "Dahomey",
+     "clio_best": "Oyo Empire [Q849623]",
+     "iou": 0.57,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0.08,
+     "size": 25
+    },
+    {
+     "hb": "Yemen",
+     "clio_best": "Qasimids [Q5261548]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.28,
+     "hb_land_without_clio": 0.35,
+     "size": 22
+    },
+    {
+     "hb": "Tripolitania",
+     "clio_best": "Karamanli Dynasty [Q1929987]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.43,
+     "hb_land_without_clio": 0.46,
+     "size": 22
+    },
+    {
+     "hb": "Cyrenaica",
+     "clio_best": "Karamanli Dynasty [Q1929987]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.21,
+     "hb_land_without_clio": 0.65,
+     "size": 17
+    },
+    {
+     "hb": "Assam",
+     "clio_best": "Kingdom of Bhutan [Q917]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.62,
+     "hb_land_without_clio": 0.4,
+     "size": 13
+    },
+    {
+     "hb": "Mecklenburg-Strelitz",
+     "clio_best": "Electorate of Hanover [Q706018]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Austrian Netherlands",
+     "clio_best": "Habsburg Monarchy [Q66504140]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Ambur",
+     "clio_best": "Kingdom of Mysore [Q266923]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.24,
+     "hb_land_without_clio": 0.2,
+     "size": 10
+    },
+    {
+     "hb": "Venetia",
+     "clio_best": "Republic of Venice [Q4948]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0,
+     "size": 8
+    },
+    {
+     "hb": "Tuscany",
+     "clio_best": "Habsburg Monarchy [Q66504140]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0,
+     "size": 8
+    },
+    {
+     "hb": "Milano (Austria)",
+     "clio_best": "Habsburg Monarchy [Q66504140]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 6
+    }
+   ]
+  },
+  {
+   "year": 1800,
+   "hb_entities": 546,
+   "clio_entities": 130,
+   "land_pct": {
+    "both": 52.9,
+    "only_hb": 26.8,
+    "only_clio": 2.1,
+    "neither": 18.1
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 34.2,
+    "sin_equivalente": 21.4,
+    "desacuerdo": 11.7,
+    "clio_mas_detallado": 6.7,
+    "hb_mas_detallado": 5.8
+   },
+   "disagreements": [
+    {
+     "hb": "Viceroyalty of New Spain",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0.22,
+     "hb_land_without_clio": 0.41,
+     "size": 1312
+    },
+    {
+     "hb": "Viceroyalty of the Río de la Plata",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.14,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.15,
+     "hb_land_without_clio": 0.3,
+     "size": 761
+    },
+    {
+     "hb": "Dutch East Indies",
+     "clio_best": "Dutch East Indies [Q188161]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.07,
+     "clio_share_in_hb": 0.63,
+     "hb_land_without_clio": 0.69,
+     "size": 520
+    },
+    {
+     "hb": "Afghanistan",
+     "clio_best": "Durrani Empire [Q467627]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.68,
+     "clio_share_in_hb": 0.57,
+     "hb_land_without_clio": 0.03,
+     "size": 426
+    },
+    {
+     "hb": "Quebec",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.32,
+     "clio_share_in_hb": 0.43,
+     "hb_land_without_clio": 0.68,
+     "size": 290
+    },
+    {
+     "hb": "Nejd",
+     "clio_best": "Emirate of Diriyah [Q146871]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.39,
+     "clio_share_in_hb": 0.32,
+     "hb_land_without_clio": 0.61,
+     "size": 214
+    },
+    {
+     "hb": "Burma",
+     "clio_best": "Konbaung Dynasty [Q1062422]",
+     "iou": 0.59,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0.22,
+     "size": 209
+    },
+    {
+     "hb": "Rajputs",
+     "clio_best": "Mughal Empire [Q33296]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0.19,
+     "size": 180
+    },
+    {
+     "hb": "Sikhs",
+     "clio_best": "Durrani Empire [Q467627]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.21,
+     "hb_land_without_clio": 0.1,
+     "size": 170
+    },
+    {
+     "hb": "Bundelkhand",
+     "clio_best": "British Empire [Q8680]",
+     "iou": 0.29,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.35,
+     "hb_land_without_clio": 0.06,
+     "size": 168
+    },
+    {
+     "hb": "Darfur",
+     "clio_best": "Sultanate of Darfur [Q1474791]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.58,
+     "hb_land_without_clio": 0.28,
+     "size": 115
+    },
+    {
+     "hb": "Funj",
+     "clio_best": "Funj Sultanate [Q1475713]",
+     "iou": 0.2,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.26,
+     "hb_land_without_clio": 0.54,
+     "size": 115
+    },
+    {
+     "hb": "Malaya",
+     "clio_best": "Sultanate of Johor [Q1150344]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.2,
+     "clio_share_in_hb": 0.41,
+     "hb_land_without_clio": 0.39,
+     "size": 101
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0.3,
+     "size": 92
+    },
+    {
+     "hb": "Merina Kingdom",
+     "clio_best": "Merina Kingdom [Q1071439]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.42,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0.58,
+     "size": 50
+    },
+    {
+     "hb": "Circars",
+     "clio_best": "British Empire [Q8680]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.74,
+     "clio_share_in_hb": 0.1,
+     "hb_land_without_clio": 0,
+     "size": 44
+    },
+    {
+     "hb": "Mysore",
+     "clio_best": "British Empire [Q8680]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.74,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0,
+     "size": 37
+    },
+    {
+     "hb": "Wadai",
+     "clio_best": "Wadai Empire [Q1132786]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.29,
+     "hb_land_without_clio": 0.18,
+     "size": 37
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Lunda [Q1796223]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.79,
+     "clio_share_in_hb": 0.61,
+     "hb_land_without_clio": 0.18,
+     "size": 28
+    },
+    {
+     "hb": "Oman",
+     "clio_best": "Sultanate of Oman [Q842]",
+     "iou": 0.4,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.37,
+     "size": 28
+    },
+    {
+     "hb": "Swabia",
+     "clio_best": "(Holy Roman Empire) [Q12548]",
+     "iou": 0.32,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.38,
+     "hb_land_without_clio": 0,
+     "size": 27
+    },
+    {
+     "hb": "Dahomey",
+     "clio_best": "Oyo Empire [Q849623]",
+     "iou": 0.57,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.67,
+     "hb_land_without_clio": 0.08,
+     "size": 25
+    },
+    {
+     "hb": "Yemen",
+     "clio_best": "Qasimids [Q5261548]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.28,
+     "hb_land_without_clio": 0.35,
+     "size": 22
+    },
+    {
+     "hb": "Tripolitania",
+     "clio_best": "Karamanli Dynasty [Q1929987]",
+     "iou": 0.33,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.47,
+     "hb_land_without_clio": 0.46,
+     "size": 22
+    },
+    {
+     "hb": "Oudh",
+     "clio_best": "Nawab of Awadh [Q2614237]",
+     "iou": 0.29,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.33,
+     "hb_land_without_clio": 0,
+     "size": 18
+    },
+    {
+     "hb": "Bahawalpur",
+     "clio_best": "Durrani Empire [Q467627]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0,
+     "size": 18
+    },
+    {
+     "hb": "Cyrenaica",
+     "clio_best": "Karamanli Dynasty [Q1929987]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.23,
+     "hb_land_without_clio": 0.65,
+     "size": 17
+    },
+    {
+     "hb": "Mecklenburg-Strelitz",
+     "clio_best": "Electorate of Hanover [Q706018]",
+     "iou": 0.52,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.75,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Tuscany",
+     "clio_best": "(Habsburg Monarchy) [Q66504140]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 8
+    },
+    {
+     "hb": "Mecklenburg-Schwerin",
+     "clio_best": "Kingdom of Prussia [Q27306]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 5
+    }
+   ]
+  },
+  {
+   "year": 1815,
+   "hb_entities": 313,
+   "clio_entities": 144,
+   "land_pct": {
+    "both": 53,
+    "only_hb": 25.4,
+    "only_clio": 3.3,
+    "neither": 18.4
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 35.7,
+    "sin_equivalente": 17.9,
+    "clio_mas_detallado": 11.5,
+    "desacuerdo": 8.3,
+    "hb_mas_detallado": 5
+   },
+   "disagreements": [
+    {
+     "hb": "Viceroyalty of New Spain",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.21,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.27,
+     "hb_land_without_clio": 0.45,
+     "size": 1484
+    },
+    {
+     "hb": "Viceroyalty of New Granada",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.26,
+     "hb_land_without_clio": 0.05,
+     "size": 993
+    },
+    {
+     "hb": "central Asian khanates",
+     "clio_best": "Kazakh Khanate [Q1433867]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.49,
+     "clio_share_in_hb": 0.28,
+     "hb_land_without_clio": 0.01,
+     "size": 334
+    },
+    {
+     "hb": "Nejd",
+     "clio_best": "Emirate of Diriyah [Q146871]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.34,
+     "clio_share_in_hb": 0.24,
+     "hb_land_without_clio": 0.64,
+     "size": 214
+    },
+    {
+     "hb": "Paraguay",
+     "clio_best": "Spanish Empire [Q80702]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 113
+    },
+    {
+     "hb": "Malaya",
+     "clio_best": "Sultanate of Johor [Q1150344]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.2,
+     "clio_share_in_hb": 0.41,
+     "hb_land_without_clio": 0.39,
+     "size": 101
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.53,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.68,
+     "hb_land_without_clio": 0.27,
+     "size": 75
+    },
+    {
+     "hb": "Asante",
+     "clio_best": "Ashanti Empire [Q722071]",
+     "iou": 0.54,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0.36,
+     "size": 59
+    },
+    {
+     "hb": "Kanem-Bornu",
+     "clio_best": "Bornu Empire [Q1139762]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.34,
+     "hb_land_without_clio": 0,
+     "size": 39
+    },
+    {
+     "hb": "Merina Kingdom",
+     "clio_best": "Merina Kingdom [Q1071439]",
+     "iou": 0.45,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.62,
+     "hb_land_without_clio": 0.39,
+     "size": 39
+    },
+    {
+     "hb": "Oman",
+     "clio_best": "Sultanate of Oman [Q842]",
+     "iou": 0.47,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.69,
+     "hb_land_without_clio": 0.37,
+     "size": 28
+    },
+    {
+     "hb": "Yemen",
+     "clio_best": "Imamate of Yemen [Q1042069]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.65,
+     "clio_share_in_hb": 0.44,
+     "hb_land_without_clio": 0.35,
+     "size": 22
+    },
+    {
+     "hb": "Tripolitania",
+     "clio_best": "Karamanli Dynasty [Q1929987]",
+     "iou": 0.33,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.47,
+     "hb_land_without_clio": 0.46,
+     "size": 22
+    },
+    {
+     "hb": "Oyo",
+     "clio_best": "Oyo Empire [Q849623]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.23,
+     "hb_land_without_clio": 0.4,
+     "size": 20
+    },
+    {
+     "hb": "Cyrenaica",
+     "clio_best": "Karamanli Dynasty [Q1929987]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.35,
+     "clio_share_in_hb": 0.23,
+     "hb_land_without_clio": 0.65,
+     "size": 17
+    },
+    {
+     "hb": "United Kingdom",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0.18,
+     "size": 15
+    },
+    {
+     "hb": "Fante",
+     "clio_best": "Ashanti Empire [Q722071]",
+     "iou": 0.11,
+     "hb_share_in_clio": 0.55,
+     "clio_share_in_hb": 0.12,
+     "hb_land_without_clio": 0,
+     "size": 11
+    },
+    {
+     "hb": "Tuscany",
+     "clio_best": "Austrian Empire [Q131964]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0,
+     "size": 8
+    },
+    {
+     "hb": "Württemberg",
+     "clio_best": "Kingdom of Württemberg [Q159631]",
+     "iou": 0.42,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.56,
+     "hb_land_without_clio": 0,
+     "size": 5
+    },
+    {
+     "hb": "Thuringia",
+     "clio_best": "Kingdom of Bavaria [Q154195]",
+     "iou": 0.05,
+     "hb_share_in_clio": 0.29,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0,
+     "size": 4
+    },
+    {
+     "hb": "Baden",
+     "clio_best": "Grand Duchy of Baden [Q186320]",
+     "iou": 0.5,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.66,
+     "hb_land_without_clio": 0,
+     "size": 4
+    },
+    {
+     "hb": "Electoral Hesse",
+     "clio_best": "Electorate of Hesse [Q529605]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.6,
+     "hb_land_without_clio": 0,
+     "size": 3
+    }
+   ]
+  },
+  {
+   "year": 1878,
+   "hb_entities": 172,
+   "clio_entities": 109,
+   "land_pct": {
+    "both": 68.9,
+    "only_hb": 15.8,
+    "only_clio": 2.6,
+    "neither": 12.7
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 53.1,
+    "desacuerdo": 12,
+    "sin_equivalente": 7.6,
+    "clio_mas_detallado": 4.4,
+    "hb_mas_detallado": 7.6
+   },
+   "disagreements": [
+    {
+     "hb": "Canada",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.18,
+     "hb_share_in_clio": 0.31,
+     "clio_share_in_hb": 0.32,
+     "hb_land_without_clio": 0.69,
+     "size": 3038
+    },
+    {
+     "hb": "Ottoman Empire",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.49,
+     "hb_share_in_clio": 0.57,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.11,
+     "size": 1025
+    },
+    {
+     "hb": "Sokoto Caliphate",
+     "clio_best": "Sokoto Caliphate [Q600524]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0.4,
+     "size": 325
+    },
+    {
+     "hb": "Madagascar",
+     "clio_best": "Merina Kingdom [Q1071439]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.47,
+     "hb_land_without_clio": 0.46,
+     "size": 110
+    },
+    {
+     "hb": "Kanem-Bornu",
+     "clio_best": "Bornu Empire [Q1139762]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.54,
+     "hb_land_without_clio": 0.44,
+     "size": 102
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.7,
+     "hb_land_without_clio": 0.35,
+     "size": 88
+    },
+    {
+     "hb": "Wadai Empire",
+     "clio_best": "Khedivate of Egypt [Q127861]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0.37,
+     "size": 83
+    },
+    {
+     "hb": "French Indochina",
+     "clio_best": "French Indochina [Q185682]",
+     "iou": 0.58,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0,
+     "size": 71
+    },
+    {
+     "hb": "Bulgaria",
+     "clio_best": "Russian Empire [Q34266]",
+     "iou": 0,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0,
+     "size": 54
+    },
+    {
+     "hb": "Harer (Egypt)",
+     "clio_best": "Khedivate of Egypt [Q127861]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.29,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.61,
+     "size": 40
+    },
+    {
+     "hb": "Senegal (FR)",
+     "clio_best": "French Africa [Q19951607]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.36,
+     "clio_share_in_hb": 0.08,
+     "hb_land_without_clio": 0.64,
+     "size": 38
+    },
+    {
+     "hb": "Rabih az-Zubayr",
+     "clio_best": "Khedivate of Egypt [Q127861]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.39,
+     "size": 36
+    },
+    {
+     "hb": "Oman",
+     "clio_best": "Sultanate of Oman [Q842]",
+     "iou": 0.37,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.52,
+     "hb_land_without_clio": 0.41,
+     "size": 34
+    },
+    {
+     "hb": "Greece",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0,
+     "size": 33
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Lunda [Q1796223]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.46,
+     "hb_land_without_clio": 0.36,
+     "size": 25
+    },
+    {
+     "hb": "Natal",
+     "clio_best": "Natalia Republic [Q1029847]",
+     "iou": 0.44,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0.1,
+     "size": 17
+    },
+    {
+     "hb": "Griqualand West",
+     "clio_best": "British Cape Colony [Q370736]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0.32,
+     "size": 17
+    },
+    {
+     "hb": "Denmark",
+     "clio_best": "Denmark-Norway [Q62651]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.24,
+     "hb_land_without_clio": 0,
+     "size": 14
+    },
+    {
+     "hb": "Liberia",
+     "clio_best": "Republic of Liberia [Q1014]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.25,
+     "hb_land_without_clio": 0,
+     "size": 13
+    },
+    {
+     "hb": "Zululand",
+     "clio_best": "Zululand [Q13558877]",
+     "iou": 0.64,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0,
+     "size": 8
+    },
+    {
+     "hb": "Montenegro",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0,
+     "size": 7
+    },
+    {
+     "hb": "Oyo",
+     "clio_best": "Sokoto Caliphate [Q600524]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.67,
+     "size": 6
+    },
+    {
+     "hb": "Swaziland",
+     "clio_best": "British Cape Colony [Q370736]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.5,
+     "size": 5
+    },
+    {
+     "hb": "Portuguese Guinea",
+     "clio_best": "Kingdom of Portugal [Q45670]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.2,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.6,
+     "size": 5
+    }
+   ]
+  },
+  {
+   "year": 1880,
+   "hb_entities": 169,
+   "clio_entities": 109,
+   "land_pct": {
+    "both": 69.7,
+    "only_hb": 15,
+    "only_clio": 2.7,
+    "neither": 12.6
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 52.5,
+    "desacuerdo": 12.5,
+    "sin_equivalente": 6.3,
+    "clio_mas_detallado": 4.4,
+    "hb_mas_detallado": 9
+   },
+   "disagreements": [
+    {
+     "hb": "Canada",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.21,
+     "hb_share_in_clio": 0.34,
+     "clio_share_in_hb": 0.34,
+     "hb_land_without_clio": 0.65,
+     "size": 3038
+    },
+    {
+     "hb": "Ottoman Empire",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.49,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.79,
+     "hb_land_without_clio": 0.11,
+     "size": 1025
+    },
+    {
+     "hb": "Sokoto Caliphate",
+     "clio_best": "Sokoto Caliphate [Q600524]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0.4,
+     "size": 325
+    },
+    {
+     "hb": "Chile",
+     "clio_best": "Republic of Chile [Q298]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.56,
+     "hb_land_without_clio": 0.51,
+     "size": 148
+    },
+    {
+     "hb": "Tukular Caliphate",
+     "clio_best": "French Africa [Q19951607]",
+     "iou": 0.15,
+     "hb_share_in_clio": 0.41,
+     "clio_share_in_hb": 0.19,
+     "hb_land_without_clio": 0.59,
+     "size": 118
+    },
+    {
+     "hb": "Madagascar",
+     "clio_best": "Merina Kingdom [Q1071439]",
+     "iou": 0.34,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.47,
+     "hb_land_without_clio": 0.46,
+     "size": 110
+    },
+    {
+     "hb": "Kanem-Bornu",
+     "clio_best": "Bornu Empire [Q1139762]",
+     "iou": 0.28,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.54,
+     "hb_land_without_clio": 0.44,
+     "size": 102
+    },
+    {
+     "hb": "Ethiopia",
+     "clio_best": "Ethiopian Empire [Q207521]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.7,
+     "hb_land_without_clio": 0.35,
+     "size": 88
+    },
+    {
+     "hb": "Wadai Empire",
+     "clio_best": "Khedivate of Egypt [Q127861]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.43,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0.37,
+     "size": 83
+    },
+    {
+     "hb": "French Indochina",
+     "clio_best": "French Indochina [Q185682]",
+     "iou": 0.58,
+     "hb_share_in_clio": 0.69,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0,
+     "size": 71
+    },
+    {
+     "hb": "Bulgaria",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.05,
+     "hb_land_without_clio": 0.01,
+     "size": 54
+    },
+    {
+     "hb": "Harer (Egypt)",
+     "clio_best": "Khedivate of Egypt [Q127861]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.29,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.61,
+     "size": 40
+    },
+    {
+     "hb": "Rabih az-Zubayr",
+     "clio_best": "Khedivate of Egypt [Q127861]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.61,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.39,
+     "size": 36
+    },
+    {
+     "hb": "Greece",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0,
+     "size": 33
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Lunda [Q1796223]",
+     "iou": 0.36,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.46,
+     "hb_land_without_clio": 0.36,
+     "size": 25
+    },
+    {
+     "hb": "Teke",
+     "clio_best": "Kingdom of Lunda [Q1796223]",
+     "iou": 0.13,
+     "hb_share_in_clio": 0.29,
+     "clio_share_in_hb": 0.2,
+     "hb_land_without_clio": 0.67,
+     "size": 24
+    },
+    {
+     "hb": "Natal",
+     "clio_best": "Natalia Republic [Q1029847]",
+     "iou": 0.44,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.77,
+     "hb_land_without_clio": 0.1,
+     "size": 17
+    },
+    {
+     "hb": "Griqualand West",
+     "clio_best": "British Cape Colony [Q370736]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0.32,
+     "size": 17
+    },
+    {
+     "hb": "Denmark",
+     "clio_best": "Denmark-Norway [Q62651]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.24,
+     "hb_land_without_clio": 0,
+     "size": 14
+    },
+    {
+     "hb": "Liberia",
+     "clio_best": "Republic of Liberia [Q1014]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.25,
+     "hb_land_without_clio": 0,
+     "size": 13
+    },
+    {
+     "hb": "Zululand",
+     "clio_best": "Zululand [Q13558877]",
+     "iou": 0.64,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0,
+     "size": 8
+    },
+    {
+     "hb": "Montenegro",
+     "clio_best": "Ottoman Empire [Q12560]",
+     "iou": 0,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0,
+     "size": 7
+    },
+    {
+     "hb": "Oyo",
+     "clio_best": "Sokoto Caliphate [Q600524]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.67,
+     "size": 6
+    },
+    {
+     "hb": "Swaziland",
+     "clio_best": "British Cape Colony [Q370736]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.5,
+     "size": 5
+    },
+    {
+     "hb": "Portuguese Guinea",
+     "clio_best": "Kingdom of Portugal [Q45670]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.2,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.6,
+     "size": 5
+    }
+   ]
+  },
+  {
+   "year": 1900,
+   "hb_entities": 165,
+   "clio_entities": 88,
+   "land_pct": {
+    "both": 77.2,
+    "only_hb": 7.1,
+    "only_clio": 10.5,
+    "neither": 5.2
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 53.6,
+    "desacuerdo": 9.8,
+    "clio_mas_detallado": 4.7,
+    "hb_mas_detallado": 14.7,
+    "sin_equivalente": 1.5
+   },
+   "disagreements": [
+    {
+     "hb": "Canada",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.24,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.33,
+     "hb_land_without_clio": 0.53,
+     "size": 3038
+    },
+    {
+     "hb": "Sokoto Caliphate",
+     "clio_best": "Sokoto Caliphate [Q600524]",
+     "iou": 0.48,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0.73,
+     "hb_land_without_clio": 0.4,
+     "size": 325
+    },
+    {
+     "hb": "Papua New Guinea",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.52,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 132
+    },
+    {
+     "hb": "Tukular Caliphate",
+     "clio_best": "French Africa [Q19951607]",
+     "iou": 0.06,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.06,
+     "hb_land_without_clio": 0.2,
+     "size": 114
+    },
+    {
+     "hb": "Kanem-Bornu",
+     "clio_best": "French Africa [Q19951607]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.37,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0.44,
+     "size": 102
+    },
+    {
+     "hb": "Sultanate of Zanzibar",
+     "clio_best": "German Africa [Q5551337]",
+     "iou": 0.06,
+     "hb_share_in_clio": 0.47,
+     "clio_share_in_hb": 0.06,
+     "hb_land_without_clio": 0.01,
+     "size": 93
+    },
+    {
+     "hb": "Mossi States",
+     "clio_best": "British Gold Coast [Q503623]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.23,
+     "clio_share_in_hb": 0.13,
+     "hb_land_without_clio": 0.59,
+     "size": 68
+    },
+    {
+     "hb": "Yeke",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.55,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0,
+     "size": 63
+    },
+    {
+     "hb": "Shona",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.54,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0,
+     "size": 48
+    },
+    {
+     "hb": "Borgu States",
+     "clio_best": "French Africa [Q19951607]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.35,
+     "size": 42
+    },
+    {
+     "hb": "Oman",
+     "clio_best": "Sultanate of Muscat and Oman [Q157734]",
+     "iou": 0.35,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.48,
+     "hb_land_without_clio": 0.41,
+     "size": 34
+    },
+    {
+     "hb": "Barotse",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.58,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0,
+     "size": 30
+    },
+    {
+     "hb": "Congo",
+     "clio_best": "Kingdom of Portugal [Q45670]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 25
+    },
+    {
+     "hb": "Yaka",
+     "clio_best": "Belgian Congo [Q213510]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.68,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 25
+    },
+    {
+     "hb": "Teke",
+     "clio_best": "French Africa [Q19951607]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0,
+     "size": 24
+    },
+    {
+     "hb": "Natal",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.05,
+     "size": 17
+    },
+    {
+     "hb": "Buganda",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0,
+     "hb_share_in_clio": 0.59,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.35,
+     "size": 17
+    },
+    {
+     "hb": "Denmark",
+     "clio_best": "Denmark-Norway [Q62651]",
+     "iou": 0.23,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.24,
+     "hb_land_without_clio": 0,
+     "size": 14
+    },
+    {
+     "hb": "Liberia",
+     "clio_best": "Republic of Liberia [Q1014]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.25,
+     "hb_land_without_clio": 0,
+     "size": 13
+    },
+    {
+     "hb": "Dahomey",
+     "clio_best": "French Africa [Q19951607]",
+     "iou": 0,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0,
+     "size": 10
+    },
+    {
+     "hb": "Oyo",
+     "clio_best": "Sokoto Caliphate [Q600524]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.33,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.33,
+     "size": 6
+    },
+    {
+     "hb": "Swaziland",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0,
+     "hb_share_in_clio": 0.5,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0,
+     "size": 5
+    },
+    {
+     "hb": "Portuguese Guinea",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0,
+     "size": 5
+    },
+    {
+     "hb": "Kingdom of Hawaii",
+     "clio_best": "United States of America [Q30]",
+     "iou": 0,
+     "hb_share_in_clio": 0.75,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.25,
+     "size": 4
+    }
+   ]
+  },
+  {
+   "year": 1914,
+   "hb_entities": 142,
+   "clio_entities": 79,
+   "land_pct": {
+    "both": 93.6,
+    "only_hb": 4.3,
+    "only_clio": 1.5,
+    "neither": 0.7
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 69.7,
+    "hb_mas_detallado": 20.8,
+    "sin_equivalente": 3,
+    "clio_mas_detallado": 1.6,
+    "desacuerdo": 2.8
+   },
+   "disagreements": [
+    {
+     "hb": "Libya",
+     "clio_best": "Italian Africa [Q926295]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.62,
+     "clio_share_in_hb": 0.59,
+     "hb_land_without_clio": 0,
+     "size": 443
+    },
+    {
+     "hb": "British Protectorate",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.29,
+     "hb_share_in_clio": 0.46,
+     "clio_share_in_hb": 0.44,
+     "hb_land_without_clio": 0.35,
+     "size": 218
+    },
+    {
+     "hb": "British East Africa",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0.06,
+     "hb_share_in_clio": 0.8,
+     "clio_share_in_hb": 0.06,
+     "hb_land_without_clio": 0.02,
+     "size": 214
+    },
+    {
+     "hb": "Papua New Guinea",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.52,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0,
+     "size": 132
+    },
+    {
+     "hb": "Paraguay",
+     "clio_best": "Bolivia [Q750]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.58,
+     "clio_share_in_hb": 0.18,
+     "hb_land_without_clio": 0,
+     "size": 130
+    },
+    {
+     "hb": "Malawi",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.22,
+     "size": 35
+    },
+    {
+     "hb": "Togoland",
+     "clio_best": "German Africa [Q5551337]",
+     "iou": 0.03,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.03,
+     "hb_land_without_clio": 0,
+     "size": 33
+    },
+    {
+     "hb": "Spanish Morocco",
+     "clio_best": "French Africa [Q19951607]",
+     "iou": 0,
+     "hb_share_in_clio": 0.67,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.08,
+     "size": 10
+    },
+    {
+     "hb": "Kuwait",
+     "clio_best": "Emirate of Nejd [Q146862]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.2,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.6,
+     "size": 4
+    }
+   ]
+  },
+  {
+   "year": 1920,
+   "hb_entities": 163,
+   "clio_entities": 87,
+   "land_pct": {
+    "both": 92.1,
+    "only_hb": 5.6,
+    "only_clio": 1.6,
+    "neither": 0.7
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 62.2,
+    "desacuerdo": 6.5,
+    "hb_mas_detallado": 23.8,
+    "sin_equivalente": 3.6,
+    "clio_mas_detallado": 1.7
+   },
+   "disagreements": [
+    {
+     "hb": "Chinese Warlords",
+     "clio_best": "Kuomintang [Q31113]",
+     "iou": 0.55,
+     "hb_share_in_clio": 0.71,
+     "clio_share_in_hb": 0.7,
+     "hb_land_without_clio": 0.22,
+     "size": 1758
+    },
+    {
+     "hb": "Libya (IT)",
+     "clio_best": "Italian Africa [Q926295]",
+     "iou": 0.46,
+     "hb_share_in_clio": 0.63,
+     "clio_share_in_hb": 0.63,
+     "hb_land_without_clio": 0,
+     "size": 521
+    },
+    {
+     "hb": "Mesopotamia (GB)",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.48,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.48,
+     "size": 177
+    },
+    {
+     "hb": "Hejaz",
+     "clio_best": "Kingdom of Hejaz [Q956357]",
+     "iou": 0.46,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.78,
+     "hb_land_without_clio": 0.01,
+     "size": 141
+    },
+    {
+     "hb": "Paraguay",
+     "clio_best": "Bolivia [Q750]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.58,
+     "clio_share_in_hb": 0.18,
+     "hb_land_without_clio": 0,
+     "size": 130
+    },
+    {
+     "hb": "Hail",
+     "clio_best": "Emirate of Jabal Shammar [Q5362837]",
+     "iou": 0.22,
+     "hb_share_in_clio": 0.56,
+     "clio_share_in_hb": 0.27,
+     "hb_land_without_clio": 0,
+     "size": 39
+    },
+    {
+     "hb": "Malawi",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.22,
+     "size": 35
+    },
+    {
+     "hb": "Trucial Oman",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0.27,
+     "size": 31
+    },
+    {
+     "hb": "Burundi",
+     "clio_best": "Belgian Congo [Q213510]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0,
+     "size": 9
+    }
+   ]
+  },
+  {
+   "year": 1930,
+   "hb_entities": 163,
+   "clio_entities": 89,
+   "land_pct": {
+    "both": 95.7,
+    "only_hb": 2,
+    "only_clio": 1.7,
+    "neither": 0.6
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 64.9,
+    "hb_mas_detallado": 29.1,
+    "sin_equivalente": 1.6,
+    "desacuerdo": 1.9,
+    "clio_mas_detallado": 0.2
+   },
+   "disagreements": [
+    {
+     "hb": "Emirate of Bin Shal'an",
+     "clio_best": "Kingdom of Hejaz and Nejd [Q1756546]",
+     "iou": 0.43,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.51,
+     "hb_land_without_clio": 0.21,
+     "size": 369
+    },
+    {
+     "hb": "Hejaz",
+     "clio_best": "Kingdom of Hejaz and Nejd [Q1756546]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.73,
+     "clio_share_in_hb": 0.2,
+     "hb_land_without_clio": 0.01,
+     "size": 141
+    },
+    {
+     "hb": "Paraguay",
+     "clio_best": "Bolivia [Q750]",
+     "iou": 0.16,
+     "hb_share_in_clio": 0.58,
+     "clio_share_in_hb": 0.18,
+     "hb_land_without_clio": 0,
+     "size": 130
+    },
+    {
+     "hb": "United Kingdom of Great Britain and Ireland",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.31,
+     "hb_share_in_clio": 0.76,
+     "clio_share_in_hb": 0.34,
+     "hb_land_without_clio": 0.01,
+     "size": 93
+    },
+    {
+     "hb": "Malawi",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.22,
+     "size": 35
+    },
+    {
+     "hb": "Trucial Oman",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.1,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.11,
+     "hb_land_without_clio": 0.09,
+     "size": 31
+    },
+    {
+     "hb": "Burundi",
+     "clio_best": "Belgian Congo [Q213510]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0,
+     "size": 9
+    }
+   ]
+  },
+  {
+   "year": 1938,
+   "hb_entities": 171,
+   "clio_entities": 90,
+   "land_pct": {
+    "both": 97.3,
+    "only_hb": 0.6,
+    "only_clio": 1.5,
+    "neither": 0.6
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 75.6,
+    "hb_mas_detallado": 21.3,
+    "clio_mas_detallado": 0.7,
+    "desacuerdo": 0.2,
+    "sin_equivalente": 0
+   },
+   "disagreements": [
+    {
+     "hb": "Malawi",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.22,
+     "size": 35
+    },
+    {
+     "hb": "Trucial Oman",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.08,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0,
+     "size": 31
+    },
+    {
+     "hb": "Burundi",
+     "clio_best": "Belgian Congo [Q213510]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0,
+     "size": 9
+    }
+   ]
+  },
+  {
+   "year": 1945,
+   "hb_entities": 183,
+   "clio_entities": 77,
+   "land_pct": {
+    "both": 97.1,
+    "only_hb": 0.8,
+    "only_clio": 1.5,
+    "neither": 0.6
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 62.8,
+    "clio_mas_detallado": 5.2,
+    "hb_mas_detallado": 29,
+    "desacuerdo": 0.9,
+    "sin_equivalente": 0
+   },
+   "disagreements": [
+    {
+     "hb": "Yemen",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.32,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.37,
+     "hb_land_without_clio": 0,
+     "size": 127
+    },
+    {
+     "hb": "Dutch Guinea",
+     "clio_best": "Empire of Japan [Q188712]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.32,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.5,
+     "size": 117
+    },
+    {
+     "hb": "Tonkin",
+     "clio_best": "French Indochina [Q185682]",
+     "iou": 0.11,
+     "hb_share_in_clio": 0.77,
+     "clio_share_in_hb": 0.12,
+     "hb_land_without_clio": 0,
+     "size": 36
+    },
+    {
+     "hb": "Nyasaland",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.22,
+     "size": 35
+    },
+    {
+     "hb": "United Arab Emirates",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.09,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.09,
+     "hb_land_without_clio": 0,
+     "size": 31
+    },
+    {
+     "hb": "Austria",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.04,
+     "hb_share_in_clio": 0.38,
+     "clio_share_in_hb": 0.04,
+     "hb_land_without_clio": 0,
+     "size": 27
+    },
+    {
+     "hb": "Burundi",
+     "clio_best": "Belgian Congo [Q213510]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0,
+     "size": 9
+    },
+    {
+     "hb": "Kuwait",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0,
+     "hb_land_without_clio": 0.4,
+     "size": 4
+    }
+   ]
+  },
+  {
+   "year": 1960,
+   "hb_entities": 157,
+   "clio_entities": 107,
+   "land_pct": {
+    "both": 97.2,
+    "only_hb": 0.6,
+    "only_clio": 1.5,
+    "neither": 0.6
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 82.4,
+    "hb_mas_detallado": 14.5,
+    "desacuerdo": 0.7,
+    "clio_mas_detallado": 0.2,
+    "sin_equivalente": 0
+   },
+   "disagreements": [
+    {
+     "hb": "Yemen",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.27,
+     "hb_share_in_clio": 0.72,
+     "clio_share_in_hb": 0.3,
+     "hb_land_without_clio": 0,
+     "size": 127
+    },
+    {
+     "hb": "Malaysia",
+     "clio_best": "British Colonial Empire [Q8680]",
+     "iou": 0.26,
+     "hb_share_in_clio": 0.53,
+     "clio_share_in_hb": 0.34,
+     "hb_land_without_clio": 0.01,
+     "size": 101
+    },
+    {
+     "hb": "Malawi",
+     "clio_best": "British Africa [Q179848]",
+     "iou": 0.02,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.02,
+     "hb_land_without_clio": 0.22,
+     "size": 35
+    },
+    {
+     "hb": "United Arab Emirates",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.07,
+     "hb_share_in_clio": 0.7,
+     "clio_share_in_hb": 0.07,
+     "hb_land_without_clio": 0,
+     "size": 31
+    },
+    {
+     "hb": "Burundi",
+     "clio_best": "Belgian Congo [Q213510]",
+     "iou": 0.37,
+     "hb_share_in_clio": 0.78,
+     "clio_share_in_hb": 0.41,
+     "hb_land_without_clio": 0,
+     "size": 9
+    },
+    {
+     "hb": "Kuwait",
+     "clio_best": "Kingdom of Great Britain [Q23666]",
+     "iou": 0.01,
+     "hb_share_in_clio": 0.6,
+     "clio_share_in_hb": 0.01,
+     "hb_land_without_clio": 0.4,
+     "size": 4
+    }
+   ]
+  },
+  {
+   "year": 1994,
+   "hb_entities": 193,
+   "clio_entities": 189,
+   "land_pct": {
+    "both": 97.1,
+    "only_hb": 0.8,
+    "only_clio": 1.6,
+    "neither": 0.6
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 97.2,
+    "sin_equivalente": 0.2,
+    "clio_mas_detallado": 0.1,
+    "hb_mas_detallado": 0.3,
+    "desacuerdo": 0
+   },
+   "disagreements": [
+    {
+     "hb": "Bosnia and Herzegovina",
+     "clio_best": "Serbia-Montenegro [Q37024]",
+     "iou": 0.19,
+     "hb_share_in_clio": 0.64,
+     "clio_share_in_hb": 0.21,
+     "hb_land_without_clio": 0,
+     "size": 16
+    }
+   ]
+  },
+  {
+   "year": 2000,
+   "hb_entities": 193,
+   "clio_entities": 192,
+   "land_pct": {
+    "both": 97.1,
+    "only_hb": 0.8,
+    "only_clio": 1.6,
+    "neither": 0.6
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 97.3,
+    "sin_equivalente": 0.2,
+    "clio_mas_detallado": 0.1,
+    "hb_mas_detallado": 0.3,
+    "desacuerdo": 0
+   },
+   "disagreements": []
+  },
+  {
+   "year": 2010,
+   "hb_entities": 193,
+   "clio_entities": 191,
+   "land_pct": {
+    "both": 97.1,
+    "only_hb": 0.8,
+    "only_clio": 1.6,
+    "neither": 0.6
+   },
+   "hb_land_by_kind_pct": {
+    "acuerdo": 97,
+    "hb_mas_detallado": 0.5,
+    "sin_equivalente": 0.2,
+    "clio_mas_detallado": 0.1,
+    "desacuerdo": 0
+   },
+   "disagreements": []
+  }
+ ],
+ "sources": {
+  "historical_basemaps": "da7a4b735ecef70aebdc9c73e409d8a2500d50f3",
+  "cliopatria": "5f433377139a6eeaeacbdc894b70f8805b72c8b5",
+  "cliopatria_file": "cliopatria_polities_only_v021.geojson",
+  "cliopatria_sha256": "fc6f0d1e4cc42f45da83522b3696db6f2cc85ec0d12259a85c89b31347b8fc0a"
+ }
+}
