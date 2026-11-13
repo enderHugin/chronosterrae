@@ -229,6 +229,13 @@ const mk = (id, imp, lng, lat, jd, precision = 'day', extra = {}) => ({
 /* ---------- Ventana segun la velocidad del tiempo y desvanecido ---------- */
 {
     const YEAR_S = 31557600;
+    check('paginas de calendario («January 2010», dia o mes del calendario) no son sucesos; un tratado o una batalla si (rechazado, no roto)', () => {
+        const EI = require('../map/event-icons.js');
+        const cal = EI.isRealEvent({ kind: 'event', name: 'January 2010', classes: [{ id: 'Q47018478', label: 'calendar month of a given year' }], year: 2010 });
+        const tr = EI.isRealEvent({ kind: 'event', name: 'Treaty of X', classes: [{ id: 'Q131569', label: 'treaty' }], year: 1700 });
+        const birth = EI.isRealEvent({ kind: 'birth', name: 'X', year: 1900 });
+        return cal === false && tr === true && birth === true ? true : [cal, tr, birth].join(' ');
+    });
     check('ventana: con tiempo parado o lento (hasta 1 mes/s) vale la de reposo: el ultimo año y NADA por llegar, sin «flowing»', () => [0, 1, 3600, 86400, 2629800].every((r) => { const w = T.windowFor(r); return w.pastDays === 365 && w.futureDays === 0 && w.flowing === false; }));
     check('reposo: lo que aun no ha ocurrido no se dibuja (el creador, 2026-11-13: el atentado de Estambul del 1-1-2017 salia con el reloj el 9-7-2016) y lo de hace 11 meses si', () => {
         const atentado = mk('estambul2017', 0.9, 29, 41, jdOf(2017, 1, 1, 1, 15)); const pasado = mk('hace11m', 0.9, 30, 41, jdOf(2015, 8, 9));

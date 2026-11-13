@@ -4847,7 +4847,8 @@ function eventsRebuild() {
         const s = f.properties.status; const g = VF_GROUP[f.properties.evidence] || 'documentary';
         events.counts.status[s] = (events.counts.status[s] || 0) + 1; events.counts.evidence[g] = (events.counts.evidence[g] || 0) + 1;
     });
-    events.all = all.filter(vfPasses);
+    // sin paginas de calendario («January 2010»): no son sucesos (los datos ya publicados aun las traen; la cosecha nueva ya no)
+    events.all = all.filter((f) => vfPasses(f) && !ChronosEventIcons.NOT_EVENT_ICONS.includes(evIconKey(f)));
     events.byId = new Map(events.all.map((f) => [f.properties.id, f]));
     events.timed = events.all.filter((f) => window.ChronosTimed && ChronosTimed.isTimed(f));
     eventsVisApply();

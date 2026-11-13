@@ -422,6 +422,14 @@ async function main() {
             if (rows2) { rel[name] = relationRows(rows2, def.cap); stats.rows += rows2.length; }
         }
         stats.enriched = enrichEvents([...byShard.values()].flat(), rel);
+        // Paginas de calendario («January 2010», dia o mes del calendario, articulo de lista): no son sucesos. Se sabe por sus clases, que
+        // llegan con el enriquecimiento; se quitan aqui (revision del 2026-11-13: 688 iconos de calendario que no decian nada).
+        const EI = require('../map/event-icons.js'); let dropped = 0;
+        for (const [key, feats] of byShard) {
+            const keep = feats.filter((f) => { const p = f.properties; const ok = EI.isRealEvent({ kind: p.kind, name: p.name, classes: p.classes, year: parseInt(String(p.time.iso || '').match(/^-?\d+/), 10) }); if (!ok) dropped++; return ok; });
+            byShard.set(key, keep);
+        }
+        stats.skipped['pagina de calendario, no suceso'] = dropped;
     }
     fs.mkdirSync(out, { recursive: true });
     const index = { shards: {}, generated_at: retrievedAt };

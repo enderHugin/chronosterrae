@@ -81,6 +81,12 @@ check('entrada animada de las personas con papel: arranca distinta, termina en e
     return start && end && mono;
 }));
 check('el grupo del filtro, el color de los puntos y la animacion siguen siendo los de nacer/morir (la clave compuesta no los cambia)', () => I.groupOf('birth') === 'birth' && I.animGroup('birth') === 'bob' && I.KEYS.indexOf('birth.monarch') < 0);
+check('nacer «*» y morir «†»: el dibujo de una persona con papel lleva su marca (solo el color los distinguia); sin papel, no', () => {
+    const drawn = (k) => { const ds = []; function P(d) { ds.push(d); } I.draw(fakeCtx(), k, 32, { Path2D: P }); return ds; };
+    const b = drawn('birth.monarch'); const d = drawn('death.monarch'); const plain = drawn('birth');
+    return b.includes(I.LIFE_MARK.birth) && !b.includes(I.LIFE_MARK.death) && d.includes(I.LIFE_MARK.death) && !d.includes(I.LIFE_MARK.birth) && !plain.includes(I.LIFE_DISC) ? true : 'falta la marca';
+});
+check('marca de nacer/morir: cabe en la caja 24x24', () => [I.LIFE_DISC, I.LIFE_MARK.birth, I.LIFE_MARK.death].every((d) => { const bx = I.pathBox(d); return bx.minX >= -0.6 && bx.minY >= -0.6 && bx.maxX <= 24.6 && bx.maxY <= 24.6; }));
 check('ROLES: nombres en los dos idiomas, sin genero en español (ambito, no profesion)', () => I.ROLES.every((r) => r.es && r.en && !/(or|ora|ero|era)$/.test(r.es)));
 
 /* ---------- datos publicados ---------- */

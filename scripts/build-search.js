@@ -65,6 +65,7 @@ function build() {
             continue;
         }
         let icon = 'event'; try { icon = EI.classify({ kind: p.kind, name: p.name, classes: p.classes, year: yearOfIso(tm.iso) }).icon; } catch (e) { /* por defecto */ }
+        if (EI.NOT_EVENT_ICONS.includes(icon)) continue;      // paginas de calendario («January 2010»): no son sucesos
         const en = (p.labels && p.labels.en) || p.name; const es = p.labels && p.labels.es;
         rows.push([idOrNull(p.id, qid, p.kind || 'event'), 'event', icon, en, es && es !== en ? es : null, at[1], at[2], at[3], at[4], r2(p.importance || 0), qid, (qid && imgs[qid]) || null, null, p.kind || 'event']);
     }

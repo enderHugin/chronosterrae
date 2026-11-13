@@ -371,6 +371,10 @@
      * el relleno. Opciones: `Path2D` y `color` (por defecto, el global y el color del icono) y `t` (0..1, instante de la entrada animada; sin él,
      * el dibujo final) y `parts` (un dibujo ajeno, p. ej. las construcciones, que comparte borde y trazo con los sucesos).
      */
+    // Marca de nacer/morir de las personas con papel: disco en la esquina superior izquierda (centro 4,4; radio 3,7 en la caja de 24) con
+    // «*» (nacer) o «†» (morir) dentro, en el color del borde.
+    const LIFE_DISC = 'M 0.3 4 A 3.7 3.7 0 1 0 7.7 4 A 3.7 3.7 0 1 0 0.3 4 Z';
+    const LIFE_MARK = { birth: 'M 4 1.9 L 4 6.1 M 2.2 2.95 L 5.8 5.05 M 2.2 5.05 L 5.8 2.95', death: 'M 4 1.6 L 4 6.4 M 2.4 3.2 L 5.6 3.2' };
     function draw(ctx, key, size, o) {
         const parts = (o && o.parts) || glyphOf(key); if (!parts) throw new Error('icono desconocido: ' + key);   // o.parts: dibujo de otra capa (map/built.js) con el mismo estilo
         const P2D = (o && o.Path2D) || (typeof Path2D !== 'undefined' ? Path2D : null); if (!P2D) throw new Error('falta Path2D');
@@ -403,6 +407,17 @@
             else { ctx.strokeStyle = p.t === 's' ? color : p.t === 'd' ? dark : light; ctx.lineWidth = p.w || 2; ctx.stroke(path); }
             ctx.restore();
         });
+        // 3. Personas con papel: marca de nacer «*» o morir «†» en una esquina (el creador, 2026-11-13: solo el color —cian o gris— los
+        //    distinguia). Convencion genealogica. Aparece con el ultimo trazo de la entrada animada.
+        const sk = splitKey(key); const mark = sk.role && LIFE_MARK[sk.icon];
+        if (mark && trs.length && trs[trs.length - 1].a > 0) {
+            ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.globalAlpha = trs[trs.length - 1].a;
+            const disc = new P2D(LIFE_DISC);
+            ctx.strokeStyle = light; ctx.lineWidth = 2.2; ctx.stroke(disc);
+            ctx.fillStyle = color; ctx.fill(disc);
+            ctx.strokeStyle = light; ctx.lineWidth = 1.35; ctx.stroke(new P2D(mark));
+            ctx.restore();
+        }
         ctx.restore();
     }
 
@@ -539,5 +554,9 @@
     /** Color de cada punto: el del icono (o el que devuelva colorOf, p. ej. con el matiz de la epoca). Expresion 'match' sobre la propiedad icon. */
     const dotColorExpr = (colorOf) => ['match', ['get', 'icon']].concat(...KEYS.map((k) => [k, colorOf ? colorOf(COLORS[k], k) : COLORS[k]]), ['#888888']);
 
-    return { ROLE_GLYPHS, ROLES, ROLE_IDS, ROLE_KEYS, PERSON_ICONS, drawKey, splitKey, glyphOf, hasGlyph, HALO, OUTER, OUTER_W, ZOOM_SCALE, DOT_ZOOM, DOT_SWITCH, zoomScale, iconShare, zoomScaled, iconFade, dotFade, DOT_RADIUS, dotColorExpr, ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
+    // Clases de Wikidata que NO son sucesos: paginas de calendario («January 2010», «día del calendario», «artículo de lista»). Entraban en la
+    // cosecha como si lo fueran (688, icono de calendario) y llenaban el mapa de ruido (revision del 2026-11-13). Se quitan al construir y al cargar.
+    const NOT_EVENT_ICONS = ['calendar'];
+    const isRealEvent = (p) => { try { return !NOT_EVENT_ICONS.includes(classify(p).icon); } catch (e) { return true; } };
+    return { NOT_EVENT_ICONS, isRealEvent, LIFE_DISC, LIFE_MARK, ROLE_GLYPHS, ROLES, ROLE_IDS, ROLE_KEYS, PERSON_ICONS, drawKey, splitKey, glyphOf, hasGlyph, HALO, OUTER, OUTER_W, ZOOM_SCALE, DOT_ZOOM, DOT_SWITCH, zoomScale, iconShare, zoomScaled, iconFade, dotFade, DOT_RADIUS, dotColorExpr, ICON_CLASSES, KEYS, ANIM_MODES, animMode, isSlow, GROUPS, groupOf, GROUP_ALL_MASK, hiddenToMask, maskToHidden, iconShown, GLYPHS, COLORS, ERA_MUSKET_FROM, ERA_TANK_FROM, PRESENT, classify, eraIcon, animGroup, draw, enterParams, ENTER_FRAMES, ENTER_MS, pathBox, createPulse, shade, BORDER };
 });
