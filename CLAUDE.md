@@ -47,3 +47,4 @@ node scripts/probe.js > probe.json   # solo útil con internet completo
 - `data/harvests/` y `latest_harvest.json`: ingesta diaria automática (bot).
 - `.github/workflows/`: `ci.yml`, `harvest.yml`, `probe.yml`.
 - `docs/VISION.md`: visión y hoja de ruta.
+- `docs/FUENTES.md`: inventario de fuentes (licencia verificada o pendiente) y contrastes entre fuentes (`sources.yml`, rama `sources`).

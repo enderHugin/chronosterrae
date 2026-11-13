@@ -1,0 +1,77 @@
+name: Fuentes - sonda y contraste
+
+# Inventario de fuentes fiables (docs/FUENTES.md), pedido del creador 2026-11-14: «fuentes de datos mas fiables y revision mas intensiva y
+# proactiva». Dos cosas, cada semana y a mano:
+#  1. Sonda: que licencia DICE la pagina de cada fuente candidata y si su API responde (scripts/probe-sources.js).
+#  2. Contraste: las fronteras que dibuja la web (historical-basemaps, commit fijado en index.html) frente a Cliopatria (Seshat, CC BY 4.0),
+#     por año de mapa (scripts/cross-borders.js). Solo cifras de acuerdo y desacuerdo; no se guardan datos de ninguna de las dos.
+# El resultado va a la rama `sources`, nunca a `main`.
+on:
+  schedule:
+    - cron: '41 4 * * 3'
+  workflow_dispatch:
+    inputs:
+      clio_ref:
+        description: 'Commit o etiqueta de Cliopatria a contrastar'
+        required: false
+        default: '5f433377139a6eeaeacbdc894b70f8805b72c8b5'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/probe-sources.js'
+      - 'scripts/cross-borders.js'
+      - '.github/workflows/sources.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sources
+  cancel-in-progress: false
+
+jobs:
+  sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      CLIO_REF: ${{ github.event.inputs.clio_ref || '5f433377139a6eeaeacbdc894b70f8805b72c8b5' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Sonda de licencias y APIs
+        run: node scripts/probe-sources.js > /tmp/sources.json 2> /tmp/sources.log || true
+
+      - name: Descargar las dos fuentes de fronteras (commits fijados)
+        run: |
+          set -euo pipefail
+          HB=$(grep -o "hbCommit: '[0-9a-f]\{40\}'" index.html | grep -o "[0-9a-f]\{40\}")
+          echo "historical-basemaps $HB / Cliopatria $CLIO_REF"
+          mkdir -p /tmp/src && cd /tmp/src
+          git init -q hb && git -C hb remote add origin https://github.com/aourednik/historical-basemaps && git -C hb fetch -q --depth 1 origin "$HB" && git -C hb checkout -q FETCH_HEAD
+          git init -q clio && git -C clio remote add origin https://github.com/Seshat-Global-History-Databank/cliopatria && git -C clio fetch -q --depth 1 origin "$CLIO_REF" && git -C clio checkout -q FETCH_HEAD
+          mkdir -p clio-data && unzip -q -o clio/cliopatria.geojson.zip -d clio-data
+          ls -la clio-data
+          echo "{\"historical_basemaps\":\"$HB\",\"cliopatria\":\"$(git -C clio rev-parse HEAD)\",\"cliopatria_file\":\"$(ls clio-data | head -1)\",\"cliopatria_sha256\":\"$(sha256sum clio-data/*.geojson | cut -c1-64)\"}" > /tmp/cross-sources.json
+
+      - name: Contraste de fronteras
+        run: |
+          set -euo pipefail
+          node --max-old-space-size=6000 scripts/cross-borders.js --hb /tmp/src/hb --clio "$(ls /tmp/src/clio-data/*.geojson | head -1)" --step 0.5 --out /tmp/cross-borders.json 2> /tmp/cross-borders.log
+          node -e "const r=require('/tmp/cross-borders.json'); r.sources=require('/tmp/cross-sources.json'); require('fs').writeFileSync('/tmp/cross-borders.json', JSON.stringify(r,null,1))"
+          cat /tmp/cross-borders.log
+
+      - name: Publicar en la rama sources
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Sources"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan sources
+          for f in sources.json sources.log cross-borders.json cross-borders.log; do test -f /tmp/$f && cp /tmp/$f $f || true; done
+          git add -A . 2>/dev/null || true
+          git commit -q -m "Fuentes: sonda y contraste $(date -u +%Y-%m-%dT%H:%MZ)" || true
+          git push --force origin sources
