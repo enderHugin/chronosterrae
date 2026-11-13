@@ -1,0 +1,854 @@
+{
+ "generated_at": "2026-11-13T00:14:42Z",
+ "source": "Wikidata (CC0) via QLever: P106 (ocupacion), P39 (cargo), descripcion inglesa",
+ "verify": {
+  "Q19546": {
+   "role": "pope",
+   "want": "pope",
+   "got": "Pope",
+   "ok": true
+  },
+  "Q116": {
+   "role": "monarch",
+   "want": "monarch",
+   "got": "monarch",
+   "ok": true
+  },
+  "Q36834": {
+   "role": "composer",
+   "want": "composer",
+   "got": "composer",
+   "ok": true
+  },
+  "Q1028181": {
+   "role": "painter",
+   "want": "painter",
+   "got": "painter",
+   "ok": true
+  },
+  "Q1281618": {
+   "role": "painter",
+   "want": "sculptor",
+   "got": "sculptor",
+   "ok": true
+  },
+  "Q36180": {
+   "role": "writer",
+   "want": "writer",
+   "got": "writer",
+   "ok": true
+  },
+  "Q49757": {
+   "role": "writer",
+   "want": "poet",
+   "got": "poet",
+   "ok": true
+  },
+  "Q201788": {
+   "role": "writer",
+   "want": "historian",
+   "got": "historian",
+   "ok": true
+  },
+  "Q901": {
+   "role": "scientist",
+   "want": "scientist",
+   "got": "scientist",
+   "ok": true
+  },
+  "Q169470": {
+   "role": "scientist",
+   "want": "physicist",
+   "got": "physicist",
+   "ok": true
+  },
+  "Q593644": {
+   "role": "scientist",
+   "want": "chemist",
+   "got": "chemist",
+   "ok": true
+  },
+  "Q864503": {
+   "role": "scientist",
+   "want": "biologist",
+   "got": "biologist",
+   "ok": true
+  },
+  "Q11063": {
+   "role": "scientist",
+   "want": "astronomer",
+   "got": "astronomer",
+   "ok": true
+  },
+  "Q170790": {
+   "role": "scientist",
+   "want": "mathematician",
+   "got": "mathematician",
+   "ok": true
+  },
+  "Q520549": {
+   "role": "scientist",
+   "want": "geologist",
+   "got": "geologist",
+   "ok": true
+  },
+  "Q18805": {
+   "role": "scientist",
+   "want": "naturalist",
+   "got": "naturalist",
+   "ok": true
+  },
+  "Q2374149": {
+   "role": "scientist",
+   "want": "botanist",
+   "got": "botanist",
+   "ok": true
+  },
+  "Q350979": {
+   "role": "scientist",
+   "want": "zoologist",
+   "got": "zoologist",
+   "ok": true
+  },
+  "Q39631": {
+   "role": "scientist",
+   "want": "physician",
+   "got": "physician",
+   "ok": true
+  },
+  "Q212980": {
+   "role": "scientist",
+   "want": "psychologist",
+   "got": "psychologist",
+   "ok": true
+  },
+  "Q82594": {
+   "role": "scientist",
+   "want": "computer scientist",
+   "got": "computer scientist",
+   "ok": true
+  },
+  "Q4964182": {
+   "role": "philosopher",
+   "want": "philosopher",
+   "got": "philosopher",
+   "ok": true
+  },
+  "Q42603": {
+   "role": "religious",
+   "want": "priest",
+   "got": "priest",
+   "ok": true
+  },
+  "Q29182": {
+   "role": "religious",
+   "want": "bishop",
+   "got": "bishop",
+   "ok": true
+  },
+  "Q733786": {
+   "role": "religious",
+   "want": "monk",
+   "got": "monk",
+   "ok": true
+  },
+  "Q133485": {
+   "role": "religious",
+   "want": "rabbi",
+   "got": "rabbi",
+   "ok": true
+  },
+  "Q1234713": {
+   "role": "religious",
+   "want": "theologian",
+   "got": "theologian",
+   "ok": true
+  },
+  "Q2259532": {
+   "role": "religious",
+   "want": "cleric",
+   "got": "cleric",
+   "ok": true
+  },
+  "Q11900058": {
+   "role": "explorer",
+   "want": "explorer",
+   "got": "explorer",
+   "ok": true
+  },
+  "Q42973": {
+   "role": "architect",
+   "want": "architect",
+   "got": "architect",
+   "ok": true
+  },
+  "Q205375": {
+   "role": "inventor",
+   "want": "inventor",
+   "got": "inventor",
+   "ok": true
+  },
+  "Q81096": {
+   "role": "inventor",
+   "want": "engineer",
+   "got": "engineer",
+   "ok": true
+  },
+  "Q47064": {
+   "role": "military",
+   "want": "military personnel",
+   "got": "military personnel",
+   "ok": true
+  },
+  "Q82955": {
+   "role": "politician",
+   "want": "politician",
+   "got": "politician",
+   "ok": true
+  },
+  "Q33999": {
+   "role": "actor",
+   "want": "actor",
+   "got": "actor",
+   "ok": true
+  },
+  "Q2526255": {
+   "role": "actor",
+   "want": "film director",
+   "got": "film director",
+   "ok": true
+  },
+  "Q639669": {
+   "role": "musician",
+   "want": "musician",
+   "got": "musician",
+   "ok": true
+  },
+  "Q177220": {
+   "role": "musician",
+   "want": "singer",
+   "got": "singer",
+   "ok": true
+  },
+  "Q2066131": {
+   "role": "athlete",
+   "want": "athlete",
+   "got": "athlete",
+   "ok": true
+  }
+ },
+ "counts": {
+  "people": 6424,
+  "with_role": 6233,
+  "with_description": 6424,
+  "via": {
+   "cargo": 714,
+   "descripcion": 5294,
+   "primera ocupacion": 132,
+   "prioridad": 93
+  },
+  "by_role": {
+   "pope": 263,
+   "monarch": 535,
+   "religious": 152,
+   "writer": 839,
+   "scientist": 749,
+   "military": 117,
+   "philosopher": 144,
+   "politician": 1055,
+   "inventor": 50,
+   "explorer": 54,
+   "musician": 379,
+   "painter": 150,
+   "architect": 29,
+   "composer": 108,
+   "actor": 997,
+   "athlete": 612
+  }
+ },
+ "closure": {
+  "Q19546": 6,
+  "Q116": 832,
+  "Q36834": 61,
+  "Q1028181": 165,
+  "Q1281618": 40,
+  "Q36180": 344,
+  "Q49757": 134,
+  "Q201788": 278,
+  "Q901": 1,
+  "Q169470": 80,
+  "Q593644": 88,
+  "Q864503": 364,
+  "Q11063": 45,
+  "Q170790": 50,
+  "Q520549": 67,
+  "Q18805": 187,
+  "Q2374149": 52,
+  "Q350979": 102,
+  "Q39631": 611,
+  "Q212980": 75,
+  "Q82594": 52,
+  "Q4964182": 66,
+  "Q42603": 5076,
+  "Q29182": 3442,
+  "Q733786": 571,
+  "Q133485": 56,
+  "Q1234713": 47,
+  "Q2259532": 5592,
+  "Q11900058": 51,
+  "Q42973": 98,
+  "Q205375": 28,
+  "Q81096": 803,
+  "Q47064": 3541,
+  "Q82955": 113971,
+  "Q33999": 172,
+  "Q2526255": 18,
+  "Q639669": 825,
+  "Q177220": 249,
+  "Q2066131": 935
+ },
+ "known": [
+  {
+   "qid": "Q937",
+   "label_ok": true,
+   "label": "Albert Einstein",
+   "in_data": true,
+   "expect": "scientist",
+   "role": "scientist",
+   "candidates": [
+    "philosopher",
+    "scientist",
+    "inventor",
+    "writer"
+   ],
+   "order": null,
+   "description": "German-born theoretical physicist (1879–1955)"
+  },
+  {
+   "qid": "Q5879",
+   "label_ok": true,
+   "label": "Johann Wolfgang von Goethe",
+   "in_data": true,
+   "expect": "writer",
+   "role": "writer",
+   "candidates": [
+    "painter",
+    "religious",
+    "scientist",
+    "writer",
+    "philosopher",
+    "composer",
+    "musician",
+    "politician"
+   ],
+   "order": null,
+   "description": "German writer, artist, natural scientist and politician (1749–1832)"
+  },
+  {
+   "qid": "Q254",
+   "label_ok": true,
+   "label": "Wolfgang Amadeus Mozart",
+   "in_data": true,
+   "expect": "composer",
+   "role": "composer",
+   "candidates": [
+    "musician",
+    "composer"
+   ],
+   "order": null,
+   "description": "Austrian composer of the Classical period (1756–1791)"
+  },
+  {
+   "qid": "Q989",
+   "label_ok": true,
+   "label": "John Paul II",
+   "in_data": true,
+   "expect": "pope",
+   "role": "pope",
+   "candidates": [
+    "religious",
+    "writer",
+    "pope",
+    "monarch",
+    "politician",
+    "philosopher"
+   ],
+   "order": null,
+   "description": "264th pope of the Catholic Church (1978–2005)"
+  },
+  {
+   "qid": "Q5593",
+   "label_ok": true,
+   "label": "Pablo Picasso",
+   "in_data": false,
+   "expect": "painter",
+   "role": null,
+   "candidates": [],
+   "order": null,
+   "description": null
+  },
+  {
+   "qid": "Q692",
+   "label_ok": true,
+   "label": "William Shakespeare",
+   "in_data": true,
+   "expect": "writer",
+   "role": "writer",
+   "candidates": [
+    "writer",
+    "actor"
+   ],
+   "order": null,
+   "description": "English playwright and poet (1564–1616)"
+  },
+  {
+   "qid": "Q9682",
+   "label_ok": true,
+   "label": "Elizabeth II",
+   "in_data": true,
+   "expect": "monarch",
+   "role": "monarch",
+   "candidates": [
+    "monarch",
+    "politician",
+    "military"
+   ],
+   "order": null,
+   "description": "Queen of the United Kingdom from 1952 to 2022 (1926–2022)"
+  },
+  {
+   "qid": "Q517",
+   "label_ok": true,
+   "label": "Napoleon",
+   "in_data": true,
+   "expect": "monarch",
+   "role": "monarch",
+   "candidates": [
+    "politician",
+    "military",
+    "monarch"
+   ],
+   "order": null,
+   "description": "French military leader, French Emperor 1804–1814 and again in 1815 (1769–1821)"
+  },
+  {
+   "qid": "Q8016",
+   "label_ok": true,
+   "label": "Winston Churchill",
+   "in_data": true,
+   "expect": "politician",
+   "role": "politician",
+   "candidates": [
+    "politician",
+    "writer"
+   ],
+   "order": null,
+   "description": "British statesman, soldier and writer (1874–1965)"
+  },
+  {
+   "qid": "Q7186",
+   "label_ok": false,
+   "label": null,
+   "in_data": false,
+   "expect": "scientist",
+   "role": null,
+   "candidates": [],
+   "order": null,
+   "description": null
+  },
+  {
+   "qid": "Q762",
+   "label_ok": true,
+   "label": "Leonardo da Vinci",
+   "in_data": true,
+   "expect": "painter",
+   "role": "painter",
+   "candidates": [
+    "painter",
+    "scientist",
+    "architect",
+    "inventor",
+    "philosopher",
+    "writer",
+    "composer",
+    "musician"
+   ],
+   "order": [
+    "painter",
+    "inventor",
+    "scientist",
+    "philosopher",
+    "architect",
+    "composer",
+    "musician",
+    "writer"
+   ],
+   "description": "Italian Renaissance polymath (1452−1519)"
+  },
+  {
+   "qid": "Q255",
+   "label_ok": true,
+   "label": "Ludwig van Beethoven",
+   "in_data": true,
+   "expect": "composer",
+   "role": "composer",
+   "candidates": [
+    "composer",
+    "musician"
+   ],
+   "order": null,
+   "description": "German composer (1770-1827)"
+  },
+  {
+   "qid": "Q1035",
+   "label_ok": true,
+   "label": "Charles Darwin",
+   "in_data": true,
+   "expect": "scientist",
+   "role": "scientist",
+   "candidates": [
+    "explorer",
+    "scientist",
+    "writer",
+    "philosopher"
+   ],
+   "order": null,
+   "description": "English naturalist and biologist (1809–1882)"
+  },
+  {
+   "qid": "Q868",
+   "label_ok": true,
+   "label": "Aristotle",
+   "in_data": false,
+   "expect": "philosopher",
+   "role": null,
+   "candidates": [],
+   "order": null,
+   "description": null
+  },
+  {
+   "qid": "Q57336",
+   "label_ok": true,
+   "label": "Ali Khamenei",
+   "in_data": true,
+   "expect": "politician",
+   "role": "politician",
+   "candidates": [
+    "military",
+    "religious",
+    "politician",
+    "writer"
+   ],
+   "order": null,
+   "description": "Supreme Leader of Iran from 1989 to 2026"
+  },
+  {
+   "qid": "Q2039",
+   "label_ok": true,
+   "label": "Titus Livius",
+   "in_data": true,
+   "expect": "writer",
+   "role": "writer",
+   "candidates": [
+    "writer"
+   ],
+   "order": null,
+   "description": "Roman historian (59 BC – AD 17)"
+  },
+  {
+   "qid": "Q83322",
+   "label_ok": true,
+   "label": "Guru Nanak",
+   "in_data": true,
+   "expect": "religious",
+   "role": "religious",
+   "candidates": [
+    "writer"
+   ],
+   "order": null,
+   "description": "First Sikh Guru and founder of Sikhism"
+  },
+  {
+   "qid": "Q1254",
+   "label_ok": true,
+   "label": "Kofi Annan",
+   "in_data": true,
+   "expect": "politician",
+   "role": "politician",
+   "candidates": [
+    "politician"
+   ],
+   "order": null,
+   "description": "7th Secretary-General of the United Nations (1938-2018)"
+  },
+  {
+   "qid": "Q5809",
+   "label_ok": true,
+   "label": "Che Guevara",
+   "in_data": true,
+   "expect": "military",
+   "role": "military",
+   "candidates": [
+    "military",
+    "scientist"
+   ],
+   "order": null,
+   "description": "Argentine Marxist revolutionary (1928–1967)"
+  },
+  {
+   "qid": "Q174979",
+   "label_ok": true,
+   "label": "Alan Shepard",
+   "in_data": true,
+   "expect": "explorer",
+   "role": "explorer",
+   "candidates": [
+    "military"
+   ],
+   "order": null,
+   "description": "American astronaut, first American in space, lunar explorer (1923–1998)"
+  }
+ ],
+ "sample": [
+  [
+   "Q42887",
+   "pope",
+   "religious+pope+monarch+politician",
+   "4th Pope of the Catholic Church"
+  ],
+  [
+   "Q1424",
+   "monarch",
+   "politician+monarch",
+   "12th Roman Emperor (96–98)"
+  ],
+  [
+   "Q328804",
+   "religious",
+   "religious",
+   "author of the Gospel of John; traditionally identified with John the Apostle of "
+  ],
+  [
+   "Q1423",
+   "monarch",
+   "politician+monarch",
+   "11th Roman Emperor (81–96)"
+  ],
+  [
+   "Q193769",
+   "writer",
+   "writer",
+   "1st century Hispanic-born Roman educator and rhetorician"
+  ],
+  [
+   "Q243203",
+   "writer",
+   "writer",
+   "1st century CE Roman poet"
+  ],
+  [
+   "Q31845",
+   "writer",
+   "politician+writer+religious+military+philosopher",
+   "2nd century Greek historian, official and philosopher"
+  ],
+  [
+   "Q190368",
+   "writer",
+   "writer+politician",
+   "Greco-Roman historian (c. 95 – c.165)"
+  ],
+  [
+   "Q34943",
+   "scientist",
+   "scientist+writer+philosopher",
+   "2nd-century Roman mathematician, astronomer, geographer"
+  ],
+  [
+   "Q1429",
+   "monarch",
+   "politician+monarch",
+   "15th Roman Emperor (138–161)"
+  ],
+  [
+   "Q128538",
+   "religious",
+   "painter+writer+scientist+religious",
+   "one of the four evangelists"
+  ],
+  [
+   "Q1421",
+   "monarch",
+   "politician+military+monarch",
+   "tenth Roman Emperor (79–81)"
+  ],
+  [
+   "Q82778",
+   "military",
+   "military+politician+writer+scientist+philosopher",
+   "Roman military commander and writer (AD23/24–79)"
+  ],
+  [
+   "Q1419",
+   "monarch",
+   "politician+military+monarch",
+   "ninth Roman Emperor and founder of the Flavian dynasty (69–79)"
+  ],
+  [
+   "Q47144",
+   "pope",
+   "religious+pope+monarch+politician",
+   "2nd Pope of the Catholic Church"
+  ],
+  [
+   "Q197206",
+   "scientist",
+   "scientist+inventor+philosopher+writer+politician",
+   "Chinese scientist and statesman (78–139)"
+  ],
+  [
+   "Q1427",
+   "monarch",
+   "politician+military+writer+monarch",
+   "14th Roman Emperor (117–138)"
+  ],
+  [
+   "Q161853",
+   "scientist",
+   "scientist+inventor",
+   "ancient Greek mathematician and engineer"
+  ],
+  [
+   "Q43600",
+   "religious",
+   "religious",
+   "Christian evangelist and apostle (10-74)"
+  ],
+  [
+   "Q43669",
+   "religious",
+   "religious",
+   "one of the Twelve Apostles in the New Testament"
+  ],
+  [
+   "Q10133",
+   "writer",
+   "writer",
+   "late 1st/early 2nd-century Roman historian"
+  ],
+  [
+   "Q192371",
+   "religious",
+   "religious+writer",
+   "bishop of Smyrna and martyr (69–155)"
+  ],
+  [
+   "Q1417",
+   "monarch",
+   "politician+military+monarch",
+   "eighth Roman Emperor (69)"
+  ],
+  [
+   "Q1416",
+   "monarch",
+   "politician+military+monarch",
+   "seventh Roman Emperor (69)"
+  ],
+  [
+   "Q1414",
+   "monarch",
+   "politician+military+monarch",
+   "sixth Roman Emperor (68–69)"
+  ],
+  [
+   "Q1413",
+   "monarch",
+   "politician+military+writer+musician+monarch",
+   "fifth and last Roman Emperor of Julio-Claudian dynasty (54–68)"
+  ],
+  [
+   "Q31966",
+   "religious",
+   "religious",
+   "credited author of the Gospel of Mark and Christian saint; traditionally identif"
+  ],
+  [
+   "Q9200",
+   "religious",
+   "religious+writer",
+   "Early Christian apostle and missionary (c. AD 5 – c. 64/65)"
+  ],
+  [
+   "Q47180",
+   "writer",
+   "politician+writer+military+philosopher",
+   "1st century AD Roman courtier and author of the Satyricon (27–66)"
+  ],
+  [
+   "Q188646",
+   "writer",
+   "writer",
+   "Roman poet (39–65)"
+  ],
+  [
+   "Q2054",
+   "philosopher",
+   "scientist+politician+writer+philosopher",
+   "Roman Stoic philosopher, statesman and dramatist (c. 4 BCE–65 CE)"
+  ],
+  [
+   "Q33923",
+   "pope",
+   "pope+monarch+religious+politician",
+   "apostle of Jesus Christ"
+  ],
+  [
+   "Q184634",
+   "monarch",
+   "military+monarch+politician",
+   "queen of the British Iceni tribe"
+  ],
+  [
+   "Q168707",
+   "politician",
+   "politician+military+writer",
+   "Roman lawyer, author and magistrate (61 – c.113)"
+  ],
+  [
+   "Q26925",
+   "religious",
+   "religious",
+   "Jewish bishop of Jerusalem figure in Early Christianity"
+  ],
+  [
+   "Q185856",
+   "religious",
+   "religious",
+   "1st-century Cypriot Jewish apostle and missionary, Christian saint, companion of"
+  ],
+  [
+   "Q154732",
+   "monarch",
+   "politician",
+   "Roman empress and member of the Julio-Claudian dynasty (AD 15–59)"
+  ],
+  [
+   "Q2161",
+   "writer",
+   "politician+writer+military",
+   "Roman historian and senator (c. 56 – c. 120)"
+  ],
+  [
+   "Q193800",
+   "writer",
+   "writer",
+   "early 2nd century Roman poet"
+  ],
+  [
+   "Q1411",
+   "monarch",
+   "politician+writer+religious+monarch",
+   "fourth Roman emperor (41–54)"
+  ]
+ ]
+}

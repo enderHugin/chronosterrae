@@ -1,0 +1,8 @@
+personas: 6424
+clases en los cierres: 127507
+  lote 0 : 14457 ocupaciones/cargos, 10670 pares persona-papel, 2003 descripciones
+  lote 2000 : 12131 ocupaciones/cargos, 8160 pares persona-papel, 2000 descripciones
+  lote 4000 : 15148 ocupaciones/cargos, 9665 pares persona-papel, 2006 descripciones
+  lote 6000 : 1853 ocupaciones/cargos, 1962 pares persona-papel, 424 descripciones
+sin pista en la descripcion: 132 ; orden de ocupaciones leido de 132
+hecho: {"people":6424,"with_role":6233,"with_description":6424,"via":{"cargo":714,"descripcion":5294,"primera ocupacion":132,"prioridad":93},"by_role":{"pope":263,"monarch":535,"religious":152,"writer":839,"scientist":749,"military":117,"philosopher":144,"politician":1055,"inventor":50,"explorer":54,"musician":379,"painter":150,"architect":29,"composer":108,"actor":997,"athlete":612}}
