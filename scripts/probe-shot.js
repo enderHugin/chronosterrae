@@ -18,6 +18,9 @@ const SUITE = [
     { id: 'leyenda-tableta-1939', leyenda: true, abrir: ['leyenda'], senalar: true, vp: { width: 834, height: 1194, touch: true }, year: 1939, lng: 12, lat: 48, zoom: 4.2 },
     { id: 'leyenda-movil-1939', leyenda: true, abrir: ['leyenda'], senalar: true, vp: { width: 390, height: 844, touch: true }, year: 1939, lng: 12, lat: 48, zoom: 3.6 },
     { id: 'leyenda-escritorio-1879', leyenda: true, abrir: ['leyenda'], senalar: true, year: 1879, lng: 15, lat: 30, zoom: 1.6 },
+    // 2026-11-14: señalada DESDE EL GLOBO (la fila va a la altura de su punto; etiqueta del mapa encima; recuadros de dos colores) y lista entera
+    { id: 'leyenda-tableta-1939-mapa', leyenda: true, abrir: ['leyenda'], senalar: 'mapa', vp: { width: 834, height: 1194, touch: true }, year: 1939, lng: 12, lat: 48, zoom: 4.2 },
+    { id: 'leyenda-tableta-1939-lista', leyenda: true, abrir: ['leyenda'], ancha: true, senalar: 'mapa', vp: { width: 834, height: 1194, touch: true }, year: 1939, lng: 12, lat: 48, zoom: 4.2 },
     { id: 'costa-natural-iberia-1924', costa: true, year: 1924, lng: 3, lat: 40.5, zoom: 4.3 },
     { id: 'costa-natural-valencia-1924', costa: true, year: 1924, lng: 1.5, lat: 39.6, zoom: 4.55 },
     { id: 'estrecho-2026', year: 2026, lng: -5.6, lat: 36, zoom: 8 },
@@ -186,11 +189,18 @@ async function runSuite(page, out, only) {
                 if (a.includes('info-tl')) document.getElementById('tl-info-btn').click();     // lo que ves ahora + fuentes y licencias
                 if (a.includes('leyenda')) { if (!LG.open) lgSet(true, false); }                // leyenda viva (puntos de color por defecto)
             }, v.abrir);
+            if (v.leyenda) await page.evaluate((ancha) => { if (typeof lgWide === 'function' && LG.wide !== !!ancha) lgWide(!!ancha); }, !!v.ancha);
             if (v.senalar) {        // leyenda: se espera a que tenga filas y se señala la del medio (cable fuerte, anillo, nombre)
                 await page.waitForFunction(() => LG.open && LG.rows.length > 0, null, { timeout: 30000 }).catch(() => {});
                 await page.waitForTimeout(1200);
-                await page.evaluate(() => { lgRender(); const it = LG.rows[Math.floor(LG.rows.length / 2)]; if (it) lgHot(it.id); });
-                await page.waitForTimeout(600);
+                await page.evaluate((desde) => {
+                    evHoverSet(null); buHoverSet(null); lgRender();
+                    if (desde !== 'mapa') { const it = LG.rows[Math.floor(LG.rows.length / 2)]; if (it) lgHot(it.id); return; }
+                    // como el raton sobre el icono del globo: la fila del ultimo tercio (en la lista entera, fuera de la vista: tiene que desplazarse)
+                    const it = LG.rows[Math.floor(LG.rows.length * (LG.wide ? 0.8 : 0.33))];
+                    if (it && it.kind === 'e') evHoverSet(it.f); else if (it) buHoverSet({ properties: it.props, geometry: it.geom });
+                }, v.senalar);
+                await page.waitForTimeout(1200);
             }
             if (v.run) await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});   // el cielo (efemerides) carga aparte
             if (v.run) {   // el reloj avanza por su punto de entrada real (clockSet) a v.yearsPerSec; se mide la ventana y se fotografia sin esperar (al parar, la ventana vuelve a la minima en ~2,5 s)

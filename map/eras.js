@@ -43,6 +43,7 @@
 
     const SERIF = 'serif', SANS = 'sans-serif', MONO = 'monospace';
     const SYS_UI = "system-ui, -apple-system, 'Segoe UI', sans-serif";
+    const READ_FONT = SYS_UI;     // letra de lectura: la misma en todas las epocas (solo los titulos cambian)
 
     /* ---------------------------- Las epocas ---------------------------- */
     const ERAS = [
@@ -50,7 +51,7 @@
             note: { es: 'Antes de cualquier humano: la Tierra geológica.', en: 'Before any human: the geological Earth.' },
             light: pl('#e3e5e8', '#eceef0', '#1f2328', '#4d545c', '#4a3a8a'), dark: pd('#121417', '#1a1d21', '#e3e6ea', '#9aa1aa', '#b9a6ff'),
             map: { light: mp('#a3b8c9', '#c0d0dc', '#e4ded2', '#9a9080', '#33302b'), dark: mp('#0a141c', '#142633', '#34312d', '#6a655c', '#e3dfd6') },
-            type: { heading: "'Rockwell', 'Roboto Slab', 'Courier New', serif", ui: SYS_UI, weight: 800, transform: 'uppercase', spacing: '0.08em', style: 'normal' },
+            type: { heading: "'Rockwell', 'Roboto Slab', 'Courier New', serif", weight: 800, transform: 'uppercase', spacing: '0.08em', style: 'normal' },
             shape: { border: 'solid', bw: 2, radius: 14, btnRadius: 10 },
             ornament: { corner: 'chip', divider: 'strata', texture: 'strata' }, cursor: 'pick',
             icons: { rim: '#e9e1d2', tint: { color: '#8a3410', amt: 0.22 } } },
@@ -58,7 +59,7 @@
             note: { es: 'Era glacial y cazadores-recolectores (convención).', en: 'Ice age hunter-gatherers (convention).' },
             light: pl('#e8dcc9', '#f0e6d4', '#2a1d14', '#5e4a39', '#8a3517'), dark: pd('#1a130e', '#231a13', '#ecdfcc', '#a8967f', '#e58a5c'),
             map: { light: mp('#a9c3cf', '#c6d6dc', '#eddfc4', '#b09a76', '#4a2a18'), dark: mp('#0b151a', '#16262d', '#352d24', '#6b5c48', '#eadbc4') },
-            type: { heading: "'Rockwell', 'Roboto Slab', 'Courier New', serif", ui: SYS_UI, weight: 800, transform: 'uppercase', spacing: '0.06em', style: 'normal' },
+            type: { heading: "'Rockwell', 'Roboto Slab', 'Courier New', serif", weight: 800, transform: 'uppercase', spacing: '0.06em', style: 'normal' },
             shape: { border: 'solid', bw: 3, radius: 16, btnRadius: 12 },
             ornament: { corner: 'hands', divider: 'dots', texture: 'grain' }, cursor: 'flint',
             icons: { rim: '#f1e2c6', tint: { color: '#a0502a', amt: 0.3 } } },
@@ -66,7 +67,7 @@
             note: { es: 'Agricultura y aldeas; el momento varía mucho según la región.', en: 'Farming and villages; timing varies a lot by region.' },
             light: pl('#e5e7cc', '#eef0d9', '#262a14', '#555c33', '#3f6a10'), dark: pd('#13170d', '#1b2013', '#e6e9cc', '#a3ab82', '#8ed46a'),
             map: { light: mp('#aacfc9', '#c6ddd2', '#e8e9c8', '#a5a572', '#3d4318'), dark: mp('#0a1816', '#14292a', '#2c3022', '#626a46', '#e0e3c3') },
-            type: { heading: "'Rockwell', 'Cambria', 'Georgia', serif", ui: SYS_UI, weight: 700, transform: 'none', spacing: '0.02em', style: 'normal' },
+            type: { heading: "'Rockwell', 'Cambria', 'Georgia', serif", weight: 700, transform: 'none', spacing: '0.02em', style: 'normal' },
             shape: { border: 'dashed', bw: 2, radius: 12, btnRadius: 9 },
             ornament: { corner: 'spiral', divider: 'zigzag', texture: 'weave' }, cursor: 'axe',
             icons: { rim: '#eef0cf', tint: { color: '#6d7a1c', amt: 0.28 } } },
@@ -74,7 +75,7 @@
             note: { es: 'Convención sobre todo del Próximo Oriente y Europa; en otras regiones no hubo, o fue otra fecha.', en: 'Mainly a Near East / Europe convention; elsewhere it did not happen, or at another date.' },
             light: pl('#dfe9e2', '#e9f2ec', '#17261f', '#46584d', '#0f6b5c'), dark: pd('#0e1715', '#15211e', '#dcebe4', '#97aaa1', '#5fd6c0'),
             map: { light: mp('#b3d3d0', '#cce0dc', '#e4dbb9', '#a8935a', '#5a3a10'), dark: mp('#08181a', '#10292a', '#33301f', '#6f6338', '#ecdcae') },
-            type: { heading: "'Trajan Pro', 'Optima', 'Palatino Linotype', 'Book Antiqua', serif", ui: SYS_UI, weight: 700, transform: 'uppercase', spacing: '0.07em', style: 'normal' },
+            type: { heading: "'Trajan Pro', 'Optima', 'Palatino Linotype', 'Book Antiqua', serif", weight: 700, transform: 'uppercase', spacing: '0.07em', style: 'normal' },
             shape: { border: 'double', bw: 4, radius: 3, btnRadius: 3 },
             ornament: { corner: 'step', divider: 'meander', texture: 'none' }, cursor: 'spear',
             icons: { rim: '#ecd8a6', tint: { color: '#2e8b78', amt: 0.24 } } },
@@ -82,7 +83,7 @@
             note: { es: 'Convención eurasiática; empieza en fechas distintas según la región.', en: 'Eurasian convention; begins at different dates by region.' },
             light: pl('#e1e2e6', '#eaebee', '#1d2026', '#4c525c', '#8a2f1a'), dark: pd('#121317', '#1a1c21', '#e4e6ea', '#9ba0aa', '#e8826a'),
             map: { light: mp('#b8cbd8', '#cfdce5', '#dcd8cf', '#9c9484', '#3a2f2a'), dark: mp('#0a141d', '#132432', '#312f2d', '#68645c', '#e6e2da') },
-            type: { heading: "'Palatino Linotype', 'Book Antiqua', 'Palatino', serif", ui: SYS_UI, weight: 800, transform: 'uppercase', spacing: '0.05em', style: 'normal' },
+            type: { heading: "'Palatino Linotype', 'Book Antiqua', 'Palatino', serif", weight: 800, transform: 'uppercase', spacing: '0.05em', style: 'normal' },
             shape: { border: 'ridge', bw: 4, radius: 2, btnRadius: 2 },
             ornament: { corner: 'knotwork', divider: 'rope', texture: 'weave' }, cursor: 'celtic',
             icons: { rim: '#d3d6dc', tint: { color: '#8a3b22', amt: 0.26 } } },
@@ -90,7 +91,7 @@
             note: { es: 'Grecia y Roma; en el resto del mundo, otros periodos.', en: 'Greece and Rome; other periods elsewhere in the world.' },
             light: pl('#f3f0e8', '#faf8f2', '#1b2433', '#4a5568', '#1c4d8c'), dark: pd('#0d1420', '#142031', '#e4ebf6', '#97a6bd', '#85b4ee'),
             map: { light: mp('#a9cfe6', '#c6e0ee', '#efe6d2', '#bda878', '#8a3a1c'), dark: mp('#07182a', '#0e2b45', '#363126', '#76694c', '#efe3c9') },
-            type: { heading: "'Trajan Pro', 'Cinzel', 'Palatino Linotype', 'Book Antiqua', serif", ui: "'Palatino Linotype', 'Book Antiqua', Palatino, serif", weight: 700, transform: 'uppercase', spacing: '0.1em', style: 'normal' },
+            type: { heading: "'Trajan Pro', 'Cinzel', 'Palatino Linotype', 'Book Antiqua', serif", weight: 700, transform: 'uppercase', spacing: '0.1em', style: 'normal' },
             shape: { border: 'double', bw: 4, radius: 0, btnRadius: 0 },
             ornament: { corner: 'meander', divider: 'meander2', texture: 'none' }, cursor: 'laurel',
             icons: { rim: '#f7f3e8', tint: { color: '#2a5fa8', amt: 0.2 } } },
@@ -98,7 +99,7 @@
             note: { es: 'Del 476 al 1000 aprox.; convención europea.', en: 'c. 476–1000; a European convention.' },
             light: pl('#ece3c6', '#f4edd4', '#1f2a1c', '#4f5a47', '#2b5a34'), dark: pd('#10160e', '#181f14', '#e9eed8', '#a1ac90', '#97cf86'),
             map: { light: mp('#b6d0cc', '#cde0d8', '#e7dcb4', '#a99b64', '#2b3f22'), dark: mp('#08171a', '#10282a', '#2f2e20', '#6a6638', '#e3dfb7') },
-            type: { heading: "'Papyrus', 'Uncial Antiqua', 'Palatino Linotype', 'Book Antiqua', serif", ui: "'Palatino Linotype', 'Book Antiqua', Palatino, serif", weight: 700, transform: 'none', spacing: '0.03em', style: 'italic' },
+            type: { heading: "'Papyrus', 'Uncial Antiqua', 'Palatino Linotype', 'Book Antiqua', serif", weight: 700, transform: 'none', spacing: '0.03em', style: 'italic' },
             shape: { border: 'solid', bw: 3, radius: 8, btnRadius: 6 },
             ornament: { corner: 'knot', divider: 'vine', texture: 'paper' }, cursor: 'quill',
             icons: { rim: '#f3e6b4', tint: { color: '#2f6b3a', amt: 0.24 } } },
@@ -106,7 +107,7 @@
             note: { es: 'Del 1000 a 1450 aprox.; convención europea.', en: 'c. 1000–1450; a European convention.' },
             light: pl('#eee1d0', '#f6ebdc', '#2a1620', '#634452', '#5a1f7a'), dark: pd('#0f1021', '#171832', '#ecebf8', '#a3a6c4', '#c79bff'),
             map: { light: mp('#b4cde0', '#cbdfeb', '#ebdcc0', '#ad976d', '#5a1626'), dark: mp('#080f26', '#10204a', '#2d2a28', '#6e6048', '#f0dfb0') },
-            type: { heading: "'Garamond', 'Palatino Linotype', 'Book Antiqua', serif", ui: "'Garamond', 'Palatino Linotype', 'Book Antiqua', serif", weight: 700, transform: 'none', spacing: '0.04em', style: 'normal' },
+            type: { heading: "'Garamond', 'Palatino Linotype', 'Book Antiqua', serif", weight: 700, transform: 'none', spacing: '0.04em', style: 'normal' },
             shape: { border: 'double', bw: 4, radius: 0, btnRadius: 0 },
             ornament: { corner: 'trefoil', divider: 'diamonds', texture: 'paper' }, cursor: 'sword',
             icons: { rim: '#f2e4b9', tint: { color: '#8a1f33', amt: 0.24 } } },
@@ -114,7 +115,7 @@
             note: { es: 'De 1450 a 1700 aprox.; convención europea.', en: 'c. 1450–1700; a European convention.' },
             light: pl('#f0e3c9', '#f8edd7', '#2b1d10', '#5f4a30', '#6e4f08'), dark: pd('#1a120b', '#241912', '#f0e2c8', '#ad9a7e', '#e6bd62'),
             map: { light: mp('#b3cddb', '#cadee8', '#efdcb4', '#b09559', '#4e3208'), dark: mp('#0a1218', '#14232d', '#352b1d', '#78633a', '#f2dfae') },
-            type: { heading: "'Baskerville', 'Garamond', 'Palatino Linotype', serif", ui: "'Baskerville', 'Garamond', 'Palatino Linotype', serif", weight: 600, transform: 'none', spacing: '0.02em', style: 'italic' },
+            type: { heading: "'Baskerville', 'Garamond', 'Palatino Linotype', serif", weight: 600, transform: 'none', spacing: '0.02em', style: 'italic' },
             shape: { border: 'double', bw: 3, radius: 2, btnRadius: 2 },
             ornament: { corner: 'flourish', divider: 'scroll', texture: 'linen' }, cursor: 'dividers',
             icons: { rim: '#f6e3b0', tint: { color: '#8a5d0a', amt: 0.3 } } },
@@ -122,7 +123,7 @@
             note: { es: 'De 1700 a 1830 aprox.; convención europea y atlántica.', en: 'c. 1700–1830; a European and Atlantic convention.' },
             light: pl('#f1ece7', '#f9f5f1', '#2a1c2a', '#5f4a5d', '#a02b5f'), dark: pd('#181219', '#221a24', '#efe4f0', '#ab97ab', '#f08fb4'),
             map: { light: mp('#bdd0e0', '#d2e0ec', '#efe6d6', '#b3a07e', '#4a2342'), dark: mp('#0c1320', '#162438', '#352d33', '#72606d', '#efe0ec') },
-            type: { heading: "'Baskerville', 'Didot', 'Bodoni 72', 'Times New Roman', serif", ui: "'Baskerville', 'Times New Roman', serif", weight: 700, transform: 'none', spacing: '0.01em', style: 'normal' },
+            type: { heading: "'Baskerville', 'Didot', 'Bodoni 72', 'Times New Roman', serif", weight: 700, transform: 'none', spacing: '0.01em', style: 'normal' },
             shape: { border: 'solid', bw: 2, radius: 4, btnRadius: 4 },
             ornament: { corner: 'laurel', divider: 'garland', texture: 'linen' }, cursor: 'nib',
             icons: { rim: '#f7eef4', tint: { color: '#7a3a68', amt: 0.22 } } },
@@ -130,7 +131,7 @@
             note: { es: 'De 1830 a 1914 aprox.; convención europea y norteamericana.', en: 'c. 1830–1914; a European and North American convention.' },
             light: pl('#e6dfd2', '#efe9dd', '#231c17', '#574c42', '#962d12'), dark: pd('#151210', '#1e1a17', '#ece5da', '#aaa093', '#ee8a5a'),
             map: { light: mp('#b8cbd2', '#cfdde0', '#e6dcc6', '#a8977a', '#3e2418'), dark: mp('#0b1316', '#142228', '#332e29', '#6d6254', '#eadfcd') },
-            type: { heading: "'Rockwell', 'Clarendon', 'Georgia', serif", ui: "'Georgia', serif", weight: 800, transform: 'none', spacing: '0', style: 'normal' },
+            type: { heading: "'Rockwell', 'Clarendon', 'Georgia', serif", weight: 800, transform: 'none', spacing: '0', style: 'normal' },
             shape: { border: 'ridge', bw: 4, radius: 3, btnRadius: 3 },
             ornament: { corner: 'rivet', divider: 'cogs', texture: 'hatch' }, cursor: 'arrow-chunky',
             icons: { rim: '#e9ddc6', tint: { color: '#6e3a22', amt: 0.28 } } },
@@ -138,7 +139,7 @@
             note: { es: 'De 1914 a 1990 aprox.', en: 'c. 1914–1990.' },
             light: pl('#efede6', '#f7f5ef', '#1a1a1a', '#53514b', '#00756a'), dark: pd('#0f0f10', '#18181a', '#f0eee6', '#a6a49b', '#4fd6c8'),
             map: { light: mp('#b8d0dd', '#cfe0ea', '#ebe5d3', '#aaa085', '#262626'), dark: mp('#0a121a', '#122030', '#2f2f2d', '#66645c', '#efede5') },
-            type: { heading: "'Futura', 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif", ui: "'Futura', 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif", weight: 700, transform: 'uppercase', spacing: '0.12em', style: 'normal' },
+            type: { heading: "'Futura', 'Century Gothic', 'Avenir Next', 'Trebuchet MS', sans-serif", weight: 700, transform: 'uppercase', spacing: '0.12em', style: 'normal' },
             shape: { border: 'solid', bw: 2, radius: 0, btnRadius: 0 },
             ornament: { corner: 'deco', divider: 'deco', texture: 'halftone' }, cursor: 'arrow',
             icons: { rim: '#ffffff', tint: { color: '#b02e0c', amt: 0.12 } } },
@@ -146,7 +147,7 @@
             note: { es: 'De 1990 a hoy.', en: 'c. 1990 to today.' },
             light: pl('#f3f5f8', '#fbfcfd', '#14181f', '#4d5663', '#1f5fbf'), dark: pd('#0e1116', '#161b22', '#e7ebf1', '#9aa4b2', '#6aa7ff'),
             map: { light: mp('#c3dbe9', '#dbeaf2', '#ece9df', '#bdb69f', '#3a3a3a'), dark: mp('#0b1a26', '#17303f', '#2d3338', '#59636b', '#e6e2d8') },
-            type: { heading: SYS_UI, ui: SYS_UI, weight: 700, transform: 'none', spacing: '0', style: 'normal' },
+            type: { heading: SYS_UI, weight: 700, transform: 'none', spacing: '0', style: 'normal' },
             shape: { border: 'solid', bw: 1, radius: 10, btnRadius: 8 },
             ornament: { corner: 'bracket', divider: 'line', texture: 'none' }, cursor: null,
             icons: { rim: '#ffffff', tint: { color: '#1f5fbf', amt: 0 } } },
@@ -154,7 +155,7 @@
             note: { es: 'Fechas posteriores a hoy: no hay registros, solo proyecciones.', en: 'Dates after today: no records, only projections.' },
             light: pl('#e6f2f4', '#f0f8f9', '#0d1f24', '#3f5a61', '#00606e'), dark: pd('#050a10', '#0b131c', '#e0f6fa', '#8fb2ba', '#5ef0ff'),
             map: { light: mp('#b2dfe6', '#cbe9ee', '#e3ece6', '#9eb8ac', '#0d3a44'), dark: mp('#030a12', '#08202e', '#1b2a2a', '#3f6a6a', '#c9f6fa') },
-            type: { heading: "'Orbitron', 'Eurostile', 'Bank Gothic', ui-monospace, 'SF Mono', Menlo, Consolas, monospace", ui: SYS_UI, weight: 700, transform: 'uppercase', spacing: '0.12em', style: 'normal' },
+            type: { heading: "'Orbitron', 'Eurostile', 'Bank Gothic', ui-monospace, 'SF Mono', Menlo, Consolas, monospace", weight: 700, transform: 'uppercase', spacing: '0.12em', style: 'normal' },
             shape: { border: 'solid', bw: 1, radius: 2, btnRadius: 2 },
             ornament: { corner: 'target', divider: 'scan', texture: 'scan' }, cursor: 'arrow-future',
             icons: { rim: '#d8fbff', tint: { color: '#00a3b8', amt: 0.3 } } }
@@ -272,7 +273,9 @@
         const p = dark ? era.dark : era.light; const v = {};
         v['--bg'] = p.bg; v['--panel'] = rgba(p.panel, PANEL_ALPHA); v['--text'] = p.text; v['--muted'] = p.muted; v['--accent'] = p.accent;
         v['--ok'] = p.ok; v['--warn'] = p.warn; v['--err'] = p.err;
-        v['--font'] = era.type.heading; v['--font-ui'] = era.type.ui;
+        // La letra de epoca solo en TITULOS; el texto corrido, siempre la del sistema (legible, con negrita y cursiva de verdad). El creador,
+        // 2026-11-14: «no deberia estarse modificando la tipografia de TODO, sino solo de cosas especificas como titulos».
+        v['--font'] = era.type.heading; v['--font-ui'] = READ_FONT;
         v['--h-weight'] = String(era.type.weight); v['--h-transform'] = era.type.transform; v['--h-spacing'] = era.type.spacing; v['--h-style'] = era.type.style;
         const full = level >= 2;
         v['--bstyle'] = full ? era.shape.border : 'solid'; v['--bw'] = (full ? era.shape.bw : 1) + 'px';

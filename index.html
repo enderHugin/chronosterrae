@@ -128,15 +128,15 @@
         .ev-dl { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 1.3; }
         .ev-dl .ev-dl-ico { width: 20px; height: 20px; flex: none; }
         .ev-dl .ev-dl-k { font-weight: 700; color: var(--accent); min-width: 0; }
-        .ev-dl .ev-dl-d { font-variant-numeric: tabular-nums; }
+        .ev-dl .ev-dl-d { font-variant-numeric: tabular-nums; font-weight: 600; }
         .ev-dl .ev-dl-tm { margin-left: auto; min-width: 44px; padding: 0 6px; height: 20px; line-height: 18px; box-sizing: border-box; text-align: center; font-size: 12px; font-variant-numeric: tabular-nums; border: 1px solid color-mix(in srgb, var(--text) 30%, transparent); border-radius: 5px; }
         .ev-dl .ev-dl-tm.unk { border-style: dashed; color: var(--muted); }
         .ev-dl.other { opacity: 0.5; cursor: pointer; }
         .ev-dl.other:hover, .ev-dl.other:focus-visible { opacity: 0.85; }
         .ev-dl.other .ev-dl-d { text-decoration: underline dotted; text-underline-offset: 3px; }
         .ev-dl .ev-dl-or { color: var(--muted); font-size: 12px; }
-        /* Simbolo de fiabilidad (reutilizable): 4 barras = nivel de revision; su color = en que se basa (verde: documento, medida o resto; azul:
-           modelo; ocre: reconstruccion; morado: especulacion). Lo que no es prueba directa lo dice ademas con palabras (regla 3). */
+        /* Simbolo de fiabilidad (reutilizable): la MEDALLA (map/reliability.js): barras 1-4 + color + nombre (bronce, plata, oro, diamante;
+           «en disputa» en rojo). Lo que no es prueba directa (reconstruccion, modelo, especulacion) lo dice ademas con palabras (regla 3). */
         .rel-chip { display: inline-flex; align-items: center; gap: 4px; flex: none; --rel: #a0632b; color: var(--rel); font: 700 11px var(--font-ui); cursor: help; }
         .rel-chip svg { width: 18px; height: 16px; display: block; }
         .rel-chip rect.on { fill: var(--rel); } .rel-chip rect.off { fill: none; stroke: color-mix(in srgb, var(--text) 35%, transparent); stroke-width: 0.8; }
@@ -202,6 +202,7 @@
         #info .row { margin-top: 7px; font-size: 13px; line-height: 1.4; word-break: break-word; }
         #info .row.row-link { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
         #info .row b { color: var(--accent); }
+        #info .row strong { font-weight: 700; color: var(--text); } #info .row em { font-style: italic; }
         #info a { color: var(--accent); }
         #info .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
 
@@ -248,8 +249,11 @@
         @media (max-height: 820px) { .toast:nth-child(n+3) { display: none; } }   /* con poca altura, como mucho dos avisos a la vez */
         @media (max-height: 520px) { .toast:nth-child(n+2) { display: none; } #status { max-height: 4.2em; } #time-sub, #clock-sub { display: none; } #time-label { font-size: 17px; } #clock-controls { margin-top: 0; } #slider { margin: 4px 0 0; } }
         @media (max-width: 760px) { .toast { padding: 6px 10px; font-size: 13px; } .toast:nth-child(n+2) { display: none; } #status { max-height: 5.6em; } #events, #changes, #sky, #settings, #info { min-height: 90px; } }
-        #ev-hover { position: absolute; left: 0; top: 0; z-index: 4; pointer-events: none; padding: 1px 9px; border-radius: 11px; border: 1.5px solid #000; background: var(--ev, #888); color: #000;
-            font: 700 12px/18px var(--font-ui); white-space: nowrap; max-width: 280px; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); }
+        /* etiqueta del suceso bajo el raton: borde de dos colores, fuera el del pais del lugar (--co) y dentro el del tipo (--ev) */
+        #ev-hover { position: absolute; left: 0; top: 0; z-index: 4; pointer-events: none; padding: 0 9px; border-radius: 11px; border: 2px solid var(--ev, #888); background: var(--bg); color: var(--text);
+            font: 400 12px/18px var(--font-ui); white-space: nowrap; max-width: 320px; overflow: hidden; text-overflow: ellipsis;
+            box-shadow: 0 0 0 2.5px var(--co, color-mix(in srgb, var(--text) 30%, transparent)), 0 2px 6px rgba(0, 0, 0, 0.35); }
+        #ev-hover strong { font-weight: 700; } #ev-hover em { font-style: italic; color: var(--muted); margin-left: 5px; }
         [hidden] { display: none !important; }
         #space { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
         /* Sistema solar: continuacion del zoom del globo. El lienzo de detras es #space; el mapa (la Tierra) queda entre ese y este */
@@ -550,28 +554,49 @@
 
         /* Leyenda viva (el creador, 2026-11-13): columna estrecha al margen derecho con los iconos que se ven AHORA, cada fila a la altura de
            su punto; el nombre se despliega al señalarla; un cable punteado une fila y punto (al señalar, o siempre y tenues si se elige). */
-        :root { --lg-w: 50px; }
-        @media (max-width: 760px) { :root { --lg-w: 46px; } }
+        /* 2026-11-14 (el creador): mas compacta (iconos mas pequeños) y dinamica: la fila señalada desde el globo se pone a la altura de su
+           punto (las demas se apartan, con transicion); el recuadro del nombre nunca lo cruza el cable (map/legend.js, bubblePlace); «+N» abre
+           la lista entera con nombres y barra; recuadros con dos colores: fuera el del pais del lugar, dentro el del tipo. */
+        :root { --lg-w: 40px; --lg-wide: 272px; }
+        @media (pointer: coarse) { :root { --lg-w: 46px; } }
+        @media (max-width: 760px) { :root { --lg-wide: min(272px, 74vw); } }
+        body.lg-wide { --lg-w: var(--lg-wide); }
         body.lg-on #dock { right: calc(14px + var(--lg-w)); }
         body.lg-on .maplibregl-ctrl-bottom-right .maplibregl-ctrl { margin-right: calc(14px + var(--lg-w)) !important; }
         #legend { position: absolute; right: 0; top: var(--top-h, 60px); bottom: var(--bot-h, 180px); width: var(--lg-w); z-index: 12; box-sizing: border-box; padding: 0; display: flex; flex-direction: column;
             background: color-mix(in srgb, var(--bg) 62%, transparent); border: 1px solid color-mix(in srgb, var(--text) 18%, transparent); border-right: 0; border-radius: 10px 0 0 10px; }
         #legend[hidden] { display: none; }
-        #lg-head { flex: none; height: 34px; margin: 4px 4px 2px; padding: 0; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); background: transparent; color: var(--text);
-            font: 700 12px/1 var(--font-ui); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
-        #lg-head .lg-cap { font-size: 9px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; }
+        #lg-head { flex: none; height: 30px; margin: 4px 3px 2px; padding: 0; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); background: transparent; color: var(--text);
+            font: 700 11px/1 var(--font-ui); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+        #lg-head .lg-cap { font-size: 8.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; }
         #lg-head[aria-expanded="true"] { background: var(--accent); color: var(--bg); }
         #lg-head[aria-expanded="true"] .lg-cap { color: var(--bg); }
         #lg-list { position: relative; flex: 1 1 auto; margin: 0; padding: 0; list-style: none; min-height: 0; }
-        .lg-row { position: absolute; left: 0; right: 0; height: var(--lg-row, 34px); display: flex; align-items: center; justify-content: center; }
-        .lg-btn { position: relative; width: 38px; height: 32px; padding: 0; border: 0; border-radius: 8px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .lg-row { position: absolute; left: 0; right: 0; height: var(--lg-row, 26px); display: flex; align-items: center; justify-content: center; transition: top 0.18s ease; }
+        @media (prefers-reduced-motion: reduce) { .lg-row { transition: none; } }
+        .lg-btn { width: 32px; height: calc(var(--lg-row, 26px) - 2px); padding: 0; border: 0; border-radius: 7px; background: transparent; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .lg-btn:hover, .lg-btn:focus-visible, .lg-row.hot .lg-btn { background: color-mix(in srgb, var(--accent) 28%, transparent); outline: none; }
-        .lg-ico { width: 28px; height: 28px; display: block; pointer-events: none; }
-        .lg-name { position: absolute; right: calc(100% + 6px); top: 50%; transform: translateY(-50%); display: none; white-space: nowrap; max-width: min(320px, 70vw); overflow: hidden; text-overflow: ellipsis;
-            padding: 3px 10px; border-radius: 12px; background: var(--bg); color: var(--text); border: 1.5px solid var(--accent); font: 600 12.5px/1.35 var(--font-ui); box-shadow: 0 2px 10px rgba(0,0,0,0.35); pointer-events: none; text-align: left; }
-        .lg-name .lg-date { margin-left: 6px; font-weight: 500; color: var(--muted); }
+        .lg-ico { width: 20px; height: 20px; display: block; flex: none; pointer-events: none; }
+        @media (pointer: coarse) { .lg-btn { width: 40px; } .lg-ico { width: 24px; height: 24px; } }
+        /* recuadro del nombre: borde de DOS colores, fuera el pais del lugar (--co) y dentro el tipo de suceso (--ty) */
+        .lg-name { position: absolute; right: calc(100% + var(--lg-nr, 6px)); top: 50%; transform: translateY(-50%); display: none; white-space: nowrap; max-width: min(320px, 70vw); overflow: hidden; text-overflow: ellipsis;
+            padding: 2px 9px; border-radius: 11px; background: var(--bg); color: var(--text); border: 2px solid var(--ty, var(--accent)); font: 400 12.5px/1.35 var(--font-ui);
+            box-shadow: 0 0 0 2.5px var(--co, color-mix(in srgb, var(--text) 30%, transparent)), 0 2px 10px rgba(0,0,0,0.35); pointer-events: none; text-align: left; }
+        .lg-name strong { font-weight: 700; }
+        .lg-name .lg-date { margin-left: 6px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+        .lg-name .lg-co { margin-left: 6px; font-style: italic; color: var(--muted); }
         .lg-row.hot .lg-name { display: block; }
-        #lg-extra { flex: none; height: 22px; box-sizing: border-box; text-align: center; font: 700 11px/1 var(--font-ui); color: var(--muted); padding: 5px 0 6px; cursor: help; }   /* su sitio, siempre: si apareciera despues de medir, las filas se saldrian */
+        .lg-row.up .lg-name { top: auto; bottom: calc(100% + 3px); transform: none; }
+        .lg-row.down .lg-name { top: calc(100% + 3px); transform: none; }
+        #lg-extra { flex: none; height: 22px; margin: 0 3px 3px; padding: 0; box-sizing: border-box; border: 0; border-radius: 6px; background: transparent; text-align: center; font: 700 10.5px/1 var(--font-ui); color: var(--muted); cursor: pointer; }   /* su sitio, siempre: si apareciera despues de medir, las filas se saldrian */
+        #lg-extra:hover, #lg-extra:focus-visible { color: var(--text); background: color-mix(in srgb, var(--accent) 22%, transparent); outline: none; }
+        #lg-extra:empty { cursor: default; background: transparent; }
+        /* lista desplegada: entera, con nombres y barra; la fila señalada desde el globo se desplaza a la altura de su punto (o al centro) */
+        #legend.wide #lg-list { overflow-y: auto; overscroll-behavior: contain; padding: 0 4px 0 2px; }
+        #legend.wide .lg-row { position: relative; top: auto !important; height: 30px; transition: none; }
+        #legend.wide .lg-btn { width: 100%; height: 28px; justify-content: flex-start; gap: 6px; padding: 0 6px 0 4px; border-radius: 6px; border-left: 3px solid var(--co, transparent); box-shadow: inset 3px 0 0 var(--ty, transparent); }
+        #legend.wide .lg-name { position: static; display: block; transform: none; flex: 1 1 auto; min-width: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; font-size: 12px; }
+        #legend.wide .lg-name .lg-co { display: none; }
         #lg-pop { position: absolute; right: calc(100% + 8px); top: 0; width: 290px; max-width: calc(100vw - var(--lg-w) - 24px); max-height: 100%; overflow: auto; box-sizing: border-box; padding: 10px 12px; font-size: 12.5px; line-height: 1.45; z-index: 2; }
         #lg-pop[hidden] { display: none; }
         #lg-pop h3 { margin: 0 0 6px; font: 700 12px/1.3 var(--font-ui); text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
@@ -590,7 +615,6 @@
         #lg-wires circle.hot { fill: none; stroke: var(--accent); stroke-width: 2.6; }
         #lg-wires circle.hot-under { fill: none; stroke: var(--bg); stroke-width: 5.5; stroke-opacity: 0.85; }
         body.solar-on #legend, body.solar-on #lg-wires { display: none; }
-        @media (pointer: coarse) { .lg-btn { width: 40px; height: 38px; } }
         .maplibregl-ctrl-legend .maplibregl-ctrl-icon { display: flex; align-items: center; justify-content: center; }
         .maplibregl-ctrl-legend svg { width: 18px; height: 18px; display: block; }
         .maplibregl-ctrl-legend[aria-pressed="true"] { background: var(--accent) !important; color: var(--bg); }
@@ -890,7 +914,7 @@ const parsePrefs = (raw) => {
     if (typeof p.jd === 'number' && Number.isFinite(p.jd) && p.jd >= 900000 && p.jd <= 3000000) out.jd = p.jd;   // dia juliano UT del reloj
     if (p.tl === 0 || p.tl === 1) out.tl = p.tl;   // linea de tiempo: 1 desplegada (pasos, saltos, creditos); por defecto plegada
     if (Number.isInteger(p.pg) && p.pg >= 0 && p.pg <= 7) out.pg = p.pg;   // notas cerradas por el usuario que no deben volver solas (1 estado, 2 fondo espacial, 4 sistema solar)
-    ['lg', 'lgw', 'lgd'].forEach((k) => { if (p[k] === 0 || p[k] === 1) out[k] = p[k]; });   // leyenda viva: abierta, cables siempre, puntos en el globo
+    ['lg', 'lgw', 'lgd', 'lgx'].forEach((k) => { if (p[k] === 0 || p[k] === 1) out[k] = p[k]; });   // leyenda viva: abierta, cables siempre, puntos en el globo, lista entera
     return out;
 };
 const readPrefs = () => {
@@ -911,7 +935,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined, tl: prefs.tl, pg: prefs.pg || undefined, lg: prefs.lg, lgw: prefs.lgw, lgd: prefs.lgd };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined, tl: prefs.tl, pg: prefs.pg || undefined, lg: prefs.lg, lgw: prefs.lgw, lgd: prefs.lgd, lgx: prefs.lgx };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -925,7 +949,7 @@ const savePrefs = (patch) => {
 const i18n = {
     es: {
         lgBtn: 'Leyenda: qué es cada icono', lgTitle: 'Leyenda', lgOpts: 'Qué se ve y por qué; opciones', lgClose: 'Cerrar leyenda', lgWires: 'Cables', lgWPoint: 'Al señalar uno', lgWAlways: 'Siempre (tenues)',
-        lgDots: 'Puntos de color en el globo (los iconos, en esta lista)', lgShow: 'Mostrar', lgMore: '+{n}', lgMoreTip: '{n} más en pantalla, menos notorios: acércate o filtra', lgTap: 'Toca otra vez para abrir',
+        lgDots: 'Puntos de color en el globo (los iconos, en esta lista)', lgShow: 'Mostrar', lgMore: '+{n} ▾', lgMoreTip: '{n} más en pantalla, menos notorios: verlos todos en una lista', lgAll: 'Lista ▾', lgAllTip: 'Ver la lista entera, con nombres', lgLess: '▴', lgLessTip: 'Volver a la columna de iconos', lgTap: 'Toca otra vez para abrir',
         lgWhyRest: 'Del último año', lgWhyFlow: 'Del tramo de tiempo que acaba de pasar', lgWhyN: '{s} de {t} sucesos: a esta escala solo los de notoriedad {f} o más, y uno por zona para que no se amontonen. Acércate para ver más.',
         lgWhyAll: '{s} sucesos: todos los que hay a esta escala.', lgWhyNone: 'Ningún suceso a la vista en esta fecha y escala.', lgWhyBuilt: 'Construcciones: las más conocidas a esta escala ({b} a la vista).', lgEmpty: 'Nada a la vista',
         donate: 'Apoyar el proyecto', infoImage: 'Imagen', infoMore: 'En qué se basa, estado, fuente y cita', tlJumps: 'Épocas', tlJumpsTip: 'Saltos rápidos a fechas señaladas (cada uno con el aspecto de su época)', tlKeysTip: 'Teclado: cuánto mueven ← → y RePág/AvPág', tlInfoTip: 'Lo que ves ahora; fuentes y licencias', sceneTitle: 'Lo que ves ahora', creditsTitle: 'Fuentes y licencias', creditsPeek: 'Fuentes', notesBack: 'Volver a mostrar las notas que cerraste', searchPlaceholder: 'Buscar persona, suceso, edificio, imperio…',
@@ -1149,7 +1173,7 @@ const i18n = {
     },
     en: {
         lgBtn: 'Legend: what each icon is', lgTitle: 'Legend', lgOpts: 'What is shown and why; options', lgClose: 'Close legend', lgWires: 'Leader lines', lgWPoint: 'When pointing at one', lgWAlways: 'Always (faint)',
-        lgDots: 'Coloured dots on the globe (the icons, in this list)', lgShow: 'Show', lgMore: '+{n}', lgMoreTip: '{n} more on screen, less notable: zoom in or filter', lgTap: 'Tap again to open',
+        lgDots: 'Coloured dots on the globe (the icons, in this list)', lgShow: 'Show', lgMore: '+{n} ▾', lgMoreTip: '{n} more on screen, less notable: see them all in a list', lgAll: 'List ▾', lgAllTip: 'See the whole list, with names', lgLess: '▴', lgLessTip: 'Back to the icon column', lgTap: 'Tap again to open',
         lgWhyRest: 'From the last year', lgWhyFlow: 'From the stretch of time just passed', lgWhyN: '{s} of {t} events: at this scale only those with notability {f} or more, and one per area so they do not pile up. Zoom in to see more.',
         lgWhyAll: '{s} events: all there are at this scale.', lgWhyNone: 'No events in view at this date and scale.', lgWhyBuilt: 'Structures: the best known at this scale ({b} in view).', lgEmpty: 'Nothing in view',
         donate: 'Support the project', infoImage: 'Image', infoMore: 'What it is based on, status, source and citation', tlJumps: 'Eras', tlJumpsTip: 'Quick jumps to landmark dates (each in the look of its era)', tlKeysTip: 'Keyboard: how far ← → and PgUp/PgDn move', tlInfoTip: 'What you are seeing; sources and licences', sceneTitle: 'What you are seeing', creditsTitle: 'Sources and licences', creditsPeek: 'Sources', notesBack: 'Show again the notes you closed', searchPlaceholder: 'Search a person, event, building, empire…',
@@ -1468,6 +1492,23 @@ function el(tag, props, children) {
     return node;
 }
 
+/** Texto con formato: [[texto, ''|'b'|'i'|'bi'], ...] -> nodos. Negrita = lo clave (fechas, nombres, la medalla); cursiva = matices
+ *  (papel, nombre de una fuente u obra, aproximaciones). El creador, 2026-11-14: «diferenciacion clara entre negritas y cursivas… para
+ *  formatear la informacion de cada elemento… y que se pueda distinguir mas facilmente de un vistazo». */
+function richNodes(parts) {
+    return parts.filter((p) => p && p[0] !== '' && p[0] != null).map(([txt, st]) => {
+        let n = document.createTextNode(String(txt));
+        if (st && st.includes('i')) { const e = document.createElement('em'); e.appendChild(n); n = e; }
+        if (st && st.includes('b')) { const e = document.createElement('strong'); e.appendChild(n); n = e; }
+        return n;
+    });
+}
+/** Plantilla con {src} y {v} -> partes con formato: la fuente en cursiva y el valor en negrita. */
+function richFmt(key, vars) {
+    const out = []; const tpl = t(key); const re = /\{(\w+)\}/g; let last = 0; let m;
+    while ((m = re.exec(tpl))) { out.push([tpl.slice(last, m.index), '']); const k = m[1]; out.push([vars[k] == null ? '' : vars[k], k === 'src' ? 'i' : k === 'v' ? 'b' : '']); last = re.lastIndex; }
+    out.push([tpl.slice(last), '']); return out;
+}
 function fillRows(body, rows) {
     rows.forEach((r) => {
         const row = el('div', { class: 'row' }, [el('b', { text: r.label + ': ' })]);
@@ -1475,7 +1516,8 @@ function fillRows(body, rows) {
         if (r.onclick) { row.classList.add('row-link'); row.tabIndex = 0; row.setAttribute('role', 'button'); row.addEventListener('click', r.onclick); row.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') r.onclick(); }); }
         if (r.icon) { const im = el('img', { class: 'ev-ico', alt: '', 'aria-hidden': 'true', src: r.icon }); im.style.cssText = 'display:inline-block;width:20px;height:20px;vertical-align:-5px;margin-right:4px'; row.appendChild(im); }
         if (r.badge) row.appendChild(el('span', { class: 'badge ' + r.badge, text: t('ev.' + r.badge) }));
-        else if (r.href) row.appendChild(el('a', { href: r.href, target: '_blank', rel: 'noopener', text: r.value }));
+        else if (r.href) row.appendChild(el('a', { href: r.href, target: '_blank', rel: 'noopener' }, richNodes(r.rich || [[r.value, '']])));
+        else if (r.rich) richNodes(r.rich).forEach((n) => row.appendChild(n));
         else row.appendChild(document.createTextNode(String(r.value)));
         if (r.note) body.appendChild(row), body.appendChild(el('div', { class: 'row', text: r.note, style: 'color:var(--muted);font-size:12px' }));
         else body.appendChild(row);
@@ -2720,13 +2762,22 @@ function evHoverSet(f) {
     if (src) src.setData(f ? { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: f.geometry, properties: f.properties }] } : emptyFC());
     const chip = $('ev-hover');
     if (!f || LG_HOT_SELF) { chip.hidden = true; return; }     // señalado desde la leyenda: el nombre ya va en su fila (y el cable lo tacharia)
-    chip.textContent = f.properties.name || ''; chip.style.setProperty('--ev', evColor(f.properties.icon)); chip.hidden = !chip.textContent;
+    chipFill(chip, f.properties.name || '', '', f.geometry && f.geometry.coordinates); chip.style.setProperty('--ev', evColor(f.properties.icon));
     evHoverPlace();
+}
+/** Etiqueta del mapa: nombre en negrita, fecha, y el pais del lugar en cursiva; su color va al borde exterior (--co). */
+function chipFill(chip, name, date, coords) {
+    const p = coords ? map.project(coords) : null; const pol = p ? polityAt(p.x, p.y) : null;
+    chip.replaceChildren(...richNodes([[name, 'b'], [date ? ' · ' + date : '', ''], [pol && pol.name ? pol.name : '', 'i']]));
+    if (pol) chip.style.setProperty('--co', pol.c); else chip.style.removeProperty('--co');
+    chip.hidden = !name;
 }
 // La etiqueta va a la derecha del icono; si no cabe (movil, icono cerca del borde), a su izquierda; si tampoco (nombre largo en pantalla
 // estrecha), debajo y centrada. Nunca encima del icono ni fuera de la pantalla (antes se salia por la derecha).
-function chipPlace(chip, p, dx) {
+// Con la leyenda abierta y ese elemento en ella, ENCIMA del icono y centrada: el cable sale del punto en horizontal y no la tacha.
+function chipPlace(chip, p, dx, above) {
     const w = chip.offsetWidth || 0; const W = map.getContainer().clientWidth;
+    if (above) { chip.style.transform = 'translate(' + Math.round(Math.max(6, Math.min(p.x - w / 2, W - 6 - w))) + 'px,' + Math.round(p.y - 44) + 'px)'; return; }
     let x = p.x + dx; let y = p.y - 11;
     if (x + w > W - 6) {
         if (p.x - dx - w >= 6) x = p.x - dx - w;
@@ -2734,8 +2785,9 @@ function chipPlace(chip, p, dx) {
     }
     chip.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px)';
 }
+const lgHas = (id) => Boolean(id && typeof LG !== 'undefined' && LG.open && LG.rows.some((r) => r.id === id));
 function evHoverPlace() {
-    if (!EVH.coords) return; chipPlace($('ev-hover'), map.project(EVH.coords), 18);
+    if (!EVH.coords) return; chipPlace($('ev-hover'), map.project(EVH.coords), 18, lgHas(EVH.id));
 }
 function evHoverUpdate() {
     EVH.raf = 0;
@@ -2935,10 +2987,10 @@ function buHoverSet(f) {
     const chip = $('ev-hover');
     if (!f || LG_HOT_SELF) { chip.hidden = true; return; }
     const y = f.properties.d ? ChronosBuilt.dateText({ iso: f.properties.d, precision: f.properties.p }, formatYear) : '';
-    chip.textContent = (f.properties.n || '') + (y ? ' · ' + y : ''); chip.style.setProperty('--ev', ChronosBuilt.CHIP); chip.hidden = !chip.textContent;
-    chipPlace(chip, map.project(BUH.coords), 16);
+    chipFill(chip, f.properties.n || '', y, BUH.coords); chip.style.setProperty('--ev', ChronosBuilt.CHIP);
+    chipPlace(chip, map.project(BUH.coords), 16, lgHas(BUH.id));
 }
-map.on('move', () => { if (BUH.coords && !EVH.id) chipPlace($('ev-hover'), map.project(BUH.coords), 16); });
+map.on('move', () => { if (BUH.coords && !EVH.id) chipPlace($('ev-hover'), map.project(BUH.coords), 16, lgHas(BUH.id)); });
 // Centrar al hacer clic (ajuste): un clic sobre un elemento del mapa lleva el centro a ese punto, sin cambiar el zoom
 const CENTER = { on: prefs.cc === true };
 $('btn-center').setAttribute('aria-pressed', String(CENTER.on));
@@ -4968,18 +5020,21 @@ function eventsVisApply() {
 // Cables: «al señalar uno» (por defecto) o «siempre» (tenues). Con «puntos de color», el globo pinta puntos y los iconos quedan en la lista.
 // Coste: nada mientras el globo se mueve (los cables se esconden); al parar, una pasada sobre lo dibujado (<= 80 sucesos) y lo que haya
 // puesto MapLibre de construcciones. La logica (que filas, donde, por donde va el cable) esta en map/legend.js con sus pruebas.
-var LG = { open: prefs.lg === 1, always: prefs.lgw === 1, dots: prefs.lgd !== 0, rows: [], extra: 0, hot: null, touchHot: null, timer: 0, sig: '', lastPointer: 'mouse', ms: 0 };
+var LG = { open: prefs.lg === 1, always: prefs.lgw === 1, dots: prefs.lgd !== 0, wide: prefs.lgx === 1, rows: [], extra: 0, hot: null, pin: null, pinT: 0, hb: null, touchHot: null, timer: 0, sig: '', lastPointer: 'mouse', ms: 0, rowH: 26 };
 const LG_DOT_RADIUS = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 3.6, 1, 5.6];
-const lgRowH = () => (matchMedia('(pointer: coarse)').matches ? 40 : 34);
+const lgRowH = () => (LG.wide ? 30 : matchMedia('(pointer: coarse)').matches ? 32 : 26);
 (function lgBuild() {
     const box = el('aside', { id: 'legend', class: 'panel' }, [
         el('button', { id: 'lg-head', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'lg-pop' }, [el('span', { id: 'lg-n', text: '0' }), el('span', { class: 'lg-cap', text: '≡ ?' })]),
-        el('ul', { id: 'lg-list' }), el('div', { id: 'lg-extra' }), el('div', { id: 'lg-pop', class: 'panel' })
+        el('ul', { id: 'lg-list' }), el('button', { id: 'lg-extra', type: 'button' }), el('div', { id: 'lg-pop', class: 'panel' })
     ]);
     box.hidden = true;
     document.body.appendChild(box); box.querySelector('#lg-pop').hidden = true;
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.id = 'lg-wires'; svg.setAttribute('aria-hidden', 'true'); svg.hidden = true; document.body.appendChild(svg);
     box.querySelector('#lg-head').addEventListener('click', () => { const pop = $('lg-pop'); const open = pop.hidden; if (open) lgPopRender(); pop.hidden = !open; $('lg-head').setAttribute('aria-expanded', String(open)); });
+    // «+N ▾» abre la lista entera (con nombres y barra); «▴» vuelve a la columna
+    box.querySelector('#lg-extra').addEventListener('click', () => { if (!LG.wide && !LG.extra && !LG.rows.length) return; lgWide(!LG.wide); });
+    let scr = 0; box.querySelector('#lg-list').addEventListener('scroll', () => { if (!LG.wide || scr) return; scr = requestAnimationFrame(() => { scr = 0; lgAnchors(); lgWires(); }); }, { passive: true });
 })();
 class LegendControl {
     onAdd() {
@@ -4999,6 +5054,7 @@ function lgSet(open, persist) {
     LG.open = !!open; if (persist) savePrefs({ lg: LG.open ? 1 : 0 });
     document.body.classList.toggle('lg-on', LG.open);
     $('legend').hidden = !LG.open; $('lg-wires').hidden = !LG.open;
+    document.body.classList.toggle('lg-wide', LG.open && LG.wide); $('legend').classList.toggle('wide', LG.wide);
     if (!LG.open) { $('lg-pop').hidden = true; $('lg-head').setAttribute('aria-expanded', 'false'); lgHot(null); LG.sig = ''; }
     legendControl.texts(); lgDotsApply();
     if (LG.open) lgSchedule(0);
@@ -5047,39 +5103,101 @@ function lgText(it) {
     if (it.kind === 'e') return { name: evName(it.f), date: String(it.f.properties.time.iso || '').replace(/T.*$/, '') };
     const p = it.props; return { name: p.n || '', date: p.d ? ChronosBuilt.dateText({ iso: p.d, precision: p.p }, formatYear) : '' };
 }
+/** Lista entera con nombres (true) o columna de iconos (false). */
+function lgWide(on) {
+    LG.wide = !!on; savePrefs({ lgx: LG.wide ? 1 : 0 });
+    document.body.classList.toggle('lg-wide', LG.open && LG.wide); $('legend').classList.toggle('wide', LG.wide);
+    $('lg-list').textContent = ''; $('lg-list').scrollTop = 0; LG.sig = ''; LG.pin = null;
+    lgSchedule(0);
+}
+/** Pais del lugar en pantalla (x, y del mapa) segun las fronteras dibujadas: { c: color, name } o null (mar, sin fronteras). */
+function polityAt(x, y) {
+    if (!map.getLayer('borders-fill') || map.getLayoutProperty('borders-fill', 'visibility') === 'none') return null;
+    let h = null; try { h = map.queryRenderedFeatures([x, y], { layers: ['borders-fill'] })[0]; } catch (e) { return null; }
+    if (!h || !h.properties || !h.properties._c) return null;
+    const p = h.properties; return { c: p._c, name: (lang === 'es' && p.NAME_ES) || p.NAME || '' };
+}
+const lgTypeColor = (it) => (it.kind === 'e' ? evColor(it.f.properties.icon) : ChronosBuilt.CHIP);
 function lgRender() {
     if (!LG.open) return;
     const t0 = performance.now();
     const box = $('legend'); const list = $('lg-list'); const lr = list.getBoundingClientRect(); const br = box.getBoundingClientRect();
-    const rowH = lgRowH(); list.style.setProperty('--lg-row', rowH + 'px');
-    const max = Math.max(0, Math.floor(lr.height / rowH));
+    const rowH = lgRowH(); LG.rowH = rowH; list.style.setProperty('--lg-row', rowH + 'px');
+    // columna: se dejan ~4 filas de holgura para que la señalada pueda ir a la altura de su punto (sin holgura no se puede mover)
+    const fit = Math.floor(lr.height / rowH); const max = LG.wide ? Infinity : Math.max(0, fit - Math.min(4, Math.round(fit * 0.12)));
     const cr = map.getContainer().getBoundingClientRect();
     const items = lgCollect(br.left - cr.left - 4);
-    const pick = ChronosLegend.pickRows(items, { max });
-    const ys = ChronosLegend.placeRows(pick.rows.map((it) => it.y + cr.top - lr.top), 0, lr.height, rowH);
-    pick.rows.forEach((it, i) => { it.rowY = ys[i]; it.ax = br.left + 2; it.ay = lr.top + ys[i] + rowH / 2; it.px = it.x + cr.left; it.py = it.y + cr.top; });
+    const pick = ChronosLegend.pickRows(items, { max: LG.wide ? items.length : max });
+    pick.rows.forEach((it) => { it.yd = it.y + cr.top - lr.top; it.px = it.x + cr.left; it.py = it.y + cr.top; });
     LG.rows = pick.rows; LG.extra = pick.extra;
     $('lg-n').textContent = String(items.length);
-    const ex = $('lg-extra'); ex.textContent = pick.extra ? fmt('lgMore', { n: pick.extra }) : ''; ex.title = pick.extra ? fmt('lgMoreTip', { n: pick.extra }) : '';
-    const sig = pick.rows.map((it) => it.id + '@' + Math.round(it.rowY)).join('|') + '#' + lang;
-    if (sig !== LG.sig) {                       // solo se rehace la lista si cambio (no se pierde la fila bajo el puntero)
-        LG.sig = sig; list.textContent = '';
-        pick.rows.forEach((it) => list.appendChild(lgRow(it)));
-    }
+    const ex = $('lg-extra');
+    ex.textContent = LG.wide ? t('lgLess') : pick.extra ? fmt('lgMore', { n: pick.extra }) : pick.rows.length ? t('lgAll') : '';
+    ex.title = LG.wide ? t('lgLessTip') : pick.extra ? fmt('lgMoreTip', { n: pick.extra }) : t('lgAllTip');
+    if (LG.pin && !pick.rows.some((it) => it.id === LG.pin)) LG.pin = null;
+    lgLayout();
     if (LG.hot && !pick.rows.some((it) => it.id === LG.hot)) lgHot(null);
     if (LG.touchHot && !pick.rows.some((it) => it.id === LG.touchHot)) LG.touchHot = null;
-    list.querySelectorAll('.lg-row').forEach((li) => li.classList.toggle('hot', li.dataset.id === LG.hot));
+    if (LG.hot) lgBubble();
     lgWires();
     if (!$('lg-pop').hidden) lgPopRender();
     LG.ms = performance.now() - t0;
 }
+/**
+ * Coloca las filas. Columna: cada una a la altura de su punto (map/legend.js); la fijada (señalada desde el globo) justo a la suya. Las
+ * filas que ya estaban se mueven (transicion), no se rehacen: asi no se pierde la que esta bajo el puntero. Lista entera: en orden.
+ */
+function lgLayout() {
+    const list = $('lg-list'); const rowH = LG.rowH; const H = list.clientHeight;
+    const have = new Map(); list.querySelectorAll('.lg-row').forEach((li) => have.set(li.dataset.id, li));
+    const keep = new Set(LG.rows.map((it) => it.id));
+    have.forEach((li, id) => { if (!keep.has(id)) li.remove(); });
+    if (LG.wide) {
+        const sig = LG.rows.map((it) => it.id).join('|') + '#' + lang;
+        if (sig !== LG.sig) { LG.sig = sig; LG.rows.forEach((it) => list.appendChild(have.get(it.id) || lgRow(it))); }
+        LG.rows.forEach((it) => lgColors(list.querySelector('.lg-row[data-id="' + CSS.escape(it.id) + '"]'), it));
+    } else {
+        const k = LG.pin ? LG.rows.findIndex((it) => it.id === LG.pin) : -1;
+        const desired = LG.rows.map((it) => it.yd);
+        const ys = k >= 0 ? ChronosLegend.placeRowsPinned(desired, 0, H, rowH, k) : ChronosLegend.placeRows(desired, 0, H, rowH);
+        LG.rows.forEach((it, i) => {
+            it.rowY = ys[i];
+            let li = have.get(it.id); if (!li) { li = lgRow(it); list.appendChild(li); }
+            li.style.top = Math.round(it.rowY) + 'px';
+        });
+        LG.sig = '';
+    }
+    list.querySelectorAll('.lg-row').forEach((li) => li.classList.toggle('hot', li.dataset.id === LG.hot));
+    lgAnchors();
+}
+/** Colores del recuadro: --co (pais del lugar, en esta fecha) y --ty (tipo). Solo en la lista entera (todas) o en la fila señalada. */
+function lgColors(li, it) {
+    if (!li) return;
+    const cr = map.getContainer().getBoundingClientRect(); const pol = polityAt(it.px - cr.left, it.py - cr.top);
+    li.style.setProperty('--ty', lgTypeColor(it));
+    if (pol) li.style.setProperty('--co', pol.c); else li.style.removeProperty('--co');
+    const co = li.querySelector('.lg-co'); if (co) co.textContent = pol && pol.name ? pol.name : '';
+}
+/** Donde acaba el cable de cada fila (borde izquierdo de la columna, a la altura de la fila). La señalada, aparte (lgBubble). */
+function lgAnchors() {
+    const list = $('lg-list'); const lr = list.getBoundingClientRect(); const left = $('legend').getBoundingClientRect().left;
+    if (LG.wide) {
+        LG.rows.forEach((it) => {
+            const li = list.querySelector('.lg-row[data-id="' + CSS.escape(it.id) + '"]'); if (!li) { it.ax = null; return; }
+            const r = li.getBoundingClientRect(); const cy = r.top + r.height / 2;
+            it.ax = cy < lr.top || cy > lr.bottom ? null : left + 2; it.ay = cy;      // fuera de la ventana de la lista: sin cable
+        });
+    } else LG.rows.forEach((it) => { it.ax = left + 2; it.ay = lr.top + it.rowY + LG.rowH / 2; });
+    if (LG.hot && !LG.wide) lgBubble();
+}
 function lgRow(it) {
     const tx = lgText(it);
-    const li = el('li', { class: 'lg-row' }); li.dataset.id = it.id; li.style.top = Math.round(it.rowY) + 'px';
+    const li = el('li', { class: 'lg-row' }); li.dataset.id = it.id; if (it.rowY != null) li.style.top = Math.round(it.rowY) + 'px';
+    const name = el('span', { class: 'lg-name' }, [el('strong', { text: tx.name }), tx.date ? el('span', { class: 'lg-date', text: tx.date }) : null, el('em', { class: 'lg-co' })].filter(Boolean));
     const b = el('button', { type: 'button', class: 'lg-btn', 'aria-label': tx.name + (tx.date ? ' · ' + tx.date : '') }, [
-        el('img', { class: 'lg-ico', alt: '', 'aria-hidden': 'true', src: lgIcon(it) }),
-        el('span', { class: 'lg-name' }, [document.createTextNode(tx.name), tx.date ? el('span', { class: 'lg-date', text: tx.date }) : null].filter(Boolean))
+        el('img', { class: 'lg-ico', alt: '', 'aria-hidden': 'true', src: lgIcon(it) })
     ]);
+    if (LG.wide) b.appendChild(name); else li.appendChild(name);
     b.addEventListener('pointerdown', (e) => { LG.lastPointer = e.pointerType || 'mouse'; });
     b.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') lgHot(it.id); });
     b.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') lgHot(null); });
@@ -5092,15 +5210,41 @@ function lgRow(it) {
     });
     li.appendChild(b); return li;
 }
+/**
+ * Recuadro del nombre de la fila señalada (columna): sus dos colores y su sitio, para que el cable NO lo cruce nunca (map/legend.js,
+ * bubblePlace): a la izquierda de la fila y el cable acaba en su borde; o encima/debajo si el punto esta junto a la columna.
+ */
+function lgBubble() {
+    const it = LG.hot ? LG.rows.find((r) => r.id === LG.hot) : null; LG.hb = null; if (!it) return;
+    const li = $('lg-list').querySelector('.lg-row[data-id="' + CSS.escape(it.id) + '"]'); if (!li) return;
+    lgColors(li, it);
+    if (LG.wide) return;
+    const nm = li.querySelector('.lg-name'); const lr = $('lg-list').getBoundingClientRect(); const left = $('legend').getBoundingClientRect().left;
+    li.classList.remove('up', 'down'); li.style.removeProperty('--lg-nr');
+    const pl = ChronosLegend.bubblePlace({ px: it.px, py: it.py, colLeft: left, rowTop: lr.top + it.rowY, rowH: LG.rowH, w: nm.offsetWidth || 160, h: nm.offsetHeight || 22, top: lr.top, bottom: lr.bottom + 30 });
+    if (pl.side === 'up' || pl.side === 'down') li.classList.add(pl.side);
+    if (pl.right !== 6) li.style.setProperty('--lg-nr', Math.round(pl.right) + 'px');
+    LG.hb = { ax: pl.ax, ay: pl.ay };
+}
 function lgOpen(it) {
     if (it.kind === 'e') { const f = events.byId.get(it.id) || it.f; showEvent(f); selRemember('e', it.id); return; }
     selRemember('b', it.id); builtFull().then(() => { const f = BUILT.byId && BUILT.byId.get(it.id); if (f) showBuilt(f); });
 }
-/** Fila señalada (o null). fromMap: la señala el raton desde el globo (el foco y el resplandor ya los pone el mapa). */
+/**
+ * Fila señalada (o null). fromMap: la señala el raton (o un toque) desde el globo; entonces la lista se mueve: en la columna, la fila va a
+ * la altura de su punto; en la lista entera, se desplaza hasta ella (salvo que ya este a esa altura). Desde la propia lista no se mueve
+ * nada (la fila se iria de debajo del puntero).
+ */
 function lgHot(id, fromMap) {
     id = id || null;
     const prev = LG.hot; LG.hot = id;
+    if (fromMap && !LG.wide) {
+        clearTimeout(LG.pinT);
+        if (id) { if (LG.pin !== id) { LG.pin = id; lgLayout(); } }
+        else LG.pinT = setTimeout(() => { LG.pinT = 0; if (LG.hot) return; LG.pin = null; lgLayout(); lgWires(); }, 700);    // sin rebotes al pasar de un icono a otro
+    }
     document.querySelectorAll('#lg-list .lg-row').forEach((li) => li.classList.toggle('hot', li.dataset.id === id));
+    if (fromMap && LG.wide && id) lgScrollTo(id);
     if (!fromMap && prev !== id) {
         const it = id ? LG.rows.find((r) => r.id === id) : null;
         spotHover(id);
@@ -5111,17 +5255,28 @@ function lgHot(id, fromMap) {
             else { evHoverSet(null); buHoverSet(null); }
         } finally { LG_HOT_SELF = false; }
     }
+    lgBubble();
     lgWires();
+}
+/** Lista entera: desplaza hasta la fila (a la altura de su punto o al centro; si ya esta ahi, nada). */
+function lgScrollTo(id) {
+    const list = $('lg-list'); const i = LG.rows.findIndex((r) => r.id === id); if (i < 0) return;
+    const it = LG.rows[i]; const lr = list.getBoundingClientRect();
+    const to = ChronosLegend.scrollFor(i, 30, list.clientHeight, list.scrollHeight, list.scrollTop, it.py - lr.top);
+    if (to == null) return;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    try { list.scrollTo({ top: to, behavior: reduce ? 'auto' : 'smooth' }); } catch (e) { list.scrollTop = to; }
 }
 function lgFromMap(id) { if (!LG.open) return; lgHot(id && LG.rows.some((r) => r.id === id) ? id : null, true); }
 function lgWires() {
     const svg = $('lg-wires'); if (!svg) return;
     const NS = 'http://www.w3.org/2000/svg'; const parts = [];
-    const path = (it, cls) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', ChronosLegend.wirePath(it.px, it.py, it.ax, it.ay)); p.setAttribute('class', cls); return p; };
-    if (LG.open && LG.always) LG.rows.forEach((it) => { if (it.id !== LG.hot) parts.push(path(it, '')); });
+    const path = (it, cls, ax, ay) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', ChronosLegend.wirePath(it.px, it.py, ax, ay)); p.setAttribute('class', cls); return p; };
+    if (LG.open && LG.always && !LG.wide) LG.rows.forEach((it) => { if (it.id !== LG.hot && it.ax != null) parts.push(path(it, '', it.ax, it.ay)); });
     const hot = LG.open && LG.hot ? LG.rows.find((r) => r.id === LG.hot) : null;
-    if (hot) {
-        parts.push(path(hot, 'hot-under'), path(hot, 'hot'));
+    const end = hot && (LG.wide ? (hot.ax != null ? { ax: hot.ax, ay: hot.ay } : null) : LG.hb || { ax: hot.ax, ay: hot.ay });
+    if (hot && end) {
+        parts.push(path(hot, 'hot-under', end.ax, end.ay), path(hot, 'hot', end.ax, end.ay));
         [['hot-under', 15], ['hot', 15]].forEach(([cls, r]) => { const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', hot.px); c.setAttribute('cy', hot.py); c.setAttribute('r', r); c.setAttribute('class', cls); parts.push(c); });
     }
     svg.replaceChildren(...parts);
@@ -5317,7 +5472,7 @@ function eventRows(f) {
     const rows = [{ label: t('evidence'), badge: p.evidence }];
     rows.push({ label: t('events.kindLabel'), value: t('events.kind.' + evKind(f)) });
     const role = evRole(f); const rd = role && ChronosEventIcons.ROLES.find((r) => r.id === role);
-    if (rd) rows.push({ label: t('events.role'), value: rd[lang] || rd.en, icon: evIconUrl(evDrawKey(f)), title: t('events.roleTip') });
+    if (rd) rows.push({ label: t('events.role'), value: rd[lang] || rd.en, rich: [[rd[lang] || rd.en, 'i']], icon: evIconUrl(evDrawKey(f)), title: t('events.roleTip') });
     rows.push({ label: t('events.when'), value: eventDateText(f) });
     // Si se ve antes de su fecha (con el tiempo corriendo hay un margen breve por delante), se dice: lo que se muestra no es presente (regla 3)
     if (clockFull()) { const ahead = ChronosTimed.span(f).a - clock.jd; if (ahead > 0) rows.push({ label: t('events.notYet'), value: fmt('events.notYetVal', { d: evSpanText(ahead) }), title: t('events.notYetTip') }); }
@@ -5397,8 +5552,9 @@ function relChip(p) {
 /** Filas de la «i»: la medalla y por que. */
 function relRows(p) {
     const r = relOf(p); const name = (id) => (ChronosReliability.SOURCES[id] || {}).name || id;
-    const why = r.reasons.map((x) => (x.source ? fmt('rel.r.' + x.k, { src: name(x.source), v: x.value }) : t('rel.r.' + x.k))).join(' · ');
-    return [{ label: t('rel.title'), value: (r.disputed ? t('rel.disputed') + ' · ' : '') + t('rel.m.' + r.medal) + ' — ' + why, title: t('rel.how') }];
+    const rich = [[(r.disputed ? t('rel.disputed') + ' · ' : '') + t('rel.m.' + r.medal), 'b'], [' — ', '']];
+    r.reasons.forEach((x, i) => { if (i) rich.push([' · ', '']); rich.push(...(x.source ? richFmt('rel.r.' + x.k, { src: name(x.source), v: x.value }) : [[t('rel.r.' + x.k), '']])); });
+    return [{ label: t('rel.title'), value: rich.map((q) => q[0]).join(''), rich, title: t('rel.how') }];
 }
 const evIsoText = (tm) => String(tm.iso || '').replace(/T.*$/, '') + (tm.calendar === 'julian' ? ' (' + t('clock.julian') + ')' : '');
 /** Cajoncito de la hora: la de la fuente (y en que se basa, al pasar el raton) o «?» si no la da. */
@@ -5442,13 +5598,15 @@ function evCard(f) {
     const rows = [];
     if (clockFull()) { const ahead = ChronosTimed.span(f).a - clock.jd; if (ahead > 0) rows.push({ label: t('events.notYet'), value: fmt('events.notYetVal', { d: evSpanText(ahead) }), title: t('events.notYetTip') }); }
     const role = evRole(f); const rd = role && ChronosEventIcons.ROLES.find((r) => r.id === role);
-    if (rd) rows.push({ label: t('events.role'), value: rd[lang] || rd.en, icon: evIconUrl(evDrawKey(f)), title: t('events.roleTip') });
+    if (rd) rows.push({ label: t('events.role'), value: rd[lang] || rd.en, rich: [[rd[lang] || rd.en, 'i']], icon: evIconUrl(evDrawKey(f)), title: t('events.roleTip') });
     if (p.description && (p.description[lang] || p.description.en)) rows.push({ label: t('events.note'), value: p.description[lang] || p.description.en });
     const more = relRows(p).concat([{ label: t('evidence'), badge: p.evidence }, { label: t('events.status'), value: t('events.verif.st.' + p.status) }]);
     (p.sources || []).forEach((src) => {
         const href = src.kind === 'wikidata' ? 'https://www.wikidata.org/wiki/' + src.id : src.kind === 'url' ? src.id : null;
-        const row = { label: t('source'), value: src.kind === 'wikidata' ? 'Wikidata ' + src.id : src.id }; if (href) row.href = href; more.push(row);
-        if (src.citation) more.push({ label: t('events.citation'), value: src.citation });
+        const row = { label: t('source'), value: src.kind === 'wikidata' ? 'Wikidata ' + src.id : src.id }; if (href) row.href = href;
+        if (src.kind === 'wikidata') row.rich = [['Wikidata', 'i'], [' ' + src.id, '']];
+        more.push(row);
+        if (src.citation) more.push({ label: t('events.citation'), value: src.citation, rich: [[src.citation, 'i']] });
     });
     return { head, rows, more, rel: relChip(p) };
 }
