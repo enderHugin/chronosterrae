@@ -32,7 +32,8 @@ t('revision humana: revisado = plata, consenso = oro; una fuente desconocida no 
     assert.strictEqual(R.medal(wd, [{ source: 'blog-cualquiera', result: 'a', independent: true }]).medal, 'bronze');
 });
 t('fila del fichero de contraste: se acepta la forma buena y se RECHAZA lo roto (null), sin lanzar', () => {
-    assert.deepStrictEqual(R.fromRow('gnd', ['a', '1879', '118529579', 'y', 1]), { source: 'gnd', result: 'a', value: '1879', ref: '118529579', level: 'y', independent: true });
+    assert.deepStrictEqual(R.fromRow('gnd', ['a', '1879', '118529579', 'y', 1]), { source: 'gnd', result: 'a', value: '1879', ref: '118529579', level: 'y', independent: true, alt: false });
+    assert.strictEqual(R.fromRow('gnd', ['c', '1594-12-19', 'x', 'd', 1, 0]).result, 'c');
     assert.strictEqual(R.fromRow('gnd', ['x', '1879']), null);
     assert.strictEqual(R.fromRow('gnd', null), null);
 });
@@ -58,6 +59,35 @@ t('independencia: la declaracion que cita a la GND no cuenta como fuente aparte'
     assert.strictEqual(G.refIsGnd({ references: [{ snaks: { P854: [{ datavalue: { value: 'https://d-nb.info/gnd/118529579' } }] } }] }), true);
     assert.strictEqual(G.refIsGnd({ references: [{ snaks: { P248: [{ datavalue: { value: { id: 'Q328' } } }] } }] }), false);
     assert.strictEqual(G.refIsGnd({}), false);
+});
+
+t('otro calendario y fechas aproximadas: ni suben ni bajan la medalla, pero se dicen', () => {
+    const m = R.medal(wd, [{ source: 'gnd', result: 'c', value: '1594-12-19', independent: true }]);
+    assert.strictEqual(m.medal, 'bronze'); assert.strictEqual(m.disputed, false); assert.ok(m.reasons.some((r) => r.k === 'calendar'));
+    const u = R.medal(wd, [{ source: 'gnd', result: 'u', value: '0055', independent: true }]);
+    assert.strictEqual(u.medal, 'bronze'); assert.strictEqual(u.disputed, false); assert.ok(u.reasons.some((r) => r.k === 'approx'));
+    assert.ok(R.medal(wd, [{ source: 'gnd', result: 'd', value: '1694-11-21', independent: true, alt: true }]).reasons.some((r) => r.k === 'disputed-alt'));
+});
+t('clases de diferencia con casos reales de la primera pasada (2026-11-14)', () => {
+    const P = G.parseDate;
+    // Gustavo Adolfo: 9-12-1594 (juliano) frente a 19-12-1594 = desfase de 10 dias en esa fecha
+    assert.strictEqual(G.classifyDiff(P('1594-12-09'), P('1594-12-19'), 'd', false), 'c');
+    // Ana de Rusia, 1740: desfase de 11 dias
+    assert.strictEqual(G.classifyDiff(P('1740-10-17'), P('1740-10-28'), 'd', false), 'c');
+    // Robert Boyle: 25-1-1626 frente a 25-1-1627 (el año empezaba el 25 de marzo)
+    assert.strictEqual(G.classifyDiff(P('1626-01-25'), P('1627-01-25'), 'd', false), 'c');
+    // Tacito: 54 frente a 55 (antes de 1500, año, hasta 5): aproximadas
+    assert.strictEqual(G.classifyDiff(P('0054'), P('0055'), 'y', false), 'u');
+    // Ptolomeo: 165 frente a 178: discrepan
+    assert.strictEqual(G.classifyDiff(P('0165'), P('0178'), 'y', false), 'd');
+    // con «circa» en Wikidata, hasta 10 años
+    assert.strictEqual(G.classifyDiff(P('1565'), P('1556'), 'y', true), 'u');
+    assert.strictEqual(G.classifyDiff(P('1565'), P('1550'), 'y', false), 'd');
+    // contradicciones reales: Voltaire (20-2 frente a 21-11-1694), Marat (1793 frente a 1703), un dia de diferencia
+    assert.strictEqual(G.classifyDiff(P('1694-02-20'), P('1694-11-21'), 'd', false), 'd');
+    assert.strictEqual(G.classifyDiff(P('1793-07-13'), P('1703-07-13'), 'd', false), 'd');
+    assert.strictEqual(G.classifyDiff(P('1837-06-14'), P('1837-06-15'), 'd', false), 'd');
+    assert.strictEqual(G.jgOffset(P('1582-10-14')), 0); assert.strictEqual(G.jgOffset(P('1900-03-01')), 13);
 });
 
 console.log(n + ' pruebas de fiabilidad correctas');

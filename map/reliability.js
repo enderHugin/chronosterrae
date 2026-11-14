@@ -11,6 +11,7 @@
 //   oro      : una fuente curada INDEPENDIENTE dice lo mismo (comprobado por un contraste automatico), o consenso de revisores.
 //   diamante : dos o mas fuentes curadas independientes dicen lo mismo, y ninguna lo contradice.
 //   en disputa: una fuente curada dice otra cosa. La medalla se queda en bronce hasta que se aclare, y se muestran las dos versiones.
+//   (Ni suben ni bajan, pero se dicen: el mismo dia en otro calendario, y fechas que las fuentes dan como aproximadas.)
 // Independiente = no copia a la otra: si Wikidata cita a la GND para esa fecha, que coincidan no prueba nada nuevo.
 // Regla 2 del proyecto (lo generado por IA no pasa de `community`): sigue rigiendo el ESTADO de revision. Una IA puede proponer fuentes y
 // contrastes; la medalla solo sube cuando el contraste (codigo, sin IA) encuentra el mismo valor en otra fuente.
@@ -43,7 +44,8 @@
         let indep = 0;
         for (const c of checks || []) {
             const s = SOURCES[c.source]; if (!s || !s.curated) continue;
-            if (c.result === 'd') { disputed = true; reasons.push({ k: 'disputed', source: c.source, value: c.value, level: c.level }); continue; }
+            if (c.result === 'd') { disputed = true; reasons.push({ k: c.alt ? 'disputed-alt' : 'disputed', source: c.source, value: c.value, level: c.level }); continue; }
+            if (c.result === 'c' || c.result === 'u') { reasons.push({ k: c.result === 'c' ? 'calendar' : 'approx', source: c.source, value: c.value, level: c.level }); continue; }
             if (c.result !== 'a') continue;
             if (c.independent) { indep++; reasons.push({ k: 'agrees', source: c.source, value: c.value, level: c.level }); }
             else { level = Math.max(level, 2); reasons.push({ k: 'cites', source: c.source, value: c.value, level: c.level }); }
@@ -55,8 +57,8 @@
 
     /** Fila compacta del fichero de contraste ([a|d, valor, id, nivel, independiente]) -> check. */
     function fromRow(source, row) {
-        if (!Array.isArray(row) || (row[0] !== 'a' && row[0] !== 'd')) return null;
-        return { source, result: row[0], value: row[1], ref: row[2], level: row[3], independent: row[4] === 1 };
+        if (!Array.isArray(row) || !['a', 'd', 'c', 'u'].includes(row[0])) return null;
+        return { source, result: row[0], value: row[1], ref: row[2], level: row[3], independent: row[4] === 1, alt: row[5] === 1 };
     }
 
     return { MEDALS, SOURCES, medal, fromRow };

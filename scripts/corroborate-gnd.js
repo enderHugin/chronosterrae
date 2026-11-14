@@ -14,7 +14,15 @@
 //  3. De lobid: dateOfBirth / dateOfDeath de la GND.
 //  4. Comparacion al nivel de precision del menos preciso (dia, mes o año). Antes de 1583 solo el año (la GND no dice calendario).
 //     Fechas antes de Cristo: no se comparan (formato de la GND sin verificar).
-// Salida (CC0, como sus dos fuentes): records[id] = [resultado a|d, fecha GND, id GND, nivel d|m|y, independiente 1|0].
+//  5. Una diferencia no siempre es una contradiccion. Reglas declaradas (vistas en la primera pasada, 2026-11-14: 871 diferencias):
+//     c = mismo dia en otro calendario: la diferencia es justo el desfase juliano-gregoriano de esa fecha (10 a 13 dias), o el año
+//         empieza en otra fecha (antes de 1753, entre el 1 de enero y el 24 de marzo, mismo dia y mes y un año de diferencia: «estilo
+//         antiguo» ingles, «more veneto»). No sube ni baja la medalla; la ficha lo dice.
+//     u = fechas aproximadas: con precision de año, antes de 1500 y hasta 5 años de diferencia, o si Wikidata marca la suya como
+//         «circa» (P1480 = Q5727902) y hasta 10. No sube ni baja la medalla; la ficha lo dice.
+//     d = discrepan de verdad (p. ej. Voltaire nacido el 20-2-1694 frente al 21-11-1694; Marat muerto en 1793 frente a 1703).
+// Salida (CC0, como sus dos fuentes): records[id] = [a|d|c|u, fecha GND, id GND, nivel d|m|y, independiente 1|0, Wikidata tambien da el
+// valor de la GND como alternativa 1|0].
 'use strict';
 
 const fs = require('fs');
@@ -44,6 +52,32 @@ function wdTime(v) {
     return { y: (m[1] === '-' ? -1 : 1) * Number(m[2]), m: p === 'y' ? 0 : Number(m[3]), d: p === 'd' ? Number(m[4]) : 0, prec: p };
 }
 const RANK = { y: 0, m: 1, d: 2 };
+const CIRCA = 'Q5727902';
+/** Dias desde una fecha civil (calendario gregoriano proleptico; solo para restar dos fechas cercanas). */
+const dayNum = (x) => Date.UTC(x.y, x.m - 1, x.d) / 864e5;
+/** Desfase juliano-gregoriano (dias) en esa fecha, o 0 fuera de 1582-10-15..2099. */
+function jgOffset(x) {
+    const k = x.y * 10000 + x.m * 100 + x.d;
+    if (k < 15821015 || k >= 21000301) return 0;
+    return k < 17000301 ? 10 : k < 18000301 ? 11 : k < 19000301 ? 12 : 13;
+}
+/**
+ * Clase de una diferencia ya comprobada (cmp.result === 'd'): 'c' (otro calendario o comienzo de año), 'u' (fechas aproximadas) o 'd'.
+ * mine, gnd: fechas parseadas; circa: Wikidata marca la suya como aproximada.
+ */
+function classifyDiff(mine, gnd, level, circa) {
+    if (level === 'd') {
+        const delta = Math.abs(dayNum(gnd) - dayNum(mine)); const off = jgOffset(mine) || jgOffset(gnd);
+        if (off && delta === off) return 'c';
+        const early = Math.min(mine.y, gnd.y) < 1753 && Math.abs(mine.y - gnd.y) === 1 && mine.m === gnd.m && mine.d === gnd.d && (mine.m < 3 || (mine.m === 3 && mine.d <= 24));
+        if (early) return 'c';
+    }
+    if (level === 'y') {
+        const dy = Math.abs(mine.y - gnd.y);
+        if ((Math.min(mine.y, gnd.y) < 1500 && dy <= 5) || (circa && dy <= 10)) return 'u';
+    }
+    return 'd';
+}
 /**
  * Compara dos fechas al nivel del menos preciso. Antes de 1583, solo el año. Antes de Cristo: null (no se compara).
  * Devuelve { result: 'a'|'d', level } o null.
@@ -103,14 +137,15 @@ async function main() {
         const j = await getJSON(WD_API + '?' + new URLSearchParams({ action: 'wbgetentities', ids: ids.join('|'), props: 'claims', format: 'json' }));
         for (const [q, ent] of Object.entries((j && j.entities) || {})) {
             const c = ent.claims || {}; const gnd = (c.P227 || []).map((s) => s.mainsnak && s.mainsnak.datavalue && s.mainsnak.datavalue.value).filter(Boolean);
-            const dates = (prop) => (c[prop] || []).filter((s) => s.rank !== 'deprecated' && s.mainsnak && s.mainsnak.datavalue).map((s) => ({ t: wdTime(s.mainsnak.datavalue.value), gndRef: refIsGnd(s) }));
+            const dates = (prop) => (c[prop] || []).filter((s) => s.rank !== 'deprecated' && s.mainsnak && s.mainsnak.datavalue).map((s) => ({ t: wdTime(s.mainsnak.datavalue.value), gndRef: refIsGnd(s),
+                circa: ((s.qualifiers || {}).P1480 || []).some((q) => q.datavalue && q.datavalue.value && q.datavalue.value.id === CIRCA) }));
             wd.set(q, { gnd, birth: dates('P569'), death: dates('P570') });
         }
         if (i % 1000 === 0) log('wikidata', i, '/', people.length);
         await sleep(300);
     }
     // 3 y 4. lobid y comparacion
-    const records = {}; const counts = { people: people.length, with_gnd: 0, gnd_read: 0, gnd_missing: 0, compared: 0, agree: 0, disagree: 0, not_independent: 0, not_comparable: 0, unparsed_gnd: 0 };
+    const records = {}; const counts = { people: people.length, with_gnd: 0, gnd_read: 0, gnd_missing: 0, compared: 0, agree: 0, disagree: 0, calendar: 0, approximate: 0, alternative_in_wikidata: 0, not_independent: 0, not_comparable: 0, unparsed_gnd: 0 };
     const sampleKeys = new Set(); let done = 0;
     const work = people.filter(([q]) => wd.get(q) && wd.get(q).gnd.length);
     counts.with_gnd = work.length;
@@ -127,18 +162,20 @@ async function main() {
             // ¿La declaracion de Wikidata con NUESTRA fecha cita a la GND? Entonces no son independientes.
             const st = w[kind].filter((s) => s.t && compareDates(mine, s.t) && compareDates(mine, s.t).result === 'a');
             const independent = st.length ? !st.some((s) => s.gndRef) : true;
+            const res = cmp.result === 'a' ? 'a' : classifyDiff(mine, gd, cmp.level, st.some((s) => s.circa));
+            const alt = res !== 'a' && w[kind].some((s) => s.t && compareDates(gd, s.t) && compareDates(gd, s.t).result === 'a') ? 1 : 0;
             if (!independent) counts.not_independent++;
-            counts.compared++; counts[cmp.result === 'a' ? 'agree' : 'disagree']++;
-            records[ours[kind].id] = [cmp.result, String(gv), gid, cmp.level, independent ? 1 : 0];
+            counts.compared++; counts[{ a: 'agree', d: 'disagree', c: 'calendar', u: 'approximate' }[res]]++; if (alt) counts.alternative_in_wikidata++;
+            records[ours[kind].id] = [res, String(gv), gid, cmp.level, independent ? 1 : 0, alt];
         }
         if (++done % 500 === 0) log('lobid', done, '/', work.length);
     };
     for (let i = 0; i < work.length; i += 6) { await Promise.all(work.slice(i, i + 6).map(run)); await sleep(150); }
     const outObj = {
         meta: {
-            what: 'Contraste de fechas de vida: nuestras fichas (Wikidata) frente a la GND. records[id] = [a=coinciden|d=discrepan, fecha GND, id GND, nivel de la comparacion d|m|y, 1=fuentes independientes|0=la declaracion de Wikidata cita a la GND]',
+            what: 'Contraste de fechas de vida: nuestras fichas (Wikidata) frente a la GND. records[id] = [a=coinciden|d=discrepan|c=mismo dia en otro calendario|u=fechas aproximadas, fecha GND, id GND, nivel de la comparacion d|m|y, 1=fuentes independientes|0=la declaracion de Wikidata cita a la GND, 1=Wikidata tambien da el valor de la GND]',
             sources: ['Wikidata (CC0), API wbgetentities: P227 y referencias de P569/P570', 'GND de la Deutsche Nationalbibliothek (CC0 desde 2015) via lobid.org'],
-            rules: ['nivel = el del menos preciso', 'antes de 1583 solo el año (la GND no dice calendario)', 'fechas antes de Cristo: no se comparan'],
+            rules: ['nivel = el del menos preciso', 'antes de 1583 solo el año (la GND no dice calendario)', 'fechas antes de Cristo: no se comparan', 'c: diferencia = desfase juliano-gregoriano de la fecha, o año que empieza en otra fecha (antes de 1753, 1-1 a 24-3, un año)', 'u: precision de año y antes de 1500 hasta 5 años, o Wikidata «circa» hasta 10'],
             generated_at: new Date().toISOString().replace(/\.\d+Z$/, 'Z'), counts, lobid_keys_seen: [...sampleKeys].sort()
         },
         records
@@ -150,4 +187,4 @@ async function main() {
 }
 
 if (require.main === module) main().catch((e) => { log(e); process.exit(1); });
-module.exports = { parseDate, wdTime, compareDates, refIsGnd, collectPeople };
+module.exports = { parseDate, wdTime, compareDates, refIsGnd, collectPeople, classifyDiff, jgOffset };
