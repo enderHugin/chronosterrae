@@ -24,7 +24,7 @@ on:
       - 'vendor/**'
       - '.github/workflows/pages.yml'
   workflow_run:
-    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (validación contra Horizons)', 'Sucesos (Wikidata)', 'Construcciones (Wikidata)', 'Imagenes (nombres de archivo P18)', 'Papeles de personas (Wikidata)']
+    workflows: ['AI Harvester Swarm', 'Paleocostas (construcción)', 'Cielo (validación contra Horizons)', 'Sucesos (Wikidata)', 'Construcciones (Wikidata)', 'Imagenes (nombres de archivo P18)', 'Papeles de personas (Wikidata)', 'Contraste automatico (medallas de fiabilidad)']
     types: [completed]
     branches: [main]
   workflow_dispatch:
