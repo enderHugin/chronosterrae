@@ -55,7 +55,11 @@ const [url, out] = process.argv.slice(2);
     });
     await step('intro: ficha', async () => {
         await page.keyboard.press('Enter'); await page.waitForTimeout(4000);
-        const r = await page.evaluate(() => ({ title: $('info-title').textContent, body: $('info-body').textContent.slice(0, 400) }));
+        // medalla de fiabilidad (map/reliability.js): el simbolo junto al titulo y su fila en la «i» (abierta para la foto)
+        const r = await page.evaluate(() => ({ title: $('info-title').textContent, body: $('info-body').textContent.slice(0, 400), medal: $('info-rel').textContent, medalTip: ($('info-rel').firstChild || {}).title || null }));
+        await page.evaluate(() => { const b = $('info-more-btn'); if (b && !b.hidden && b.getAttribute('aria-expanded') !== 'true') b.click(); });
+        await page.waitForTimeout(600);
+        r.reliabilityRow = await page.evaluate(() => ($('info-more').textContent || '').slice(0, 400));
         await page.screenshot({ path: path.join(out, '3-ficha-einstein.png') });
         return r;
     });

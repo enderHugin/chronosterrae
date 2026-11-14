@@ -137,11 +137,15 @@
         .ev-dl .ev-dl-or { color: var(--muted); font-size: 12px; }
         /* Simbolo de fiabilidad (reutilizable): 4 barras = nivel de revision; su color = en que se basa (verde: documento, medida o resto; azul:
            modelo; ocre: reconstruccion; morado: especulacion). Lo que no es prueba directa lo dice ademas con palabras (regla 3). */
-        .rel-chip { display: inline-flex; align-items: center; gap: 4px; flex: none; --rel: #2e7d32; color: var(--rel); font: 700 11px var(--font-ui); cursor: help; }
+        .rel-chip { display: inline-flex; align-items: center; gap: 4px; flex: none; --rel: #a0632b; color: var(--rel); font: 700 11px var(--font-ui); cursor: help; }
         .rel-chip svg { width: 18px; height: 16px; display: block; }
         .rel-chip rect.on { fill: var(--rel); } .rel-chip rect.off { fill: none; stroke: color-mix(in srgb, var(--text) 35%, transparent); stroke-width: 0.8; }
-        .rel-chip.ev-model { --rel: #1565c0; } .rel-chip.ev-reconstruction { --rel: #b7791f; } .rel-chip.ev-speculation { --rel: #8e24aa; }
-        body.dark .rel-chip { --rel: #66bb6a; } body.dark .rel-chip.ev-model { --rel: #64b5f6; } body.dark .rel-chip.ev-reconstruction { --rel: #f0b44c; } body.dark .rel-chip.ev-speculation { --rel: #ce93d8; }
+        /* Medallas (map/reliability.js): el color dice la medalla, las barras el escalon y la palabra lo nombra (no solo el color). */
+        .rel-chip.m-none { --rel: #8a8f98; } .rel-chip.m-silver { --rel: #6f7a85; } .rel-chip.m-gold { --rel: #a87900; } .rel-chip.m-diamond { --rel: #0b84a5; }
+        .rel-chip.disputed { --rel: #c62828; }
+        body.dark .rel-chip { --rel: #d39058; } body.dark .rel-chip.m-none { --rel: #a7adb6; } body.dark .rel-chip.m-silver { --rel: #c3ccd5; } body.dark .rel-chip.m-gold { --rel: #f2c94c; } body.dark .rel-chip.m-diamond { --rel: #5fd3f3; } body.dark .rel-chip.disputed { --rel: #ef5350; }
+        .rel-chip .rel-w { font-weight: 600; color: #b7791f; } .rel-chip .rel-w.ev-model { color: #1565c0; } .rel-chip .rel-w.ev-speculation { color: #8e24aa; }
+        body.dark .rel-chip .rel-w { color: #f0b44c; } body.dark .rel-chip .rel-w.ev-model { color: #64b5f6; } body.dark .rel-chip .rel-w.ev-speculation { color: #ce93d8; }
         #top-right { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
         #dock { position: absolute; left: 14px; right: 14px; top: var(--top-h, 60px); bottom: var(--bot-h, 180px); z-index: 11; display: flex; justify-content: space-between; gap: 10px; pointer-events: none; }
         #dock-l, #dock-r { display: flex; flex-direction: column; gap: 8px; min-height: 0; min-width: 0; align-items: stretch; }
@@ -802,6 +806,7 @@
 <script src="./map/panels.js"></script>
 <script src="./map/event-icons.js"></script>
 <script src="./map/legend.js"></script>
+<script src="./map/reliability.js"></script>
 <script src="./map/built.js"></script>
 <script src="./map/search.js"></script>
 <script src="./map/glide.js"></script>
@@ -964,6 +969,10 @@ const i18n = {
         noResults: 'Sin resultados para «{q}». Pronto una búsqueda sin resultado podrá convertirse en una petición de datos.',
         found: '«{n}» aparece en {c} épocas. Mostrando {y}.', badTime: 'No entiendo esa fecha. Prueba: 1789, 44 a.C., 12 ka, 250 Ma.',
         liveOk: 'Datos recientes cargados: {n}.',
+        rel: { title: 'Fiabilidad', m: { none: 'Sin fuente', bronze: 'Bronce', silver: 'Plata', gold: 'Oro', diamond: 'Diamante' }, disputed: 'En disputa',
+            tip: { none: 'Sin fuente citada', bronze: 'Una fuente, aún sin contrastar', silver: 'Su fuente se apoya en una autoridad, o la revisó una persona', gold: 'Una fuente fiable e independiente dice lo mismo', diamond: 'Dos o más fuentes fiables e independientes dicen lo mismo', disputed: 'Una fuente fiable dice otra cosa: se muestran las dos versiones' },
+            r: { 'one-source': 'Tiene fuente citada', 'no-source': 'Sin fuente citada', reviewed: 'Revisado por una persona experta', consensus: 'Consenso de varios revisores', cites: '{src} es la fuente de este dato en Wikidata ({v})', agrees: '{src} dice lo mismo por su cuenta: {v}', disputed: '{src} dice otra cosa: {v}' },
+            how: 'La medalla se calcula sola contrastando fuentes (bronce, plata, oro, diamante); no es la opinión de nadie.' },
         evidence: 'Se basa en', source: 'Fuente', snapshotLabel: 'Instantánea', precision: 'Precisión de la frontera',
         parent: 'Parte de', power: 'Bajo autoridad de', model: 'Modelo', age: 'Edad',
         ev: { measurement: 'Medición', documentary: 'Documento', artefact: 'Artefacto', model: 'Modelo', reconstruction: 'Reconstrucción', speculation: 'Especulación' },
@@ -1184,6 +1193,10 @@ const i18n = {
         noResults: 'No results for "{q}". Soon an empty search will be able to become a data request.',
         found: '"{n}" appears in {c} eras. Showing {y}.', badTime: "I can't read that date. Try: 1789, 44 BC, 12 ka, 250 Ma.",
         liveOk: 'Recent data loaded: {n}.',
+        rel: { title: 'Reliability', m: { none: 'No source', bronze: 'Bronze', silver: 'Silver', gold: 'Gold', diamond: 'Diamond' }, disputed: 'Disputed',
+            tip: { none: 'No source cited', bronze: 'One source, not yet cross-checked', silver: 'Its source relies on an authority, or a person reviewed it', gold: 'A reliable, independent source says the same', diamond: 'Two or more reliable, independent sources say the same', disputed: 'A reliable source says something else: both versions are shown' },
+            r: { 'one-source': 'Has a cited source', 'no-source': 'No source cited', reviewed: 'Reviewed by an expert', consensus: 'Agreed by several reviewers', cites: '{src} is the source of this datum in Wikidata ({v})', agrees: '{src} independently says the same: {v}', disputed: '{src} says something else: {v}' },
+            how: 'The medal is computed automatically by cross-checking sources (bronze, silver, gold, diamond); it is nobody\'s opinion.' },
         evidence: 'Based on', source: 'Source', snapshotLabel: 'Snapshot', precision: 'Border precision',
         parent: 'Part of', power: 'Under authority of', model: 'Model', age: 'Age',
         ev: { measurement: 'Measurement', documentary: 'Documentary', artefact: 'Artefact', model: 'Model', reconstruction: 'Reconstruction', speculation: 'Speculation' },
@@ -5342,7 +5355,7 @@ function evGoTo(g) {
 }
 var INFO_EV = null;   // suceso de la ficha abierta (para redibujarla si llega su papel)
 function showEvent(f) {
-    INFO_EV = f; const c = evCard(f);
+    INFO_EV = f; corrLoad(); const c = evCard(f);
     showInfo(evName(f), c.rows, { head: c.head, more: c.more, rel: c.rel, ev: f });
     const w = (f.properties.sources || []).find((x) => x.kind === 'wikidata'); if (w) infoImageFor(w.id);
     evPairFill(f, c.head);
@@ -5353,20 +5366,39 @@ function showEvent(f) {
    persona salen las dos, en orden; la que no es esta ficha, mas tenue y tocable: lleva alli como el buscador (giro, fecha, ficha). Las otras
    fechas que da la fuente para lo mismo (Jesus: 30 o 33), tambien tocables. Al lado del titulo, el simbolo de fiabilidad; en la «i», en que
    se basa, estado, fuente, cita y credito de la imagen. */
-const REL_LEVEL = { raw: 1, community: 2, reviewed: 3, consensus: 4 };
 const EV_RECON = new Set(['reconstruction', 'model', 'speculation']);
-/** Simbolo de fiabilidad (reutilizable): 4 barras = nivel de revision; color = en que se basa. Lo que no es prueba directa (reconstruccion,
- *  modelo, especulacion) lo dice ademas con palabras: la diferencia entre evidencia y reconstruccion queda a la vista (regla 3). */
-function relChip(status, evidence) {
-    const lv = REL_LEVEL[status] || 1; const NS = 'http://www.w3.org/2000/svg';
-    const chip = el('span', { class: 'rel-chip ev-' + (evidence || 'none'), role: 'img' });
+/* Contrastes automaticos (data/corroboration/, workflow corroborate.yml): se cargan una vez, en segundo plano; si llegan con una ficha abierta,
+   se redibuja. Sin fichero (404) no hay contrastes: todo sale con la medalla de sus fuentes. */
+const CORR = { gnd: null, loading: null };
+function corrLoad() {
+    if (CORR.loading) return CORR.loading;
+    CORR.loading = fetch('./data/corroboration/gnd-people.json').then((r) => (r.ok ? r.json() : null)).then((j) => { CORR.gnd = (j && j.records) || {}; })
+        .catch(() => { CORR.gnd = {}; }).then(() => { if (INFO_EV && $('info').style.display === 'block' && lastInfo && lastInfo.ev === INFO_EV) showEvent(INFO_EV); });
+    return CORR.loading;
+}
+function relOf(p) {
+    const checks = []; const g = CORR.gnd && CORR.gnd[p.id]; const c = g && ChronosReliability.fromRow('gnd', g); if (c) checks.push(c);
+    return ChronosReliability.medal(p, checks);
+}
+/** Simbolo de fiabilidad (reutilizable): MEDALLA (bronce, plata, oro, diamante; map/reliability.js), con 1-4 barras y su nombre, y aparte
+ *  «en disputa». Lo que no es prueba directa (reconstruccion, modelo, especulacion) lo dice ademas con palabras (regla 3). */
+function relChip(p) {
+    const r = relOf(p); const NS = 'http://www.w3.org/2000/svg';
+    const chip = el('span', { class: 'rel-chip m-' + r.medal + (r.disputed ? ' disputed' : ''), role: 'img' });
     const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 17 14'); svg.setAttribute('aria-hidden', 'true');
-    for (let i = 0; i < 4; i++) { const r = document.createElementNS(NS, 'rect'); r.setAttribute('x', String(1 + i * 4)); r.setAttribute('y', String(10 - i * 3)); r.setAttribute('width', '3'); r.setAttribute('height', String(3 + i * 3)); r.setAttribute('rx', '0.6'); r.setAttribute('class', i < lv ? 'on' : 'off'); svg.appendChild(r); }
+    for (let i = 0; i < 4; i++) { const b = document.createElementNS(NS, 'rect'); b.setAttribute('x', String(1 + i * 4)); b.setAttribute('y', String(10 - i * 3)); b.setAttribute('width', '3'); b.setAttribute('height', String(3 + i * 3)); b.setAttribute('rx', '0.6'); b.setAttribute('class', i < r.level ? 'on' : 'off'); svg.appendChild(b); }
     chip.appendChild(svg);
-    if (EV_RECON.has(evidence)) chip.appendChild(el('span', { class: 'rel-w', text: t('ev.' + evidence) }));
-    const tip = t('events.status') + ': ' + t('events.verif.st.' + status) + ' · ' + t('evidence') + ': ' + t('ev.' + evidence);
-    chip.title = tip; chip.setAttribute('aria-label', tip);
+    chip.appendChild(el('span', { class: 'rel-m', text: r.disputed ? t('rel.disputed') : t('rel.m.' + r.medal) }));
+    if (EV_RECON.has(p.evidence)) chip.appendChild(el('span', { class: 'rel-w ev-' + p.evidence, text: t('ev.' + p.evidence) }));
+    const tip = (r.disputed ? t('rel.tip.disputed') : t('rel.tip.' + r.medal)) + ' · ' + t('evidence') + ': ' + t('ev.' + p.evidence);
+    chip.title = tip; chip.setAttribute('aria-label', t('rel.title') + ': ' + tip);
     return chip;
+}
+/** Filas de la «i»: la medalla y por que. */
+function relRows(p) {
+    const r = relOf(p); const name = (id) => (ChronosReliability.SOURCES[id] || {}).name || id;
+    const why = r.reasons.map((x) => (x.source ? fmt('rel.r.' + x.k, { src: name(x.source), v: x.value }) : t('rel.r.' + x.k))).join(' · ');
+    return [{ label: t('rel.title'), value: (r.disputed ? t('rel.disputed') + ' · ' : '') + t('rel.m.' + r.medal) + ' — ' + why, title: t('rel.how') }];
 }
 const evIsoText = (tm) => String(tm.iso || '').replace(/T.*$/, '') + (tm.calendar === 'julian' ? ' (' + t('clock.julian') + ')' : '');
 /** Cajoncito de la hora: la de la fuente (y en que se basa, al pasar el raton) o «?» si no la da. */
@@ -5412,13 +5444,13 @@ function evCard(f) {
     const role = evRole(f); const rd = role && ChronosEventIcons.ROLES.find((r) => r.id === role);
     if (rd) rows.push({ label: t('events.role'), value: rd[lang] || rd.en, icon: evIconUrl(evDrawKey(f)), title: t('events.roleTip') });
     if (p.description && (p.description[lang] || p.description.en)) rows.push({ label: t('events.note'), value: p.description[lang] || p.description.en });
-    const more = [{ label: t('evidence'), badge: p.evidence }, { label: t('events.status'), value: t('events.verif.st.' + p.status) }];
+    const more = relRows(p).concat([{ label: t('evidence'), badge: p.evidence }, { label: t('events.status'), value: t('events.verif.st.' + p.status) }]);
     (p.sources || []).forEach((src) => {
         const href = src.kind === 'wikidata' ? 'https://www.wikidata.org/wiki/' + src.id : src.kind === 'url' ? src.id : null;
         const row = { label: t('source'), value: src.kind === 'wikidata' ? 'Wikidata ' + src.id : src.id }; if (href) row.href = href; more.push(row);
         if (src.citation) more.push({ label: t('events.citation'), value: src.citation });
     });
-    return { head, rows, more, rel: relChip(p.status, p.evidence) };
+    return { head, rows, more, rel: relChip(p) };
 }
 /** Rellena la otra fecha de la persona: de lo ya cargado o, si no, del indice del buscador y su trozo de sucesos (se carga). */
 async function evPairFill(f, head) {

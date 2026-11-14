@@ -17,6 +17,7 @@ on:
       - 'data/built/**'
       - 'data/images/**'
       - 'data/people/**'
+      - 'data/corroboration/**'
       - 'sky/**'
       - 'map/**'
       - 'solar/**'
@@ -68,6 +69,8 @@ jobs:
           if [ -d data/built ]; then cp -r data/built _site/data/built; fi
           # papel de cada persona para su icono (corona, mitra, pluma...; scripts/build-roles.js)
           if [ -d data/people ]; then cp -r data/people _site/data/people; fi
+          # contrastes automaticos (medallas de fiabilidad; corroborate.yml)
+          if [ -d data/corroboration ]; then cp -r data/corroboration _site/data/corroboration; fi
           # indice del buscador (personas, sucesos, construcciones y nombre del archivo de su imagen en Commons): se genera aqui, no se guarda
           node scripts/build-search.js _site/data/search
           touch _site/.nojekyll
