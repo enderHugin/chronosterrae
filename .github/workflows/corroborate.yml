@@ -1,0 +1,71 @@
+name: Contraste automatico (medallas de fiabilidad)
+
+# Las medallas (bronce, plata, oro, diamante; map/reliability.js) suben solas cuando un contraste encuentra el mismo dato en una fuente
+# curada e independiente. Este workflow corre los contrastes y deja el resultado en data/corroboration/ (CC0, como sus fuentes):
+#  - gnd-people.json: fechas de nacimiento y muerte frente a la GND (scripts/corroborate-gnd.js).
+# Cada semana publica en main sin intervencion humana (pedido del creador: «sin esfuerzo de humanos»). A mano: mode=run solo deja el
+# informe en la rama `corroboration` para revisarlo; mode=publish ademas lo copia a main.
+on:
+  schedule:
+    - cron: '23 3 * * 0'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'run | publish'
+        default: 'run'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: corroborate
+  cancel-in-progress: false
+
+jobs:
+  corroborate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      MODE: ${{ github.event.inputs.mode || 'publish' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Contraste con la GND
+        run: node scripts/corroborate-gnd.js --out /tmp/corr/gnd-people.json 2> /tmp/corr.log
+
+      - name: Resumen en el log
+        if: always()
+        run: |
+          tail -n 30 /tmp/corr.log || true
+          node -e "const r=require('/tmp/corr/gnd-people.json'); console.log(JSON.stringify(r.meta,null,1))" || true
+
+      - name: Publicar en main (data/corroboration)
+        if: env.MODE == 'publish'
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Corroborate"
+          git config user.email "bot@chronosterrae.local"
+          mkdir -p data/corroboration
+          cp /tmp/corr/gnd-people.json data/corroboration/
+          git add data/corroboration
+          if git diff --staged --quiet; then echo "Sin cambios."; else
+            git commit -m "Datos: contraste de fechas de vida con la GND (CC0)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Informe en la rama corroboration
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "ChronosTerrae-Corroborate"
+          git config user.email "bot@chronosterrae.local"
+          git switch --orphan corroboration-report
+          cp /tmp/corr.log corr.log || true
+          cp /tmp/corr/gnd-people.json gnd-people.json || true
+          git add -A . 2>/dev/null || true
+          git commit -q -m "Contraste $(date -u +%Y-%m-%dT%H:%MZ)" || true
+          git push --force origin HEAD:corroboration
