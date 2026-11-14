@@ -1,0 +1,292 @@
+[
+  {
+    "name": "leyenda-tableta-1939-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "Loading plate-model coastlines…⠿×"
+  },
+  {
+    "name": "leyenda-movil-1939-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.6,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "Loading plate-model coastlines…⠿×"
+  },
+  {
+    "name": "leyenda-escritorio-1879-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.6,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.169,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.470740711778168,
+    "btn": false,
+    "status": "Loading plate-model coastlines…⠿×"
+  },
+  {
+    "name": "leyenda-tableta-1939-mapa-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "Loading plate-model coastlines…⠿×"
+  },
+  {
+    "name": "leyenda-tableta-1939-lista-oscuro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "Loading plate-model coastlines…⠿×"
+  },
+  {
+    "name": "leyenda-tableta-1939-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "Loading plate-model coastlines…⠿×"
+  },
+  {
+    "name": "leyenda-movil-1939-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.6,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "Loading plate-model coastlines…⠿×"
+  },
+  {
+    "name": "leyenda-escritorio-1879-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.6,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 0.169,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.470740711778168,
+    "btn": false,
+    "status": "Loading plate-model coastlines…⠿×"
+  },
+  {
+    "name": "leyenda-tableta-1939-mapa-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "Loading plate-model coastlines…⠿×"
+  },
+  {
+    "name": "leyenda-tableta-1939-lista-claro",
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "sphereCover": 1,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "Loading plate-model coastlines…⠿×"
+  }
+]
