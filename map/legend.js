@@ -91,6 +91,25 @@
         return Math.max(0, Math.min(Math.max(0, total - viewH), i * rowH + rowH / 2 - t));
     }
 
+    /**
+     * Lista entera por APARTADOS (el creador, 2026-11-15: la lista «puede ser dificil de navegar… podria haber apartados titulados», con
+     * «un cambio en el color de fondo para cada pais»). items: [{ id, y, ... }]; keyOf(it) -> { key, name, color } o null (sin pais).
+     * Apartados en el orden en que aparecen de arriba abajo en pantalla (el de su punto mas alto); dentro, por altura. Sin pais, al final.
+     * Devuelve [{ key, name, color, items }].
+     */
+    function groupRows(items, keyOf) {
+        const groups = new Map();
+        for (const it of items || []) {
+            const g = keyOf(it); const key = g && g.key ? g.key : '';
+            if (!groups.has(key)) groups.set(key, { key, name: g && g.key ? g.name || g.key : '', color: g && g.key ? g.color || null : null, items: [] });
+            groups.get(key).items.push(it);
+        }
+        const out = [...groups.values()];
+        out.forEach((g) => g.items.sort((a, b) => a.y - b.y || String(a.id).localeCompare(String(b.id))));
+        out.sort((a, b) => (a.key === '') - (b.key === '') || a.items[0].y - b.items[0].y || a.key.localeCompare(b.key));
+        return out;
+    }
+
     /** Ruta SVG del cable: del punto (px,py) a la fila (ax,ay), con el tramo horizontal hasta el carril (ax - LANE_PX). */
     function wirePath(px, py, ax, ay) {
         const r = (v) => Math.round(v * 10) / 10;
@@ -111,5 +130,5 @@
         return t > 1e-6 && t < 1 - 1e-6 && u > 1e-6 && u < 1 - 1e-6;
     }
 
-    return { LANE_PX, pickRows, placeRows, placeRowsPinned, bubblePlace, scrollFor, wirePath, wireSegments, segmentsCross };
+    return { LANE_PX, pickRows, placeRows, placeRowsPinned, bubblePlace, scrollFor, groupRows, wirePath, wireSegments, segmentsCross };
 }));

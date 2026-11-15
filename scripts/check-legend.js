@@ -87,5 +87,15 @@ check('lista desplegada: lleva la fila a la altura de su punto; si ya esta ahi, 
     return a === 315 && b === null && c === 315 && d === 0 || [a, b, c, d];
 });
 
+// --- 2026-11-15: lista entera por apartados (pais) ---
+check('apartados: por pais, en el orden en que aparecen de arriba abajo; dentro, por altura; sin pais al final', () => {
+    const P = { es: { key: 'Spain', name: 'España', color: '#0a0' }, fr: { key: 'France', name: 'Francia', color: '#a00' } };
+    const items = [{ id: 'a', y: 300, p: 'es' }, { id: 'b', y: 100, p: 'fr' }, { id: 'c', y: 50, p: null }, { id: 'd', y: 200, p: 'es' }, { id: 'e', y: 400, p: 'fr' }];
+    const g = L.groupRows(items, (it) => (it.p ? P[it.p] : null));
+    const sig = g.map((x) => (x.key || '-') + ':' + x.items.map((i) => i.id).join(','));
+    return JSON.stringify(sig) === JSON.stringify(['France:b,e', 'Spain:d,a', '-:c']) && g[0].name === 'Francia' && g[0].color === '#a00' && g[2].name === '' || sig;
+});
+check('apartados: lista vacia o sin funcion de pais valida -> sin romper (rechazado, no roto)', () => L.groupRows([], () => null).length === 0 && L.groupRows(null, () => null).length === 0 && L.groupRows([{ id: 'x', y: 1 }], () => ({})).length === 1);
+
 console.log('\nPASS ' + passes.length); passes.forEach((p) => console.log('  ok  ' + p));
 if (fails) { console.log('\nFAIL ' + fails); process.exit(1); } else console.log('\nLeyenda: todo verde.');

@@ -594,7 +594,21 @@
         /* lista desplegada: entera, con nombres y barra; la fila señalada desde el globo se desplaza a la altura de su punto (o al centro) */
         #legend.wide #lg-list { overflow-y: auto; overscroll-behavior: contain; padding: 0 4px 0 2px; }
         #legend.wide .lg-row { position: relative; top: auto !important; height: 30px; transition: none; }
-        #legend.wide .lg-btn { width: 100%; height: 28px; justify-content: flex-start; gap: 6px; padding: 0 6px 0 4px; border-radius: 6px; border-left: 3px solid var(--co, transparent); box-shadow: inset 3px 0 0 var(--ty, transparent); }
+        /* por apartados (el creador, 2026-11-15): titulo de cada pais (fijo arriba al desplazar; se pliega) y filas con el FONDO del color del
+           pais y, dentro, una franja del color del tipo */
+        #legend.wide .lg-btn { width: 100%; height: 28px; justify-content: flex-start; gap: 6px; padding: 0 6px 0 4px; border-radius: 6px; border-left: 4px solid var(--ty, transparent);
+            background: color-mix(in srgb, var(--co, transparent) 22%, transparent); }
+        #legend.wide .lg-btn:hover, #legend.wide .lg-btn:focus-visible, #legend.wide .lg-row.hot .lg-btn { background: color-mix(in srgb, var(--co, var(--accent)) 45%, transparent); outline: 1.5px solid var(--accent); outline-offset: -1.5px; }
+        .lg-row[hidden] { display: none; }
+        .lg-sec { position: sticky; top: 0; z-index: 1; margin: 4px 0 1px; }
+        .lg-sec button { width: 100%; display: flex; align-items: center; gap: 6px; padding: 3px 6px; border: 0; border-radius: 6px; cursor: pointer; text-align: left;
+            background: color-mix(in srgb, var(--co, var(--muted)) 62%, var(--bg)); color: var(--text); font: 700 11.5px/1.3 var(--font-ui); }
+        .lg-sec .lg-sw { width: 10px; height: 10px; border-radius: 3px; flex: none; background: var(--co, transparent); border: 1px solid color-mix(in srgb, var(--text) 45%, transparent); }
+        .lg-sec .lg-sn { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .lg-sec .lg-sc { font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+        .lg-sec .lg-sv { font-size: 10px; color: var(--muted); transition: transform 0.15s; }
+        .lg-sec button[aria-expanded="false"] .lg-sv { transform: rotate(-90deg); }
+        .lg-sec.none button { font-style: italic; font-weight: 600; }
         #legend.wide .lg-name { position: static; display: block; transform: none; flex: 1 1 auto; min-width: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; font-size: 12px; }
         #legend.wide .lg-name .lg-co { display: none; }
         #lg-pop { position: absolute; right: calc(100% + 8px); top: 0; width: 290px; max-width: calc(100vw - var(--lg-w) - 24px); max-height: 100%; overflow: auto; box-sizing: border-box; padding: 10px 12px; font-size: 12.5px; line-height: 1.45; z-index: 2; }
@@ -604,7 +618,9 @@
         #lg-pop fieldset { border: 0; margin: 8px 0 0; padding: 8px 0 0; border-top: 1px solid color-mix(in srgb, var(--text) 15%, transparent); }
         #lg-pop legend { font-weight: 700; padding: 0; margin-bottom: 2px; }
         #lg-pop label { display: flex; align-items: center; gap: 6px; margin: 3px 0; cursor: pointer; }
-        #lg-pop .lg-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8px; }
+        #lg-pop .lg-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 8px; }
+        #lg-pop .lg-groups label { min-width: 0; overflow-wrap: anywhere; }
+        #lg-pop { overflow-x: hidden; }
         #lg-pop .lg-close { margin-top: 10px; width: 100%; }
         /* Cables: una capa SVG sobre el mapa; se esconden mientras el globo se mueve y se recalculan al parar (nada cada fotograma) */
         #lg-wires { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; overflow: visible; }
@@ -949,7 +965,7 @@ const savePrefs = (patch) => {
 const i18n = {
     es: {
         lgBtn: 'Leyenda: qué es cada icono', lgTitle: 'Leyenda', lgOpts: 'Qué se ve y por qué; opciones', lgClose: 'Cerrar leyenda', lgWires: 'Cables', lgWPoint: 'Al señalar uno', lgWAlways: 'Siempre (tenues)',
-        lgDots: 'Puntos de color en el globo (los iconos, en esta lista)', lgShow: 'Mostrar', lgMore: '+{n} ▾', lgMoreTip: '{n} más en pantalla, menos notorios: verlos todos en una lista', lgAll: 'Lista ▾', lgAllTip: 'Ver la lista entera, con nombres', lgLess: '▴', lgLessTip: 'Volver a la columna de iconos', lgTap: 'Toca otra vez para abrir',
+        lgDots: 'Puntos de color en el globo (los iconos, en esta lista)', lgShow: 'Mostrar', lgMore: '+{n} ▾', lgMoreTip: '{n} más en pantalla, menos notorios: verlos todos en una lista', lgAll: 'Lista ▾', lgAllTip: 'Ver la lista entera, con nombres', lgNoCountry: 'Sin país (mar o sin frontera dibujada)', lgSecTip: 'Plegar o desplegar este apartado', lgLess: '▴', lgLessTip: 'Volver a la columna de iconos', lgTap: 'Toca otra vez para abrir',
         lgWhyRest: 'Del último año', lgWhyFlow: 'Del tramo de tiempo que acaba de pasar', lgWhyN: '{s} de {t} sucesos: a esta escala solo los de notoriedad {f} o más, y uno por zona para que no se amontonen. Acércate para ver más.',
         lgWhyAll: '{s} sucesos: todos los que hay a esta escala.', lgWhyNone: 'Ningún suceso a la vista en esta fecha y escala.', lgWhyBuilt: 'Construcciones: las más conocidas a esta escala ({b} a la vista).', lgEmpty: 'Nada a la vista',
         donate: 'Apoyar el proyecto', infoImage: 'Imagen', infoMore: 'En qué se basa, estado, fuente y cita', tlJumps: 'Épocas', tlJumpsTip: 'Saltos rápidos a fechas señaladas (cada uno con el aspecto de su época)', tlKeysTip: 'Teclado: cuánto mueven ← → y RePág/AvPág', tlInfoTip: 'Lo que ves ahora; fuentes y licencias', sceneTitle: 'Lo que ves ahora', creditsTitle: 'Fuentes y licencias', creditsPeek: 'Fuentes', notesBack: 'Volver a mostrar las notas que cerraste', searchPlaceholder: 'Buscar persona, suceso, edificio, imperio…',
@@ -1173,7 +1189,7 @@ const i18n = {
     },
     en: {
         lgBtn: 'Legend: what each icon is', lgTitle: 'Legend', lgOpts: 'What is shown and why; options', lgClose: 'Close legend', lgWires: 'Leader lines', lgWPoint: 'When pointing at one', lgWAlways: 'Always (faint)',
-        lgDots: 'Coloured dots on the globe (the icons, in this list)', lgShow: 'Show', lgMore: '+{n} ▾', lgMoreTip: '{n} more on screen, less notable: see them all in a list', lgAll: 'List ▾', lgAllTip: 'See the whole list, with names', lgLess: '▴', lgLessTip: 'Back to the icon column', lgTap: 'Tap again to open',
+        lgDots: 'Coloured dots on the globe (the icons, in this list)', lgShow: 'Show', lgMore: '+{n} ▾', lgMoreTip: '{n} more on screen, less notable: see them all in a list', lgAll: 'List ▾', lgAllTip: 'See the whole list, with names', lgNoCountry: 'No country (sea or no border drawn)', lgSecTip: 'Collapse or expand this section', lgLess: '▴', lgLessTip: 'Back to the icon column', lgTap: 'Tap again to open',
         lgWhyRest: 'From the last year', lgWhyFlow: 'From the stretch of time just passed', lgWhyN: '{s} of {t} events: at this scale only those with notability {f} or more, and one per area so they do not pile up. Zoom in to see more.',
         lgWhyAll: '{s} events: all there are at this scale.', lgWhyNone: 'No events in view at this date and scale.', lgWhyBuilt: 'Structures: the best known at this scale ({b} in view).', lgEmpty: 'Nothing in view',
         donate: 'Support the project', infoImage: 'Image', infoMore: 'What it is based on, status, source and citation', tlJumps: 'Eras', tlJumpsTip: 'Quick jumps to landmark dates (each in the look of its era)', tlKeysTip: 'Keyboard: how far ← → and PgUp/PgDn move', tlInfoTip: 'What you are seeing; sources and licences', sceneTitle: 'What you are seeing', creditsTitle: 'Sources and licences', creditsPeek: 'Sources', notesBack: 'Show again the notes you closed', searchPlaceholder: 'Search a person, event, building, empire…',
@@ -2019,8 +2035,12 @@ function detailVisibility() {
 const GAP_DIST_M = 100000;       // fronteras historicas (toscas)
 const GAP_DIST_NE_M = 20000;     // Natural Earth (1,7 km): solo rendijas frente a la costa del mapa
 const GAP_MAX_SPAN_DEG = 200;    // vistas mas anchas (el globo entero): las franjas miden menos de un pixel
-const GAP_CELL_PX = 1.5;         // tamano de celda objetivo en pixeles de pantalla (para que la costa no salga escalonada)
-const GAP_CELLS_MIN = 200; const GAP_CELLS_MAX = 1100;
+// Tamaño de celda en pixeles de pantalla y tope de celdas. Con 1,5 px y 1100 la costa salia «difusa» (el creador, 2026-11-15, en una
+// pantalla de 1913 px: cada celda ~1,7 px, suavizada). Donde el equipo puede (4+ nucleos y raton), 1 px y hasta 2048 (medido en escritorio:
+// ~0,4 s frente a ~0,23 s, una vez al parar la camara); en el resto (moviles, el iPad de 2015) se queda como estaba.
+const GAP_STRONG = (navigator.hardwareConcurrency || 2) >= 4 && !matchMedia('(pointer: coarse)').matches;
+const GAP_CELL_PX = GAP_STRONG ? 1 : 1.5;
+const GAP_CELLS_MIN = 200; const GAP_CELLS_MAX = GAP_STRONG ? 2048 : 1100;
 let gapSeq = 0;                   // el PNG se codifica fuera del hilo principal: solo vale el ultimo
 const GAP = { timer: 0, shown: false, ctx: null, sel: null, url: null, cache: new Map(), t: null, dirty: false, dirtyTimer: 0 };
 function gapColor(css) {
@@ -2055,6 +2075,21 @@ function gapSettled() {
     if (GAP.dirty) { GAP.dirty = false; naturalView(); }
 }
 function gapDraw() { try { gapDrawNow(); } finally { gapSettled(); } }
+/**
+ * El poligono (con su caja _bb) tal cual, desplazado 360 grados, o null si no toca la vista. La vista puede pasar de 180 o de -180 (cruza
+ * el antimeridiano); los datos van siempre entre -180 y 180. La copia desplazada se guarda en el propio poligono (una vez).
+ */
+function gapWrap(poly, view, pad) {
+    const bb = poly._bb; if (bb[3] < view[1] - pad || bb[1] > view[3] + pad) return null;
+    for (const k of [0, 360, -360]) {
+        if (bb[2] + k < view[0] - pad || bb[0] + k > view[2] + pad) continue;
+        if (!k) return poly;
+        const key = k > 0 ? '_p360' : '_m360';
+        if (!poly[key]) { const q = poly.map((r) => r.map(([x, y]) => [x + k, y])); q._bb = [bb[0] + k, bb[1], bb[2] + k, bb[3]]; poly[key] = q; }
+        return poly[key];
+    }
+    return null;
+}
 function gapDrawNow() {
     if (!map.getLayer('gap-raster') || !window.ChronosGap) return;
     const b = state.borders;
@@ -2065,7 +2100,15 @@ function gapDrawNow() {
     if (!DETAIL.shown && !(L && L.data && L.data.features)) { gapHide(); return; }
     const capM = b.source === 'ne' ? GAP_DIST_NE_M : GAP_DIST_M;
     const bd = map.getBounds(); const padDeg = capM / 111000 * 1.2;
-    const view = [Math.max(-180, bd.getWest()), Math.max(-84, bd.getSouth()), Math.min(180, bd.getEast()), Math.min(84, bd.getNorth())];
+    // Vista CONTINUA en longitud: si cruza el antimeridiano, MapLibre da p. ej. [80, 273]; antes se recortaba a 180 y lo de mas alla quedaba
+    // sin color, con una recta en el meridiano 180 (el creador, 2026-11-15: «linea recta que delimita el relleno… de Rusia»). Ahora se
+    // conserva y los poligonos del otro lado se desplazan 360 grados (gapWrap).
+    let w0 = bd.getWest(); let e0 = bd.getEast();
+    if (e0 - w0 >= 360) { w0 = -180; e0 = 180; }
+    while (w0 < -180) { w0 += 360; e0 += 360; }
+    while (w0 >= 180) { w0 -= 360; e0 -= 360; }
+    if ((w0 + e0) / 2 > 180) { w0 -= 360; e0 -= 360; }    // el CENTRO de la imagen dentro de [-180, 180]: si no, MapLibre calcula una tesela inexistente (x=1 a z=0) y no la pinta
+    const view = [w0, Math.max(-84, bd.getSouth()), e0, Math.min(84, bd.getNorth())];
     GAP.dbg = { z: Math.round(map.getZoom() * 100) / 100, bounds: [bd.getWest(), bd.getSouth(), bd.getEast(), bd.getNorth()].map((v) => Math.round(v * 100) / 100), view: view.map((v) => Math.round(v * 100) / 100) };   // para la sonda
     if (view[2] - view[0] > GAP_MAX_SPAN_DEG) { GAP.dbg.hidden = 'span'; gapHide(); return; }
     const degPerPx = 360 / (512 * Math.pow(2, map.getZoom()));
@@ -2091,10 +2134,9 @@ function gapDrawNow() {
         if (!f.geometry) continue;
         const polys = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates : f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : [];
         const key = (f.properties && (f.properties.SUBJECTO || f.properties.NAME)) || '?';
-        for (const poly of polys) {
+        for (let poly of polys) {
             if (!poly._bb) { let a = 180, c = 90, d = -180, e = -90; poly[0].forEach(([x, y]) => { a = Math.min(a, x); d = Math.max(d, x); c = Math.min(c, y); e = Math.max(e, y); }); poly._bb = [a, c, d, e]; }
-            const bb = poly._bb;
-            if (bb[2] < view[0] - padDeg || bb[0] > view[2] + padDeg || bb[3] < view[1] - padDeg || bb[1] > view[3] + padDeg) continue;
+            const wp = gapWrap(poly, view, padDeg); if (!wp) continue; poly = wp;
             if (!groups.has(key)) groups.set(key, { key, css: f.properties._c, alpha: Math.min(255, Math.round(255 * ((f.properties._o == null ? 0.5 : f.properties._o) + (GAP.sel === key ? 0.3 : 0)))), polys: [] });
             groups.get(key).polys.push(poly);
         }
@@ -2103,7 +2145,7 @@ function gapDrawNow() {
     if (!list.length) { gapHide(); return; }
     let landPolys = null;
     if (maskPolys) {
-        landPolys = maskPolys.filter((poly) => { const bb = poly._bb; return !(bb[2] < view[0] - padDeg || bb[0] > view[2] + padDeg || bb[3] < view[1] - padDeg || bb[1] > view[3] + padDeg); });
+        landPolys = maskPolys.map((poly) => gapWrap(poly, view, padDeg)).filter(Boolean);
         if (!landPolys.length) { gapHide(); return; }
     } else if (L) {
         landPolys = [];
@@ -2112,9 +2154,7 @@ function gapDrawNow() {
             const polys = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates : f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : [];
             for (const poly of polys) {
                 if (!poly._bb) { let a = 180, c = 90, d = -180, e = -90; poly[0].forEach(([x, y]) => { a = Math.min(a, x); d = Math.max(d, x); c = Math.min(c, y); e = Math.max(e, y); }); poly._bb = [a, c, d, e]; }
-                const bb = poly._bb;
-                if (bb[2] < view[0] - padDeg || bb[0] > view[2] + padDeg || bb[3] < view[1] - padDeg || bb[1] > view[3] + padDeg) continue;
-                landPolys.push(poly);
+                const wp = gapWrap(poly, view, padDeg); if (wp) landPolys.push(wp);
             }
         }
         if (!landPolys.length) { gapHide(); return; }
@@ -5021,7 +5061,7 @@ function eventsVisApply() {
 // Cables: «al señalar uno» (por defecto) o «siempre» (tenues). Con «puntos de color», el globo pinta puntos y los iconos quedan en la lista.
 // Coste: nada mientras el globo se mueve (los cables se esconden); al parar, una pasada sobre lo dibujado (<= 80 sucesos) y lo que haya
 // puesto MapLibre de construcciones. La logica (que filas, donde, por donde va el cable) esta en map/legend.js con sus pruebas.
-var LG = { open: prefs.lg === 1, always: prefs.lgw === 1, dots: prefs.lgd !== 0, wide: prefs.lgx === 1, rows: [], extra: 0, hot: null, pin: null, pinT: 0, hb: null, touchHot: null, timer: 0, sig: '', lastPointer: 'mouse', ms: 0, rowH: 26 };
+var LG = { open: prefs.lg === 1, always: prefs.lgw === 1, dots: prefs.lgd !== 0, wide: prefs.lgx === 1, rows: [], groups: [], fold: new Set(), extra: 0, hot: null, pin: null, pinT: 0, hb: null, touchHot: null, timer: 0, sig: '', lastPointer: 'mouse', ms: 0, rowH: 26 };
 const LG_DOT_RADIUS = ['interpolate', ['linear'], ['get', 'importance'], 0.3, 3.6, 1, 5.6];
 const lgRowH = () => (LG.wide ? 30 : matchMedia('(pointer: coarse)').matches ? 32 : 26);
 (function lgBuild() {
@@ -5130,6 +5170,12 @@ function lgRender() {
     const items = lgCollect(br.left - cr.left - 4);
     const pick = ChronosLegend.pickRows(items, { max: LG.wide ? items.length : max });
     pick.rows.forEach((it) => { it.yd = it.y + cr.top - lr.top; it.px = it.x + cr.left; it.py = it.y + cr.top; });
+    LG.groups = [];
+    if (LG.wide) {
+        pick.rows.forEach((it) => { it.pol = polityAt(it.x, it.y); });
+        LG.groups = ChronosLegend.groupRows(pick.rows, (it) => (it.pol && it.pol.name ? { key: it.pol.name, name: it.pol.name, color: it.pol.c } : null));
+        pick.rows = LG.groups.flatMap((g) => g.items);
+    }
     LG.rows = pick.rows; LG.extra = pick.extra;
     $('lg-n').textContent = String(items.length);
     const ex = $('lg-extra');
@@ -5154,9 +5200,15 @@ function lgLayout() {
     const keep = new Set(LG.rows.map((it) => it.id));
     have.forEach((li, id) => { if (!keep.has(id)) li.remove(); });
     if (LG.wide) {
-        const sig = LG.rows.map((it) => it.id).join('|') + '#' + lang;
-        if (sig !== LG.sig) { LG.sig = sig; LG.rows.forEach((it) => list.appendChild(have.get(it.id) || lgRow(it))); }
-        LG.rows.forEach((it) => lgColors(list.querySelector('.lg-row[data-id="' + CSS.escape(it.id) + '"]'), it));
+        const sig = LG.groups.map((g) => g.key + (LG.fold.has(g.key) ? '-' : '+') + ':' + g.items.map((it) => it.id).join('|')).join('#') + '#' + lang;
+        if (sig !== LG.sig) {
+            LG.sig = sig; list.querySelectorAll('.lg-sec').forEach((h) => h.remove());
+            LG.groups.forEach((g) => {
+                list.appendChild(lgSec(g));
+                g.items.forEach((it) => { const li = have.get(it.id) || lgRow(it); li.hidden = LG.fold.has(g.key); list.appendChild(li); });
+            });
+        }
+        LG.rows.forEach((it) => lgPaint(list.querySelector('.lg-row[data-id="' + CSS.escape(it.id) + '"]'), it, it.pol));
     } else {
         const k = LG.pin ? LG.rows.findIndex((it) => it.id === LG.pin) : -1;
         const desired = LG.rows.map((it) => it.yd);
@@ -5171,10 +5223,24 @@ function lgLayout() {
     list.querySelectorAll('.lg-row').forEach((li) => li.classList.toggle('hot', li.dataset.id === LG.hot));
     lgAnchors();
 }
+/** Titulo de un apartado (pais) de la lista entera: color, nombre y cuantos; al pulsarlo se pliega o despliega. */
+function lgSec(g) {
+    const li = el('li', { class: 'lg-sec' + (g.key ? '' : ' none'), role: 'presentation' });
+    if (g.color) li.style.setProperty('--co', g.color);
+    const open = !LG.fold.has(g.key);
+    const b = el('button', { type: 'button', 'aria-expanded': String(open), title: t('lgSecTip') }, [
+        el('span', { class: 'lg-sw', 'aria-hidden': 'true' }), el('span', { class: 'lg-sn', text: g.key ? g.name : t('lgNoCountry') }),
+        el('span', { class: 'lg-sc', text: String(g.items.length) }), el('span', { class: 'lg-sv', 'aria-hidden': 'true', text: '▾' })]);
+    b.addEventListener('click', () => { if (LG.fold.has(g.key)) LG.fold.delete(g.key); else LG.fold.add(g.key); LG.sig = ''; lgLayout(); lgWires(); });
+    li.appendChild(b); return li;
+}
 /** Colores del recuadro: --co (pais del lugar, en esta fecha) y --ty (tipo). Solo en la lista entera (todas) o en la fila señalada. */
 function lgColors(li, it) {
     if (!li) return;
-    const cr = map.getContainer().getBoundingClientRect(); const pol = polityAt(it.px - cr.left, it.py - cr.top);
+    const cr = map.getContainer().getBoundingClientRect(); lgPaint(li, it, polityAt(it.px - cr.left, it.py - cr.top));
+}
+function lgPaint(li, it, pol) {
+    if (!li) return;
     li.style.setProperty('--ty', lgTypeColor(it));
     if (pol) li.style.setProperty('--co', pol.c); else li.style.removeProperty('--co');
     const co = li.querySelector('.lg-co'); if (co) co.textContent = pol && pol.name ? pol.name : '';
@@ -5184,7 +5250,7 @@ function lgAnchors() {
     const list = $('lg-list'); const lr = list.getBoundingClientRect(); const left = $('legend').getBoundingClientRect().left;
     if (LG.wide) {
         LG.rows.forEach((it) => {
-            const li = list.querySelector('.lg-row[data-id="' + CSS.escape(it.id) + '"]'); if (!li) { it.ax = null; return; }
+            const li = list.querySelector('.lg-row[data-id="' + CSS.escape(it.id) + '"]'); if (!li || li.hidden) { it.ax = null; return; }
             const r = li.getBoundingClientRect(); const cy = r.top + r.height / 2;
             it.ax = cy < lr.top || cy > lr.bottom ? null : left + 2; it.ay = cy;      // fuera de la ventana de la lista: sin cable
         });
@@ -5261,9 +5327,11 @@ function lgHot(id, fromMap) {
 }
 /** Lista entera: desplaza hasta la fila (a la altura de su punto o al centro; si ya esta ahi, nada). */
 function lgScrollTo(id) {
-    const list = $('lg-list'); const i = LG.rows.findIndex((r) => r.id === id); if (i < 0) return;
-    const it = LG.rows[i]; const lr = list.getBoundingClientRect();
-    const to = ChronosLegend.scrollFor(i, 30, list.clientHeight, list.scrollHeight, list.scrollTop, it.py - lr.top);
+    const list = $('lg-list'); const it = LG.rows.find((r) => r.id === id); if (!it) return;
+    const g = LG.groups.find((x) => x.items.includes(it)); if (g && LG.fold.has(g.key)) { LG.fold.delete(g.key); LG.sig = ''; lgLayout(); }
+    const li = list.querySelector('.lg-row[data-id="' + CSS.escape(id) + '"]'); if (!li) return;
+    const lr = list.getBoundingClientRect(); const rowH = li.offsetHeight || 30;
+    const to = ChronosLegend.scrollFor(li.offsetTop / rowH, rowH, list.clientHeight, list.scrollHeight, list.scrollTop, it.py - lr.top);
     if (to == null) return;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     try { list.scrollTo({ top: to, behavior: reduce ? 'auto' : 'smooth' }); } catch (e) { list.scrollTop = to; }
