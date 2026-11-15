@@ -25,8 +25,8 @@ const SUITE = [
     { id: 'costa-natural-valencia-1924', costa: true, year: 1924, lng: 1.5, lat: 39.6, zoom: 4.55 },
     // 2026-11-15, capturas del creador en 2011 (pantalla 1913x950): «fronteras difusas» en Iberia y «linea recta que delimita el relleno… de Rusia»
     { id: 'costa-2011-iberia-ancho', costa: true, vp: { width: 1913, height: 950 }, year: 2011, lng: 1.5, lat: 41, zoom: 4.45 },
-    { id: 'costa-2011-bering-oeste', costa: true, vp: { width: 1913, height: 950 }, year: 2011, lng: 177.1, lat: 62, zoom: 2.75 },
-    { id: 'costa-2011-bering-este', costa: true, vp: { width: 1913, height: 950 }, year: 2011, lng: -177.3, lat: 62, zoom: 2.75 },
+    { id: 'costa-2011-bering-oeste', costa: true, vp: { width: 1913, height: 950 }, year: 2011, lng: 177.1, lat: 62, zoom: 3.2 },
+    { id: 'costa-2011-bering-este', costa: true, vp: { width: 1913, height: 950 }, year: 2011, lng: -177.3, lat: 62, zoom: 3.2 },
     { id: 'estrecho-2026', year: 2026, lng: -5.6, lat: 36, zoom: 8 },
     { id: 'europa-1945-lejos', year: 1945, lng: 12, lat: 50, zoom: 3 },
     { id: 'europa-1945', year: 1945, lng: 12, lat: 50, zoom: 4 },
