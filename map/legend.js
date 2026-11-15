@@ -110,6 +110,106 @@
         return out;
     }
 
+    /* ---- Rueda (el creador, 2026-11-15) ----
+     * «Agrupar en la lista de la derecha. Colapsar paises. Colapsar por tipos… dentro de cada pais. Expandir automaticamente solo lo
+     * necesario. Para tener vision mas amplia de todo. Reducir tamaño de items a la lejania del central. El central es el seleccionado.
+     * Como si fuera una rueda con inercia.» Y: la seleccion sigue al centro EN TODO MOMENTO; en la columna y en la lista entera.
+     * La rueda recorre los ELEMENTOS en orden (pais, tipo, altura en pantalla); la posicion es un numero continuo f (indice en esa
+     * secuencia). Solo se despliega la rama del elemento del centro; lo demas queda en filas resumen («Francia · 34», «Batallas · 5»). */
+
+    /**
+     * Arbol: paises > tipos > elementos. items: [{ id, y }]; countryOf(it) -> { key, name, color } o null (sin pais); typeOf(it) ->
+     * { key, name }. Paises en el orden en que aparecen de arriba abajo (su punto mas alto), sin pais al final; dentro, los tipos igual;
+     * dentro, por altura. Devuelve { countries: [{ key, name, color, n, types: [{ key, name, n, items }] }], seq, at } con seq = elementos en
+     * el orden de la rueda y at: Map id -> { c, t, k } (indices de pais, tipo y posicion en seq).
+     */
+    function buildTree(items, countryOf, typeOf) {
+        const cs = new Map(); const seen = new Set();
+        for (const it of items || []) {
+            if (!it || it.id == null || seen.has(it.id) || !Number.isFinite(it.y)) continue; seen.add(it.id);
+            const g = countryOf(it) || null; const ck = g && g.key ? g.key : '';
+            if (!cs.has(ck)) cs.set(ck, { key: ck, name: ck ? g.name || ck : '', color: ck ? g.color || null : null, top: Infinity, tmap: new Map() });
+            const c = cs.get(ck); c.top = Math.min(c.top, it.y);
+            const ty = typeOf(it) || {}; const tk = ty.key || '?';
+            if (!c.tmap.has(tk)) c.tmap.set(tk, { key: tk, name: ty.name || tk, top: Infinity, items: [] });
+            const t = c.tmap.get(tk); t.top = Math.min(t.top, it.y); t.items.push(it);
+        }
+        const byTop = (a, b) => a.top - b.top || String(a.key).localeCompare(String(b.key));
+        const countries = [...cs.values()].sort((a, b) => (a.key === '') - (b.key === '') || byTop(a, b)).map((c) => {
+            const types = [...c.tmap.values()].sort(byTop).map((t) => ({ key: t.key, name: t.name, n: t.items.length, items: t.items.sort((a, b) => a.y - b.y || String(a.id).localeCompare(String(b.id))) }));
+            return { key: c.key, name: c.name, color: c.color, n: types.reduce((s, t) => s + t.n, 0), types };
+        });
+        const seq = []; const at = new Map();
+        countries.forEach((c, ci) => c.types.forEach((t, ti) => t.items.forEach((it) => { at.set(it.id, { c: ci, t: ti, k: seq.length }); seq.push(it); })));
+        return { countries, seq, at };
+    }
+
+    /**
+     * Filas de la rueda con el elemento seq[k] desplegado: cada pais es UNA fila salvo el del elemento (su cabecera y sus tipos); cada tipo
+     * es una fila salvo el del elemento (su cabecera y sus elementos). Con un solo pais, o ninguno con nombre, no se pone fila de pais.
+     * Devuelve { rows: [{ key, kind: 'country'|'type'|'item', open, ci, ti, it, n }], anchor } (anchor: fila del elemento k, o -1).
+     */
+    function wheelRows(tree, k) {
+        const rows = []; let anchor = -1; if (!tree || !tree.seq.length) return { rows, anchor };
+        const kk = Math.max(0, Math.min(tree.seq.length - 1, Math.round(k) || 0));
+        const pos = tree.at.get(tree.seq[kk].id);
+        const flat = tree.countries.length === 1;
+        tree.countries.forEach((c, ci) => {
+            const open = ci === pos.c;
+            if (!flat) rows.push({ key: 'c:' + c.key, kind: 'country', open, ci, n: c.n });
+            if (!open) return;
+            c.types.forEach((t, ti) => {
+                const topen = ti === pos.t;
+                rows.push({ key: 't:' + c.key + '/' + t.key, kind: 'type', open: topen, ci, ti, n: t.n });
+                if (!topen) return;
+                t.items.forEach((it) => { if (it.id === tree.seq[kk].id) anchor = rows.length; rows.push({ key: 'i:' + it.id, kind: 'item', open: false, ci, ti, it, n: 1 }); });
+            });
+        });
+        return { rows, anchor };
+    }
+
+    /**
+     * Donde va cada fila: la del ancla centrada en centerY (desplazada `frac` hacia la siguiente o la anterior mientras gira); las demas
+     * apiladas hacia arriba y abajo, cada una mas pequeña y tenue cuanto mas lejos del centro (en filas): escala max(minS, 1 - kS·d),
+     * opacidad max(minO, 1 - kO·d). heights[i]: alto natural de cada fila. Devuelve [{ y (borde de arriba), h (alto ya escalado), s, o, d }].
+     */
+    function wheelPlace(heights, anchor, frac, centerY, opts) {
+        const o = opts || {}; const kS = o.kS == null ? 0.07 : o.kS; const minS = o.minS == null ? 0.62 : o.minS;
+        const kO = o.kO == null ? 0.1 : o.kO; const minO = o.minO == null ? 0.38 : o.minO;
+        const n = heights.length; const out = new Array(n); if (!n) return out;
+        const a = Math.max(0, Math.min(n - 1, anchor | 0)); const fr = Number.isFinite(frac) ? frac : 0;
+        const sc = (d) => Math.max(minS, 1 - kS * Math.abs(d)); const op = (d) => Math.max(minO, 1 - kO * Math.abs(d));
+        const put = (i, cy, d) => { const s = sc(d); const h = heights[i] * s; out[i] = { y: cy - h / 2, h, s, o: op(d), d }; return h; };
+        // el centro de la rueda cae `fr` filas por debajo del centro del ancla: el ancla sube fr veces la distancia a su vecina
+        const nb = fr >= 0 ? Math.min(n - 1, a + 1) : Math.max(0, a - 1);
+        const gap = nb === a ? heights[a] : (heights[a] + heights[nb]) / 2;
+        let hA = put(a, centerY - fr * gap, -fr);
+        let cy = centerY - fr * gap; let hPrev = hA;
+        for (let i = a + 1; i < n; i++) { const d = i - a - fr; const s = sc(d); cy += (hPrev + heights[i] * s) / 2; hPrev = put(i, cy, d); }
+        cy = centerY - fr * gap; hPrev = hA;
+        for (let i = a - 1; i >= 0; i--) { const d = i - a - fr; const s = sc(d); cy -= (hPrev + heights[i] * s) / 2; hPrev = put(i, cy, d); }
+        return out;
+    }
+
+    /**
+     * Un paso de la inercia (dt en segundos). st: { f, v (filas por segundo), to (destino, o null si gira libre) }; n: cuantos elementos.
+     * Libre: avanza y frena (como el desplazamiento del sistema, ~0,33 s de constante); cuando va despacio, encaja en el entero mas cercano.
+     * Con destino (un toque, o señalado en el globo): se acerca a el. Nunca sale de [0, n-1]. Devuelve el estado nuevo con done (parado).
+     */
+    const TAU_FREE = 0.33; const V_SNAP = 1.6; const TAU_SNAP = 0.085;
+    function spinStep(st, dt, n) {
+        const hi = Math.max(0, (n | 0) - 1); let f = Number.isFinite(st.f) ? st.f : 0; let v = Number.isFinite(st.v) ? st.v : 0; let to = st.to == null ? null : Math.max(0, Math.min(hi, Math.round(st.to)));
+        const t = Math.max(0, Math.min(0.1, dt || 0));
+        if (to == null) {
+            f += v * t; v *= Math.exp(-t / TAU_FREE);
+            if (f <= 0) { f = 0; v = Math.max(0, v); } else if (f >= hi) { f = hi; v = Math.min(0, v); }
+            if (Math.abs(v) < V_SNAP) { to = Math.max(0, Math.min(hi, Math.round(f))); v = 0; }
+        }
+        if (to != null) { f = to + (f - to) * Math.exp(-t / TAU_SNAP); if (Math.abs(f - to) < 0.004) f = to; }
+        f = Math.max(0, Math.min(hi, f));
+        return { f, v, to, done: to != null && f === to };
+    }
+
     /** Ruta SVG del cable: del punto (px,py) a la fila (ax,ay), con el tramo horizontal hasta el carril (ax - LANE_PX). */
     function wirePath(px, py, ax, ay) {
         const r = (v) => Math.round(v * 10) / 10;
@@ -130,5 +230,5 @@
         return t > 1e-6 && t < 1 - 1e-6 && u > 1e-6 && u < 1 - 1e-6;
     }
 
-    return { LANE_PX, pickRows, placeRows, placeRowsPinned, bubblePlace, scrollFor, groupRows, wirePath, wireSegments, segmentsCross };
+    return { LANE_PX, pickRows, placeRows, placeRowsPinned, bubblePlace, scrollFor, groupRows, buildTree, wheelRows, wheelPlace, spinStep, wirePath, wireSegments, segmentsCross };
 }));

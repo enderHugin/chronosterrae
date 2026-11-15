@@ -21,6 +21,10 @@ const SUITE = [
     // 2026-11-14: señalada DESDE EL GLOBO (la fila va a la altura de su punto; etiqueta del mapa encima; recuadros de dos colores) y lista entera
     { id: 'leyenda-tableta-1939-mapa', leyenda: true, abrir: ['leyenda'], senalar: 'mapa', vp: { width: 834, height: 1194, touch: true }, year: 1939, lng: 12, lat: 48, zoom: 4.2 },
     { id: 'leyenda-tableta-1939-lista', leyenda: true, abrir: ['leyenda'], ancha: true, senalar: 'mapa', vp: { width: 834, height: 1194, touch: true }, year: 1939, lng: 12, lat: 48, zoom: 4.2 },
+    // 2026-11-15, RUEDA (el creador): paises > tipos plegados, solo se despliega lo del centro, mas pequeño lejos del centro; se gira arrastrando
+    { id: 'leyenda-movil-1964-rueda', leyenda: true, abrir: ['leyenda'], girar: 160, vp: { width: 412, height: 860, touch: true }, year: 1964, lng: 2, lat: 46, zoom: 4.3 },
+    { id: 'leyenda-movil-1964-rueda-lista', leyenda: true, abrir: ['leyenda'], ancha: true, girar: -120, vp: { width: 412, height: 860, touch: true }, year: 1964, lng: 2, lat: 46, zoom: 4.3 },
+    { id: 'leyenda-escritorio-1939-rueda-lista', leyenda: true, abrir: ['leyenda'], ancha: true, girar: 200, year: 1939, lng: 12, lat: 48, zoom: 4.2 },
     { id: 'costa-natural-iberia-1924', costa: true, year: 1924, lng: 3, lat: 40.5, zoom: 4.3 },
     { id: 'costa-natural-valencia-1924', costa: true, year: 1924, lng: 1.5, lat: 39.6, zoom: 4.55 },
     // 2026-11-15, capturas del creador en 2011 (pantalla 1913x950): «fronteras difusas» en Iberia y «linea recta que delimita el relleno… de Rusia»
@@ -255,6 +259,16 @@ async function runSuite(page, out, only) {
                 }, v.senalar);
                 await page.waitForTimeout(1200);
             }
+            if (v.girar) {          // rueda: arrastre vertical sobre la lista (px; positivo = hacia arriba) y se suelta con impulso
+                await page.waitForFunction(() => LG.open && LG.rows.length > 0, null, { timeout: 30000 }).catch(() => {});
+                await page.waitForTimeout(1500);
+                const bx = await page.evaluate(() => { const r = document.getElementById('lg-list').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+                await page.mouse.move(bx.x, bx.y + v.girar / 2); await page.mouse.down();
+                for (let i = 1; i <= 8; i++) { await page.mouse.move(bx.x, bx.y + v.girar / 2 - i * v.girar / 8); await page.waitForTimeout(16); }
+                await page.mouse.up(); await page.waitForTimeout(250);
+                await page.screenshot({ path: path.join(out, v.id + (dark ? '-oscuro' : '-claro') + '-girando.png') });
+                await page.waitForTimeout(2500);
+            }
             if (v.run) await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});   // el cielo (efemerides) carga aparte
             if (v.run) {   // el reloj avanza por su punto de entrada real (clockSet) a v.yearsPerSec; se mide la ventana y se fotografia sin esperar (al parar, la ventana vuelve a la minima en ~2,5 s)
                 ventana = await page.evaluate(async (yps) => {
@@ -298,7 +312,7 @@ async function runSuite(page, out, only) {
                 const cs = getComputedStyle(document.body);
                 return { epoca: document.body.getAttribute('data-era'), insignia: document.getElementById('era-badge').hidden ? null : document.getElementById('era-badge').textContent, acento: cs.getPropertyValue('--accent').trim(), borde: getComputedStyle(document.getElementById('timeline')).borderTopStyle, mar: map.getPaintProperty('ocean', 'background-color'), puntos: map.getLayer('events-dot') ? map.getPaintProperty('events-dot', 'circle-stroke-color') : null, ventana: [innerWidth, innerHeight], cajas: bx, solapes };
             }) : undefined;
-            rows.push({ name, ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, gapDbg: GAP.dbg || null, sea: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null, seaTiles: typeof SEA !== 'undefined' ? SEA.n : null, seaCpu: typeof SEA !== 'undefined' && SEA.cpu.length ? Math.round(SEA.cpu.reduce((a, b) => a + b, 0) / SEA.cpu.length * 10) / 10 : null, proj: map.getProjection && map.getProjection().type, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            rows.push({ name, ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, gapDbg: GAP.dbg || null, sea: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null, seaTiles: typeof SEA !== 'undefined' ? SEA.n : null, seaCpu: typeof SEA !== 'undefined' && SEA.cpu.length ? Math.round(SEA.cpu.reduce((a, b) => a + b, 0) / SEA.cpu.length * 10) / 10 : null, proj: map.getProjection && map.getProjection().type, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, rueda: typeof LGW !== 'undefined' && LG.open ? { n: LG.rows.length, f: Math.round(LGW.f * 100) / 100, filas: LGW.rows.length, elegido: LG.hot, tomada: LGW.engaged, paises: LGW.tree ? LGW.tree.countries.length : 0, ms: Math.round(LG.ms) } : null, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
             if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
             if (v.tipos) await page.evaluate(() => { typesSet(0, false); typesRender(); panelsUI.setSettingsOpen(false); });
             if (v.abrir) await page.evaluate(() => { panelsUI.setSettingsOpen(false); hideInfo(); menus.closeAll(); if (typeof LG !== 'undefined' && LG.open) lgSet(false, false); });

@@ -97,5 +97,55 @@ check('apartados: por pais, en el orden en que aparecen de arriba abajo; dentro,
 });
 check('apartados: lista vacia o sin funcion de pais valida -> sin romper (rechazado, no roto)', () => L.groupRows([], () => null).length === 0 && L.groupRows(null, () => null).length === 0 && L.groupRows([{ id: 'x', y: 1 }], () => ({})).length === 1);
 
+// --- 2026-11-15: rueda (paises > tipos > elementos; solo se despliega la rama del centro; mas pequeño cuanto mas lejos; inercia) ---
+const W = [
+    { id: 'fr1', y: 120, c: 'Francia', t: 'guerra' }, { id: 'es1', y: 300, c: 'España', t: 'nacer' }, { id: 'fr2', y: 90, c: 'Francia', t: 'nacer' },
+    { id: 'es2', y: 260, c: 'España', t: 'nacer' }, { id: 'es3', y: 280, c: 'España', t: 'guerra' }, { id: 'mar', y: 500, c: null, t: 'guerra' }, { id: 'fr3', y: 150, c: 'Francia', t: 'guerra' }
+];
+const tree = () => L.buildTree(W, (x) => (x.c ? { key: x.c, name: x.c, color: '#123' } : null), (x) => ({ key: x.t, name: x.t }));
+check('rueda, arbol: paises por su punto mas alto (sin pais al final), tipos igual, elementos por altura; seq en ese orden', () => {
+    const T = tree();
+    const ok = T.countries.map((c) => c.key).join(',') === 'Francia,España,' && T.countries[0].types.map((t) => t.key).join(',') === 'nacer,guerra'
+        && T.seq.map((x) => x.id).join(',') === 'fr2,fr1,fr3,es2,es1,es3,mar' && T.countries[0].n === 3 && T.at.get('es1').k === 4;
+    return ok || T.seq.map((x) => x.id).join(',');
+});
+check('rueda, arbol: repetidos y alturas no validas fuera; sin elementos, arbol vacio (rechazado, no roto)', () => {
+    const T = L.buildTree([{ id: 'a', y: 1 }, { id: 'a', y: 2 }, { id: 'b', y: NaN }, null], () => null, () => ({ key: 'x' }));
+    const E = L.buildTree(null, () => null, () => null);
+    return T.seq.length === 1 && E.seq.length === 0 && L.wheelRows(E, 0).rows.length === 0;
+});
+check('rueda, filas: solo se despliega la rama del centro; lo demas, una fila resumen con cuantos', () => {
+    const { rows, anchor } = L.wheelRows(tree(), 4);     // es1: España > nacer
+    const s = rows.map((r) => r.kind[0] + (r.open ? '+' : '') + ':' + (r.it ? r.it.id : r.n)).join(' ');
+    return (s === 'c:3 c+:3 t+:2 i:es2 i:es1 t:1 c:1' && rows[anchor].it.id === 'es1') || s;
+});
+check('rueda, filas: con un solo pais no hay fila de pais; el indice se recorta a la secuencia', () => {
+    const T = L.buildTree([{ id: 'a', y: 1, t: 'x' }, { id: 'b', y: 2, t: 'y' }], () => ({ key: 'P', name: 'P' }), (x) => ({ key: x.t }));
+    const r = L.wheelRows(T, 99); return (r.rows.map((x) => x.kind).join(',') === 'type,type,item' && r.rows[r.anchor].it.id === 'b') || r;
+});
+check('rueda, colocacion: el ancla centrada, sin solapes, en orden, y mas pequeña y tenue cuanto mas lejos', () => {
+    const hs = Array.from({ length: 11 }, () => 30); const p = L.wheelPlace(hs, 5, 0, 400);
+    if (Math.abs(p[5].y + p[5].h / 2 - 400) > 1e-9 || p[5].s !== 1) return 'centro';
+    for (let i = 1; i < 11; i++) if (p[i].y < p[i - 1].y + p[i - 1].h - 1e-9) return 'solape ' + i;
+    return (p[0].s < p[3].s && p[3].s < p[5].s && p[10].o < p[7].o && p[0].s >= 0.62 - 1e-9 && p[0].o >= 0.38 - 1e-9) || p.map((x) => x.s);
+});
+check('rueda, colocacion: continua al girar (media fila de giro mueve el ancla media separacion hacia arriba)', () => {
+    const hs = Array.from({ length: 7 }, () => 30); const a = L.wheelPlace(hs, 3, 0, 300); const b = L.wheelPlace(hs, 3, 0.5, 300); const c = L.wheelPlace(hs, 3, 0.02, 300);
+    return (Math.abs((b[3].y + b[3].h / 2) - (300 - 15)) < 1e-9 && Math.abs(c[3].y - a[3].y) < 1 && b[4].s > b[2].s) || [a[3], b[3]];
+});
+check('rueda, inercia: un impulso gira, frena solo y encaja en un entero; nunca sale de [0, n-1]', () => {
+    let st = { f: 2, v: 30, to: null }; let steps = 0;
+    while (!st.done && steps < 2000) { st = L.spinStep(st, 1 / 60, 20); steps++; if (st.f < 0 || st.f > 19) return 'fuera ' + st.f; }
+    if (!st.done || st.f !== Math.round(st.f) || st.f <= 2) return st;
+    let e = { f: 18, v: 200, to: null }; for (let i = 0; i < 400 && !e.done; i++) e = L.spinStep(e, 1 / 60, 20);
+    let z = { f: 1, v: -200, to: null }; for (let i = 0; i < 400 && !z.done; i++) z = L.spinStep(z, 1 / 60, 20);
+    return (e.f === 19 && z.f === 0 && steps < 200) || [e, z, steps];
+});
+check('rueda, inercia: con destino (toque o globo) llega a el y para; un destino fuera de rango se recorta', () => {
+    let st = { f: 0, v: 0, to: 7 }; for (let i = 0; i < 200 && !st.done; i++) st = L.spinStep(st, 1 / 60, 10);
+    let o = { f: 3, v: 0, to: 50 }; for (let i = 0; i < 200 && !o.done; i++) o = L.spinStep(o, 1 / 60, 10);
+    return (st.done && st.f === 7 && o.f === 9) || [st, o];
+});
+
 console.log('\nPASS ' + passes.length); passes.forEach((p) => console.log('  ok  ' + p));
 if (fails) { console.log('\nFAIL ' + fails); process.exit(1); } else console.log('\nLeyenda: todo verde.');

@@ -571,9 +571,25 @@
         #lg-head .lg-cap { font-size: 8.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; }
         #lg-head[aria-expanded="true"] { background: var(--accent); color: var(--bg); }
         #lg-head[aria-expanded="true"] .lg-cap { color: var(--bg); }
-        #lg-list { position: relative; flex: 1 1 auto; margin: 0; padding: 0; list-style: none; min-height: 0; }
-        .lg-row { position: absolute; left: 0; right: 0; height: var(--lg-row, 26px); display: flex; align-items: center; justify-content: center; transition: top 0.18s ease; }
-        @media (prefers-reduced-motion: reduce) { .lg-row { transition: none; } }
+        /* RUEDA (el creador, 2026-11-15): las filas se colocan con transform desde JS (map/legend.js, wheelPlace); la lente marca el centro.
+           Recorte solo arriba y abajo: el nombre del elegido (columna) sale a la izquierda de la rueda. */
+        #lg-wheel { position: relative; flex: 1 1 auto; min-height: 0; touch-action: none; clip-path: inset(0 0 0 -100vw); }
+        #lg-list { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; outline: none; }
+        #lg-list:focus-visible { box-shadow: inset 0 0 0 2px var(--accent); border-radius: 8px; }
+        #lg-lens { position: absolute; left: 2px; right: 2px; top: 0; box-sizing: border-box; border-radius: 7px; pointer-events: none; will-change: transform;
+            background: color-mix(in srgb, var(--accent) 14%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent); }
+        #lg-lens[hidden] { display: none; }
+        .lg-row { position: absolute; left: 0; right: 0; top: 0; height: var(--lg-row, 26px); display: flex; align-items: center; justify-content: center; transform-origin: 50% 50%; will-change: transform, opacity; }
+        .lg-h { cursor: pointer; gap: 6px; font: 600 11px/1.1 var(--font-ui); color: var(--text); user-select: none; }
+        .lg-h .lg-sn, .lg-h .lg-sc { display: none; }
+        .lg-cn .lg-sw { min-width: 26px; height: 15px; padding: 0 3px; box-sizing: border-box; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+            background: var(--co, color-mix(in srgb, var(--text) 22%, transparent)); border: 1px solid color-mix(in srgb, var(--text) 45%, transparent); }
+        .lg-cn .lg-sw b { font: 700 9.5px/1 var(--font-ui); color: #fff; text-shadow: 0 0 2px #000, 0 0 2px #000; font-variant-numeric: tabular-nums; }
+        .lg-ty .lg-ti { position: relative; display: flex; align-items: center; }
+        .lg-ty .lg-ti .lg-ico { width: 18px; height: 18px; }
+        .lg-ty .lg-ti b { position: absolute; right: -10px; bottom: -5px; min-width: 13px; padding: 0 2px; box-sizing: border-box; border-radius: 7px; background: var(--ty, var(--accent)); color: #fff;
+            font: 700 8.5px/13px var(--font-ui); text-align: center; text-shadow: 0 0 2px rgba(0, 0, 0, 0.7); font-variant-numeric: tabular-nums; }
+        .lg-h.open .lg-sw, .lg-h.open .lg-ti { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 5px; }
         .lg-btn { width: 32px; height: calc(var(--lg-row, 26px) - 2px); padding: 0; border: 0; border-radius: 7px; background: transparent; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .lg-btn:hover, .lg-btn:focus-visible, .lg-row.hot .lg-btn { background: color-mix(in srgb, var(--accent) 28%, transparent); outline: none; }
         .lg-ico { width: 20px; height: 20px; display: block; flex: none; pointer-events: none; }
@@ -592,27 +608,27 @@
         #lg-extra:hover, #lg-extra:focus-visible { color: var(--text); background: color-mix(in srgb, var(--accent) 22%, transparent); outline: none; }
         #lg-extra:empty { cursor: default; background: transparent; }
         /* lista desplegada: entera, con nombres y barra; la fila señalada desde el globo se desplaza a la altura de su punto (o al centro) */
-        #legend.wide #lg-list { overflow-y: auto; overscroll-behavior: contain; padding: 0 4px 0 2px; }
+        #legend.wide #lg-list { left: 2px; right: 4px; }
         /* lista entera: panel OPACO y colores fuertes (el creador, 2026-11-15: «esta transparencia hace demasiado sutil la diferencia… se
            confunde con el fondo») */
         #legend.wide { background: var(--bg); }
         #legend.wide .lg-name .lg-date { color: color-mix(in srgb, var(--text) 80%, transparent); }
-        #legend.wide .lg-row { position: relative; top: auto !important; height: 30px; transition: none; }
+        #legend.wide .lg-row { transform-origin: 0 50%; }
+        #legend.wide .lg-h { justify-content: flex-start; padding: 0 8px 0 4px; box-sizing: border-box; border-radius: 6px; }
+        #legend.wide .lg-h .lg-sn { display: block; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+        #legend.wide .lg-h .lg-sc { display: block; color: var(--muted); font-variant-numeric: tabular-nums; }
+        #legend.wide .lg-cn { font-weight: 700; background: color-mix(in srgb, var(--co, transparent) 70%, var(--bg)); }
+        #legend.wide .lg-cn .lg-sw { min-width: 12px; width: 12px; height: 12px; padding: 0; }
+        #legend.wide .lg-cn .lg-sw b, #legend.wide .lg-ty .lg-ti b { display: none; }
+        #legend.wide .lg-ty { padding-left: 16px; }
+        #legend.wide .lg-h.open .lg-sn::after { content: ' ▾'; color: var(--muted); }
+        #legend.wide .lg-h:not(.open) .lg-sn::after { content: ' ▸'; color: var(--muted); }
         /* por apartados (el creador, 2026-11-15): titulo de cada pais (fijo arriba al desplazar; se pliega) y filas con el FONDO del color del
            pais y, dentro, una franja del color del tipo */
         #legend.wide .lg-btn { width: 100%; height: 28px; justify-content: flex-start; gap: 6px; padding: 0 6px 0 4px; border-radius: 6px; border-left: 4px solid var(--ty, transparent);
             background: color-mix(in srgb, var(--co, transparent) 48%, var(--bg)); }
         #legend.wide .lg-btn:hover, #legend.wide .lg-btn:focus-visible, #legend.wide .lg-row.hot .lg-btn { background: color-mix(in srgb, var(--co, var(--accent)) 72%, var(--bg)); outline: 2px solid var(--accent); outline-offset: -2px; }
         .lg-row[hidden] { display: none; }
-        .lg-sec { position: sticky; top: 0; z-index: 1; margin: 4px 0 1px; }
-        .lg-sec button { width: 100%; display: flex; align-items: center; gap: 6px; padding: 3px 6px; border: 0; border-radius: 6px; cursor: pointer; text-align: left;
-            background: color-mix(in srgb, var(--co, var(--muted)) 85%, var(--bg)); color: var(--text); font: 700 11.5px/1.3 var(--font-ui); text-shadow: 0 0 3px var(--bg), 0 0 1px var(--bg); }
-        .lg-sec .lg-sw { width: 10px; height: 10px; border-radius: 3px; flex: none; background: var(--co, transparent); border: 1px solid color-mix(in srgb, var(--text) 45%, transparent); }
-        .lg-sec .lg-sn { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .lg-sec .lg-sc { font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
-        .lg-sec .lg-sv { font-size: 10px; color: var(--muted); transition: transform 0.15s; }
-        .lg-sec button[aria-expanded="false"] .lg-sv { transform: rotate(-90deg); }
-        .lg-sec.none button { font-style: italic; font-weight: 600; }
         #legend.wide .lg-name { position: static; display: block; transform: none; flex: 1 1 auto; min-width: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; font-size: 12px; }
         #legend.wide .lg-name .lg-co { display: none; }
         #lg-pop { position: absolute; right: calc(100% + 8px); top: 0; width: 290px; max-width: calc(100vw - var(--lg-w) - 24px); max-height: 100%; overflow: auto; box-sizing: border-box; padding: 10px 12px; font-size: 12.5px; line-height: 1.45; z-index: 2; }
@@ -3224,6 +3240,7 @@ map.on('click', (e) => {
     // estas tocando en el globo o en el icono»).
     const near = mapPickNear(e.point, ['events-circle', 'live-points', ...(map.getLayer('built-icons') && BUILT.on ? ChronosBuilt.LAYER_IDS : [])]);
     const hit = near || map.queryRenderedFeatures(e.point, { layers: ['borders-fill', 'land-fill', 'margin-fill'].filter((l) => map.getLayer(l)) })[0];
+    if (typeof lgMapClick === 'function') lgMapClick(near);
     if (bordersStale() && hit && hit.layer.id === 'borders-fill') return;   // se ve el mapa de la instantanea anterior hasta que llegue la nueva
     clearHighlight(); setHoverKey(null);
     if (!hit) { hideInfo(); selRemember(null); return; }
@@ -5248,7 +5265,7 @@ const lgRowH = () => (LG.wide ? 30 : matchMedia('(pointer: coarse)').matches ? 3
 (function lgBuild() {
     const box = el('aside', { id: 'legend', class: 'panel' }, [
         el('button', { id: 'lg-head', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'lg-pop' }, [el('span', { id: 'lg-n', text: '0' }), el('span', { class: 'lg-cap', text: '≡ ?' })]),
-        el('ul', { id: 'lg-list' }), el('button', { id: 'lg-extra', type: 'button' }), el('div', { id: 'lg-pop', class: 'panel' })
+        el('div', { id: 'lg-wheel' }, [el('div', { id: 'lg-lens', 'aria-hidden': 'true' }), el('ul', { id: 'lg-list' })]), el('button', { id: 'lg-extra', type: 'button' }), el('div', { id: 'lg-pop', class: 'panel' })
     ]);
     box.hidden = true;
     document.body.appendChild(box); box.querySelector('#lg-pop').hidden = true;
@@ -5256,7 +5273,6 @@ const lgRowH = () => (LG.wide ? 30 : matchMedia('(pointer: coarse)').matches ? 3
     box.querySelector('#lg-head').addEventListener('click', () => { const pop = $('lg-pop'); const open = pop.hidden; if (open) lgPopRender(); pop.hidden = !open; $('lg-head').setAttribute('aria-expanded', String(open)); });
     // «+N ▾» abre la lista entera (con nombres y barra); «▴» vuelve a la columna
     box.querySelector('#lg-extra').addEventListener('click', () => { if (!LG.wide && !LG.extra && !LG.rows.length) return; lgWide(!LG.wide); });
-    let scr = 0; box.querySelector('#lg-list').addEventListener('scroll', () => { if (!LG.wide || scr) return; scr = requestAnimationFrame(() => { scr = 0; lgAnchors(); lgWires(); }); }, { passive: true });
 })();
 class LegendControl {
     onAdd() {
@@ -5292,7 +5308,11 @@ function lgDotsApply() {
 function lgSchedule(ms) {
     if (!LG.open) return;
     clearTimeout(LG.timer);
-    LG.timer = setTimeout(() => { LG.timer = 0; if (map.isMoving && map.isMoving()) return; lgRender(); }, ms === undefined ? 250 : ms);
+    LG.timer = setTimeout(() => {
+        LG.timer = 0; if (map.isMoving && map.isMoving()) return;
+        if (typeof LGW !== 'undefined' && (LGW.drag || LGW.v || (LGW.to != null && LGW.f !== LGW.to))) { lgSchedule(300); return; }    // la rueda gira: despues
+        lgRender();
+    }, ms === undefined ? 250 : ms);
 }
 // Lo que se ve ahora: sucesos dibujados (en pantalla y en la cara visible del globo) y construcciones que MapLibre ha colocado.
 function lgCollect(maxX) {
@@ -5329,7 +5349,7 @@ function lgText(it) {
 function lgWide(on) {
     LG.wide = !!on; savePrefs({ lgx: LG.wide ? 1 : 0 });
     document.body.classList.toggle('lg-wide', LG.open && LG.wide); $('legend').classList.toggle('wide', LG.wide);
-    $('lg-list').textContent = ''; $('lg-list').scrollTop = 0; LG.sig = ''; LG.pin = null;
+    $('lg-list').textContent = ''; LGW.els.clear(); LGW.k = -1; LG.sig = '';
     lgSchedule(0);
 }
 /** Pais del lugar en pantalla (x, y del mapa) segun las fronteras dibujadas: { c: color, name } o null (mar, sin fronteras). */
@@ -5339,198 +5359,294 @@ function polityAt(x, y) {
     if (!h || !h.properties || !h.properties._c) return null;
     const p = h.properties; return { c: p._c, name: (lang === 'es' && p.NAME_ES) || p.NAME || '' };
 }
+/*
+ * RUEDA (el creador, 2026-11-15): «agrupar en la lista de la derecha. Colapsar paises. Colapsar por tipos… dentro de cada pais. Expandir
+ * automaticamente solo lo necesario. Para tener vision mas amplia de todo. Reducir tamaño de items a la lejania del central. El central
+ * es el seleccionado. Como si fuera una rueda con inercia.» Decidido con el: la seleccion sigue al centro EN TODO MOMENTO, en la columna y en
+ * la lista entera, y sin perder los cables: al pararse, la linea central se desliza a la altura del punto del elegido (cable recto).
+ * La logica pura (arbol, filas, colocacion, inercia) esta en map/legend.js con sus pruebas; aqui, el DOM y los gestos.
+ *  - Arrastrar (dedo o raton), rueda del raton o trackpad, flechas: gira; al soltar sigue con inercia y encaja en un elemento.
+ *  - Tocar un elemento: gira hasta el; tocar el del centro (ya elegido): abre su ficha. Tocar un pais o un tipo plegado: gira a su primero.
+ *  - Señalar un icono en el globo: la rueda gira hasta el.
+ *  - Mientras gira, el cable y el anillo siguen al centro; los demas iconos del globo se atenuan cuando para (atenuar en cada fila obligaria
+ *    a MapLibre a rehacer las capas de iconos muchas veces por segundo). Escape, o tocar el globo donde no hay nada, suelta la seleccion.
+ */
+const LGW = { tree: null, f: 0, v: 0, to: null, k: -1, rows: [], anchor: -1, els: new Map(), cy: null, cyTo: null, raf: 0, last: 0, engaged: false, jump: null, dimmed: null, drag: null, wheelT: 0, moved: false, bubbleFor: null };
+const lgPitch = () => LG.rowH;
+const LGW_RM = matchMedia('(prefers-reduced-motion: reduce)');
 const lgTypeColor = (it) => (it.kind === 'e' ? evColor(it.f.properties.icon) : ChronosBuilt.CHIP);
+/** Tipo de un elemento: grupo de suceso (los mismos de Ajustes) o familia de construccion. */
+function lgTypeOf(it) {
+    if (it.kind === 'e') { const gid = ChronosEventIcons.groupOf(it.f.properties.icon); const g = ChronosEventIcons.GROUPS.find((x) => x.id === gid); return { key: 'e:' + gid, name: g ? g[lang] || g.en : gid }; }
+    const fam = (it.props && it.props.f) || 'other'; const F = ChronosBuilt.FAMILIES.find((x) => x.id === fam);
+    return { key: 'b:' + fam, name: F ? F[lang] || F.en : fam };
+}
 function lgRender() {
     if (!LG.open) return;
     const t0 = performance.now();
     const box = $('legend'); const list = $('lg-list'); const lr = list.getBoundingClientRect(); const br = box.getBoundingClientRect();
     const rowH = lgRowH(); LG.rowH = rowH; list.style.setProperty('--lg-row', rowH + 'px');
-    // columna: se dejan ~4 filas de holgura para que la señalada pueda ir a la altura de su punto (sin holgura no se puede mover)
-    const fit = Math.floor(lr.height / rowH); const max = LG.wide ? Infinity : Math.max(0, fit - Math.min(4, Math.round(fit * 0.12)));
     const cr = map.getContainer().getBoundingClientRect();
     const items = lgCollect(br.left - cr.left - 4);
-    const pick = ChronosLegend.pickRows(items, { max: LG.wide ? items.length : max });
-    pick.rows.forEach((it) => { it.yd = it.y + cr.top - lr.top; it.px = it.x + cr.left; it.py = it.y + cr.top; });
-    LG.groups = [];
-    if (LG.wide) {
-        pick.rows.forEach((it) => { it.pol = polityAt(it.x, it.y); });
-        LG.groups = ChronosLegend.groupRows(pick.rows, (it) => (it.pol && it.pol.name ? { key: it.pol.name, name: it.pol.name, color: it.pol.c } : null));
-        pick.rows = LG.groups.flatMap((g) => g.items);
-    }
-    LG.rows = pick.rows; LG.extra = pick.extra;
+    items.forEach((it) => { it.px = it.x + cr.left; it.py = it.y + cr.top; it.yd = it.py - lr.top; it.pol = polityAt(it.x, it.y); });
+    const old = LGW.tree && LGW.tree.seq.length ? LGW.tree.seq : null;
+    const prevId = old ? old[Math.max(0, Math.min(old.length - 1, Math.round(LGW.f)))].id : null;
+    const prevY = prevId ? (old.find((x) => x.id === prevId) || {}).yd : null;
+    const frac = old ? LGW.f - Math.round(LGW.f) : 0; const toId = old && LGW.to != null && old[LGW.to] ? old[LGW.to].id : null;
+    LGW.tree = ChronosLegend.buildTree(items, (it) => (it.pol && it.pol.name ? { key: it.pol.name, name: it.pol.name, color: it.pol.c } : null), lgTypeOf);
+    const seq = LGW.tree.seq; LG.rows = seq; LG.extra = 0; LG.groups = LGW.tree.countries;
+    // se sigue en el mismo elemento si sigue en pantalla; si no, en el de altura mas parecida (al principio, el del centro del mapa)
+    let k = prevId != null && LGW.tree.at.has(prevId) ? LGW.tree.at.get(prevId).k : -1;
+    if (k < 0 && seq.length) { const ref = prevY != null ? prevY : (cr.top + cr.height / 2) - lr.top; let best = Infinity; seq.forEach((it, i) => { const d = Math.abs(it.yd - ref) + (prevY == null ? Math.abs(it.px - (cr.left + cr.width / 2)) * 0.5 : 0); if (d < best) { best = d; k = i; } }); }
+    // se conserva lo que estuviera haciendo la rueda (posicion entre dos filas, destino)
+    LGW.f = Math.max(0, Math.min(Math.max(0, seq.length - 1), Math.max(0, k) + (k >= 0 ? frac : 0))); LGW.k = -1;
+    LGW.to = toId && LGW.tree.at.has(toId) ? LGW.tree.at.get(toId).k : LGW.to != null ? Math.round(LGW.f) : null;
+    if (LGW.jump && LGW.tree.at.has(LGW.jump)) LGW.to = LGW.tree.at.get(LGW.jump).k; else LGW.jump = null;
+    if (LGW.cy == null || LGW.cy > lr.height) LGW.cy = LGW.cyTo = lr.height / 2;
+    if (LG.hot && !LGW.tree.at.has(LG.hot)) LG.hot = null;
     $('lg-n').textContent = String(items.length);
     const ex = $('lg-extra');
-    ex.textContent = LG.wide ? t('lgLess') : pick.extra ? fmt('lgMore', { n: pick.extra }) : pick.rows.length ? t('lgAll') : '';
-    ex.title = LG.wide ? t('lgLessTip') : pick.extra ? fmt('lgMoreTip', { n: pick.extra }) : t('lgAllTip');
-    if (LG.pin && !pick.rows.some((it) => it.id === LG.pin)) LG.pin = null;
-    lgLayout();
-    if (LG.hot && !pick.rows.some((it) => it.id === LG.hot)) lgHot(null);
-    if (LG.touchHot && !pick.rows.some((it) => it.id === LG.touchHot)) LG.touchHot = null;
-    if (LG.hot) lgBubble();
-    lgWires();
+    ex.textContent = LG.wide ? t('lgLess') : seq.length ? t('lgAll') : '';
+    ex.title = LG.wide ? t('lgLessTip') : t('lgAllTip');
+    lgWheelRows(true);
+    if (LGW.engaged && seq.length) { lgSelect(seq[Math.round(LGW.f)].id); lgCenterOnHot(); }
+    lgAnimate();
     if (!$('lg-pop').hidden) lgPopRender();
     LG.ms = performance.now() - t0;
 }
-/**
- * Coloca las filas. Columna: cada una a la altura de su punto (map/legend.js); la fijada (señalada desde el globo) justo a la suya. Las
- * filas que ya estaban se mueven (transicion), no se rehacen: asi no se pierde la que esta bajo el puntero. Lista entera: en orden.
- */
-function lgLayout() {
-    const list = $('lg-list'); const rowH = LG.rowH; const H = list.clientHeight;
-    const have = new Map(); list.querySelectorAll('.lg-row').forEach((li) => have.set(li.dataset.id, li));
-    const keep = new Set(LG.rows.map((it) => it.id));
-    have.forEach((li, id) => { if (!keep.has(id)) li.remove(); });
-    if (LG.wide) {
-        const sig = LG.groups.map((g) => g.key + (LG.fold.has(g.key) ? '-' : '+') + ':' + g.items.map((it) => it.id).join('|')).join('#') + '#' + lang;
-        if (sig !== LG.sig) {
-            LG.sig = sig; list.querySelectorAll('.lg-sec').forEach((h) => h.remove());
-            LG.groups.forEach((g) => {
-                list.appendChild(lgSec(g));
-                g.items.forEach((it) => { const li = have.get(it.id) || lgRow(it); li.hidden = LG.fold.has(g.key); list.appendChild(li); });
-            });
-        }
-        LG.rows.forEach((it) => lgPaint(list.querySelector('.lg-row[data-id="' + CSS.escape(it.id) + '"]'), it, it.pol));
-    } else {
-        const k = LG.pin ? LG.rows.findIndex((it) => it.id === LG.pin) : -1;
-        const desired = LG.rows.map((it) => it.yd);
-        const ys = k >= 0 ? ChronosLegend.placeRowsPinned(desired, 0, H, rowH, k) : ChronosLegend.placeRows(desired, 0, H, rowH);
-        LG.rows.forEach((it, i) => {
-            it.rowY = ys[i];
-            let li = have.get(it.id); if (!li) { li = lgRow(it); list.appendChild(li); }
-            li.style.top = Math.round(it.rowY) + 'px';
-        });
-        LG.sig = '';
-    }
-    list.querySelectorAll('.lg-row').forEach((li) => li.classList.toggle('hot', li.dataset.id === LG.hot));
-    lgAnchors();
+/** Filas para el elemento del centro (solo se despliega su rama); se crean las que faltan y se quitan las que sobran. */
+function lgWheelRows(force) {
+    const T = LGW.tree; const list = $('lg-list'); if (!T) return;
+    const k = T.seq.length ? Math.max(0, Math.min(T.seq.length - 1, Math.round(LGW.f))) : -1;
+    if (!force && k === LGW.k) return;
+    LGW.k = k;
+    const { rows, anchor } = ChronosLegend.wheelRows(T, k); LGW.rows = rows; LGW.anchor = anchor;
+    const keep = new Set(rows.map((r) => r.key));
+    LGW.els.forEach((st, key) => { if (!keep.has(key)) { st.li.remove(); LGW.els.delete(key); } });
+    rows.forEach((r) => {
+        let st = LGW.els.get(r.key); const sig = lgRowSig(r);
+        if (st && st.sig !== sig) {          // cambio su contenido (cuantos, color, nombre): se rehace en su sitio, sin perder la posicion
+            const li = lgWheelRow(r); st.li.replaceWith(li); st.li = li;
+        } else if (!st) { const li = lgWheelRow(r); list.appendChild(li); st = { li, y: null, s: 1, o: 0 }; LGW.els.set(r.key, st); }
+        if (r.kind === 'item') lgPaint(st.li, r.it, r.it.pol);
+        st.li.classList.toggle('hot', r.kind === 'item' && r.it.id === LG.hot);
+        st.sig = sig; st.r = r;
+    });
 }
-/** Titulo de un apartado (pais) de la lista entera: color, nombre y cuantos; al pulsarlo se pliega o despliega. */
-function lgSec(g) {
-    const li = el('li', { class: 'lg-sec' + (g.key ? '' : ' none'), role: 'presentation' });
-    if (g.color) li.style.setProperty('--co', g.color);
-    const open = !LG.fold.has(g.key);
-    const b = el('button', { type: 'button', 'aria-expanded': String(open), title: t('lgSecTip') }, [
-        el('span', { class: 'lg-sw', 'aria-hidden': 'true' }), el('span', { class: 'lg-sn', text: g.key ? g.name : t('lgNoCountry') }),
-        el('span', { class: 'lg-sc', text: String(g.items.length) }), el('span', { class: 'lg-sv', 'aria-hidden': 'true', text: '▾' })]);
-    b.addEventListener('click', () => { if (LG.fold.has(g.key)) LG.fold.delete(g.key); else LG.fold.add(g.key); LG.sig = ''; lgLayout(); lgWires(); });
+/** Una fila de la rueda: elemento (icono; en la lista entera, nombre y fecha), tipo (icono del primero y cuantos) o pais (color y cuantos). */
+function lgWheelRow(r) {
+    const T = LGW.tree; const c = T.countries[r.ci];
+    if (r.kind === 'item') { const li = lgRow(r.it); li.dataset.key = r.key; lgPaint(li, r.it, r.it.pol); return li; }
+    const li = el('li', { class: 'lg-row lg-h ' + (r.kind === 'country' ? 'lg-cn' : 'lg-ty') + (r.open ? ' open' : '') + (r.kind === 'country' && !c.key ? ' none' : '') });
+    li.dataset.key = r.key; li.setAttribute('aria-expanded', String(r.open));
+    if (c.color) li.style.setProperty('--co', c.color);
+    if (r.kind === 'country') {
+        const name = c.key ? c.name : t('lgNoCountry');
+        li.title = name + ' · ' + c.n;
+        li.append(el('span', { class: 'lg-sw', 'aria-hidden': 'true' }, [el('b', { text: String(c.n) })]), el('span', { class: 'lg-sn', text: name }), el('span', { class: 'lg-sc', text: String(c.n) }));
+    } else {
+        const ty = c.types[r.ti]; const first = ty.items[0];
+        li.title = ty.name + ' · ' + ty.n; li.style.setProperty('--ty', lgTypeColor(first));
+        li.append(el('span', { class: 'lg-ti' }, [el('img', { class: 'lg-ico', alt: '', 'aria-hidden': 'true', src: lgIcon(first) }), el('b', { text: String(ty.n) })]), el('span', { class: 'lg-sn', text: ty.name }), el('span', { class: 'lg-sc', text: String(ty.n) }));
+    }
+    return li;
+}
+/** Firma del contenido de una fila: si cambia, la fila se rehace. */
+function lgRowSig(r) {
+    const c = LGW.tree.countries[r.ci];
+    if (r.kind === 'item') return 'i';
+    if (r.kind === 'country') return [r.open, c.n, c.name, c.color, lang].join('|');
+    const ty = c.types[r.ti]; return [r.open, ty.n, ty.name, ty.items[0].id, c.color, lang].join('|');
+}
+const lgRowNat = (r) => (r.kind === 'item' ? LG.rowH : r.kind === 'type' ? (LG.wide ? 26 : 26) : (LG.wide ? 26 : 22));
+/** Un fotograma: inercia, filas, colocacion (con muelle para que nada salte), linea central, seleccion y cables. */
+function lgFrame(now) {
+    LGW.raf = 0;
+    const T = LGW.tree; if (!LG.open || !T) return;
+    const dt = LGW.last ? Math.min(0.1, (now - LGW.last) / 1000) : 1 / 60; LGW.last = now;
+    const n = T.seq.length; let busy = false;
+    if (n && !LGW.drag) { const st = ChronosLegend.spinStep({ f: LGW.f, v: LGW.v, to: LGW.to }, dt, n); LGW.f = st.f; LGW.v = st.v; LGW.to = st.to; busy = !st.done; }
+    lgWheelRows(false);
+    const list = $('lg-list'); const H = list.clientHeight;
+    // linea central: quieta mientras gira; parada, a la altura del punto del elegido (cable recto)
+    if (LGW.cyTo != null) { const a = LGW_RM.matches ? 1 : 1 - Math.exp(-dt / 0.12); LGW.cy += (LGW.cyTo - LGW.cy) * a; if (Math.abs(LGW.cyTo - LGW.cy) < 0.3) LGW.cy = LGW.cyTo; else busy = true; }
+    if (n && LGW.anchor >= 0) {
+        const frac = LGW.f - LGW.k;
+        const place = ChronosLegend.wheelPlace(LGW.rows.map(lgRowNat), LGW.anchor, frac, LGW.cy);
+        const a = LGW_RM.matches ? 1 : 1 - Math.exp(-dt / 0.06);      // movimiento reducido: sin muelles
+        LGW.rows.forEach((r, i) => {
+            const st = LGW.els.get(r.key); const p = place[i]; if (!st || !p) return;
+            if (st.y == null) { st.y = p.y; st.s = p.s; st.o = 0; }
+            st.y += (p.y - st.y) * a; st.s += (p.s - st.s) * a; st.o += (p.o - st.o) * a;
+            if (Math.abs(p.y - st.y) > 0.3 || Math.abs(p.o - st.o) > 0.01) busy = true;
+            const vis = st.y + p.h > -20 && st.y < H + 20;
+            st.li.style.visibility = vis ? '' : 'hidden';
+            if (vis) { st.li.style.transform = 'translateY(' + st.y.toFixed(1) + 'px) scale(' + st.s.toFixed(3) + ')'; st.li.style.opacity = st.o.toFixed(2); st.li.style.height = lgRowNat(r) + 'px'; }
+            st.cy = st.y + p.h / 2;
+        });
+    }
+    const lens = $('lg-lens'); if (lens) { lens.style.transform = 'translateY(' + (LGW.cy - LG.rowH / 2).toFixed(1) + 'px)'; lens.style.height = LG.rowH + 'px'; lens.hidden = !n; }
+    // la seleccion sigue al centro (si la rueda esta tomada); en un salto (toque o globo), directamente el destino
+    if (LGW.engaged && n) {
+        const id = LGW.jump || T.seq[Math.round(LGW.f)].id;
+        if (id !== LG.hot) lgSelect(id);
+        if (!busy && LGW.jump && LGW.to != null && Math.round(LGW.f) === LGW.to) LGW.jump = null;
+    }
+    if (!busy && LGW.engaged && LG.hot && LGW.dimmed !== LG.hot) { LGW.dimmed = LG.hot; spotHover(LG.hot); lgCenterOnHot(); if (LGW.cyTo !== LGW.cy) busy = true; }
+    lgAnchors(); lgWires();
+    if (busy || LGW.drag) LGW.raf = requestAnimationFrame(lgFrame); else LGW.last = 0;
+}
+function lgAnimate() { if (!LGW.raf) { LGW.last = 0; LGW.raf = requestAnimationFrame(lgFrame); } }
+/** Linea central a la altura del punto del elegido (dentro de la lista, con margen). */
+function lgCenterOnHot() {
+    const it = LG.hot && LGW.tree && LGW.tree.at.has(LG.hot) ? LGW.tree.seq[LGW.tree.at.get(LG.hot).k] : null; if (!it) return;
+    const H = $('lg-list').clientHeight; const m = Math.min(H / 2, LG.rowH * 2.5);     // con margen: arriba y abajo se ve algo de la rueda
+    LGW.cyTo = Math.max(m, Math.min(H - m, it.yd));
+}
+/** Elegido (el del centro): fila marcada, nombre (columna), cable y anillo. Sin atenuar el globo aun (eso, al parar). */
+function lgSelect(id) {
+    LG.hot = id || null;
+    if (LGW.dimmed && LGW.dimmed !== LG.hot) { LGW.dimmed = null; spotHover(null); }
+    LGW.els.forEach((st) => st.li.classList.toggle('hot', !!LG.hot && st.r && st.r.kind === 'item' && st.r.it.id === LG.hot));
+    lgBubble();
+}
+/** Toma la rueda (el usuario la mueve o señala algo): desde ahora el del centro es el elegido. */
+function lgEngage() { LGW.engaged = true; }
+/** Suelta la seleccion: sin cable ni atenuado; la rueda se queda donde esta. */
+function lgRelease() {
+    LGW.engaged = false; LGW.jump = null; LG.hot = null; LG.touchHot = null;
+    if (LGW.dimmed) { LGW.dimmed = null; spotHover(null); }
+    LGW.els.forEach((st) => st.li.classList.remove('hot')); lgBubble(); lgWires();
+}
+/** Gira hasta un elemento (toque o globo) y lo elige ya (sin pasar por los de en medio). */
+function lgSpinTo(id) {
+    const T = LGW.tree; if (!T || !T.at.has(id)) return;
+    lgEngage(); LGW.jump = id; LGW.to = T.at.get(id).k; LGW.v = 0; lgSelect(id); lgAnimate();
+}
+/** Donde acaba el cable de cada fila de elemento: borde izquierdo de la columna (o de la fila en la lista entera), a la altura de la fila. */
+function lgAnchors() {
+    const lr = $('lg-list').getBoundingClientRect(); const left = $('legend').getBoundingClientRect().left;
+    (LG.rows || []).forEach((it) => { it.ax = null; });
+    LGW.els.forEach((st) => { if (!st.r || st.r.kind !== 'item' || st.cy == null || st.li.style.visibility === 'hidden') return; const it = st.r.it; it.ax = left + 2; it.ay = lr.top + st.cy; it.rowTop = st.cy - LG.rowH / 2; });
+    if (LG.hot && !LG.wide) lgBubbleFollow();
+}
+function lgRow(it) {
+    const tx = lgText(it);
+    const li = el('li', { class: 'lg-row lg-it' }); li.dataset.id = it.id;
+    const name = el('span', { class: 'lg-name' }, [el('strong', { text: tx.name }), tx.date ? el('span', { class: 'lg-date', text: tx.date }) : null, el('em', { class: 'lg-co' })].filter(Boolean));
+    const b = el('button', { type: 'button', class: 'lg-btn', tabindex: '-1', 'aria-label': tx.name + (tx.date ? ' · ' + tx.date : '') }, [
+        el('img', { class: 'lg-ico', alt: '', 'aria-hidden': 'true', src: lgIcon(it) })
+    ]);
+    if (LG.wide) b.appendChild(name); else li.appendChild(name);
     li.appendChild(b); return li;
 }
-/** Colores del recuadro: --co (pais del lugar, en esta fecha) y --ty (tipo). Solo en la lista entera (todas) o en la fila señalada. */
-function lgColors(li, it) {
-    if (!li) return;
-    const cr = map.getContainer().getBoundingClientRect(); lgPaint(li, it, polityAt(it.px - cr.left, it.py - cr.top));
-}
+/** Colores del recuadro: --co (pais del lugar, en esta fecha) y --ty (tipo). */
 function lgPaint(li, it, pol) {
     if (!li) return;
     li.style.setProperty('--ty', lgTypeColor(it));
     if (pol) li.style.setProperty('--co', pol.c); else li.style.removeProperty('--co');
     const co = li.querySelector('.lg-co'); if (co) co.textContent = pol && pol.name ? pol.name : '';
 }
-/** Donde acaba el cable de cada fila (borde izquierdo de la columna, a la altura de la fila). La señalada, aparte (lgBubble). */
-function lgAnchors() {
-    const list = $('lg-list'); const lr = list.getBoundingClientRect(); const left = $('legend').getBoundingClientRect().left;
-    if (LG.wide) {
-        LG.rows.forEach((it) => {
-            const li = list.querySelector('.lg-row[data-id="' + CSS.escape(it.id) + '"]'); if (!li || li.hidden) { it.ax = null; return; }
-            const r = li.getBoundingClientRect(); const cy = r.top + r.height / 2;
-            it.ax = cy < lr.top || cy > lr.bottom ? null : left + 2; it.ay = cy;      // fuera de la ventana de la lista: sin cable
-        });
-    } else LG.rows.forEach((it) => { it.ax = left + 2; it.ay = lr.top + it.rowY + LG.rowH / 2; });
-    if (LG.hot && !LG.wide) lgBubble();
-}
-function lgRow(it) {
-    const tx = lgText(it);
-    const li = el('li', { class: 'lg-row' }); li.dataset.id = it.id; if (it.rowY != null) li.style.top = Math.round(it.rowY) + 'px';
-    const name = el('span', { class: 'lg-name' }, [el('strong', { text: tx.name }), tx.date ? el('span', { class: 'lg-date', text: tx.date }) : null, el('em', { class: 'lg-co' })].filter(Boolean));
-    const b = el('button', { type: 'button', class: 'lg-btn', 'aria-label': tx.name + (tx.date ? ' · ' + tx.date : '') }, [
-        el('img', { class: 'lg-ico', alt: '', 'aria-hidden': 'true', src: lgIcon(it) })
-    ]);
-    if (LG.wide) b.appendChild(name); else li.appendChild(name);
-    b.addEventListener('pointerdown', (e) => { LG.lastPointer = e.pointerType || 'mouse'; });
-    b.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') lgHot(it.id); });
-    b.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') lgHot(null); });
-    b.addEventListener('focus', () => { if (LG.lastPointer === 'mouse') lgHot(it.id); });
-    b.addEventListener('blur', () => { if (LG.hot === it.id && LG.lastPointer === 'mouse') lgHot(null); });
-    b.addEventListener('click', () => {
-        // tactil: el primer toque señala (nombre, cable, foco); el segundo abre la ficha. Raton y teclado: abre a la primera.
-        if (LG.lastPointer !== 'mouse' && LG.touchHot !== it.id) { LG.touchHot = it.id; lgHot(it.id); return; }
-        LG.touchHot = null; lgOpen(it);
-    });
-    li.appendChild(b); return li;
-}
 /**
- * Recuadro del nombre de la fila señalada (columna): sus dos colores y su sitio, para que el cable NO lo cruce nunca (map/legend.js,
- * bubblePlace): a la izquierda de la fila y el cable acaba en su borde; o encima/debajo si el punto esta junto a la columna.
+ * Recuadro del nombre del elegido (columna): a la izquierda de su fila, y el cable acaba en su borde; o encima/debajo si el punto esta
+ * junto a la columna (map/legend.js, bubblePlace: el cable no lo cruza nunca). Se decide el lado al elegir y al parar; mientras se mueve
+ * la fila, el recuadro va con ella.
  */
 function lgBubble() {
-    const it = LG.hot ? LG.rows.find((r) => r.id === LG.hot) : null; LG.hb = null; if (!it) return;
-    const li = $('lg-list').querySelector('.lg-row[data-id="' + CSS.escape(it.id) + '"]'); if (!li) return;
-    lgColors(li, it);
-    if (LG.wide) return;
-    const nm = li.querySelector('.lg-name'); const lr = $('lg-list').getBoundingClientRect(); const left = $('legend').getBoundingClientRect().left;
-    li.classList.remove('up', 'down'); li.style.removeProperty('--lg-nr');
-    const pl = ChronosLegend.bubblePlace({ px: it.px, py: it.py, colLeft: left, rowTop: lr.top + it.rowY, rowH: LG.rowH, w: nm.offsetWidth || 160, h: nm.offsetHeight || 22, top: lr.top, bottom: lr.bottom + 30 });
-    if (pl.side === 'up' || pl.side === 'down') li.classList.add(pl.side);
-    if (pl.right !== 6) li.style.setProperty('--lg-nr', Math.round(pl.right) + 'px');
+    LG.hb = null; LGW.bubbleFor = null;
+    $('lg-list').querySelectorAll('.lg-row.up, .lg-row.down').forEach((li) => li.classList.remove('up', 'down'));
+    if (!LG.hot || LG.wide) return;
+    LGW.bubbleFor = LG.hot; lgBubbleFollow(true);
+}
+function lgBubbleFollow(decide) {
+    const it = LGW.tree && LG.hot && LGW.tree.at.has(LG.hot) ? LGW.tree.seq[LGW.tree.at.get(LG.hot).k] : null; if (!it || it.ax == null && !decide) { LG.hb = null; return; }
+    const st = LGW.els.get('i:' + it.id); if (!st) { LG.hb = null; return; }
+    const li = st.li; const nm = li.querySelector('.lg-name'); const lr = $('lg-list').getBoundingClientRect(); const left = $('legend').getBoundingClientRect().left;
+    const rowTop = lr.top + (st.cy == null ? LGW.cy : st.cy) - LG.rowH / 2;
+    const pl = ChronosLegend.bubblePlace({ px: it.px, py: it.py, colLeft: left, rowTop, rowH: LG.rowH, w: nm.offsetWidth || 160, h: nm.offsetHeight || 22, top: lr.top, bottom: lr.bottom + 30 });
+    if (decide || li.dataset.side !== pl.side) { li.classList.remove('up', 'down'); if (pl.side === 'up' || pl.side === 'down') li.classList.add(pl.side); li.dataset.side = pl.side; }
+    if (pl.right !== 6) li.style.setProperty('--lg-nr', Math.round(pl.right) + 'px'); else li.style.removeProperty('--lg-nr');
     LG.hb = { ax: pl.ax, ay: pl.ay };
 }
 function lgOpen(it) {
     if (it.kind === 'e') { const f = events.byId.get(it.id) || it.f; showEvent(f); selRemember('e', it.id); return; }
     selRemember('b', it.id); builtFull().then(() => { const f = BUILT.byId && BUILT.byId.get(it.id); if (f) showBuilt(f); });
 }
-/**
- * Fila señalada (o null). fromMap: la señala el raton (o un toque) desde el globo; entonces la lista se mueve: en la columna, la fila va a
- * la altura de su punto; en la lista entera, se desplaza hasta ella (salvo que ya este a esa altura). Desde la propia lista no se mueve
- * nada (la fila se iria de debajo del puntero).
- */
-function lgHot(id, fromMap) {
-    id = id || null;
-    const prev = LG.hot; LG.hot = id;
-    if (fromMap && !LG.wide) {
-        clearTimeout(LG.pinT);
-        if (id) { if (LG.pin !== id) { LG.pin = id; lgLayout(); } }
-        else LG.pinT = setTimeout(() => { LG.pinT = 0; if (LG.hot) return; LG.pin = null; lgLayout(); lgWires(); }, 700);    // sin rebotes al pasar de un icono a otro
-    }
-    document.querySelectorAll('#lg-list .lg-row').forEach((li) => li.classList.toggle('hot', li.dataset.id === id));
-    if (fromMap && LG.wide && id) lgScrollTo(id);
-    if (!fromMap && prev !== id) {
-        const it = id ? LG.rows.find((r) => r.id === id) : null;
-        spotHover(id);
-        LG_HOT_SELF = true;
-        try {
-            if (it && it.kind === 'e') { buHoverSet(null); evHoverSet(it.f); }
-            else if (it) { evHoverSet(null); buHoverSet({ properties: it.props, geometry: it.geom }); }
-            else { evHoverSet(null); buHoverSet(null); }
-        } finally { LG_HOT_SELF = false; }
-    }
-    lgBubble();
-    lgWires();
-}
-/** Lista entera: desplaza hasta la fila (a la altura de su punto o al centro; si ya esta ahi, nada). */
-function lgScrollTo(id) {
-    const list = $('lg-list'); const it = LG.rows.find((r) => r.id === id); if (!it) return;
-    const g = LG.groups.find((x) => x.items.includes(it)); if (g && LG.fold.has(g.key)) { LG.fold.delete(g.key); LG.sig = ''; lgLayout(); }
-    const li = list.querySelector('.lg-row[data-id="' + CSS.escape(id) + '"]'); if (!li) return;
-    const lr = list.getBoundingClientRect(); const rowH = li.offsetHeight || 30;
-    const to = ChronosLegend.scrollFor(li.offsetTop / rowH, rowH, list.clientHeight, list.scrollHeight, list.scrollTop, it.py - lr.top);
-    if (to == null) return;
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    try { list.scrollTo({ top: to, behavior: reduce ? 'auto' : 'smooth' }); } catch (e) { list.scrollTop = to; }
-}
-function lgFromMap(id) { if (!LG.open) return; lgHot(id && LG.rows.some((r) => r.id === id) ? id : null, true); }
+/** Compatibilidad (sonda y cierre): elegir un elemento (gira hasta el) o soltar (null). */
+function lgHot(id) { if (id) lgSpinTo(id); else lgRelease(); }
+/** Señalado en el globo (raton encima o toque): la rueda gira hasta el. Al salir el raton del icono no se suelta (el del centro sigue elegido). */
+function lgFromMap(id) { if (!LG.open || !id || !LGW.tree || !LGW.tree.at.has(id)) return; if (id !== LG.hot) lgSpinTo(id); }
 function lgWires() {
     const svg = $('lg-wires'); if (!svg) return;
     const NS = 'http://www.w3.org/2000/svg'; const parts = [];
     const path = (it, cls, ax, ay) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', ChronosLegend.wirePath(it.px, it.py, ax, ay)); p.setAttribute('class', cls); return p; };
-    if (LG.open && LG.always && !LG.wide) LG.rows.forEach((it) => { if (it.id !== LG.hot && it.ax != null) parts.push(path(it, '', it.ax, it.ay)); });
-    const hot = LG.open && LG.hot ? LG.rows.find((r) => r.id === LG.hot) : null;
-    const end = hot && (LG.wide ? (hot.ax != null ? { ax: hot.ax, ay: hot.ay } : null) : LG.hb || { ax: hot.ax, ay: hot.ay });
+    if (LG.open && LG.always) (LG.rows || []).forEach((it) => { if (it.id !== LG.hot && it.ax != null) parts.push(path(it, '', it.ax, it.ay)); });
+    const hot = LG.open && LG.hot && LGW.tree && LGW.tree.at.has(LG.hot) ? LGW.tree.seq[LGW.tree.at.get(LG.hot).k] : null;
+    const end = hot && (!LG.wide && LG.hb ? LG.hb : hot.ax != null ? { ax: hot.ax, ay: hot.ay } : null);
     if (hot && end) {
         parts.push(path(hot, 'hot-under', end.ax, end.ay), path(hot, 'hot', end.ax, end.ay));
         [['hot-under', 15], ['hot', 15]].forEach(([cls, r]) => { const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', hot.px); c.setAttribute('cy', hot.py); c.setAttribute('r', r); c.setAttribute('class', cls); parts.push(c); });
     }
     svg.replaceChildren(...parts);
 }
+/* gestos: arrastrar (con inercia al soltar), rueda del raton, teclado y toques */
+(function lgWheelInput() {
+    const list = $('lg-list');
+    list.tabIndex = 0; list.setAttribute('role', 'listbox'); list.setAttribute('aria-label', t('lgBtn'));
+    list.addEventListener('pointerdown', (e) => {
+        if (!LGW.tree || !LGW.tree.seq.length || (e.pointerType === 'mouse' && e.button !== 0)) return;
+        LG.lastPointer = e.pointerType || 'mouse';
+        LGW.drag = { id: e.pointerId, y0: e.clientY, f0: LGW.f, moved: false, samples: [{ t: performance.now(), y: e.clientY }] };
+        LGW.moved = false;
+    });
+    list.addEventListener('pointermove', (e) => {
+        const d = LGW.drag; if (!d || d.id !== e.pointerId) return;
+        if (!d.moved && Math.abs(e.clientY - d.y0) < 5) return;
+        if (!d.moved) { d.moved = true; LGW.moved = true; try { list.setPointerCapture(e.pointerId); } catch (x) { /* nada */ } lgEngage(); LGW.jump = null; LGW.to = null; if (LGW.dimmed) { LGW.dimmed = null; spotHover(null); } }
+        const n = LGW.tree.seq.length; LGW.f = Math.max(0, Math.min(n - 1, d.f0 + (d.y0 - e.clientY) / lgPitch()));
+        d.samples.push({ t: performance.now(), y: e.clientY }); if (d.samples.length > 8) d.samples.shift();
+        lgAnimate();
+    });
+    const end = (e) => {
+        const d = LGW.drag; if (!d || d.id !== e.pointerId) return; LGW.drag = null;
+        if (!d.moved) return;
+        const s = d.samples.filter((x) => performance.now() - x.t < 120); const a = s[0]; const b = s[s.length - 1];
+        LGW.v = a && b && b.t > a.t && !LGW_RM.matches ? -((b.y - a.y) / ((b.t - a.t) / 1000)) / lgPitch() : 0; LGW.to = null;
+        lgAnimate();
+    };
+    list.addEventListener('pointerup', end); list.addEventListener('pointercancel', end);
+    list.addEventListener('wheel', (e) => {
+        if (!LGW.tree || !LGW.tree.seq.length) return;
+        e.preventDefault();
+        const n = LGW.tree.seq.length; const dy = e.deltaMode === 1 ? e.deltaY : e.deltaMode === 2 ? e.deltaY * 5 : e.deltaY / lgPitch();
+        if (!LGW.engaged || LGW.jump || LGW.to != null) { lgEngage(); LGW.jump = null; if (LGW.dimmed) { LGW.dimmed = null; spotHover(null); } }
+        LGW.f = Math.max(0, Math.min(n - 1, LGW.f + dy)); LGW.v = 0; LGW.to = LGW.f;      // se queda donde lo deja la rueda...
+        clearTimeout(LGW.wheelT); LGW.wheelT = setTimeout(() => { LGW.to = Math.round(LGW.f); lgAnimate(); }, 140);   // ...y encaja al parar
+        LGW.to = null; LGW.v = 0; lgAnimate();
+    }, { passive: false });
+    list.addEventListener('click', (e) => {
+        if (LGW.moved) { LGW.moved = false; return; }          // fue un arrastre
+        const li = e.target.closest('.lg-row'); if (!li || !LGW.tree) return;
+        const st = LGW.els.get(li.dataset.key); if (!st || !st.r) return;
+        const r = st.r; const T = LGW.tree;
+        if (r.kind === 'item') {
+            const touch = LG.lastPointer !== 'mouse';
+            if (LG.hot === r.it.id && LGW.engaged && (!touch || LG.touchHot === r.it.id)) { LG.touchHot = null; lgOpen(r.it); return; }
+            LG.touchHot = r.it.id; lgSpinTo(r.it.id); return;
+        }
+        const c = T.countries[r.ci]; const ty = r.kind === 'type' ? c.types[r.ti] : c.types[0];
+        if (ty && ty.items[0]) lgSpinTo(ty.items[0].id);
+    });
+    list.addEventListener('keydown', (e) => {
+        if (!LGW.tree || !LGW.tree.seq.length) return;
+        const n = LGW.tree.seq.length; const cur = LGW.to != null ? LGW.to : Math.round(LGW.f);
+        const step = { ArrowDown: 1, ArrowUp: -1, PageDown: 5, PageUp: -5, Home: -n, End: n }[e.key];
+        if (step) { e.preventDefault(); lgSpinTo(LGW.tree.seq[Math.max(0, Math.min(n - 1, cur + step))].id); return; }
+        if (e.key === 'Enter' && LG.hot) { e.preventDefault(); const it = LGW.tree.seq[LGW.tree.at.get(LG.hot).k]; lgOpen(it); }
+        if (e.key === 'Escape') { e.preventDefault(); lgRelease(); }
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && LG.open && LGW.engaged && !e.defaultPrevented) lgRelease(); });
+})();
 function lgPopRender() {
     const pop = $('lg-pop'); pop.textContent = '';
     const win = evWindow(); const floor = ChronosTimed.importanceFloor(viewMeters());
@@ -5569,7 +5685,8 @@ map.on('movestart', () => { if (LG.open) $('lg-wires').classList.add('moving'); 
 map.on('moveend', () => { if (!LG.open) return; $('lg-wires').classList.remove('moving'); lgSchedule(120); });
 map.on('idle', () => lgSchedule(200));
 window.addEventListener('resize', () => lgSchedule(200));
-map.on('touchstart', () => { if (LG.touchHot) { LG.touchHot = null; lgHot(null); } });
+/** Toque o clic en el globo: sobre un icono de la leyenda, la rueda gira hasta el; donde no hay nada que tocar, se suelta la seleccion. */
+function lgMapClick(near) { if (!LG.open) return; const id = near && near.properties ? near.properties.id : null; if (id && LGW.tree && LGW.tree.at.has(id)) lgSpinTo(id); else if (LGW.engaged) lgRelease(); }
 lgSet(LG.open, false);
 
 function typesSet(mask, persist) {
