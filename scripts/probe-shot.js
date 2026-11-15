@@ -179,19 +179,22 @@ async function runZoom(page, out) {
     await cdp.send('Network.enable'); await cdp.send('Network.emulateNetworkConditions', net);
     const rows = [];
     const estado = () => page.evaluate(() => ({
-        t: Math.round(performance.now()), z: Math.round(map.getZoom() * 100) / 100, detalle: DETAIL.shown, fase: DETAIL.phase === undefined ? null : DETAIL.phase,
+        t: Math.round(performance.now()), z: Math.round(map.getZoom() * 100) / 100, detalle: DETAIL.shown, prepara: DETAIL.next === undefined ? '-' : DETAIL.next, capas: DETAIL.vis === undefined ? '-' : DETAIL.vis, velo: DETAIL.veiled === undefined ? '-' : DETAIL.veiled,
         natural: NAT.on, gap: GAP.shown, gapCaduca: GAP.stale === undefined ? null : GAP.stale, mar: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null,
         ofm: Object.keys(map.getStyle().sources).filter((s) => s.startsWith('ofm-')).map((s) => s + ':' + (map.isSourceLoaded(s) ? 1 : 0)).join(' '),
         nat: ['natural', 'natural-sea'].filter((s) => map.getSource(s)).map((s) => s + ':' + (map.isSourceLoaded(s) ? 1 : 0)).join(' ')
     }));
-    const pasos = [['1-acercar', 5.6], ['2-alejar', 3.4], ['3-acercar', 5.6]];
-    for (const [nombre, z] of pasos) {
-        const t0 = await page.evaluate((zz) => { map.easeTo({ zoom: zz, duration: 1600 }); return performance.now(); }, z);
+    // Acercar como un pellizco (1,6 s); alejar y desplazar DESPACIO (el fin del movimiento rehace la imagen del color: un gesto lento deja ver
+    // lo que pasa mientras dura); una captura tarda cientos de ms con el render por software.
+    const pasos = [['1-acercar', { zoom: 5.6 }, 1600], ['2-alejar', { zoom: 3.4 }, 6000], ['3-acercar', { zoom: 5.6 }, 1600], ['4-alejar', { zoom: 3.4 }, 6000], ['5-desplazar', { center: [12, 46] }, 6000]];
+    for (const [nombre, cam, dur] of pasos) {
+        const t0 = await page.evaluate(([c, d]) => { map.easeTo({ ...c, duration: d }); return performance.now(); }, [cam, dur]);
         for (let k = 0; k < 40; k++) {
-            const e = await estado(); const dt = e.t - Math.round(t0); if (dt > 7000) break;
+            const e = await estado(); const dt = e.t - Math.round(t0); if (dt > dur + 6000) break;
             const file = 'zoom-' + nombre + '-' + String(k).padStart(2, '0') + '.png';
             await page.screenshot({ path: path.join(out, file) });
-            rows.push({ paso: nombre, k, ms: dt, file, ...e });
+            const d = await estado();      // la captura tarda: el estado de despues dice que se ve en ella mejor que el de antes
+            rows.push({ paso: nombre, k, ms: dt, msFin: d.t - Math.round(t0), file, ...e, despues: d });
             fs.writeFileSync(path.join(out, 'zoom.json'), JSON.stringify(rows, null, 2));
             await page.waitForTimeout(120);
         }

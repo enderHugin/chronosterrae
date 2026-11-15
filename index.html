@@ -1945,14 +1945,19 @@ const DETAIL = {
     physicalMaxYbp: 11000,
     shown: null,                      // null | 'physical' | 'full'
     layers: [],                       // { id, role, physical, orig }
-    built: false, building: null, error: null, failedAt: null, backoff: 15000, fadeTimer: null
+    built: false, building: null, error: null, failedAt: null, backoff: 15000,
+    // Paso de un mapa a otro (ver detailPrepare): `next` es el modo que se esta preparando (undefined = ninguno); `vis`, el modo cuyas capas
+    // estan puestas (el confirmado o, mientras se prepara, el que viene); `veiled`, capas puestas pero transparentes; `hold`, lo de debajo
+    // sigue mientras el detalle aparece con el fundido.
+    next: undefined, vis: null, veiled: false, hold: false, holdTok: 0, rendered: false, seq: 0, since: 0, waitTimer: 0, srcIds: []
 };
 const DETAIL_PHYSICAL_LAYERS = new Set(['water', 'waterway', 'landcover']);
 const DETAIL_NOT_MODERN_WATER = ['!', ['in', ['get', 'class'], ['literal', ['dock', 'swimming_pool']]]];
 
 function detailMode() {
     if (state.ybp > DETAIL.physicalMaxYbp) return null;
-    if (map.getZoom() < (DETAIL.shown ? DETAIL.zoomOff : DETAIL.zoomOn)) return null;
+    const cur = DETAIL.next !== undefined ? DETAIL.next : DETAIL.shown;      // la histeresis cuenta desde lo que se esta preparando
+    if (map.getZoom() < (cur ? DETAIL.zoomOff : DETAIL.zoomOn)) return null;
     return state.ybp <= 0 ? 'full' : 'physical';
 }
 
@@ -1967,7 +1972,7 @@ async function detailFetchStyle() {
 function detailBuild(style) {
     if (style.glyphs) map.setGlyphs(style.glyphs);
     if (style.sprite) map.setSprite(style.sprite);
-    Object.entries(style.sources).forEach(([name, src]) => map.addSource('ofm-' + name, src));
+    Object.entries(style.sources).forEach(([name, src]) => { map.addSource('ofm-' + name, src); DETAIL.srcIds.push('ofm-' + name); });
     // Rotulo con el nombre de parques y espacios protegidos (el estilo de OpenFreeMap dibuja el relleno y el contorno de rayas, pero
     // no su nombre): sin el, una zona de otro tono con borde de rayas se confunde con un territorio. Hereda fuente y halo de un rotulo existente.
     const proto = style.layers.find((l) => l.type === 'symbol' && l.source && l.layout && l.layout['text-font']);
@@ -2015,7 +2020,7 @@ function detailTheme() {
         if (l.role === 'bg') map.setPaintProperty(l.id, 'background-color', p.land);
         else if (l.role === 'water') map.setPaintProperty(l.id, 'fill-color', p.ocean);
         else if (l.role === 'waterway') map.setPaintProperty(l.id, 'line-color', p.ocean);
-        else if (l.role === 'fill') map.setPaintProperty(l.id, 'fill-opacity', state.dark ? 0.28 : l.orig['fill-opacity']);
+        else if (l.role === 'fill') detailOpacity(l, 'fill-opacity', state.dark ? 0.28 : l.orig['fill-opacity']);
         else if (l.role === 'symbol') {
             map.setPaintProperty(l.id, 'text-color', state.dark ? '#e6e2d8' : l.orig['text-color']);
             map.setPaintProperty(l.id, 'text-halo-color', state.dark ? '#1b2126' : l.orig['text-halo-color']);
@@ -2040,19 +2045,91 @@ function detailEnsure() {
     return DETAIL.building;
 }
 
-// El fondo de tierra solo se destapa cuando ya hay teselas de agua; si no, se vería tierra sobre el océano.
-function detailFade() {
-    const bgs = DETAIL.layers.filter((l) => l.role === 'bg');
-    bgs.forEach((l) => map.setPaintProperty(l.id, 'background-opacity', 0));
-    const reveal = () => { clearTimeout(DETAIL.fadeTimer); bgs.forEach((l) => map.setPaintProperty(l.id, 'background-opacity', 1)); };
-    map.once('idle', reveal);
-    DETAIL.fadeTimer = setTimeout(reveal, 3000);
+/* ---- paso entre la Tierra natural (o el mapa de colores) y el detalle ---- */
+// Grabacion del creador en su movil (2026-11-15, 1964, Iberia): al cruzar el umbral de zoom se quitaba la imagen de NASA en el acto y el
+// detalle tardaba segundos en llegar; mientras, un fondo gris plano con el color politico saliendose al mar en escalones; al alejar, manchas
+// de color sobre el mar. Ahora se cambia de mapa solo cuando lo que entra YA esta cargado; hasta entonces se ve lo que habia, entero.
+//  - Al acercar: las capas del detalle se ponen con VELO (transparentes: MapLibre pide las teselas de toda capa visible, sin mirar su
+//    opacidad). Cuando han llegado, el velo se quita con un fundido y despues se apaga la imagen de NASA, que queda debajo durante el fundido.
+//  - Al alejar: la imagen de NASA y su mar se ponen transparentes (cargando). Cuando han llegado, se encienden debajo del detalle, que se
+//    funde y se quita.
+// Si lo que entra no llega en DETAIL_WAIT_MS (red muy lenta), se cambia igual: es lo que pasaba antes, pero solo tras esa espera.
+const DETAIL_FADE_MS = 350; const DETAIL_WAIT_MS = 12000;
+const OPACITY_PROPS = { background: ['background-opacity'], fill: ['fill-opacity'], line: ['line-opacity'], symbol: ['text-opacity', 'icon-opacity'],
+    raster: ['raster-opacity'], circle: ['circle-opacity', 'circle-stroke-opacity'], hillshade: ['hillshade-exaggeration'], heatmap: ['heatmap-opacity'] };
+/** Con velo (on) o sin el, en ms de fundido. La opacidad de verdad de cada capa se guarda en l.op mientras dura el velo. */
+function detailVeil(on, ms) {
+    DETAIL.veiled = on;
+    DETAIL.layers.forEach((l) => {
+        const lay = map.getLayer(l.id); if (!lay) return;
+        if (!l.op) l.op = {};
+        (OPACITY_PROPS[lay.type] || []).forEach((p) => {
+            if (on && !(p in l.op)) l.op[p] = map.getPaintProperty(l.id, p);
+            if (!on && !(p in l.op)) return;
+            map.setPaintProperty(l.id, p + '-transition', { duration: ms || 0, delay: 0 });
+            map.setPaintProperty(l.id, p, on ? 0 : (l.op[p] === undefined ? null : l.op[p]));
+            if (!on) delete l.op[p];
+        });
+    });
+}
+/** Cambiar la opacidad de una capa del detalle respetando el velo (si esta puesto, se guarda para cuando se quite). */
+function detailOpacity(l, p, v) { if (DETAIL.veiled && l.op && p in l.op) l.op[p] = v; else map.setPaintProperty(l.id, p, v); }
+const detailLoaded = () => DETAIL.srcIds.every((s) => !map.getSource(s) || map.isSourceLoaded(s));
+const naturalLoaded = () => ['natural', 'natural-sea'].every((s) => !map.getSource(s) || map.isSourceLoaded(s));
+// La tierra del mapa base (PaleoMAP): fuera con el detalle, salvo mientras el detalle aparece encima con el fundido
+function detailBase() { ['margin-fill', 'land-fill', 'land-line'].forEach((id) => map.setLayoutProperty(id, 'visibility', DETAIL.shown && !DETAIL.hold ? 'none' : 'visible')); }
+function detailPrepare(mode) {
+    ++DETAIL.seq; clearTimeout(DETAIL.waitTimer);
+    DETAIL.next = mode; DETAIL.since = performance.now();
+    if (mode && DETAIL.shown) { detailCommit(); return; }       // de lo fisico a lo completo o al reves (cambio de fecha): mismas teselas
+    if (mode) { detailVeil(true, 0); DETAIL.vis = mode; detailVisibility(); }
+    else if (!naturalPreload()) { detailCommit(); return; }      // sin imagen de NASA que esperar (otra epoca, o fallo): el mapa de colores es inmediato
+    // MapLibre mira que capas estan puestas (y pide sus teselas) al pintar el siguiente fotograma; antes, una fuente sin uso cuenta como
+    // «cargada». Se espera a ese fotograma para preguntar.
+    DETAIL.rendered = false; const seq = DETAIL.seq;
+    map.once('render', () => { if (seq === DETAIL.seq) { DETAIL.rendered = true; detailCheck(); } });
+    map.triggerRepaint();
+}
+function detailCheck() {
+    clearTimeout(DETAIL.waitTimer);
+    if (DETAIL.next === undefined || !DETAIL.rendered) return;
+    if ((DETAIL.next ? detailLoaded() : naturalLoaded()) || performance.now() - DETAIL.since > DETAIL_WAIT_MS) { detailCommit(); return; }
+    DETAIL.waitTimer = setTimeout(detailCheck, 150);
+}
+function detailCancel() {
+    clearTimeout(DETAIL.waitTimer); ++DETAIL.seq;
+    const next = DETAIL.next; DETAIL.next = undefined;
+    if (next) { DETAIL.vis = DETAIL.shown; detailVisibility(); detailVeil(false, 0); }     // se vuelve a alejar antes de que llegara el detalle
+    else { NAT.pre = false; naturalView(); }                                                // se vuelve a acercar antes de que llegara NASA
+}
+function detailCommit() {
+    clearTimeout(DETAIL.waitTimer);
+    const mode = DETAIL.next; if (mode === undefined) return;
+    const was = DETAIL.shown; const seq = ++DETAIL.seq;
+    DETAIL.next = undefined; DETAIL.shown = mode;
+    roadsButton();
+    if (mode) {
+        DETAIL.vis = mode; detailVisibility();
+        DETAIL.hold = !was; const tok = ++DETAIL.holdTok;
+        if (DETAIL.veiled) detailVeil(false, was ? 0 : DETAIL_FADE_MS);
+        detailBase();
+        // el fin de la espera no depende de lo que pase despues (otro paso que se cancele no puede dejar NASA encendida debajo del detalle)
+        setTimeout(() => { if (tok !== DETAIL.holdTok || !DETAIL.hold) return; DETAIL.hold = false; detailBase(); naturalView(); }, was ? 0 : DETAIL_FADE_MS + 50);
+    } else {
+        DETAIL.hold = false; detailBase();
+        NAT.pre = false; naturalView();               // NASA, ya cargada, se enciende debajo del detalle (aun opaco)
+        detailVeil(true, DETAIL_FADE_MS);             // y el detalle se funde
+        setTimeout(() => { if (seq !== DETAIL.seq) return; DETAIL.vis = null; detailVisibility(); detailVeil(false, 0); }, DETAIL_FADE_MS + 50);
+    }
+    gapRefresh(60);
+    naturalView();
+    renderStatus();
 }
 
 // Las fronteras administrativas actuales de OpenStreetMap no se dibujan mientras haya fronteras historicas:
 // serian dos mapas de fronteras superpuestos (y el actual no es el de la epoca).
 function detailVisibility() {
-    const mode = DETAIL.shown;
+    const mode = DETAIL.vis;
     DETAIL.layers.forEach((l) => {
         // Los nombres de pais del detalle son los de HOY: con los nombres propios a la vista (fronteras puestas) duplicarian, y en un mapa historico serian de otra epoca.
         const ownNames = l.country && LBL.ready && state.borders && !BR.cut;
@@ -2085,7 +2162,7 @@ const GAP_MAX_SPAN_DEG = 200;    // vistas mas anchas (el globo entero): las fra
 const GAP_CELL_PX = 1.5;
 const GAP_CELLS_MIN = 200; const GAP_CELLS_MAX = 1100;
 let gapSeq = 0;                   // el PNG se codifica fuera del hilo principal: solo vale el ultimo
-const GAP = { timer: 0, shown: false, ctx: null, sel: null, url: null, cache: new Map(), t: null, dirty: false, dirtyTimer: 0 };
+const GAP = { timer: 0, shown: false, ctx: null, sel: null, url: null, cache: new Map(), t: null, dirty: false, dirtyTimer: 0, stale: false, cov: null, covRaf: 0 };
 function gapColor(css) {
     if (!GAP.ctx) { const c = document.createElement('canvas'); c.width = c.height = 1; GAP.ctx = c.getContext('2d', { willReadFrequently: true }); }
     GAP.ctx.clearRect(0, 0, 1, 1); GAP.ctx.fillStyle = css; GAP.ctx.fillRect(0, 0, 1, 1);
@@ -2103,7 +2180,7 @@ function gapFillPaint() {
     if (!map.getLayer('borders-fill')) return;
     const base = ['get', '_o'];
     const tinted = GAP.sel ? ['case', ['==', ['coalesce', ['get', 'SUBJECTO'], ['get', 'NAME']], GAP.sel], ['min', 1, ['+', base, 0.3]], base] : base;
-    map.setPaintProperty('borders-fill', 'fill-opacity', GAP.shown ? 0.01 : tinted);
+    map.setPaintProperty('borders-fill', 'fill-opacity', GAP.shown && !GAP.stale ? 0.01 : tinted);
 }
 function setHighlightKey(key) {
     GAP.sel = key || null;
@@ -2111,7 +2188,7 @@ function setHighlightKey(key) {
     gapFillPaint();
     if (GAP.shown) gapRefresh();
 }
-function gapHide() { gapSeq++; if (BR.swap) commitBorders(); if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visibility', 'none'); GAP.shown = false; gapFillPaint(); renderStatus(); } }
+function gapHide() { gapSeq++; if (BR.swap) commitBorders(); GAP.stale = false; if (GAP.shown) { map.setLayoutProperty('gap-raster', 'visibility', 'none'); GAP.shown = false; gapFillPaint(); renderStatus(); } }
 // "dirty": llego un mapa politico nuevo y su imagen de franjas aun no esta pintada. Hasta entonces el relieve espera (politicsFirst).
 function gapSettled() {
     clearTimeout(GAP.dirtyTimer);
@@ -2123,12 +2200,12 @@ function gapDraw() { try { gapDrawNow(); } finally { gapSettled(); } }
  * espacio, no cuentan: no vuelven a su sitio al proyectarlos). Longitudes desenrolladas respecto al centro (sin saltos en el 180), con un
  * margen de un paso de rejilla. [oeste, sur, este, norte] o null.
  */
-function gapSeen() {
+function gapSeen(steps = 10) {
     const cv = map.getCanvas(); const W = cv.clientWidth; const H = cv.clientHeight; if (!W || !H) return null;
     const c0 = map.getCenter().lng; let lo = Infinity; let hi = -Infinity; let s = 90; let n = -90; let hits = 0;
-    for (let i = 0; i <= 10; i++) {
-        for (let j = 0; j <= 10; j++) {
-            const x = W * i / 10; const y = H * j / 10; let ll = null;
+    for (let i = 0; i <= steps; i++) {
+        for (let j = 0; j <= steps; j++) {
+            const x = W * i / steps; const y = H * j / steps; let ll = null;
             try { ll = map.unproject([x, y]); } catch (e) { continue; }
             if (!ll || !Number.isFinite(ll.lng) || !Number.isFinite(ll.lat)) continue;
             const back = map.project(ll); if (!back || Math.hypot(back.x - x, back.y - y) > 3) continue;
@@ -2137,9 +2214,23 @@ function gapSeen() {
         }
     }
     if (hits < 4) return null;
+    if (steps !== 10) return [c0 + lo, s, c0 + hi, n];       // sin margen (comprobacion rapida mientras se mueve la camara)
     const pl = (hi - lo) / 10 + 0.5; const pt = (n - s) / 10 + 0.5;
     return [c0 + lo - pl, Math.max(-90, s - pt), c0 + hi + pl, Math.min(90, n + pt)];
 }
+// Mientras la camara se mueve, la imagen del color es la de la vista de antes (se rehace al parar). Al ALEJAR o desplazar, lo que entraba en
+// pantalla quedaba sin color y el color acababa en un rectangulo (grabacion del creador, 2026-11-15). Si la vista se sale de la imagen, hasta
+// que llega la nueva se dibujan los poligonos tal cual (relleno vectorial): el color llega a todas partes; solo faltan las franjas de costa,
+// que vuelven al parar. La costa la sigue poniendo el mar de NASA, encima de los dos.
+function gapCoverCheck() {
+    GAP.covRaf = 0;
+    if (!GAP.shown || GAP.stale || !GAP.cov) return;
+    if (ChronosGap.covers(GAP.cov, gapSeen(4))) return;
+    GAP.stale = true;
+    map.setLayoutProperty('gap-raster', 'visibility', 'none');
+    gapFillPaint();
+}
+map.on('move', () => { if (GAP.shown && !GAP.stale && !GAP.covRaf) GAP.covRaf = requestAnimationFrame(gapCoverCheck); });
 /**
  * El poligono (con su caja _bb) tal cual, desplazado 360 grados, o null si no toca la vista. La vista puede pasar de 180 o de -180 (cruza
  * el antimeridiano); los datos van siempre entre -180 y 180. La copia desplazada se guarda en el propio poligono (una vez).
@@ -2276,7 +2367,8 @@ function gapShowImage(img, corners, seq) {
     GAP_CANVAS.getContext('2d').putImageData(img, 0, 0);
     const src = map.getSource('gap');
     src.setCoordinates(corners);
-    const was = GAP.shown; GAP.shown = true; GAP.year = state.borders ? state.borders.year : null;
+    const was = GAP.shown; GAP.shown = true; GAP.stale = false; GAP.year = state.borders ? state.borders.year : null;
+    GAP.cov = [Math.min(corners[0][0], corners[3][0]), Math.min(corners[2][1], corners[3][1]), Math.max(corners[1][0], corners[2][0]), Math.max(corners[0][1], corners[1][1])];
     map.setLayoutProperty('gap-raster', 'visibility', 'visible');
     src.play(); src.pause();
     map.triggerRepaint();
@@ -2296,16 +2388,9 @@ async function detailApply() {
         if (!(await detailEnsure())) return;
         mode = detailMode();
     }
-    if (mode === DETAIL.shown) return;
-    const was = DETAIL.shown;
-    DETAIL.shown = mode;
-    roadsButton();
-    detailVisibility();
-    ['margin-fill', 'land-fill', 'land-line'].forEach((id) => map.setLayoutProperty(id, 'visibility', mode ? 'none' : 'visible'));
-    if (mode && !was) detailFade();
-    gapRefresh();
-    naturalView();
-    renderStatus();
+    if (mode === DETAIL.shown) { if (DETAIL.next !== undefined) detailCancel(); return; }
+    if (mode === DETAIL.next) { detailCheck(); return; }
+    detailPrepare(mode);
 }
 map.on('zoom', detailApply);
 map.on('moveend', detailApply);
@@ -2393,7 +2478,7 @@ function applyBorders(b) {
         if (BR.swap) { BR.swap = null; clearTimeout(BR.swapTimer); renderStatus(); }
         return;
     }
-    const hold = Boolean(GAP.shown && data && data.features.length && !BR.cut && window.ChronosGap);
+    const hold = Boolean(GAP.shown && !GAP.stale && data && data.features.length && !BR.cut && window.ChronosGap);   // con la imagen caducada (camara en movimiento) lo que se ve es el relleno vectorial: se cambia ya
     BR.swap = { data };
     clearTimeout(BR.swapTimer);
     if (hold) {
@@ -2510,7 +2595,7 @@ async function labelsUpdate() {
 // Para una epoca en que la costa de hoy sigue valiendo (~6000 anos), el planeta se ve como es: color y relieve de la imagen de NASA (Blue Marble
 // con relieve y batimetria), tambien DEBAJO del color politico, que la deja ver. Con el detalle de OpenStreetMap manda el mapa vectorial.
 // Orden (politicsFirst): con las fronteras activas lo politico se pinta primero y el relieve despues; ocultas o lejos, solo el relieve.
-const NAT = { on: false, failed: false, errors: 0, applied: false };
+const NAT = { on: false, failed: false, errors: 0, applied: false, pre: false, preShown: false };
 // Con el mapa politico en camino (se esta descargando y, al llegar, se dibujara a este zoom) la imagen de NASA no se enciende: se bajaria
 // (decenas de teselas) para apagarla 0,3-2 s despues. Mientras tanto se ve la tierra vectorial del mapa base, que no cuesta nada.
 function bordersExpected() {
@@ -2520,9 +2605,16 @@ function bordersExpected() {
     if (!ne && state.polities && !pickSnapshot(ybp)) return false;
     return bordersInRange(!ne, BR.near);
 }
-function naturalWanted() {
-    if (NAT.failed || !state.land || state.ybp > NATURAL_MAX_YBP || DETAIL.shown) return false;
+function naturalWanted(ignoreDetail) {
+    if (NAT.failed || !state.land || state.ybp > NATURAL_MAX_YBP) return false;
+    if (DETAIL.shown && !ignoreDetail) return DETAIL.hold ? NAT.on : false;     // mientras el detalle aparece con el fundido, lo que habia sigue debajo
     return NAT.on || !politicsFirst();   // si ya esta puesto, sigue (no depende de la fecha): apagarlo y encenderlo seria un parpadeo
+}
+/** Al salir del detalle: si va a verse la imagen de NASA, se pone ya, transparente, para que cargue (ver detailPrepare). Devuelve si se puso. */
+function naturalPreload() {
+    if (!map.getLayer('natural-raster') || !naturalWanted(true)) return false;
+    NAT.pre = true; naturalView(); landMaskEnsure();
+    return true;
 }
 // El orden lo marca el boton Fronteras. Con las fronteras activas (y a un zoom en que se dibujan) lo politico va primero y el relieve se
 // enciende cuando ya estan en pantalla (llegada de la instantanea e imagen de franjas); el relieve queda DEBAJO, a traves del color.
@@ -2535,12 +2627,18 @@ function politicsFirst() {
 function naturalView() {
     if (!map.getLayer('natural-raster')) return;
     const on = Boolean(naturalWanted());
-    if (on === NAT.on && NAT.applied) return;
-    NAT.on = on; NAT.applied = true;
-    map.setLayoutProperty('natural-raster', 'visibility', on ? 'visible' : 'none');
-    if (map.getLayer('natural-sea')) map.setLayoutProperty('natural-sea', 'visibility', on ? 'visible' : 'none');
+    const pre = !on && Boolean(NAT.pre);       // cargando, transparente, debajo del detalle
+    if (on === NAT.on && pre === NAT.preShown && NAT.applied) return;
+    const was = NAT.on; const first = !NAT.applied;
+    NAT.on = on; NAT.preShown = pre; NAT.applied = true;
+    [['natural-raster', 'raster-opacity'], ['natural-sea', 'raster-opacity'], ['natural-cap-n', 'fill-opacity'], ['natural-cap-s', 'fill-opacity']].forEach(([id, p]) => {
+        if (!map.getLayer(id)) return;
+        map.setLayoutProperty(id, 'visibility', on || pre ? 'visible' : 'none');
+        map.setPaintProperty(id, p + '-transition', { duration: 0, delay: 0 });
+        map.setPaintProperty(id, p, pre ? 0 : 1);
+    });
     if (on) landMaskEnsure();
-    ['natural-cap-n', 'natural-cap-s'].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none'); });
+    if (on === was && !first) return;
     // La tierra del mapa base queda casi invisible (0,01: con 0 MapLibre deja de detectar clics) para seguir dando su ficha
     map.setPaintProperty('margin-fill', 'fill-opacity', on ? 0.01 : 1);
     map.setPaintProperty('land-fill', 'fill-opacity', on ? 0.01 : 1);

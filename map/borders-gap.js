@@ -196,5 +196,18 @@
         return cur === lab ? lab.slice() : cur;
     }
 
-    return { classify, nearestLabels, AMBIGUOUS, makeGrid, rasterize, distance, mercX, mercY, dilate };
+    /**
+     * ¿La imagen (caja cov = [oeste, sur, este, norte], longitudes continuas, pueden pasar de 180) cubre lo que se ve (caja seen, igual)?
+     * La imagen puede estar 360 grados al lado de la vista (el antimeridiano). Las latitudes por encima de 84 no cuentan: la imagen nunca las
+     * cubre (Mercator). Con un margen de tolerancia del 2 % del ancho de la imagen. Para saber, mientras se mueve la camara, si la imagen de
+     * la vista anterior aun sirve (index.html, gapCoverCheck).
+     */
+    function covers(cov, seen) {
+        if (!cov || !seen) return true;
+        const k = Math.round(((seen[0] + seen[2]) / 2 - (cov[0] + cov[2]) / 2) / 360) * 360;
+        const eps = 0.02 * Math.max(0.01, cov[2] - cov[0]);
+        return seen[0] >= cov[0] + k - eps && seen[2] <= cov[2] + k + eps && Math.max(seen[1], -84) >= cov[1] - eps && Math.min(seen[3], 84) <= cov[3] + eps;
+    }
+
+    return { classify, nearestLabels, AMBIGUOUS, makeGrid, rasterize, distance, mercX, mercY, dilate, covers };
 });

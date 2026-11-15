@@ -213,5 +213,20 @@ check('dilatar: todo vacio o todo lleno, sin cambios y sin romper', () => {
     return e.every((v) => v === 0) && f.every((v) => v === 4);
 });
 
+// --- 2026-11-15: al alejar, la imagen de la vista anterior se queda corta (grabacion del creador: el color en un rectangulo) ---
+check('cubre: la vista dentro de la imagen si; al alejar o desplazar fuera, no', () => {
+    const G = require('../map/borders-gap.js');
+    const cov = [-12, 34, 6, 46];
+    const ok = G.covers(cov, [-10, 36, 4, 44]) && G.covers(cov, [-12.2, 34, 6, 46])          // dentro, y por la tolerancia (2 % del ancho)
+        && !G.covers(cov, [-20, 30, 14, 50]) && !G.covers(cov, [-6, 36, 10, 44]) && !G.covers(cov, [-10, 30, 4, 44]);   // alejar; desplazar al este; al sur
+    return ok || 'mal';
+});
+check('cubre: a traves del antimeridiano (la imagen 360 grados al lado) y sin contar mas alla de 84 de latitud', () => {
+    const G = require('../map/borders-gap.js');
+    const ok = G.covers([150, 55, 210, 70], [-178, 58, -160, 68]) && !G.covers([150, 55, 210, 70], [-150, 58, -130, 68])
+        && G.covers([-40, 60, 40, 84], [-30, 65, 30, 89.9]) && G.covers(null, [0, 0, 1, 1]);
+    return ok || 'mal';
+});
+
 console.log(fails ? '\nHay fallos.' : '\nBordes (relleno de franjas): todo verde.');
 process.exitCode = fails ? 1 : 0;
