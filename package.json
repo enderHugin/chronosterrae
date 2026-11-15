@@ -39,7 +39,8 @@
     "check:sphere-render": "node scripts/check-sphere-render.js",
     "check:milkyway": "node scripts/check-milkyway.js",
     "check:cross": "node scripts/check-cross.js",
-    "check:reliability": "node scripts/check-reliability.js"
+    "check:reliability": "node scripts/check-reliability.js",
+    "check:sea": "node scripts/check-sea.js"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

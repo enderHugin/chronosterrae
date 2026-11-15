@@ -593,16 +593,20 @@
         #lg-extra:empty { cursor: default; background: transparent; }
         /* lista desplegada: entera, con nombres y barra; la fila señalada desde el globo se desplaza a la altura de su punto (o al centro) */
         #legend.wide #lg-list { overflow-y: auto; overscroll-behavior: contain; padding: 0 4px 0 2px; }
+        /* lista entera: panel OPACO y colores fuertes (el creador, 2026-11-15: «esta transparencia hace demasiado sutil la diferencia… se
+           confunde con el fondo») */
+        #legend.wide { background: var(--bg); }
+        #legend.wide .lg-name .lg-date { color: color-mix(in srgb, var(--text) 80%, transparent); }
         #legend.wide .lg-row { position: relative; top: auto !important; height: 30px; transition: none; }
         /* por apartados (el creador, 2026-11-15): titulo de cada pais (fijo arriba al desplazar; se pliega) y filas con el FONDO del color del
            pais y, dentro, una franja del color del tipo */
         #legend.wide .lg-btn { width: 100%; height: 28px; justify-content: flex-start; gap: 6px; padding: 0 6px 0 4px; border-radius: 6px; border-left: 4px solid var(--ty, transparent);
-            background: color-mix(in srgb, var(--co, transparent) 22%, transparent); }
-        #legend.wide .lg-btn:hover, #legend.wide .lg-btn:focus-visible, #legend.wide .lg-row.hot .lg-btn { background: color-mix(in srgb, var(--co, var(--accent)) 45%, transparent); outline: 1.5px solid var(--accent); outline-offset: -1.5px; }
+            background: color-mix(in srgb, var(--co, transparent) 48%, var(--bg)); }
+        #legend.wide .lg-btn:hover, #legend.wide .lg-btn:focus-visible, #legend.wide .lg-row.hot .lg-btn { background: color-mix(in srgb, var(--co, var(--accent)) 72%, var(--bg)); outline: 2px solid var(--accent); outline-offset: -2px; }
         .lg-row[hidden] { display: none; }
         .lg-sec { position: sticky; top: 0; z-index: 1; margin: 4px 0 1px; }
         .lg-sec button { width: 100%; display: flex; align-items: center; gap: 6px; padding: 3px 6px; border: 0; border-radius: 6px; cursor: pointer; text-align: left;
-            background: color-mix(in srgb, var(--co, var(--muted)) 62%, var(--bg)); color: var(--text); font: 700 11.5px/1.3 var(--font-ui); }
+            background: color-mix(in srgb, var(--co, var(--muted)) 85%, var(--bg)); color: var(--text); font: 700 11.5px/1.3 var(--font-ui); text-shadow: 0 0 3px var(--bg), 0 0 1px var(--bg); }
         .lg-sec .lg-sw { width: 10px; height: 10px; border-radius: 3px; flex: none; background: var(--co, transparent); border: 1px solid color-mix(in srgb, var(--text) 45%, transparent); }
         .lg-sec .lg-sn { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .lg-sec .lg-sc { font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -847,6 +851,7 @@
 <script src="./map/event-icons.js"></script>
 <script src="./map/legend.js"></script>
 <script src="./map/reliability.js"></script>
+<script src="./map/sea-mask.js"></script>
 <script src="./map/built.js"></script>
 <script src="./map/search.js"></script>
 <script src="./map/glide.js"></script>
@@ -1756,6 +1761,43 @@ async function loadBorders(ybp, signal) {
 /* Mapa                                                               */
 /* ------------------------------------------------------------------ */
 const NATURAL_URL = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg';
+// COSTAS NITIDAS (el creador, 2026-11-15: «hay que encontrar la manera de que las costas sean algo serio», en TODOS los aparatos). El color
+// politico se calcula en una imagen de celdas (gapDrawNow) y su borde con el mar salia difuso; mas resolucion solo valia en equipos potentes.
+// Ahora el borde no lo pone esa imagen: por ENCIMA del color va otra vez la imagen de NASA, pero solo el mar (capa 'natural-sea'): a cada
+// tesela que toca tierra se le recorta la tierra con la costa de Natural Earth (mascara de tierra, dominio publico), dibujada en la propia
+// tesela. El color que se sale al mar queda tapado y la costa tiene la nitidez de la foto, igual en un ordenador que en el iPad de 2015.
+// Teselas solo de mar: tal cual (sin procesar). La misma URL que la capa de abajo: el navegador la sirve de su cache.
+const SEA = { empty: null, ms: [], cpu: [], n: 0 };   // ms: de principio a fin (con esperas); cpu: trabajo propio (recorte y dibujo)
+const natTileUrl = (z, x, y) => NATURAL_URL.replace('{z}', z).replace('{y}', y).replace('{x}', x);
+function canvasPng(c) { return new Promise((res, rej) => c.toBlob((bl) => (bl ? bl.arrayBuffer().then(res, rej) : rej(new Error('png'))), 'image/png')); }
+function seaEmpty() { if (!SEA.empty) { const c = document.createElement('canvas'); c.width = c.height = 1; SEA.empty = canvasPng(c); } return SEA.empty; }
+maplibregl.addProtocol('chronossea', async (params, ac) => {
+    const m = /chronossea:\/\/(\d+)\/(\d+)\/(\d+)/.exec(params.url); if (!m) throw new Error('chronossea: ' + params.url);
+    const z = +m[1]; const x = +m[2]; const y = +m[3];
+    const polys = await landMaskLoad();
+    if (!polys) return { data: await seaEmpty() };              // sin mascara: no tapa nada (queda como antes)
+    const r = await fetch(natTileUrl(z, x, y), { signal: ac && ac.signal }); if (!r.ok) throw new Error('HTTP ' + r.status);
+    const buf = await r.arrayBuffer();
+    const t0 = performance.now();
+    const rings = ChronosSeaMask.tileRings(polys, z, x, y, 256, 2);   // la tierra de esta tesela, recortada y aligerada (map/sea-mask.js)
+    let cpu = performance.now() - t0;
+    if (!rings.length) return { data: buf };                    // todo mar: tal cual
+    const bmp = await createImageBitmap(new Blob([buf], { type: r.headers.get('content-type') || 'image/jpeg' }));
+    const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
+    const t1 = performance.now();
+    g.drawImage(bmp, 0, 0, 256, 256); if (bmp.close) bmp.close();
+    g.globalCompositeOperation = 'destination-out'; g.fillStyle = '#000';
+    for (const poly of rings) {
+        g.beginPath();
+        for (const ring of poly) { g.moveTo(ring[0][0], ring[0][1]); for (let i = 1; i < ring.length; i++) g.lineTo(ring[i][0], ring[i][1]); g.closePath(); }
+        g.fill('evenodd');
+    }
+    cpu += performance.now() - t1; SEA.cpu.push(Math.round(cpu * 10) / 10); if (SEA.cpu.length > 200) SEA.cpu.shift();
+    // MapLibre acepta la imagen ya hecha (ImageBitmap): sin codificar ni decodificar un PNG por tesela
+    const out = typeof createImageBitmap === 'function' ? await createImageBitmap(c) : await canvasPng(c);
+    SEA.n++; SEA.ms.push(Math.round(performance.now() - t0)); if (SEA.ms.length > 200) SEA.ms.shift();
+    return { data: out };
+});
 const NATURAL_MAX_YBP = 6000;    // la imagen es de hoy: desde hace ~6000 anos el nivel del mar esta estabilizado; antes cambian costas y hielos y no se muestra
 // La imagen de franjas se pinta en este lienzo y MapLibre lo lee directo como textura: se evita codificar un PNG (2-10 s en el render real, medido).
 const GAP_CANVAS = document.createElement('canvas'); GAP_CANVAS.width = GAP_CANVAS.height = 1;
@@ -1821,6 +1863,9 @@ mapReady.then(() => {
     // Franja entre un poligono de frontera demasiado simplificado y la costa real (ver gapDraw): imagen georreferenciada por sus cuatro esquinas.
     map.addSource('gap', { type: 'canvas', canvas: GAP_CANVAS, animate: false, coordinates: [[-1, 1], [1, 1], [1, -1], [-1, -1]] });
     map.addLayer({ id: 'gap-raster', type: 'raster', source: 'gap', layout: { visibility: 'none' }, paint: { 'raster-opacity': 1, 'raster-fade-duration': 0, 'raster-resampling': 'linear' } }, 'borders-line');
+    // El mar de NASA otra vez, con la tierra recortada, ENCIMA del color politico: da la costa nitida (ver 'chronossea').
+    map.addSource('natural-sea', { type: 'raster', tiles: ['chronossea://{z}/{x}/{y}'], tileSize: 256, maxzoom: 8, minzoom: 0 });
+    map.addLayer({ id: 'natural-sea', type: 'raster', source: 'natural-sea', layout: { visibility: 'none' }, paint: { 'raster-fade-duration': 0, 'raster-resampling': 'linear' } }, 'borders-line');
     map.addLayer({ id: 'borders-hover', type: 'line', source: 'borders-inner', filter: ['==', ['get', 'key'], '\u0000'], paint: { 'line-color': '#ffb300', 'line-width': 2.4, 'line-opacity': 0.95 } });
     map.addLayer({ id: 'borders-hl', type: 'line', source: 'borders-inner', filter: ['==', ['get', 'key'], '\u0000'], paint: { 'line-color': '#e53935', 'line-width': 3 } });
     map.addLayer({ id: 'live-points', type: 'circle', source: 'live', paint: { 'circle-radius': 6, 'circle-color': '#e53935', 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff' } });
@@ -2035,12 +2080,10 @@ function detailVisibility() {
 const GAP_DIST_M = 100000;       // fronteras historicas (toscas)
 const GAP_DIST_NE_M = 20000;     // Natural Earth (1,7 km): solo rendijas frente a la costa del mapa
 const GAP_MAX_SPAN_DEG = 200;    // vistas mas anchas (el globo entero): las franjas miden menos de un pixel
-// Tamaño de celda en pixeles de pantalla y tope de celdas. Con 1,5 px y 1100 la costa salia «difusa» (el creador, 2026-11-15, en una
-// pantalla de 1913 px: cada celda ~1,7 px, suavizada). Donde el equipo puede (4+ nucleos y raton), 1 px y hasta 2048 (medido en escritorio:
-// ~0,4 s frente a ~0,23 s, una vez al parar la camara); en el resto (moviles, el iPad de 2015) se queda como estaba.
-const GAP_STRONG = (navigator.hardwareConcurrency || 2) >= 4 && !matchMedia('(pointer: coarse)').matches;
-const GAP_CELL_PX = GAP_STRONG ? 1 : 1.5;
-const GAP_CELLS_MIN = 200; const GAP_CELLS_MAX = GAP_STRONG ? 2048 : 1100;
+// Tamaño de celda en pixeles de pantalla y tope de celdas. La costa nitida ya NO depende de esto: la da el mar de NASA recortado que va
+// encima ('natural-sea'), igual en todos los aparatos (el creador, 2026-11-15). Las celdas solo deciden de quien es cada trozo de tierra.
+const GAP_CELL_PX = 1.5;
+const GAP_CELLS_MIN = 200; const GAP_CELLS_MAX = 1100;
 let gapSeq = 0;                   // el PNG se codifica fuera del hilo principal: solo vale el ultimo
 const GAP = { timer: 0, shown: false, ctx: null, sel: null, url: null, cache: new Map(), t: null, dirty: false, dirtyTimer: 0 };
 function gapColor(css) {
@@ -2076,6 +2119,28 @@ function gapSettled() {
 }
 function gapDraw() { try { gapDrawNow(); } finally { gapSettled(); } }
 /**
+ * Lo que se ve del globo en lon/lat, midiendo: rejilla de 11 x 11 puntos de la pantalla desproyectados (los que caen fuera del globo, al
+ * espacio, no cuentan: no vuelven a su sitio al proyectarlos). Longitudes desenrolladas respecto al centro (sin saltos en el 180), con un
+ * margen de un paso de rejilla. [oeste, sur, este, norte] o null.
+ */
+function gapSeen() {
+    const cv = map.getCanvas(); const W = cv.clientWidth; const H = cv.clientHeight; if (!W || !H) return null;
+    const c0 = map.getCenter().lng; let lo = Infinity; let hi = -Infinity; let s = 90; let n = -90; let hits = 0;
+    for (let i = 0; i <= 10; i++) {
+        for (let j = 0; j <= 10; j++) {
+            const x = W * i / 10; const y = H * j / 10; let ll = null;
+            try { ll = map.unproject([x, y]); } catch (e) { continue; }
+            if (!ll || !Number.isFinite(ll.lng) || !Number.isFinite(ll.lat)) continue;
+            const back = map.project(ll); if (!back || Math.hypot(back.x - x, back.y - y) > 3) continue;
+            const d = ((((ll.lng - c0) % 360) + 540) % 360) - 180;
+            lo = Math.min(lo, d); hi = Math.max(hi, d); s = Math.min(s, ll.lat); n = Math.max(n, ll.lat); hits++;
+        }
+    }
+    if (hits < 4) return null;
+    const pl = (hi - lo) / 10 + 0.5; const pt = (n - s) / 10 + 0.5;
+    return [c0 + lo - pl, Math.max(-90, s - pt), c0 + hi + pl, Math.min(90, n + pt)];
+}
+/**
  * El poligono (con su caja _bb) tal cual, desplazado 360 grados, o null si no toca la vista. La vista puede pasar de 180 o de -180 (cruza
  * el antimeridiano); los datos van siempre entre -180 y 180. La copia desplazada se guarda en el propio poligono (una vez).
  */
@@ -2103,12 +2168,16 @@ function gapDrawNow() {
     // Vista CONTINUA en longitud: si cruza el antimeridiano, MapLibre da p. ej. [80, 273]; antes se recortaba a 180 y lo de mas alla quedaba
     // sin color, con una recta en el meridiano 180 (el creador, 2026-11-15: «linea recta que delimita el relleno… de Rusia»). Ahora se
     // conserva y los poligonos del otro lado se desplazan 360 grados (gapWrap).
+    // Y lo que de verdad se ve del globo (gapSeen): en el iPad, de pie y cerca del Artico, getBounds se quedaba corto y el color acababa en
+    // una recta (el creador, 2026-11-15); se mide desproyectando una rejilla de puntos de la pantalla.
+    const seen = gapSeen();
     let w0 = bd.getWest(); let e0 = bd.getEast();
+    if (seen) { w0 = Math.min(w0, seen[0]); e0 = Math.max(e0, seen[2]); }
     if (e0 - w0 >= 360) { w0 = -180; e0 = 180; }
     while (w0 < -180) { w0 += 360; e0 += 360; }
     while (w0 >= 180) { w0 -= 360; e0 -= 360; }
     if ((w0 + e0) / 2 > 180) { w0 -= 360; e0 -= 360; }    // el CENTRO de la imagen dentro de [-180, 180]: si no, MapLibre calcula una tesela inexistente (x=1 a z=0) y no la pinta
-    const view = [w0, Math.max(-84, bd.getSouth()), e0, Math.min(84, bd.getNorth())];
+    const view = [w0, Math.max(-84, Math.min(bd.getSouth(), seen ? seen[1] : 90)), e0, Math.min(84, Math.max(bd.getNorth(), seen ? seen[3] : -90))];
     GAP.dbg = { z: Math.round(map.getZoom() * 100) / 100, bounds: [bd.getWest(), bd.getSouth(), bd.getEast(), bd.getNorth()].map((v) => Math.round(v * 100) / 100), view: view.map((v) => Math.round(v * 100) / 100) };   // para la sonda
     if (view[2] - view[0] > GAP_MAX_SPAN_DEG) { GAP.dbg.hidden = 'span'; gapHide(); return; }
     const degPerPx = 360 / (512 * Math.pow(2, map.getZoom()));
@@ -2121,7 +2190,7 @@ function gapDrawNow() {
     // Cache por instantanea + vista + resaltado: volver a una fecha o a una vista ya calculada no repite la clasificacion ni la codificacion
     const fine = landMaskWanted(); if (fine) landMaskEnsure();
     const maskPolys = fine && LANDMASK.polys ? LANDMASK.polys : null;
-    const gkey = [b.year, b.source || 'hb', DETAIL.shown ? 'd' : maskPolys ? 'n' : 'p', GAP.sel || '', maxCells, view.map((v) => Math.round(v * 200) / 200).join(',')].join('|');
+    const gkey = [b.year, b.source || 'hb', DETAIL.shown ? 'd' : maskPolys ? (NAT.on ? 'ns' : 'n') : 'p', GAP.sel || '', maxCells, view.map((v) => Math.round(v * 200) / 200).join(',')].join('|');
     const hit = GAP.cache.get(gkey);
     if (hit) {
         GAP.cache.delete(gkey); GAP.cache.set(gkey, hit);     // el mas reciente al final
@@ -2166,8 +2235,11 @@ function gapDrawNow() {
     const img = new ImageData(cols, rows);
     const rgb = list.map((g) => gapColor(g.css || '#8a8a8a'));
     let filled = 0;
-    for (let i = 0; i < res.cls.length; i++) {
-        const c = res.owner[i] || res.cls[i]; if (!c) continue;   // dentro de un poligono: el suyo; fuera: el mas cercano
+    let lab = new Int32Array(res.cls.length); for (let i = 0; i < lab.length; i++) lab[i] = res.owner[i] || res.cls[i];   // dentro de un poligono: el suyo; fuera: el mas cercano
+    const seaOn = NAT.on && maskPolys && map.getLayer('natural-sea') && map.getLayoutProperty('natural-sea', 'visibility') !== 'none';
+    if (seaOn) lab = ChronosGap.dilate(lab, cols, rows, 2);   // el mar de NASA va encima y recorta: asi la costa queda cubierta entera
+    for (let i = 0; i < lab.length; i++) {
+        const c = lab[i]; if (!c) continue;
         const o = i * 4; const k = rgb[c - 1];
         img.data[o] = k[0]; img.data[o + 1] = k[1]; img.data[o + 2] = k[2]; img.data[o + 3] = list[c - 1].alpha; filled++;
     }
@@ -2183,15 +2255,17 @@ function gapDrawNow() {
 // 2026-11-13). Se carga una vez, solo cuando hace falta; mientras llega (o si falla) vale la del mapa base.
 const LANDMASK = { polys: null, loading: false, failed: false };
 const landMaskWanted = () => !DETAIL.shown && !NAT.failed && state.ybp <= NATURAL_MAX_YBP;
+/** La mascara de tierra (promesa): la lista de poligonos, o null si no se pudo cargar. */
+function landMaskLoad() { landMaskEnsure(); return LANDMASK.promise || Promise.resolve(LANDMASK.polys); }
 function landMaskEnsure() {
     if (LANDMASK.polys || LANDMASK.loading || LANDMASK.failed) return;
     LANDMASK.loading = true;
-    fetch(CFG.landMaskUrl).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then((fc) => {
+    LANDMASK.promise = fetch(CFG.landMaskUrl).then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then((fc) => {
         const polys = [];
         for (const f of fc.features || []) { const g = f.geometry; if (!g) continue; (g.type === 'MultiPolygon' ? g.coordinates : g.type === 'Polygon' ? [g.coordinates] : []).forEach((p) => polys.push(p)); }
         polys.forEach((poly) => { let a = 180, c = 90, d = -180, e = -90; poly[0].forEach(([x, y]) => { a = Math.min(a, x); d = Math.max(d, x); c = Math.min(c, y); e = Math.max(e, y); }); poly._bb = [a, c, d, e]; });
         LANDMASK.polys = polys; GAP.cache.clear(); if (landMaskWanted()) gapRefresh(0);
-    }).catch((e) => { LANDMASK.failed = true; console.warn('[LANDMASK]', e.message); }).finally(() => { LANDMASK.loading = false; });
+    }).catch((e) => { LANDMASK.failed = true; console.warn('[LANDMASK]', e.message); }).finally(() => { LANDMASK.loading = false; }).then(() => LANDMASK.polys || null);
 }
 function gapTrim() { while (GAP.cache.size > 10) GAP.cache.delete(GAP.cache.keys().next().value); }
 // Pone los pixeles (ImageData) en el lienzo que MapLibre lee como textura. Con animate:false la textura solo se vuelve a leer en play()/pause().
@@ -2464,6 +2538,8 @@ function naturalView() {
     if (on === NAT.on && NAT.applied) return;
     NAT.on = on; NAT.applied = true;
     map.setLayoutProperty('natural-raster', 'visibility', on ? 'visible' : 'none');
+    if (map.getLayer('natural-sea')) map.setLayoutProperty('natural-sea', 'visibility', on ? 'visible' : 'none');
+    if (on) landMaskEnsure();
     ['natural-cap-n', 'natural-cap-s'].forEach((id) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none'); });
     // La tierra del mapa base queda casi invisible (0,01: con 0 MapLibre deja de detectar clics) para seguir dando su ficha
     map.setPaintProperty('margin-fill', 'fill-opacity', on ? 0.01 : 1);

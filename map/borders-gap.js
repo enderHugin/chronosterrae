@@ -174,5 +174,27 @@
         return { grid, cls, owner, maxD };
     }
 
-    return { classify, nearestLabels, AMBIGUOUS, makeGrid, rasterize, distance, mercX, mercY };
+    /**
+     * Extiende cada etiqueta n celdas hacia las vacias vecinas (8 vecinas). Para que el color politico cubra la costa ENTERA: por encima va el
+     * mar de NASA con la tierra recortada (capa 'natural-sea'), que tapa lo que se salga y da el borde nitido (el creador, 2026-11-15: «las
+     * costas sean algo serio»). lab: etiquetas (0 = nada), cols x rows. Devuelve un array nuevo; las celdas con etiqueta no cambian.
+     */
+    function dilate(lab, cols, rows, n) {
+        let cur = lab;
+        for (let it = 0; it < (n || 0); it++) {
+            const out = cur.slice(); let changed = 0;
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    const i = y * cols + x; if (cur[i]) continue;
+                    let v = 0;
+                    for (let dy = -1; dy <= 1 && !v; dy++) { const yy = y + dy; if (yy < 0 || yy >= rows) continue; for (let dx = -1; dx <= 1; dx++) { const xx = x + dx; if (xx < 0 || xx >= cols || (!dx && !dy)) continue; const w = cur[yy * cols + xx]; if (w) { v = w; break; } } }
+                    if (v) { out[i] = v; changed++; }
+                }
+            }
+            cur = out; if (!changed) break;
+        }
+        return cur === lab ? lab.slice() : cur;
+    }
+
+    return { classify, nearestLabels, AMBIGUOUS, makeGrid, rasterize, distance, mercX, mercY, dilate };
 });

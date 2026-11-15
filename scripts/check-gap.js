@@ -198,5 +198,20 @@ check('rejilla fina == rejilla completa de la misma celda: coinciden en > 99 % d
     }
 }
 
+// --- 2026-11-15: el color se extiende hacia el mar (lo tapa el mar de NASA con la tierra recortada) ---
+check('dilatar: las celdas vacias junto a una etiqueta la toman; las etiquetadas no cambian', () => {
+    const G = require('../map/borders-gap.js');
+    const lab = new Int32Array([0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3]);   // 5x5
+    const d1 = G.dilate(lab, 5, 5, 1);
+    const ok1 = d1[0] === 2 && d1[2] === 2 && d1[12] === 2 && d1[3] === 0 && d1[24] === 3 && d1[18] === 3 && d1[6] === 2 && lab[0] === 0;   // no toca el original
+    const d0 = G.dilate(lab, 5, 5, 0);
+    return (ok1 && d0 !== lab && d0[6] === 2 && d0[0] === 0) || [Array.from(d1), Array.from(d0)];
+});
+check('dilatar: todo vacio o todo lleno, sin cambios y sin romper', () => {
+    const G = require('../map/borders-gap.js');
+    const e = G.dilate(new Int32Array(9), 3, 3, 3); const f = G.dilate(new Int32Array(9).fill(4), 3, 3, 3);
+    return e.every((v) => v === 0) && f.every((v) => v === 4);
+});
+
 console.log(fails ? '\nHay fallos.' : '\nBordes (relleno de franjas): todo verde.');
 process.exitCode = fails ? 1 : 0;
