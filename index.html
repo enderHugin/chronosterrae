@@ -327,8 +327,16 @@
         [data-pgone] { display: none !important; }
         [data-pempty] > .p-tools { display: none; }   /* recuadro sin contenido: nada que mover ni ocultar */
         .p-tools { position: absolute; top: 3px; right: 3px; display: flex; gap: 2px; opacity: 0; transition: opacity 0.15s; z-index: 3; pointer-events: auto; }
-        #info > .p-tools, #status > .p-tools { position: sticky; top: 3px; right: auto; float: right; margin: -6px 2px -22px 4px; }
-        @media (pointer: coarse) { #info > .p-tools, #status > .p-tools { margin-bottom: -30px; } }
+        #status > .p-tools { position: sticky; top: 3px; right: auto; float: right; margin: -6px 2px -22px 4px; }
+        @media (pointer: coarse) { #status > .p-tools { margin-bottom: -30px; } }
+        /* Ficha: la × va DENTRO de la fila de asas (una sola fila pegada arriba). Con dos flotantes, en el iPad la × y la chincheta se montaban
+           (el creador, 2026-11-16). Las asas de mover y fijar solo se ven con el cursor encima (o siempre, en pantallas tactiles). */
+        #info > .p-tools { position: sticky; top: 0; right: auto; float: right; margin: -10px -12px -28px 6px; opacity: 1; align-items: center; gap: 4px; }
+        #info > .p-tools > .p-grip, #info > .p-tools > .p-pin { opacity: 0; transition: opacity 0.15s; }
+        #info:hover > .p-tools > .p-grip, #info:hover > .p-tools > .p-pin, #info > .p-tools:focus-within > *, #info > .p-tools > .p-pin[aria-pressed="true"] { opacity: 1; }
+        #info > .p-tools > .close { position: static; float: none; flex: none; margin: 0; width: 28px; height: 28px; padding: 0; border: none; border-radius: 8px;
+            background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
+        @media (pointer: coarse) { #info > .p-tools { margin: -12px -14px -44px 6px; } #info > .p-tools > .p-grip, #info > .p-tools > .p-pin { opacity: 1; } #info > .p-tools > .close { width: 44px; height: 44px; font-size: 24px; } }
         .panel:hover > .p-tools, .p-tools:focus-within, .p-tools:hover { opacity: 1; }
         #space-note > .p-tools, #solar-note > .p-tools { top: -13px; right: 4px; }
         #status > .p-tools { margin-right: -8px; }   /* #status ahora tiene scroll propio: las asas van dentro, no sobre el borde (se recortarian) */   /* recuadros pequenos y sin recorte: las asas van encima del borde, no sobre el texto */
@@ -4126,7 +4134,10 @@ panelsUI = (function () {
             hide.addEventListener('click', () => userHide(id)); box.appendChild(hide);
         }
         // delante del contenido (tras la ×, si la hay): asi puede ir pegada arriba al desplazar
-        const x = e.querySelector(':scope > .close'); e.insertBefore(box, x ? x.nextSibling : e.firstChild); texts();
+        const x = e.querySelector(':scope > .close');
+        if (x && id === 'info') { box.appendChild(x); e.insertBefore(box, e.firstChild); }      // la × de la ficha, en la misma fila (no se montan)
+        else e.insertBefore(box, x ? x.nextSibling : e.firstChild);
+        texts();
     }
     /** Estado de las chinchetas de todos los recuadros (tras cambiar el nivel o una chincheta). */
     function pinsSync() { P.IDS.forEach((id) => { const e = byId(id); const b = e && e.querySelector(':scope > .p-tools .p-pin'); if (!b) return; const on = ah.pinned().indexOf(id) >= 0; const lv = ah.level(); b.hidden = !(lv > 0 && lv >= P.LEVEL_OF[id]); b.setAttribute('aria-pressed', String(on)); b.title = t(on ? 'ui.unpin' : 'ui.pin'); b.setAttribute('aria-label', b.title + ': ' + t('ui.pins.' + id)); }); }
