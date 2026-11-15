@@ -5334,10 +5334,12 @@ function lgSchedule(ms) {
     }, ms === undefined ? 250 : ms);
 }
 // Lo que se ve ahora: sucesos dibujados (en pantalla y en la cara visible del globo) y construcciones que MapLibre ha colocado.
-function lgCollect(maxX) {
-    const H = map.getContainer().clientHeight; const items = [];
+// Solo lo que se VE: entre la barra de arriba y la linea de tiempo (minY, maxY); lo que queda debajo de ellas no se puede señalar (sonda,
+// 2026-11-15: la rueda elegia el estadio de Mestalla, tapado por la linea de tiempo, y el cable acababa sobre ella).
+function lgCollect(maxX, minY, maxY) {
+    const H = map.getContainer().clientHeight; const items = []; const y0 = Math.max(0, minY || 0); const y1 = Math.min(H, maxY == null ? H : maxY);
     const front = (lng, lat) => {
-        const p = map.project([lng, lat]); if (!(p.x >= 0 && p.x <= maxX && p.y >= 0 && p.y <= H)) return null;
+        const p = map.project([lng, lat]); if (!(p.x >= 0 && p.x <= maxX && p.y >= y0 && p.y <= y1)) return null;
         const q = map.unproject(p); if (Math.abs(q.lat - lat) > 0.3 || Math.abs((((q.lng - lng) % 360) + 540) % 360 - 180) > 0.3) return null;   // al otro lado del globo
         return p;
     };
@@ -5408,7 +5410,7 @@ function lgRender() {
     const box = $('legend'); const list = $('lg-list'); const lr = list.getBoundingClientRect(); const br = box.getBoundingClientRect();
     const rowH = lgRowH(); LG.rowH = rowH; list.style.setProperty('--lg-row', rowH + 'px');
     const cr = map.getContainer().getBoundingClientRect();
-    const items = lgCollect(br.left - cr.left - 4);
+    const items = lgCollect(br.left - cr.left - 4, br.top - cr.top, br.bottom - cr.top);
     items.forEach((it) => { it.px = it.x + cr.left; it.py = it.y + cr.top; it.yd = it.py - lr.top; it.pol = polityAt(it.x, it.y); });
     const old = LGW.tree && LGW.tree.seq.length ? LGW.tree.seq : null;
     const prevId = old ? old[Math.max(0, Math.min(old.length - 1, Math.round(LGW.f)))].id : null;
