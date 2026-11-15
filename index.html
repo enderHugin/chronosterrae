@@ -1858,7 +1858,7 @@ mapReady.then(() => {
     map.addLayer({ id: 'margin-fill', type: 'fill', source: 'land', filter: isMargin, paint: { 'fill-color': p.shelf, 'fill-opacity': 1 } });
     map.addLayer({ id: 'land-fill', type: 'fill', source: 'land', filter: notMargin, paint: { 'fill-color': p.land, 'fill-opacity': 1 } });
     map.addLayer({ id: 'land-line', type: 'line', source: 'land', filter: notMargin, paint: { 'line-color': p.landLine, 'line-width': 0.8 } });
-    map.addLayer({ id: 'borders-fill', type: 'fill', source: 'borders', paint: { 'fill-color': ['get', '_c'], 'fill-opacity': ['get', '_o'] } });
+    map.addLayer({ id: 'borders-fill', type: 'fill', source: 'borders', paint: { 'fill-color': bordersFillColor(), 'fill-opacity': 1, 'fill-opacity-transition': { duration: 0, delay: 0 } } });
     map.addLayer({ id: 'borders-line', type: 'line', source: 'borders-inner', paint: { 'line-color': p.line, 'line-width': 0.6, 'line-opacity': 0.55 } });
     // Franja entre un poligono de frontera demasiado simplificado y la costa real (ver gapDraw): imagen georreferenciada por sus cuatro esquinas.
     map.addSource('gap', { type: 'canvas', canvas: GAP_CANVAS, animate: false, coordinates: [[-1, 1], [1, 1], [1, -1], [-1, -1]] });
@@ -2162,7 +2162,7 @@ const GAP_MAX_SPAN_DEG = 200;    // vistas mas anchas (el globo entero): las fra
 const GAP_CELL_PX = 1.5;
 const GAP_CELLS_MIN = 200; const GAP_CELLS_MAX = 1100;
 let gapSeq = 0;                   // el PNG se codifica fuera del hilo principal: solo vale el ultimo
-const GAP = { timer: 0, shown: false, ctx: null, sel: null, url: null, cache: new Map(), t: null, dirty: false, dirtyTimer: 0, stale: false, cov: null, covRaf: 0 };
+const GAP = { timer: 0, shown: false, ctx: null, sel: null, fillSel: null, url: null, cache: new Map(), t: null, dirty: false, dirtyTimer: 0, stale: false, cov: null, covRaf: 0 };
 function gapColor(css) {
     if (!GAP.ctx) { const c = document.createElement('canvas'); c.width = c.height = 1; GAP.ctx = c.getContext('2d', { willReadFrequently: true }); }
     GAP.ctx.clearRect(0, 0, 1, 1); GAP.ctx.fillStyle = css; GAP.ctx.fillRect(0, 0, 1, 1);
@@ -2176,11 +2176,18 @@ function gapRefresh(delay = 220) {
 // Mientras la imagen pinta todo el territorio, el relleno vectorial queda casi invisible (0,01: con 0 MapLibre deja de detectar clics).
 // Pais resaltado: sus fronteras TERRESTRES en rojo (nunca el contorno tosco que da al mar) y su territorio algo mas opaco.
 const polityKey = (props) => (props && (props.SUBJECTO || props.NAME)) || null;
+// La transparencia de cada pais (_o, y +0,3 el resaltado) va en el ALFA DEL COLOR; la opacidad de la capa es una constante. Asi pasar del
+// relleno vectorial a la imagen y al reves es instantaneo: cambiar una propiedad que depende de cada pais (como era antes la opacidad)
+// obliga a MapLibre a rehacer las teselas, y mientras tanto el relleno no se dibujaba (sonda de zoom, 2026-11-15: Iberia sin color al alejar).
+function bordersFillColor() {
+    const base = ['to-number', ['get', '_o'], 0.5];
+    const a = GAP.sel ? ['case', ['==', ['coalesce', ['get', 'SUBJECTO'], ['get', 'NAME']], GAP.sel], ['min', 1, ['+', base, 0.3]], base] : base;
+    return ['let', 'c', ['to-rgba', ['to-color', ['get', '_c'], '#8a8a8a']], ['rgba', ['at', 0, ['var', 'c']], ['at', 1, ['var', 'c']], ['at', 2, ['var', 'c']], a]];
+}
 function gapFillPaint() {
     if (!map.getLayer('borders-fill')) return;
-    const base = ['get', '_o'];
-    const tinted = GAP.sel ? ['case', ['==', ['coalesce', ['get', 'SUBJECTO'], ['get', 'NAME']], GAP.sel], ['min', 1, ['+', base, 0.3]], base] : base;
-    map.setPaintProperty('borders-fill', 'fill-opacity', GAP.shown && !GAP.stale ? 0.01 : tinted);
+    if (GAP.fillSel !== GAP.sel) { GAP.fillSel = GAP.sel; map.setPaintProperty('borders-fill', 'fill-color', bordersFillColor()); }   // solo al cambiar el resaltado
+    map.setPaintProperty('borders-fill', 'fill-opacity', GAP.shown && !GAP.stale ? 0.02 : 1);   // 0,02 x 0,5 = 0,01 (con 0 MapLibre deja de detectar clics)
 }
 function setHighlightKey(key) {
     GAP.sel = key || null;

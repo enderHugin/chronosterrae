@@ -378,7 +378,7 @@ async function runSuite(page, out, only) {
     fs.writeFileSync(path.join(out, 'info.json'), JSON.stringify({ info, probes, log, repetidos: globalThis.__logCounts() }, null, 2));
     await shot('1-completa-oscuro');
     const variants = [
-        ['2-sin-relleno-gap', () => { map.setLayoutProperty('gap-raster', 'visibility', 'none'); map.setPaintProperty('borders-fill', 'fill-opacity', ['get', '_o']); }],
+        ['2-sin-relleno-gap', () => { map.setLayoutProperty('gap-raster', 'visibility', 'none'); map.setPaintProperty('borders-fill', 'fill-opacity', 1); }],
         ['3-sin-gap-ni-poligonos', () => { map.setLayoutProperty('borders-fill', 'visibility', 'none'); }],
         ['4-sin-linea-ne', () => { map.setLayoutProperty('borders-line', 'visibility', 'none'); }],
         ['5-sin-parques-ni-limites-ofm', () => { map.getStyle().layers.filter((l) => l.id.startsWith('ofm-') && (l['source-layer'] === 'park' || l['source-layer'] === 'boundary' || /park|boundary/.test(l.id))).forEach((l) => map.setLayoutProperty(l.id, 'visibility', 'none')); }],
