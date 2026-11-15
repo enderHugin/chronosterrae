@@ -1989,21 +1989,15 @@ function detailBuild(style) {
     if (style.glyphs) map.setGlyphs(style.glyphs);
     if (style.sprite) map.setSprite(style.sprite);
     Object.entries(style.sources).forEach(([name, src]) => { map.addSource('ofm-' + name, src); DETAIL.srcIds.push('ofm-' + name); });
-    // Rotulo con el nombre de parques y espacios protegidos (el estilo de OpenFreeMap dibuja el relleno y el contorno de rayas, pero
-    // no su nombre): sin el, una zona de otro tono con borde de rayas se confunde con un territorio. Hereda fuente y halo de un rotulo existente.
-    const proto = style.layers.find((l) => l.type === 'symbol' && l.source && l.layout && l.layout['text-font']);
-    if (proto && !style.layers.some((l) => l.id === 'chronos_park_name')) {
-        style.layers.push({
-            id: 'chronos_park_name', type: 'symbol', source: proto.source, 'source-layer': 'park', minzoom: 9,
-            filter: ['match', ['geometry-type'], ['MultiPolygon', 'Polygon'], true, false],
-            layout: { 'text-field': ['coalesce', ['get', 'name:latin'], ['get', 'name']], 'text-font': proto.layout['text-font'], 'text-size': 12, 'text-max-width': 7, 'text-padding': 6 },
-            paint: { 'text-color': '#3b6d3b', 'text-halo-color': (proto.paint && proto.paint['text-halo-color']) || '#ffffff', 'text-halo-width': 1.2 }
-        });
-    }
+    const proto = style.layers.find((l) => l.type === 'symbol' && l.source && l.layout && l.layout['text-font']);    // fuente y halo de un rotulo existente
     // Nombre y altitud de picos y volcanes: el estilo de OpenFreeMap no rotula las teselas `mountain_peak`. Solo se ve con las fronteras apagadas (nombres de accidentes geograficos).
     if (proto && window.ChronosLabels && !style.layers.some((l) => l.id === 'chronos_peak_name')) style.layers.push(ChronosLabels.peakLayer(proto.source, proto.layout['text-font']));
     style.layers.forEach((l) => {
         if (l.type === 'fill-extrusion') return;               // edificios en 3D: pesados y de hoy
+        // Parques y espacios protegidos (relleno mas claro con contorno de puntos): fuera. El creador (2026-11-15, iPad, 2019): «esos puntos
+        // mas claros delimitando… ¿altitudes de terreno? ¿Igual nos los podemos ahorrar?». Se confundian con relieve o con territorios
+        // (antes se les puso nombre por eso) y son una figura administrativa de hoy, no geografia. Los bosques (landcover) siguen.
+        if (l['source-layer'] === 'park') return;
         const clone = { ...l, id: 'ofm-' + l.id, layout: { ...(l.layout || {}), visibility: 'none' } };
         if (l.source) clone.source = 'ofm-' + l.source;
         // Tierra y suelo van DEBAJO de las fronteras; agua, caminos y rotulos ENCIMA. Asi el agua real
