@@ -199,12 +199,15 @@
             position: relative; overflow: auto; padding: 14px 16px; display: none;
         }
         #info h2 { margin: 0 0 6px; font: 700 18px var(--font); color: var(--accent); }
+        /* La × (y las asas de mover, fijar y ocultar) se quedan arriba al desplazar el recuadro (el creador, 2026-11-15: «si navegas abajo en la
+           ventana… la x de cerrar se va hacia arriba impidiendo el acceso a ese control»): flotan a la derecha pegadas arriba (sticky), y con
+           margen inferior negativo no ocupan alto (el texto no se aparta). */
         #info .row { margin-top: 7px; font-size: 13px; line-height: 1.4; word-break: break-word; }
         #info .row.row-link { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
         #info .row b { color: var(--accent); }
         #info .row strong { font-weight: 700; color: var(--text); } #info .row em { font-style: italic; }
         #info a { color: var(--accent); }
-        #info .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #info > .close { position: sticky; top: 0; float: right; z-index: 4; width: 28px; height: 28px; margin: -10px -12px -28px 6px; padding: 0; border: none; border-radius: 8px; background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
 
         .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; color: #fff; }
         .badge.measurement, .badge.documentary, .badge.artefact { background: #2e7d32; }
@@ -288,7 +291,7 @@
         #events { position: relative; overflow: auto; padding: 12px 14px 10px; display: none; }
         #events.open { display: block; }
         #events h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
-        #events .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #events > .close { position: sticky; top: 0; float: right; z-index: 4; width: 28px; height: 28px; margin: -10px -12px -28px 6px; padding: 0; border: none; border-radius: 8px; background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
         #events-verif { margin: 6px 0 4px; font-size: 12.5px; }
         #events-verif summary { cursor: pointer; font-weight: 600; }
         #events-verif label { display: flex; gap: 7px; align-items: flex-start; padding: 2px 0; line-height: 1.3; }
@@ -297,7 +300,7 @@
         #changes { position: relative; overflow: auto; padding: 12px 14px 10px; display: none; font-size: 13px; line-height: 1.4; }
         #changes.open { display: block; }
         #changes h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
-        #changes .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #changes > .close { position: sticky; top: 0; float: right; z-index: 4; width: 28px; height: 28px; margin: -10px -12px -28px 6px; padding: 0; border: none; border-radius: 8px; background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
         #changes h3 { margin: 12px 0 4px; font: 700 13.5px var(--font); }
         #changes p { margin: 4px 0; }
         #changes .chg-note { color: var(--muted); font-size: 11.5px; }
@@ -324,21 +327,30 @@
         [data-pgone] { display: none !important; }
         [data-pempty] > .p-tools { display: none; }   /* recuadro sin contenido: nada que mover ni ocultar */
         .p-tools { position: absolute; top: 3px; right: 3px; display: flex; gap: 2px; opacity: 0; transition: opacity 0.15s; z-index: 3; pointer-events: auto; }
-        #info > .p-tools { right: 30px; }
+        #info > .p-tools, #status > .p-tools { position: sticky; top: 3px; right: auto; float: right; margin: -6px 2px -22px 4px; }
+        @media (pointer: coarse) { #info > .p-tools, #status > .p-tools { margin-bottom: -30px; } }
         .panel:hover > .p-tools, .p-tools:focus-within, .p-tools:hover { opacity: 1; }
         #space-note > .p-tools, #solar-note > .p-tools { top: -13px; right: 4px; }
-        #status > .p-tools { top: 3px; right: 4px; }   /* #status ahora tiene scroll propio: las asas van dentro, no sobre el borde (se recortarian) */   /* recuadros pequenos y sin recorte: las asas van encima del borde, no sobre el texto */
+        #status > .p-tools { margin-right: -8px; }   /* #status ahora tiene scroll propio: las asas van dentro, no sobre el borde (se recortarian) */   /* recuadros pequenos y sin recorte: las asas van encima del borde, no sobre el texto */
         #space-note > .p-tools, #solar-note > .p-tools { opacity: 0.4; }
         @media (pointer: coarse) { .p-tools, #space-note > .p-tools, #solar-note > .p-tools { opacity: 0.85; } .p-tools button { width: 30px; height: 30px; font-size: 16px; } #space-note > .p-tools, #solar-note > .p-tools { top: -17px; } }
         .p-tools button { width: 22px; height: 22px; padding: 0; line-height: 1; border-radius: 11px; border: 1px solid var(--accent); background: var(--panel); color: var(--text); font-size: 12px; cursor: pointer; }
         .p-tools .p-grip { cursor: grab; touch-action: none; }
+        /* Chincheta (el creador, 2026-11-15): fijar desde el propio recuadro que no se oculte solo; vale para todos los de su tipo (lo mismo que
+           «Mostrar siempre» en Ajustes). Solo aparece si a ese recuadro le toca ocultarse con el nivel elegido. */
+        .p-tools .p-pin { display: flex; align-items: center; justify-content: center; }
+        .p-tools .p-pin svg { width: 13px; height: 13px; transform: rotate(40deg); transition: transform 0.15s; }
+        .p-tools .p-pin[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+        .p-tools .p-pin[aria-pressed="true"] svg { transform: none; }
+        .p-tools .p-pin[hidden] { display: none; }
+        .panel:has(> .p-tools .p-pin[aria-pressed="true"]) > .p-tools { opacity: 1; }
         .p-tools .p-grip:active, body.p-dragging .p-grip { cursor: grabbing; }
         body.p-dragging { user-select: none; }
         #settings { position: relative; overflow: auto; padding: 12px 14px 12px; display: none; font-size: 13px; line-height: 1.4; }
         #settings.open { display: block; }
         #settings h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
         #settings h3 { margin: 12px 0 4px; font: 700 13px var(--font); }
-        #settings .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #settings > .close { position: sticky; top: 0; float: right; z-index: 4; width: 28px; height: 28px; margin: -10px -12px -28px 6px; padding: 0; border: none; border-radius: 8px; background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
         #settings label { display: flex; gap: 7px; align-items: flex-start; padding: 2px 0; }
         #settings .st-sub { color: var(--muted); font-size: 11.5px; }
         #settings .st-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
@@ -368,7 +380,7 @@
         #sky { position: relative; overflow: auto; padding: 12px 14px 10px; display: none; }
         #sky.open { display: block; }
         #sky h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
-        #sky .close { position: absolute; top: 6px; right: 8px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+        #sky > .close { position: sticky; top: 0; float: right; z-index: 4; width: 28px; height: 28px; margin: -10px -12px -28px 6px; padding: 0; border: none; border-radius: 8px; background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
         #sky-chart { width: 100%; aspect-ratio: 1; display: block; color: var(--text); cursor: crosshair; }
         #sky-when { font-size: 12px; color: var(--muted); margin: 4px 0 8px; line-height: 1.35; }
         #sky-range, #sky-error { font-size: 12px; line-height: 1.4; margin: 6px 0; }
@@ -410,7 +422,7 @@
         @media (pointer: coarse) {
             .btn, #search, .menu-pop .btn { min-height: 44px; }
             #presets .btn, #clock-controls .btn, #settings .st-actions .btn, .sky-actions .btn, #solar-chips .btn { min-height: 40px; min-width: 40px; }
-            #info .close, #events .close, #changes .close, #settings .close, #sky .close { width: 44px; height: 44px; top: 0; right: 0; font-size: 24px; }
+            #info > .close, #events > .close, #changes > .close, #settings > .close, #sky > .close { width: 44px; height: 44px; margin: -12px -14px -44px 6px; font-size: 24px; }
             #slider { height: 32px; }
             #key-step, #clock-rate, #time-input, .sky-grid select, .sky-grid input { min-height: 40px; }
             #settings label, #events-verif label, .sky-toggles label { padding: 6px 0; }
@@ -1089,7 +1101,7 @@ const i18n = {
         },
         menu: { layers: 'Capas', more: 'Más', layersTip: 'Capas del mapa', moreTip: 'Cambios, ajustes, idioma y tema' },
         ui: {
-            button: 'Ajustes', title: 'Ajustes', move: 'Mover', hide: 'Ocultar', undo: 'Deshacer', redo: 'Rehacer', reset: 'Restablecer posiciones', moveHint: 'Arrastra para mover (o usa las flechas)',
+            button: 'Ajustes', title: 'Ajustes', move: 'Mover', hide: 'Ocultar', pin: 'Fijar: que no se oculte solo (todos los de su tipo)', unpin: 'Fijado: no se oculta solo. Pulsa para que vuelva a ocultarse', undo: 'Deshacer', redo: 'Rehacer', reset: 'Restablecer posiciones', moveHint: 'Arrastra para mover (o usa las flechas)',
             autohide: {
                 title: 'Ocultar recuadros informativos solos (2 s)',
                 note: 'Se desvanecen a los 2 s y reaparecen al cambiar su contenido. Con el cursor encima no se ocultan, y los avisos y advertencias nunca se ocultan solos.',
@@ -1313,7 +1325,7 @@ const i18n = {
         },
         menu: { layers: 'Layers', more: 'More', layersTip: 'Map layers', moreTip: 'Changes, settings, language and theme' },
         ui: {
-            button: 'Settings', title: 'Settings', move: 'Move', hide: 'Hide', undo: 'Undo', redo: 'Redo', reset: 'Reset positions', moveHint: 'Drag to move (or use the arrow keys)',
+            button: 'Settings', title: 'Settings', move: 'Move', hide: 'Hide', pin: 'Pin: never auto-hide (all boxes of this kind)', unpin: 'Pinned: never auto-hides. Tap to let it hide again', undo: 'Undo', redo: 'Redo', reset: 'Reset positions', moveHint: 'Drag to move (or use the arrow keys)',
             autohide: {
                 title: 'Auto-hide info boxes (2 s)',
                 note: 'They fade out after 2 s and reappear when their content changes. They stay while the cursor is over them, and warnings and errors never hide by themselves.',
@@ -4105,17 +4117,30 @@ panelsUI = (function () {
             if (k) { ev.preventDefault(); nudge(id, k[0], k[1]); }
         });
         box.appendChild(grip);
+        const pin = document.createElement('button'); pin.type = 'button'; pin.className = 'p-pin';
+        pin.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M9 2h6v2l-1 1v5l3 3v2h-4v6l-1 2-1-2v-6H7v-2l3-3V5L9 4z"/></svg>';
+        pin.addEventListener('click', () => { const on = ah.pinned().indexOf(id) < 0; ah.setPinned(id, on); savePrefs({ pp: P.pinsToMask(ah.pinned()) }); pinsSync(); renderSettings(); });
+        box.appendChild(pin);
         if (id !== 'info') {               // la ficha ya tiene su ×
-            const hide = document.createElement('button'); hide.type = 'button'; hide.textContent = '×';
+            const hide = document.createElement('button'); hide.type = 'button'; hide.className = 'p-hide'; hide.textContent = '×';
             hide.addEventListener('click', () => userHide(id)); box.appendChild(hide);
         }
-        e.appendChild(box); texts();
+        // delante del contenido (tras la ×, si la hay): asi puede ir pegada arriba al desplazar
+        const x = e.querySelector(':scope > .close'); e.insertBefore(box, x ? x.nextSibling : e.firstChild); texts();
     }
+    /** Estado de las chinchetas de todos los recuadros (tras cambiar el nivel o una chincheta). */
+    function pinsSync() { P.IDS.forEach((id) => { const e = byId(id); const b = e && e.querySelector(':scope > .p-tools .p-pin'); if (!b) return; const on = ah.pinned().indexOf(id) >= 0; const lv = ah.level(); b.hidden = !(lv > 0 && lv >= P.LEVEL_OF[id]); b.setAttribute('aria-pressed', String(on)); b.title = t(on ? 'ui.unpin' : 'ui.pin'); b.setAttribute('aria-label', b.title + ': ' + t('ui.pins.' + id)); }); }
     function texts() {
         P.IDS.forEach((id) => {
             const e = byId(id); if (!e) return; const box = e.querySelector(':scope > .p-tools'); if (!box) return;
-            const [g, h] = box.children; g.title = t('ui.moveHint'); g.setAttribute('aria-label', t('ui.move') + ': ' + t('ui.pins.' + id));
+            const g = box.querySelector('.p-grip'); const h = box.querySelector('.p-hide'); const pin = box.querySelector('.p-pin');
+            g.title = t('ui.moveHint'); g.setAttribute('aria-label', t('ui.move') + ': ' + t('ui.pins.' + id));
             if (h) { h.title = t('ui.hide'); h.setAttribute('aria-label', t('ui.hide') + ': ' + t('ui.pins.' + id)); }
+            if (pin) {
+                const on = ah.pinned().indexOf(id) >= 0; const lv = ah.level();
+                pin.hidden = !(lv > 0 && lv >= P.LEVEL_OF[id]);         // solo si con este nivel se oculta solo
+                pin.setAttribute('aria-pressed', String(on)); pin.title = t(on ? 'ui.unpin' : 'ui.pin'); pin.setAttribute('aria-label', pin.title + ': ' + t('ui.pins.' + id));
+            }
         });
         [['undo-btn', 'ui.undo'], ['redo-btn', 'ui.redo']].forEach(([id, k]) => { const b = byId(id); if (b) { b.title = t(k); b.setAttribute('aria-label', t(k)); } });
         const set = (id, k) => { const b = byId(id); if (b) b.textContent = t(k); };
@@ -4176,12 +4201,12 @@ panelsUI = (function () {
         lv.textContent = ''; pins.textContent = '';
         for (let i = 0; i <= P.MAX_LEVEL; i++) {
             const lab = document.createElement('label'); const r = document.createElement('input'); r.type = 'radio'; r.name = 'st-level'; r.value = String(i); r.checked = ah.level() === i;
-            r.addEventListener('change', () => { ah.setLevel(i); savePrefs({ ah: i }); });
+            r.addEventListener('change', () => { ah.setLevel(i); savePrefs({ ah: i }); pinsSync(); });
             lab.append(r, document.createTextNode(t('ui.autohide.l' + i))); lv.appendChild(lab);
         }
         P.IDS.forEach((id) => {
             const lab = document.createElement('label'); const c = document.createElement('input'); c.type = 'checkbox'; c.checked = ah.pinned().indexOf(id) >= 0;
-            c.addEventListener('change', () => { ah.setPinned(id, c.checked); savePrefs({ pp: P.pinsToMask(ah.pinned()) }); });
+            c.addEventListener('change', () => { ah.setPinned(id, c.checked); savePrefs({ pp: P.pinsToMask(ah.pinned()) }); pinsSync(); });
             lab.append(c, document.createTextNode(t('ui.pins.' + id))); pins.appendChild(lab);
         });
         if (notesClosed()) {      // reabrir las notas cerradas a mano
@@ -5357,7 +5382,9 @@ function polityAt(x, y) {
  * RUEDA (el creador, 2026-11-15): «agrupar en la lista de la derecha. Colapsar paises. Colapsar por tipos… dentro de cada pais. Expandir
  * automaticamente solo lo necesario. Para tener vision mas amplia de todo. Reducir tamaño de items a la lejania del central. El central
  * es el seleccionado. Como si fuera una rueda con inercia.» Decidido con el: la seleccion sigue al centro EN TODO MOMENTO, en la columna y en
- * la lista entera, y sin perder los cables: al pararse, la linea central se desliza a la altura del punto del elegido (cable recto).
+ * la lista entera, y sin perder los cables. El centro de la rueda esta FIJO a media altura: se probo a deslizarlo hasta la altura del punto del
+ * elegido (para que su cable fuera recto) y el creador no entendia «por que sube y baja el grupo de elementos» (2026-11-15, iPad). El cable
+ * va en horizontal desde el punto y acaba con un tramo inclinado hasta la fila del centro.
  * La logica pura (arbol, filas, colocacion, inercia) esta en map/legend.js con sus pruebas; aqui, el DOM y los gestos.
  *  - Arrastrar (dedo o raton), rueda del raton o trackpad, flechas: gira; al soltar sigue con inercia y encaja en un elemento.
  *  - Tocar un elemento: gira hasta el; tocar el del centro (ya elegido): abre su ficha. Tocar un pais o un tipo plegado: gira a su primero.
@@ -5396,14 +5423,14 @@ function lgRender() {
     LGW.f = Math.max(0, Math.min(Math.max(0, seq.length - 1), Math.max(0, k) + (k >= 0 ? frac : 0))); LGW.k = -1;
     LGW.to = toId && LGW.tree.at.has(toId) ? LGW.tree.at.get(toId).k : LGW.to != null ? Math.round(LGW.f) : null;
     if (LGW.jump && LGW.tree.at.has(LGW.jump)) LGW.to = LGW.tree.at.get(LGW.jump).k; else LGW.jump = null;
-    if (LGW.cy == null || LGW.cy > lr.height) LGW.cy = LGW.cyTo = lr.height / 2;
+    LGW.cyTo = lr.height / 2; if (LGW.cy == null) LGW.cy = LGW.cyTo;      // el centro de la rueda: fijo, a media altura
     if (LG.hot && !LGW.tree.at.has(LG.hot)) LG.hot = null;
     $('lg-n').textContent = String(items.length);
     const ex = $('lg-extra');
     ex.textContent = LG.wide ? t('lgLess') : seq.length ? t('lgAll') : '';
     ex.title = LG.wide ? t('lgLessTip') : t('lgAllTip');
     lgWheelRows(true);
-    if (LGW.engaged && seq.length) { lgSelect(seq[Math.round(LGW.f)].id); lgCenterOnHot(); }
+    if (LGW.engaged && seq.length) lgSelect(seq[Math.round(LGW.f)].id);
     lgAnimate();
     if (!$('lg-pop').hidden) lgPopRender();
     LG.ms = performance.now() - t0;
@@ -5462,7 +5489,7 @@ function lgFrame(now) {
     if (n && !LGW.drag) { const st = ChronosLegend.spinStep({ f: LGW.f, v: LGW.v, to: LGW.to }, dt, n); LGW.f = st.f; LGW.v = st.v; LGW.to = st.to; busy = !st.done; }
     lgWheelRows(false);
     const list = $('lg-list'); const H = list.clientHeight;
-    // linea central: quieta mientras gira; parada, a la altura del punto del elegido (cable recto)
+    // linea central (a media altura; si cambia el alto de la lista, se desliza)
     if (LGW.cyTo != null) { const a = LGW_RM.matches ? 1 : 1 - Math.exp(-dt / 0.12); LGW.cy += (LGW.cyTo - LGW.cy) * a; if (Math.abs(LGW.cyTo - LGW.cy) < 0.3) LGW.cy = LGW.cyTo; else busy = true; }
     if (n && LGW.anchor >= 0) {
         const frac = LGW.f - LGW.k;
@@ -5486,17 +5513,11 @@ function lgFrame(now) {
         if (id !== LG.hot) lgSelect(id);
         if (!busy && LGW.jump && LGW.to != null && Math.round(LGW.f) === LGW.to) LGW.jump = null;
     }
-    if (!busy && LGW.engaged && LG.hot && LGW.dimmed !== LG.hot) { LGW.dimmed = LG.hot; spotHover(LG.hot); lgCenterOnHot(); if (LGW.cyTo !== LGW.cy) busy = true; }
+    if (!busy && LGW.engaged && LG.hot && LGW.dimmed !== LG.hot) { LGW.dimmed = LG.hot; spotHover(LG.hot); }
     lgAnchors(); lgWires();
     if (busy || LGW.drag) LGW.raf = requestAnimationFrame(lgFrame); else LGW.last = 0;
 }
 function lgAnimate() { if (!LGW.raf) { LGW.last = 0; LGW.raf = requestAnimationFrame(lgFrame); } }
-/** Linea central a la altura del punto del elegido (dentro de la lista, con margen). */
-function lgCenterOnHot() {
-    const it = LG.hot && LGW.tree && LGW.tree.at.has(LG.hot) ? LGW.tree.seq[LGW.tree.at.get(LG.hot).k] : null; if (!it) return;
-    const H = $('lg-list').clientHeight; const m = Math.min(H / 2, LG.rowH * 2.5);     // con margen: arriba y abajo se ve algo de la rueda
-    LGW.cyTo = Math.max(m, Math.min(H - m, it.yd));
-}
 /** Elegido (el del centro): fila marcada, nombre (columna), cable y anillo. Sin atenuar el globo aun (eso, al parar). */
 function lgSelect(id) {
     LG.hot = id || null;

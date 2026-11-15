@@ -59,6 +59,10 @@ jobs:
           cp index.html latest_harvest.json _site/
           cp -r data/paleocoastlines _site/data/paleocoastlines
           cp -r sky map vendor solar _site/
+          # Cada publicacion pide SUS scripts (?v=commit). GitHub Pages los sirve con 10 min de cache: tras publicar, el navegador traia el
+          # index.html nuevo con algun script viejo (2026-11-15: la leyenda nueva con el map/legend.js de antes, «la lista no tiene elementos»).
+          sed -i -E "s#(<script src=\"\./[^\"?]+\.js)\"#\1?v=${GITHUB_SHA::10}\"#g" _site/index.html
+          grep -c "?v=${GITHUB_SHA::10}" _site/index.html
           if [ -d data/borders ]; then cp -r data/borders _site/data/borders; fi
           if [ -d data/sky ]; then cp -r data/sky _site/data/sky; fi
           # texturas de planetas y lunas, perfil de los anillos y Via Lactea (las pide solar-view.js y el fondo del globo)
