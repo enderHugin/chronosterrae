@@ -160,6 +160,50 @@ async function runContinuity(page, out) {
     fs.writeFileSync(path.join(out, 'continuity.json'), JSON.stringify(res, null, 2));
 }
 
+// Transiciones de zoom, fotogramas DURANTE el gesto (modo `zoom`). Grabacion del creador en su movil (2026-11-15, Android, 1964, Iberia):
+// al acercar se veia un fondo gris plano con el color en escalones saliendose al mar durante segundos; al alejar, el color quedaba en un
+// rectangulo (la imagen de la vista anterior) y con manchas sobre el mar. Se reproduce con ventana de movil y red lenta (el movil tardaba
+// ~3 s en traer el agua de OpenStreetMap; en el ejecutor, sin frenar la red, ese hueco no se ve). Salida: zoom-*.png y zoom.json.
+async function runZoom(page, out) {
+    await page.setViewportSize({ width: 412, height: 860 }); await page.waitForTimeout(800);
+    await page.evaluate(() => {
+        if (!state.dark) document.getElementById('btn-theme').click();
+        if (BR.off) document.getElementById('btn-borders').click();
+        setTime(yearToYbp(1964), { immediate: true }); map.jumpTo({ center: [-4, 40], zoom: 3.5, pitch: 0, bearing: 0 });
+    });
+    await settle(page);
+    await page.waitForFunction(() => map.areTilesLoaded(), null, { timeout: 60000 }).catch(() => {});
+    await page.waitForTimeout(1500);
+    const cdp = await page.context().newCDPSession(page);
+    const net = { offline: false, latency: 250, downloadThroughput: 1.2e6 / 8, uploadThroughput: 0.5e6 / 8 };     // ~1,2 Mbit/s y 250 ms: un movil con mala cobertura
+    await cdp.send('Network.enable'); await cdp.send('Network.emulateNetworkConditions', net);
+    const rows = [];
+    const estado = () => page.evaluate(() => ({
+        t: Math.round(performance.now()), z: Math.round(map.getZoom() * 100) / 100, detalle: DETAIL.shown, fase: DETAIL.phase === undefined ? null : DETAIL.phase,
+        natural: NAT.on, gap: GAP.shown, gapCaduca: GAP.stale === undefined ? null : GAP.stale, mar: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null,
+        ofm: Object.keys(map.getStyle().sources).filter((s) => s.startsWith('ofm-')).map((s) => s + ':' + (map.isSourceLoaded(s) ? 1 : 0)).join(' '),
+        nat: ['natural', 'natural-sea'].filter((s) => map.getSource(s)).map((s) => s + ':' + (map.isSourceLoaded(s) ? 1 : 0)).join(' ')
+    }));
+    const pasos = [['1-acercar', 5.6], ['2-alejar', 3.4], ['3-acercar', 5.6]];
+    for (const [nombre, z] of pasos) {
+        const t0 = await page.evaluate((zz) => { map.easeTo({ zoom: zz, duration: 1600 }); return performance.now(); }, z);
+        for (let k = 0; k < 40; k++) {
+            const e = await estado(); const dt = e.t - Math.round(t0); if (dt > 7000) break;
+            const file = 'zoom-' + nombre + '-' + String(k).padStart(2, '0') + '.png';
+            await page.screenshot({ path: path.join(out, file) });
+            rows.push({ paso: nombre, k, ms: dt, file, ...e });
+            fs.writeFileSync(path.join(out, 'zoom.json'), JSON.stringify(rows, null, 2));
+            await page.waitForTimeout(120);
+        }
+        await page.waitForFunction(() => map.areTilesLoaded() && !map.isMoving(), null, { timeout: 30000 }).catch(() => {});
+        await page.waitForTimeout(1000);
+        const fin = 'zoom-' + nombre + '-fin.png'; await page.screenshot({ path: path.join(out, fin) });
+        rows.push({ paso: nombre, k: 'fin', file: fin, ...(await estado()) });
+        fs.writeFileSync(path.join(out, 'zoom.json'), JSON.stringify(rows, null, 2));
+    }
+    await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
+}
+
 async function runSuite(page, out, only) {
     const rows = [];
     for (const dark of [true, false]) {
@@ -302,6 +346,7 @@ async function runSuite(page, out, only) {
     await page.goto(url, { waitUntil: 'load' });
     await page.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
     await page.evaluate(() => { if (window.eventIconsAnimate) eventIconsAnimate(false); });   // la animacion de los iconos impide que el mapa llegue a idle: las capturas son de un fotograma fijo
+    if (process.argv[4] === 'zoom') { await runZoom(page, out); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
     if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos' || process.argv[4] === 'diseno' || process.argv[4] === 'costa' || process.argv[4] === 'leyenda') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : process.argv[4] === 'diseno' ? 'diseno' : process.argv[4] === 'costa' ? 'costa' : process.argv[4] === 'leyenda' ? 'leyenda' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
     if (!diag) { await runSuite(page, out); await browser.close(); return; }
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
