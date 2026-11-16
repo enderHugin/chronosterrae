@@ -498,7 +498,7 @@ check('maquetacion: los botones de capas y de mas estan dentro de menus, con sus
     const h = readIndex();
     const pop = (id) => { const a = h.indexOf('id="' + id + '"'); return a < 0 ? '' : h.slice(a, h.indexOf('</div>', a + 20 + (id === 'menu-more-pop' ? 400 : 0))); };
     const layers = pop('menu-layers-pop'), more = pop('menu-more-pop');
-    return ['btn-borders', 'btn-roads', 'btn-center', 'btn-space'].every((id) => layers.includes('id="' + id + '"'))
+    return ['btn-borders', 'btn-roads', 'btn-space'].every((id) => layers.includes('id="' + id + '"')) && !h.includes('id="btn-center"')   // «Centrar al hacer clic» quitado (el creador, 2026-11-16: un clic no centra)
         && ['btn-changes', 'btn-settings', 'btn-lang', 'btn-theme'].every((id) => more.includes('id="' + id + '"'))
         && /id="btn-events"/.test(h) && /id="btn-sky"/.test(h);
 });

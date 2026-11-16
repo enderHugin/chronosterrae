@@ -165,5 +165,28 @@ check('rueda, inercia: con destino (toque o globo) llega a el y para; un destino
     return (st.done && st.f === 7 && o.f === 9) || [st, o];
 });
 
+/* ---------------- rueda llena: orden de arriba abajo y de izquierda a derecha; marco de lo que se ve (2026-11-16) ---------------- */
+{
+    const tf = (x) => (x.c ? { key: x.c, name: x.c } : null); const ty = (x) => ({ key: x.t, name: x.t });
+    check('a la misma altura, de izquierda a derecha: elementos, tipos y paises', () => {
+        const T = L.buildTree([{ id: 'b', x: 90, y: 10, c: 'P', t: 'u' }, { id: 'a', x: 10, y: 10, c: 'P', t: 'u' }, { id: 'q', x: 300, y: 50, c: 'Q', t: 'u' }, { id: 'r', x: 5, y: 50, c: 'R', t: 'u' }, { id: 'v', x: 40, y: 10, c: 'P', t: 'v' }], tf, ty);
+        const order = T.seq.map((x) => x.id).join(''); const cs = T.countries.map((c) => c.key).join(''); const ts = T.countries[0].types.map((t) => t.key).join('');
+        return order === 'abvrq' && cs === 'PRQ' && ts === 'uv' ? true : [order, cs, ts];
+    });
+    check('sin x (posicion desconocida) cuenta como 0, sin romperse', () => { const T = L.buildTree([{ id: 'a', y: 1 }, { id: 'b', y: 1, x: -5 }], () => null, () => ({ key: 'x' })); return T.seq.map((x) => x.id).join('') === 'ba'; });
+    const T = L.buildTree([{ id: 'a', y: 1, c: 'P', t: 'u', seen: false }, { id: 'b', y: 2, c: 'P', t: 'u', seen: true }, { id: 'c', y: 3, c: 'P', t: 'w', seen: false }, { id: 'd', y: 4, c: 'Q', t: 'u', seen: false }], tf, ty);
+    check('rowSeen: un elemento por si mismo; un tipo o un pais si alguno de los suyos se ve', () => {
+        const r = (kind, ci, ti, it) => ({ kind, ci, ti, it });
+        return L.rowSeen(T, r('item', 0, 0, T.seq[1])) && !L.rowSeen(T, r('item', 0, 0, T.seq[0])) && L.rowSeen(T, r('type', 0, 0)) && !L.rowSeen(T, r('type', 0, 1)) && L.rowSeen(T, r('country', 0)) && !L.rowSeen(T, r('country', 1)) && !L.rowSeen(null, r('item'));
+    });
+    check('viewSegments: filas seguidas que se ven forman un solo recuadro; una que no se ve lo parte', () => {
+        const boxes = [{ y: 0, h: 20 }, { y: 20, h: 22 }, { y: 42, h: 18 }, { y: 60, h: 20 }, { y: 80, h: 20 }];
+        const seen = [false, true, true, false, true];
+        const segs = L.viewSegments(boxes, (i) => seen[i]);
+        return segs.length === 2 && segs[0].top === 20 && segs[0].bottom === 60 && segs[1].top === 80 && segs[1].bottom === 100 ? true : segs;
+    });
+    check('viewSegments: nada a la vista, ningun recuadro; filas sin colocar no cuentan', () => L.viewSegments([{ y: 0, h: 5 }], () => false).length === 0 && L.viewSegments([null, { y: 3, h: 4 }], () => true).length === 1 && L.viewSegments(null, () => true).length === 0);
+}
+
 console.log('\nPASS ' + passes.length); passes.forEach((p) => console.log('  ok  ' + p));
 if (fails) { console.log('\nFAIL ' + fails); process.exit(1); } else console.log('\nLeyenda: todo verde.');

@@ -331,9 +331,10 @@ async function runSuite(page, out, only, renew) {
                     await page.waitForTimeout(1200);
                     await page.evaluate((desde) => {
                         evHoverSet(null); buHoverSet(null); lgRender();
-                        if (desde !== 'mapa') { const it = LG.rows[Math.floor(LG.rows.length / 2)]; if (it) lgHot(it.id); return; }
+                        const vis = LG.rows.filter((r) => r.seen !== false);      // la rueda lleva tambien lo cercano de fuera de la vista: se señala algo que se ve
+                        if (desde !== 'mapa') { const it = vis[Math.floor(vis.length / 2)]; if (it) lgHot(it.id); return; }
                         // como el raton sobre el icono del globo: la fila del ultimo tercio (en la lista entera, fuera de la vista: tiene que desplazarse)
-                        const it = LG.rows[Math.floor(LG.rows.length * (LG.wide ? 0.8 : 0.33))];
+                        const it = vis[Math.floor(vis.length * (LG.wide ? 0.8 : 0.33))];
                         if (it && it.kind === 'e') evHoverSet(it.f); else if (it) buHoverSet({ properties: it.props, geometry: it.geom });
                     }, v.senalar);
                     await page.waitForTimeout(1200);

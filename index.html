@@ -613,6 +613,13 @@
         #lg-lens { position: absolute; left: 2px; right: 2px; top: 0; box-sizing: border-box; border-radius: 7px; pointer-events: none; will-change: transform;
             background: color-mix(in srgb, var(--accent) 14%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent); }
         #lg-lens[hidden] { display: none; }
+        /* Marco de lo que se ve (el creador, 2026-11-16): recuadros sobre las filas de lo que esta a la vista en el mapa; la rueda lleva ademas
+           lo cercano de fuera. Detras de las filas y sin tapar la lente; solo el borde y un velo muy leve. */
+        #lg-vp { position: absolute; inset: 0; pointer-events: none; }
+        .lg-vps { position: absolute; left: 1px; right: 1px; top: 0; box-sizing: border-box; border-radius: 8px; will-change: transform;
+            border: 1.5px solid color-mix(in srgb, var(--text) 62%, transparent); background: color-mix(in srgb, var(--text) 6%, transparent); }
+        .lg-vps[hidden] { display: none; }
+        .lg-row.away .lg-ico { filter: saturate(0.55); }
         .lg-row { position: absolute; left: 0; right: 0; top: 0; height: var(--lg-row, 26px); display: flex; align-items: center; justify-content: center; transform-origin: 50% 50%; will-change: transform, opacity; }
         .lg-h { cursor: pointer; gap: 6px; font: 600 11px/1.1 var(--font-ui); color: var(--text); user-select: none; }
         .lg-h .lg-sn, .lg-h .lg-sc { display: none; }
@@ -716,7 +723,6 @@
                     <button class="btn" id="btn-borders" type="button" aria-pressed="false" hidden data-i18n="borders.button"></button>
                     <button class="btn" id="btn-roads" type="button" aria-pressed="false" hidden data-i18n="roads.button"></button>
                     <button class="btn" id="btn-built" type="button" aria-pressed="true" data-i18n="built.button"></button>
-                    <button class="btn" id="btn-center" type="button" aria-pressed="false" data-i18n="center.button"></button>
                     <button class="btn" id="btn-space" type="button" aria-pressed="true" data-i18n="space.button"></button>
                     <div class="menu-sep" role="separator"></div>
                     <button class="btn" id="btn-sky-lines" type="button" aria-pressed="true" data-i18n="sky.lines"></button>
@@ -1205,7 +1211,6 @@ const i18n = {
         roads: {
             button: 'Carreteras', tip: 'Muestra u oculta las carreteras, ferrocarriles y caminos de hoy (OpenStreetMap), con sus nombres y números. Solo en el mapa actual y de cerca: antes de hoy no existían como son ahora.'
         },
-        center: { button: 'Centrar', tip: 'Centrar al hacer clic: un clic sobre un elemento del mapa lleva el centro hasta ese punto (el doble clic siempre centra)' },
         star: {
             hip: 'Hipparcos', mag: 'Magnitud aparente (V)', bv: 'Índice de color B−V', plx: 'Paralaje (hoy)', dist: 'Distancia (hoy)', ly: '{n} años luz',
             ra: 'Ascensión recta (de la fecha)', dec: 'Declinación (de la fecha)',
@@ -1429,7 +1434,6 @@ const i18n = {
         roads: {
             button: 'Roads', tip: 'Shows or hides today\'s roads, railways and paths (OpenStreetMap), with their names and numbers. Only on the current map and zoomed in: they were not as they are now before today.'
         },
-        center: { button: 'Centre', tip: 'Centre on click: a click on a map element moves the centre to that point (a double click always centres)' },
         star: {
             hip: 'Hipparcos', mag: 'Apparent magnitude (V)', bv: 'Colour index B−V', plx: 'Parallax (today)', dist: 'Distance (today)', ly: '{n} light-years',
             ra: 'Right ascension (of date)', dec: 'Declination (of date)',
@@ -3151,7 +3155,7 @@ map.on('dragstart', () => spotlight(null));
 /* ------------------------------------------------------------------ */
 // Catedrales, piramides, castillos... desde su fecha de construccion. Si la fuente da un fin (P576: demolicion O abandono), desde entonces
 // se ven atenuadas en gris, no se borran. Se cargan al encenderse (un archivo, ~3 MB sin comprimir) y pasan por los filtros de verificacion.
-const BUILT = { on: prefs.bu !== false, table: null, records: null, byId: null, loading: null, full: null, failed: false, key: null, ybp: null, raf: 0 };
+const BUILT = { on: prefs.bu !== false, table: null, fc: null, records: null, byId: null, loading: null, full: null, failed: false, key: null, ybp: null, raf: 0 };
 const BU_SPRITE = { box: 44, pad: 6, ratio: 2 };
 function builtButton() { $('btn-built').setAttribute('aria-pressed', String(BUILT.on)); }
 function builtImagesRegister() {
@@ -3203,7 +3207,8 @@ function builtRefresh() {
     if (!BUILT.table || !map.getSource('built')) return;
     const key = lang + '|' + vfMask; if (key === BUILT.key) return; BUILT.key = key;
     const pass = vfPasses({ properties: { status: 'raw', evidence: 'documentary' } });     // toda la capa es ingesta automatica documental
-    map.getSource('built').setData(pass ? ChronosBuilt.fromTable(BUILT.table, lang) : emptyFC());
+    BUILT.fc = pass ? ChronosBuilt.fromTable(BUILT.table, lang) : emptyFC();     // la rueda de la leyenda rellena tambien con las de fuera de la vista
+    map.getSource('built').setData(BUILT.fc);
 }
 /** La fecha: que construcciones existen ya y cuales han pasado su fin (literales en las expresiones; una vez por fotograma como mucho). */
 function builtTimeApply() {
@@ -3263,10 +3268,9 @@ function buHoverSet(f) {
     chipPlace(chip, map.project(BUH.coords), 16, lgHas(BUH.id));
 }
 map.on('move', () => { if (BUH.coords && !EVH.id) chipPlace($('ev-hover'), map.project(BUH.coords), 16, lgHas(BUH.id)); });
-// Centrar al hacer clic (ajuste): un clic sobre un elemento del mapa lleva el centro a ese punto, sin cambiar el zoom
-const CENTER = { on: prefs.cc === true };
-$('btn-center').setAttribute('aria-pressed', String(CENTER.on));
-$('btn-center').addEventListener('click', () => { CENTER.on = !CENTER.on; $('btn-center').setAttribute('aria-pressed', String(CENTER.on)); savePrefs({ cc: CENTER.on }); });
+// Un clic en el mapa NO mueve el centro (el creador, 2026-11-16: «si hago click en un elemento en el mapa, este no debe centrarse… navegar por
+// un mapa que se anda saltando de centro cuando clico es descolocante»). Se quito el ajuste «Centrar» (centrar al hacer clic); su preferencia
+// (cc) se sigue leyendo de las cookies viejas sin efecto. Centran el buscador, la lista de sucesos y la rueda de la leyenda (camGlide).
 map.on('click', (e) => {
     if (!map.getLayer('borders-fill')) return;
     // Primero lo que se toca (sucesos, puntos en vivo, construcciones) con margen para el dedo; si no hay nada cerca, lo de debajo
@@ -3287,7 +3291,6 @@ map.on('click', (e) => {
     else if (hit.layer.id === 'borders-fill' && hit.properties.NAME) { setHighlightKey(polityKey(hit.properties)); showPolity(hit.properties); selRemember('p', hit.properties.NAME); }
     else if (hit.layer.id === 'borders-fill') { showPolity(hit.properties); selRemember(null); }
     else { showCoast(hit.properties); selRemember(null); }
-    if (CENTER.on) camGlide((hit.layer.id === 'events-circle' || ChronosBuilt.LAYER_IDS.includes(hit.layer.id)) && hit.geometry ? hit.geometry.coordinates : [e.lngLat.lng, e.lngLat.lat]);   // sobre un suceso, se centra en EL (no en el punto del clic)
 });
 ['events-circle', 'live-points', 'borders-fill', ...ChronosBuilt.LAYER_IDS].forEach((id) => {
     map.on('mouseenter', id, () => { map.getCanvas().style.cursor = ERA.pointer || 'pointer'; });
@@ -3666,8 +3669,8 @@ function eraVeil(fn) {
 }
 /* Giro con inercia (map/camera.js). El creador, 2026-11-16: «que el globo se centre en el evento cuando clicado en la lista, no de golpe
    sino elegantemente con una animación que tenga inercia, tal y como me gustaría que girara también con los resultados de búsqueda». Todo lo
-   que centra el globo en algo pasa por aqui: buscador, lista de sucesos, rueda de la leyenda, nombre de un pais, doble clic y «centrar al
-   tocar». Arranca sin tiron y frena despacio; un destino nuevo a mitad de giro sale con la velocidad que llevaba (recorrer resultados con
+   que centra el globo en algo pasa por aqui: buscador, lista de sucesos, rueda de la leyenda, nombre de un pais y doble clic (un clic no
+   centra: ver «Un clic en el mapa NO mueve el centro»). Arranca sin tiron y frena despacio; un destino nuevo a mitad de giro sale con la velocidad que llevaba (recorrer resultados con
    las flechas ya no para y arranca el globo en cada uno). Todos los giros llevan el mismo easeId: encadenarlos no lanza 'moveend' en medio
    (cada 'moveend' pone a trabajar fronteras, sucesos y leyenda, y el giro se veria a saltos). Sin zoom. Con «reducir movimiento», salto. */
 const CAM = { ID: 'chronos-giro', on: false, to: null, samples: [] };
@@ -3926,7 +3929,6 @@ function applyStrings() {
     $('btn-built').title = t('built.tip');
     if (typeof srchSortUI === 'function') srchSortUI();
     if (typeof builtRefresh === 'function') builtRefresh();
-    $('btn-center').title = $('btn-center').ariaLabel = t('center.tip');
     $('btn-changes').title = t('changes.tip');
     $('menu-layers-btn').title = t('menu.layersTip');
     $('menu-more-btn').title = t('menu.moreTip');
@@ -5400,7 +5402,7 @@ const lgRowH = () => (LG.wide ? 30 : matchMedia('(pointer: coarse)').matches ? 3
 (function lgBuild() {
     const box = el('aside', { id: 'legend', class: 'panel' }, [
         el('button', { id: 'lg-head', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'lg-pop' }, [el('span', { id: 'lg-n', text: '0' }), el('span', { class: 'lg-cap', text: '≡ ?' })]),
-        el('div', { id: 'lg-wheel' }, [el('div', { id: 'lg-lens', 'aria-hidden': 'true' }), el('ul', { id: 'lg-list' })]), el('button', { id: 'lg-extra', type: 'button' }), el('div', { id: 'lg-pop', class: 'panel' })
+        el('div', { id: 'lg-wheel' }, [el('div', { id: 'lg-vp', 'aria-hidden': 'true' }), el('div', { id: 'lg-lens', 'aria-hidden': 'true' }), el('ul', { id: 'lg-list' })]), el('button', { id: 'lg-extra', type: 'button' }), el('div', { id: 'lg-pop', class: 'panel' })
     ]);
     box.hidden = true;
     document.body.appendChild(box); box.querySelector('#lg-pop').hidden = true;
@@ -5452,25 +5454,100 @@ function lgSchedule(ms) {
 // Lo que se ve ahora: sucesos dibujados (en pantalla y en la cara visible del globo) y construcciones que MapLibre ha colocado.
 // Solo lo que se VE: entre la barra de arriba y la linea de tiempo (minY, maxY); lo que queda debajo de ellas no se puede señalar (sonda,
 // 2026-11-15: la rueda elegia el estadio de Mestalla, tapado por la linea de tiempo, y el cable acababa sobre ella).
-function lgCollect(maxX, minY, maxY) {
-    const H = map.getContainer().clientHeight; const items = []; const y0 = Math.max(0, minY || 0); const y1 = Math.min(H, maxY == null ? H : maxY);
-    const front = (lng, lat) => {
-        const p = map.project([lng, lat]); if (!(p.x >= 0 && p.x <= maxX && p.y >= y0 && p.y <= y1)) return null;
-        const q = map.unproject(p); if (Math.abs(q.lat - lat) > 0.3 || Math.abs((((q.lng - lng) % 360) + 540) % 360 - 180) > 0.3) return null;   // al otro lado del globo
-        return p;
-    };
+function lgCollect(box) {
+    const items = []; const front = (lng, lat) => lgSeenAt(lng, lat, box);
     if (clockFull()) (events.shown || []).forEach((f) => {
         if (!f.geometry) return; const p = front(f.geometry.coordinates[0], f.geometry.coordinates[1]); if (!p) return;
-        items.push({ id: f.properties.id, kind: 'e', f, x: p.x, y: p.y, importance: f.properties.importance || 0 });
+        items.push({ id: f.properties.id, kind: 'e', f, x: p.x, y: p.y, seen: true, importance: f.properties.importance || 0 });
     });
     if (BUILT.on) {
         const layers = ChronosBuilt.LAYER_IDS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, 'visibility') !== 'none');
         if (layers.length) map.queryRenderedFeatures({ layers }).forEach((h) => {
             if (!h.geometry || !h.properties || !h.properties.id) return; const p = front(h.geometry.coordinates[0], h.geometry.coordinates[1]); if (!p) return;
-            items.push({ id: h.properties.id, kind: 'b', props: h.properties, geom: h.geometry, x: p.x, y: p.y, importance: h.properties.i || 0 });
+            items.push({ id: h.properties.id, kind: 'b', props: h.properties, geom: h.geometry, x: p.x, y: p.y, seen: true, importance: h.properties.i || 0 });
         });
     }
     return items;
+}
+/**
+ * RUEDA LLENA (el creador, 2026-11-16): «alargar la lista de elementos rellenando con elementos que no están a la vista… tantos elementos
+ * como para rellenarse, sin dejar espacios vacíos arriba y abajo», lo MAS CERCANO primero (lo eligio el). La lista va de arriba abajo como
+ * el mapa, asi que lo que la rellena por arriba es lo que queda justo ENCIMA de la vista y por abajo lo de justo DEBAJO (lo de los lados
+ * caeria en medio de la lista y dejaria huecos en los extremos: se probo). En cada lado, lo que llena media rueda. Al llevar la rueda hasta
+ * uno de ellos el mapa lo sigue, y al pararse la rueda se rellena otra vez alrededor de la vista nueva: la lista no se acaba mientras haya algo.
+ * Los de fuera son los que el mapa dibujaria alli: sucesos de esta fecha y su ventana de tiempo, con la notoriedad de esta distancia y los
+ * filtros; construcciones del tramo de esta distancia que ya existen. No entra lo que cae dentro de la vista sin dibujar (el mapa lo aparta
+ * por no caber): seria una fila que dice «se ve» sin icono.
+ */
+const LG_FILL_SCAN = 4000;     // como mucho se miran en pantalla tantos candidatos por lado, del mas cercano al mas lejano
+/** Candidatos de fuera de la vista, del mas cercano al mas lejano (el lado, arriba o abajo, se mira al tomarlos: lgFillTake). */
+function lgFillPrep(box, have) {
+    const m = map.unproject([(box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2]); const c0 = [m.lng, m.lat];
+    const cand = [];
+    const add = (it, c) => { if (have.has(it.id)) return; cand.push({ d: ChronosCamera.angleDeg(c0, c), c, it }); };
+    if (clockFull() && events.vis.length) {
+        const win = evWindow(); const floor = ChronosTimed.importanceFloor(viewMeters());
+        for (const f of events.vis) {
+            if (!f.geometry || (f.properties.importance || 0) < floor) continue;
+            const sp = ChronosTimed.span(f); if (sp.b < clock.jd - win.pastDays || sp.a > clock.jd + win.futureDays) continue;
+            add({ id: f.properties.id, kind: 'e', f, importance: f.properties.importance || 0 }, f.geometry.coordinates);
+        }
+    }
+    if (BUILT.on && BUILT.fc && map.getLayer('built-icons')) {
+        const z = map.getZoom(); const tier = ChronosBuilt.TIERS.find((tr) => z >= tr.minzoom && z < tr.maxzoom);
+        if (tier) for (const f of BUILT.fc.features) {
+            const p = f.properties; if (!f.geometry || !p || !(p.s >= state.ybp) || (tier.min && !(p.i >= tier.min))) continue;
+            add({ id: p.id, kind: 'b', props: p, geom: f.geometry, importance: p.i || 0 }, f.geometry.coordinates);
+        }
+    }
+    cand.sort((a, b) => a.d - b.d);
+    return { cand, i: 0, up: [], down: [], box, have };
+}
+/** Toma hasta n de los mas cercanos ENCIMA (side 'up') o DEBAJO ('down') de la vista; devuelve los elementos (seen = false). */
+function lgFillTake(F, side, n) {
+    const out = []; const q = F[side];
+    while (out.length < n) {
+        if (q.length) { out.push(q.shift()); continue; }
+        if (F.i >= F.cand.length || F.i >= LG_FILL_SCAN * 2) break;
+        const { c, it } = F.cand[F.i++]; if (F.have.has(it.id)) continue;
+        const p = map.project(c); const r = map.unproject(p);
+        if (Math.abs(r.lat - c[1]) > 0.3 || Math.abs((((r.lng - c[0]) % 360) + 540) % 360 - 180) > 0.3) continue;   // al otro lado del globo
+        const sd = p.y < F.box.y0 ? 'up' : p.y > F.box.y1 ? 'down' : null; if (!sd) continue;                    // dentro, o a un lado
+        F.have.add(it.id); it.x = p.x; it.y = p.y; it.seen = false;
+        if (sd === side) out.push(it); else F[sd].push(it);
+    }
+    return out;
+}
+/** Recuadro del mapa donde algo «se ve» (coordenadas del contenedor): entre la barra de arriba y la linea de tiempo, a la izquierda de la rueda.
+ *  Lo que queda debajo de ellas no se puede señalar (sonda, 2026-11-15: la rueda elegia el estadio de Mestalla, tapado por la linea de tiempo). */
+function lgViewBox() {
+    const cr = map.getContainer().getBoundingClientRect(); const br = $('legend').getBoundingClientRect(); const H = map.getContainer().clientHeight;
+    return { x0: 0, x1: br.left - cr.left - 4, y0: Math.max(0, br.top - cr.top), y1: Math.min(H, br.bottom - cr.top) };
+}
+/** Donde se ve (lng, lat) en pantalla, si cae en el recuadro y en la cara visible del globo; si no, null. */
+function lgSeenAt(lng, lat, box) {
+    const p = map.project([lng, lat]); if (!(p.x >= box.x0 && p.x <= box.x1 && p.y >= box.y0 && p.y <= box.y1)) return null;
+    const q = map.unproject(p); if (Math.abs(q.lat - lat) > 0.3 || Math.abs((((q.lng - lng) % 360) + 540) % 360 - 180) > 0.3) return null;   // al otro lado del globo
+    return p;
+}
+const lgCoords = (it) => { const g = it.kind === 'e' ? it.f && it.f.geometry : it.geom; return g && g.coordinates ? g.coordinates : null; };
+/** Pais de un punto de fuera de la vista (no hay nada dibujado alli que consultar): punto en poligono con las fronteras de esta fecha. */
+const POL_BB = new WeakMap();
+function polityAtLngLat(lng, lat) {
+    if (!map.getLayer('borders-fill') || map.getLayoutProperty('borders-fill', 'visibility') === 'none') return null;
+    const fc = state.borders && state.borders.data; if (!fc || !Array.isArray(fc.features)) return null;
+    let bbs = POL_BB.get(fc);
+    if (!bbs) {
+        bbs = fc.features.map((f) => { const b = [Infinity, Infinity, -Infinity, -Infinity]; const walk = (a) => { if (typeof a[0] === 'number') { if (a[0] < b[0]) b[0] = a[0]; if (a[1] < b[1]) b[1] = a[1]; if (a[0] > b[2]) b[2] = a[0]; if (a[1] > b[3]) b[3] = a[1]; } else a.forEach(walk); }; if (f.geometry && f.geometry.coordinates) walk(f.geometry.coordinates); return b; });
+        POL_BB.set(fc, bbs);
+    }
+    for (let i = 0; i < bbs.length; i++) {
+        const b = bbs[i]; if (lng < b[0] || lng > b[2] || lat < b[1] || lat > b[3]) continue;
+        const f = fc.features[i]; if (!ChronosChanges.pointInGeometry(lng, lat, f.geometry)) continue;
+        const p = f.properties || {}; if (!p._c) return null;
+        return { c: p._c, name: (lang === 'es' && p.NAME_ES) || p.NAME || '' };
+    }
+    return null;
 }
 function lgIcon(it) {
     if (it.kind === 'e') return evIconUrl(evDrawKey(it.f));
@@ -5510,7 +5587,7 @@ function polityAt(x, y) {
  *  - Mientras gira, el cable y el anillo siguen al centro; los demas iconos del globo se atenuan cuando para (atenuar en cada fila obligaria
  *    a MapLibre a rehacer las capas de iconos muchas veces por segundo). Escape, o tocar el globo donde no hay nada, suelta la seleccion.
  */
-const LGW = { tree: null, f: 0, v: 0, to: null, k: -1, rows: [], anchor: -1, els: new Map(), cy: null, cyTo: null, raf: 0, last: 0, engaged: false, jump: null, dimmed: null, drag: null, wheelT: 0, moved: false, bubbleFor: null };
+const LGW = { seenRaf: 0, centerT: 0, centerAt: 0, centerId: null, tree: null, f: 0, v: 0, to: null, k: -1, rows: [], anchor: -1, els: new Map(), cy: null, cyTo: null, raf: 0, last: 0, engaged: false, jump: null, dimmed: null, drag: null, wheelT: 0, moved: false, bubbleFor: null };
 const lgPitch = () => LG.rowH;
 const LGW_RM = matchMedia('(prefers-reduced-motion: reduce)');
 const lgTypeColor = (it) => (it.kind === 'e' ? evColor(it.f.properties.icon) : ChronosBuilt.CHIP);
@@ -5526,24 +5603,46 @@ function lgRender() {
     const box = $('legend'); const list = $('lg-list'); const lr = list.getBoundingClientRect(); const br = box.getBoundingClientRect();
     const rowH = lgRowH(); LG.rowH = rowH; list.style.setProperty('--lg-row', rowH + 'px');
     const cr = map.getContainer().getBoundingClientRect();
-    const items = lgCollect(br.left - cr.left - 4, br.top - cr.top, br.bottom - cr.top);
-    items.forEach((it) => { it.px = it.x + cr.left; it.py = it.y + cr.top; it.yd = it.py - lr.top; it.pol = polityAt(it.x, it.y); });
+    const vbox = lgViewBox();
+    const items = lgCollect(vbox);
+    // de los de fuera de la vista no hay punto al que tender un cable (px, py) ni nada dibujado que consultar: su pais, por sus coordenadas
+    const place = (it) => { const c = lgCoords(it); it.yd = it.y + cr.top - lr.top; if (it.seen) { it.px = it.x + cr.left; it.py = it.y + cr.top; it.pol = polityAt(it.x, it.y); } else { it.px = it.py = null; it.pol = c ? polityAtLngLat(c[0], c[1]) : null; } };
     const old = LGW.tree && LGW.tree.seq.length ? LGW.tree.seq : null;
     const prevId = old ? old[Math.max(0, Math.min(old.length - 1, Math.round(LGW.f)))].id : null;
     const prevY = prevId ? (old.find((x) => x.id === prevId) || {}).yd : null;
     const frac = old ? LGW.f - Math.round(LGW.f) : 0; const toId = old && LGW.to != null && old[LGW.to] ? old[LGW.to].id : null;
-    LGW.tree = ChronosLegend.buildTree(items, (it) => (it.pol && it.pol.name ? { key: it.pol.name, name: it.pol.name, color: it.pol.c } : null), lgTypeOf);
+    // el elegido de antes no se pierde aunque siga fuera de la vista y ya no sea de los mas cercanos
+    const have = new Set(items.map((it) => it.id));
+    [prevId, LG.hot, toId, LGW.jump].forEach((id) => { if (!id || have.has(id) || !old) return; const it = old.find((x) => x.id === id); const c = it && lgCoords(it); if (!c) return; const p = map.project(c); it.x = p.x; it.y = p.y; it.seen = Boolean(lgSeenAt(c[0], c[1], vbox)); items.push(it); have.add(id); });
+    items.forEach(place);
+    const build = () => ChronosLegend.buildTree(items, (it) => (it.pol && it.pol.name ? { key: it.pol.name, name: it.pol.name, color: it.pol.c } : null), lgTypeOf);
+    // se sigue en el mismo elemento si sigue en la rueda; si no, en el de altura mas parecida (al principio, el del centro del mapa)
+    const anchorOf = (T) => {
+        if (prevId != null && T.at.has(prevId)) return T.at.get(prevId).k;
+        let k = -1; const ref = prevY != null ? prevY : (cr.top + cr.height / 2) - lr.top; let best = Infinity;
+        T.seq.forEach((it, i) => { const d = Math.abs(it.yd - ref) + (prevY == null ? Math.abs(it.x + cr.left - (cr.left + cr.width / 2)) * 0.5 : 0); if (d < best) { best = d; k = i; } });
+        return k;
+    };
+    // RUEDA LLENA: hasta media rueda de elementos antes y despues del de el centro, con lo de justo encima y justo debajo de la vista
+    // (por paises, uno de mas abajo puede caer en un pais de en medio: se sigue tomando de ese lado hasta llenar o acabar)
+    const per = Math.ceil((lr.height || 300) / (rowH * 0.62) / 2);
+    const F = lgFillPrep(vbox, have);
+    LGW.tree = build(); let k = anchorOf(LGW.tree);
+    for (let guard = 0; guard < 24; guard++) {
+        const before = k < 0 ? 0 : k; const after = k < 0 ? 0 : LGW.tree.seq.length - 1 - k;
+        const add = [...(before < per ? lgFillTake(F, 'up', per - before) : []), ...(after < per ? lgFillTake(F, 'down', per - after) : [])];
+        if (!add.length) break;
+        add.forEach((it) => { place(it); items.push(it); });
+        LGW.tree = build(); k = anchorOf(LGW.tree);
+    }
     const seq = LGW.tree.seq; LG.rows = seq; LG.extra = 0; LG.groups = LGW.tree.countries;
-    // se sigue en el mismo elemento si sigue en pantalla; si no, en el de altura mas parecida (al principio, el del centro del mapa)
-    let k = prevId != null && LGW.tree.at.has(prevId) ? LGW.tree.at.get(prevId).k : -1;
-    if (k < 0 && seq.length) { const ref = prevY != null ? prevY : (cr.top + cr.height / 2) - lr.top; let best = Infinity; seq.forEach((it, i) => { const d = Math.abs(it.yd - ref) + (prevY == null ? Math.abs(it.px - (cr.left + cr.width / 2)) * 0.5 : 0); if (d < best) { best = d; k = i; } }); }
     // se conserva lo que estuviera haciendo la rueda (posicion entre dos filas, destino)
     LGW.f = Math.max(0, Math.min(Math.max(0, seq.length - 1), Math.max(0, k) + (k >= 0 ? frac : 0))); LGW.k = -1;
     LGW.to = toId && LGW.tree.at.has(toId) ? LGW.tree.at.get(toId).k : LGW.to != null ? Math.round(LGW.f) : null;
     if (LGW.jump && LGW.tree.at.has(LGW.jump)) LGW.to = LGW.tree.at.get(LGW.jump).k; else LGW.jump = null;
     LGW.cyTo = lr.height / 2; if (LGW.cy == null) LGW.cy = LGW.cyTo;      // el centro de la rueda: fijo, a media altura
     if (LG.hot && !LGW.tree.at.has(LG.hot)) LG.hot = null;
-    $('lg-n').textContent = String(items.length);
+    $('lg-n').textContent = String(items.filter((it) => it.seen).length);     // lo que se ve (la rueda lleva ademas lo cercano de fuera)
     const ex = $('lg-extra');
     ex.textContent = LG.wide ? t('lgLess') : seq.length ? t('lgAll') : '';
     ex.title = LG.wide ? t('lgLessTip') : t('lgAllTip');
@@ -5627,14 +5726,15 @@ function lgFrame(now) {
             const vis = st.y + p.h > -20 && st.y < H + 20;
             st.li.style.visibility = vis ? '' : 'hidden';
             if (vis) { st.li.style.transform = 'translateY(' + st.y.toFixed(1) + 'px) scale(' + st.s.toFixed(3) + ')'; st.li.style.opacity = st.o.toFixed(2); st.li.style.height = lgRowNat(r) + 'px'; }
-            st.cy = st.y + p.h / 2;
+            st.cy = st.y + p.h / 2; st.h = p.h; st.shown = vis;
         });
     }
+    lgVpDraw();
     const lens = $('lg-lens'); if (lens) { lens.style.transform = 'translateY(' + (LGW.cy - LG.rowH / 2).toFixed(1) + 'px)'; lens.style.height = LG.rowH + 'px'; lens.hidden = !n; }
     // la seleccion sigue al centro (si la rueda esta tomada); en un salto (toque o globo), directamente el destino
     if (LGW.engaged && n) {
         const id = LGW.jump || T.seq[Math.round(LGW.f)].id;
-        if (id !== LG.hot) lgSelect(id);
+        if (id !== LG.hot) { lgSelect(id); if (!LGW.jump) lgCenterSoon(id); }      // arrastre o rueda del raton: el globo se centra en el elegido
         if (!busy && LGW.jump && LGW.to != null && Math.round(LGW.f) === LGW.to) LGW.jump = null;
     }
     if (!busy && LGW.engaged && LG.hot && LGW.dimmed !== LG.hot) { LGW.dimmed = LG.hot; spotHover(LG.hot); }
@@ -5662,15 +5762,42 @@ function lgSpinTo(id) {
     const T = LGW.tree; if (!T || !T.at.has(id)) return;
     lgEngage(); LGW.jump = id; LGW.to = T.at.get(id).k; LGW.v = 0; lgSelect(id); lgAnimate();
 }
-/**
- * Tocar un elemento de la rueda (o un grupo, que lleva a su primero) centra ademas el globo en el, con inercia (camGlide; el creador,
- * 2026-11-16). Solo al TOCAR: arrastrar la rueda, girarla con la rueda del raton o las flechas, o señalar un icono en el globo no mueven el
- * globo (lo que hay en la rueda es lo que se ve; si el globo siguiera a cada fila, la lista cambiaria bajo el dedo).
- */
+/** Centra el globo en un elemento de la rueda, con inercia (camGlide). La lista no cambia mientras el mapa se mueve (solo el marco de lo que
+ *  se ve): se rehace al pararse el mapa y la rueda, alrededor de la vista nueva. */
 function lgCenter(id) {
     const T = LGW.tree; if (!T || !T.at.has(id)) return;
-    const it = T.seq[T.at.get(id).k]; const g = it.kind === 'e' ? it.f && it.f.geometry : it.geom;
-    if (g && g.coordinates) camGlide(g.coordinates);
+    const c = lgCoords(T.seq[T.at.get(id).k]); if (c) camGlide(c);
+}
+/**
+ * EL MAPA SIGUE A LA RUEDA (el creador, 2026-11-16: «si yo arrastro la rueda a países/elementos fuera de vista, el mapa sigue a la rueda» y
+ * «se debe centrar si me muevo por la rueda o por resultados de búsqueda»). Moverse por la rueda (arrastrarla, la rueda del raton, las flechas,
+ * tocar una fila) centra el globo en el elemento del centro, con el giro con inercia. Al arrastrar deprisa los elegidos cambian muchas veces
+ * por segundo: el globo va al ultimo como mucho cada LG_CENTER_MS (cada destino nuevo sale con la velocidad que llevaba, asi que lo sigue sin
+ * tirones). Lo que viene del MAPA no mueve el mapa: señalar o tocar un icono gira la rueda hasta el, nada mas.
+ */
+const LG_CENTER_MS = 140;
+function lgCenterSoon(id) {
+    LGW.centerId = id; if (LGW.centerT) return;
+    const wait = Math.max(0, LG_CENTER_MS - (performance.now() - (LGW.centerAt || 0)));
+    LGW.centerT = setTimeout(() => { LGW.centerT = 0; LGW.centerAt = performance.now(); if (LG.open && LGW.centerId && LGW.centerId === LG.hot) lgCenter(LGW.centerId); }, wait);
+}
+/** Marco de lo que se ve (ChronosLegend.viewSegments): recuadros sobre las filas seguidas que se ven, donde estan dibujadas ahora. */
+function lgVpDraw() {
+    const box = $('lg-vp'); if (!box) return;
+    const T = LGW.tree; const segs = T && LG.open ? ChronosLegend.viewSegments(LGW.rows.map((r) => { const st = LGW.els.get(r.key); return st && st.shown && st.y != null && st.h ? { y: st.y, h: st.h } : null; }), (i) => ChronosLegend.rowSeen(T, LGW.rows[i])) : [];
+    while (box.children.length < segs.length) box.appendChild(el('div', { class: 'lg-vps' }));
+    [...box.children].forEach((d, i) => {
+        const g = segs[i]; d.hidden = !g; if (!g) return;
+        d.style.transform = 'translateY(' + (g.top - 2).toFixed(1) + 'px)'; d.style.height = (g.bottom - g.top + 4).toFixed(1) + 'px';
+    });
+    LGW.els.forEach((st) => { if (st.r && st.r.kind === 'item') st.li.classList.toggle('away', !st.r.it.seen); });
+}
+/** Al mover el mapa, cada elemento de la rueda vuelve a mirar si cae en la vista (sin reordenar la lista: eso, al parar). */
+function lgSeenLive() {
+    LGW.seenRaf = 0; const T = LGW.tree; if (!LG.open || !T || !T.seq.length) return;
+    const box = lgViewBox(); let changed = false; let n = 0;
+    T.seq.forEach((it) => { const c = lgCoords(it); const s = Boolean(c && lgSeenAt(c[0], c[1], box)); if (s !== it.seen) { it.seen = s; changed = true; } if (s) n++; });
+    if (changed) { lgVpDraw(); $('lg-n').textContent = String(n); }
 }
 /** Donde acaba el cable de cada fila de elemento: borde izquierdo de la columna (o de la fila en la lista entera), a la altura de la fila. */
 function lgAnchors() {
@@ -5708,11 +5835,11 @@ function lgBubble() {
     LGW.bubbleFor = LG.hot; lgBubbleFollow(true);
 }
 function lgBubbleFollow(decide) {
-    const it = LGW.tree && LG.hot && LGW.tree.at.has(LG.hot) ? LGW.tree.seq[LGW.tree.at.get(LG.hot).k] : null; if (!it || it.ax == null && !decide) { LG.hb = null; return; }
+    const it = LGW.tree && LG.hot && LGW.tree.at.has(LG.hot) ? LGW.tree.seq[LGW.tree.at.get(LG.hot).k] : null; if (!it || (it.ax == null || !Number.isFinite(it.px)) && !decide) { LG.hb = null; return; }
     const st = LGW.els.get('i:' + it.id); if (!st) { LG.hb = null; return; }
     const li = st.li; const nm = li.querySelector('.lg-name'); const lr = $('lg-list').getBoundingClientRect(); const left = $('legend').getBoundingClientRect().left;
     const rowTop = lr.top + (st.cy == null ? LGW.cy : st.cy) - LG.rowH / 2;
-    const pl = ChronosLegend.bubblePlace({ px: it.px, py: it.py, colLeft: left, rowTop, rowH: LG.rowH, w: nm.offsetWidth || 160, h: nm.offsetHeight || 22, top: lr.top, bottom: lr.bottom + 30 });
+    const pl = ChronosLegend.bubblePlace({ px: Number.isFinite(it.px) ? it.px : -1e6, py: Number.isFinite(it.py) ? it.py : rowTop, colLeft: left, rowTop, rowH: LG.rowH, w: nm.offsetWidth || 160, h: nm.offsetHeight || 22, top: lr.top, bottom: lr.bottom + 30 });
     if (decide || li.dataset.side !== pl.side) { li.classList.remove('up', 'down'); if (pl.side === 'up' || pl.side === 'down') li.classList.add(pl.side); li.dataset.side = pl.side; }
     if (pl.right !== 6) li.style.setProperty('--lg-nr', Math.round(pl.right) + 'px'); else li.style.removeProperty('--lg-nr');
     LG.hb = { ax: pl.ax, ay: pl.ay };
@@ -5729,9 +5856,9 @@ function lgWires() {
     const svg = $('lg-wires'); if (!svg) return;
     const NS = 'http://www.w3.org/2000/svg'; const parts = [];
     const path = (it, cls, ax, ay) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', ChronosLegend.wirePath(it.px, it.py, ax, ay)); p.setAttribute('class', cls); return p; };
-    if (LG.open && LG.always) (LG.rows || []).forEach((it) => { if (it.id !== LG.hot && it.ax != null) parts.push(path(it, '', it.ax, it.ay)); });
+    if (LG.open && LG.always) (LG.rows || []).forEach((it) => { if (it.id !== LG.hot && it.ax != null && Number.isFinite(it.px)) parts.push(path(it, '', it.ax, it.ay)); });
     const hot = LG.open && LG.hot && LGW.tree && LGW.tree.at.has(LG.hot) ? LGW.tree.seq[LGW.tree.at.get(LG.hot).k] : null;
-    const end = hot && (!LG.wide && LG.hb ? LG.hb : hot.ax != null ? { ax: hot.ax, ay: hot.ay } : null);
+    const end = hot && Number.isFinite(hot.px) && (!LG.wide && LG.hb ? LG.hb : hot.ax != null ? { ax: hot.ax, ay: hot.ay } : null);     // de fuera de la vista: sin cable
     if (hot && end) {
         parts.push(path(hot, 'hot-under', end.ax, end.ay), path(hot, 'hot', end.ax, end.ay));
         [['hot-under', 15], ['hot', 15]].forEach(([cls, r]) => { const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', hot.px); c.setAttribute('cy', hot.py); c.setAttribute('r', r); c.setAttribute('class', cls); parts.push(c); });
@@ -5781,12 +5908,12 @@ function lgWires() {
         if (r.kind === 'item') {
             const touch = LG.lastPointer !== 'mouse';
             if (LG.hot === r.it.id && LGW.engaged && (!touch || LG.touchHot === r.it.id)) { LG.touchHot = null; lgOpen(r.it); return; }
-            LG.touchHot = r.it.id; lgSpinTo(r.it.id); lgCenter(r.it.id); return;
+            LG.touchHot = r.it.id; lgSpinTo(r.it.id); lgCenterSoon(r.it.id); return;
         }
         // Cabecera plegada: gira a su primer elemento. Cabecera ABIERTA (el grupo del centro): recorre sus elementos, uno por toque (el
         // creador, 2026-11-16: «si clico el elemento que tiene el globo [el numero] no pasa nada»: ya estaba en el primero).
         const c = T.countries[r.ci];
-        const go = (id) => { lgSpinTo(id); lgCenter(id); };      // la rueda gira hasta el y el globo se centra en el
+        const go = (id) => { lgSpinTo(id); lgCenterSoon(id); };      // la rueda gira hasta el y el globo se centra en el
         // (con sitio de sobra hay otros grupos abiertos: solo el del centro recorre; tocar otro abierto gira a su primero)
         const cur = LG.hot && T.at.has(LG.hot) ? T.at.get(LG.hot) : null;
         if (cur && cur.c === r.ci) {
@@ -5800,7 +5927,7 @@ function lgWires() {
         if (!LGW.tree || !LGW.tree.seq.length) return;
         const n = LGW.tree.seq.length; const cur = LGW.to != null ? LGW.to : Math.round(LGW.f);
         const step = { ArrowDown: 1, ArrowUp: -1, PageDown: 5, PageUp: -5, Home: -n, End: n }[e.key];
-        if (step) { e.preventDefault(); lgSpinTo(LGW.tree.seq[Math.max(0, Math.min(n - 1, cur + step))].id); return; }
+        if (step) { e.preventDefault(); const id = LGW.tree.seq[Math.max(0, Math.min(n - 1, cur + step))].id; lgSpinTo(id); lgCenterSoon(id); return; }
         if (e.key === 'Enter' && LG.hot) { e.preventDefault(); const it = LGW.tree.seq[LGW.tree.at.get(LG.hot).k]; lgOpen(it); }
         if (e.key === 'Escape') { e.preventDefault(); lgRelease(); }
     });
@@ -5811,7 +5938,7 @@ function lgPopRender() {
     const win = evWindow(); const floor = ChronosTimed.importanceFloor(viewMeters());
     let inWin = 0;
     if (clockFull()) for (const f of events.vis) { const sp = ChronosTimed.span(f); if (sp.b >= clock.jd - win.pastDays && sp.a <= clock.jd + win.futureDays) inWin++; }
-    const shownE = LG.rows.filter((r) => r.kind === 'e').length + 0; const allE = (events.shown || []).length; const nb = LG.rows.filter((r) => r.kind === 'b').length;
+    const shownE = LG.rows.filter((r) => r.kind === 'e' && r.seen).length + 0; const allE = (events.shown || []).length; const nb = LG.rows.filter((r) => r.kind === 'b' && r.seen).length;
     pop.appendChild(el('h3', { text: t('lgTitle') + ' · ' + (win.flowing ? t('lgWhyFlow') : t('lgWhyRest')) }));
     const why = !inWin ? t('lgWhyNone') : allE < inWin ? fmt('lgWhyN', { s: allE, t: inWin, f: nf().format(floor) }) : fmt('lgWhyAll', { s: allE });
     pop.appendChild(el('p', { class: 'lg-why', text: why }));
@@ -5841,6 +5968,7 @@ function lgPopRender() {
     const close = el('button', { type: 'button', class: 'btn lg-close', text: t('lgClose') }); close.addEventListener('click', () => lgSet(false, true)); pop.appendChild(close);
 }
 map.on('movestart', () => { if (LG.open) $('lg-wires').classList.add('moving'); });
+map.on('move', () => { if (LG.open && !LGW.seenRaf) LGW.seenRaf = requestAnimationFrame(lgSeenLive); });     // marco de lo que se ve, en directo
 map.on('moveend', () => { if (!LG.open) return; $('lg-wires').classList.remove('moving'); lgSchedule(120); });
 map.on('idle', () => lgSchedule(200));
 window.addEventListener('resize', () => lgSchedule(200));

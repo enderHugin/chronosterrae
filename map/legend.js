@@ -125,23 +125,52 @@
      */
     function buildTree(items, countryOf, typeOf) {
         const cs = new Map(); const seen = new Set();
+        const xOf = (it) => (Number.isFinite(it.x) ? it.x : 0);
+        const higher = (g, it) => { if (it.y < g.top || (it.y === g.top && xOf(it) < g.left)) { g.top = it.y; g.left = xOf(it); } };
         for (const it of items || []) {
             if (!it || it.id == null || seen.has(it.id) || !Number.isFinite(it.y)) continue; seen.add(it.id);
             const g = countryOf(it) || null; const ck = g && g.key ? g.key : '';
-            if (!cs.has(ck)) cs.set(ck, { key: ck, name: ck ? g.name || ck : '', color: ck ? g.color || null : null, top: Infinity, tmap: new Map() });
-            const c = cs.get(ck); c.top = Math.min(c.top, it.y);
+            if (!cs.has(ck)) cs.set(ck, { key: ck, name: ck ? g.name || ck : '', color: ck ? g.color || null : null, top: Infinity, left: Infinity, tmap: new Map() });
+            const c = cs.get(ck); higher(c, it);
             const ty = typeOf(it) || {}; const tk = ty.key || '?';
-            if (!c.tmap.has(tk)) c.tmap.set(tk, { key: tk, name: ty.name || tk, top: Infinity, items: [] });
-            const t = c.tmap.get(tk); t.top = Math.min(t.top, it.y); t.items.push(it);
+            if (!c.tmap.has(tk)) c.tmap.set(tk, { key: tk, name: ty.name || tk, top: Infinity, left: Infinity, items: [] });
+            const t = c.tmap.get(tk); higher(t, it); t.items.push(it);
         }
-        const byTop = (a, b) => a.top - b.top || String(a.key).localeCompare(String(b.key));
+        // de arriba abajo y, a la misma altura, de izquierda a derecha (el creador, 2026-11-16): paises por su elemento mas alto, igual tipos y elementos
+        const byTop = (a, b) => a.top - b.top || a.left - b.left || String(a.key).localeCompare(String(b.key));
         const countries = [...cs.values()].sort((a, b) => (a.key === '') - (b.key === '') || byTop(a, b)).map((c) => {
-            const types = [...c.tmap.values()].sort(byTop).map((t) => ({ key: t.key, name: t.name, n: t.items.length, items: t.items.sort((a, b) => a.y - b.y || String(a.id).localeCompare(String(b.id))) }));
+            const types = [...c.tmap.values()].sort(byTop).map((t) => ({ key: t.key, name: t.name, n: t.items.length, items: t.items.sort((a, b) => a.y - b.y || xOf(a) - xOf(b) || String(a.id).localeCompare(String(b.id))) }));
             return { key: c.key, name: c.name, color: c.color, n: types.reduce((s, t) => s + t.n, 0), types };
         });
         const seq = []; const at = new Map();
         countries.forEach((c, ci) => c.types.forEach((t, ti) => t.items.forEach((it) => { at.set(it.id, { c: ci, t: ti, k: seq.length }); seq.push(it); })));
         return { countries, seq, at };
+    }
+
+    /**
+     * MARCO DE LO QUE SE VE (el creador, 2026-11-16: «un viewport que encuadre visualmente lo que sí está visible en el canvas»). La rueda
+     * lleva tambien lo cercano de fuera de la vista; cada elemento sabe si se ve (it.seen). Una fila se ve si es un elemento que se ve, o un
+     * tipo o un pais (plegado o su cabecera) con alguno de sus elementos a la vista.
+     */
+    function rowSeen(tree, r) {
+        if (!tree || !r) return false;
+        if (r.kind === 'item') return Boolean(r.it && r.it.seen);
+        const c = tree.countries[r.ci]; if (!c) return false;
+        if (r.kind === 'type') { const t = c.types[r.ti]; return Boolean(t && t.items.some((it) => it.seen)); }
+        return c.types.some((t) => t.items.some((it) => it.seen));
+    }
+    /**
+     * Trozos del marco: filas seguidas que se ven, unidas en un recuadro. rows y boxes en el mismo orden (boxes[i] = { y, h }: donde esta
+     * dibujada la fila i, ya encogida); seen(i) dice si se ve. Devuelve [{ top, bottom }] de arriba abajo. Con un orden por paises y altura
+     * el marco puede ir a trozos: un pais que asoma por el borde lleva dentro elementos de fuera.
+     */
+    function viewSegments(boxes, seen) {
+        const out = []; let cur = null;
+        (boxes || []).forEach((b, i) => {
+            if (!b || !seen(i)) { cur = null; return; }
+            if (cur) { cur.bottom = Math.max(cur.bottom, b.y + b.h); cur.top = Math.min(cur.top, b.y); } else { cur = { top: b.y, bottom: b.y + b.h }; out.push(cur); }
+        });
+        return out;
     }
 
     /** Filas para un juego dado de paises abiertos (open: indices) y tipos desplegados (exp: "ci/ti"); anchor: fila de seq[kk]. */
@@ -274,5 +303,5 @@
         return t > 1e-6 && t < 1 - 1e-6 && u > 1e-6 && u < 1 - 1e-6;
     }
 
-    return { LANE_PX, pickRows, placeRows, placeRowsPinned, bubblePlace, scrollFor, groupRows, buildTree, wheelRows, wheelPlace, spinStep, wirePath, wireSegments, segmentsCross };
+    return { LANE_PX, pickRows, placeRows, placeRowsPinned, bubblePlace, scrollFor, groupRows, buildTree, rowSeen, viewSegments, wheelRows, wheelPlace, spinStep, wirePath, wireSegments, segmentsCross };
 }));

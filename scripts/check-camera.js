@@ -107,7 +107,12 @@ check('camGlide: usa el plan y la curva de camera.js, con un easeId comun (encad
     const b = body('camGlide'); return /ChronosCamera\.plan\(/.test(b) && /ChronosCamera\.easing\(/.test(b) && /easeId:\s*CAM\.ID/.test(b) && /essential:\s*true/.test(b) && /SRCH_REDUCED\(\)/.test(b) && !/zoom:/.test(b.replace(/zoom:\s*map\.getZoom\(\)/, ''));
 });
 check('el buscador y la lista de sucesos giran con camGlide (ya no con la curva fija de antes)', () => /camGlide\(tg\.center/.test(body('srchGo')) && !/map\.easeTo\(/.test(body('srchGo')) && /srchGo\(/.test(body('eventFocus')));
-check('la rueda de la leyenda: tocar un elemento (o un grupo) centra el globo en el; señalarlo en el globo, no', () => /lgCenter\(/.test(html) && /function lgCenter\(/.test(html) && /camGlide\(/.test(body('lgCenter')) && !/lgCenter\(/.test(body('lgFromMap')) && !/lgCenter\(/.test(body('lgSpinTo')));
+check('la rueda de la leyenda: moverse por ella (arrastre, rueda, flechas, toque) centra el globo; lo que viene del mapa (señalar, tocar un icono), no', () => {
+    const frame = body('lgFrame'); const keys = html.slice(html.indexOf("list.addEventListener('keydown'"), html.indexOf("list.addEventListener('keydown'") + 900);
+    return /lgCenterSoon\(id\)/.test(frame) && /lgCenterSoon\(id\)/.test(keys) && /camGlide\(/.test(body('lgCenter')) && /lgCenter\(/.test(body('lgCenterSoon'))
+        && !/lgCenter/.test(body('lgFromMap')) && !/lgCenter/.test(body('lgMapClick')) && !/lgCenter/.test(body('lgSpinTo'));
+});
+check('un clic en el mapa no centra (se quito «Centrar al hacer clic»)', () => !/CENTER\.on/.test(html) && !/id="btn-center"/.test(html));
 check('ningun centrado usa ya map.easeTo con duracion fija', () => { const bad = html.match(/map\.easeTo\(\{\s*center:[^\n]*duration:\s*\d+/g); return !bad ? true : bad.join(' | '); });
 
 if (fails) { console.log('\n' + fails + ' prueba(s) fallida(s)'); process.exit(1); }
