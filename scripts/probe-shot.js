@@ -249,15 +249,18 @@ async function runSuite(page, out, only, renew) {
         for (const v of SUITE.filter((x) => (only === 'diseno' ? x.diseno : only === 'costa' ? x.costa : only === 'leyenda' ? x.leyenda : (!x.diseno && (!only || (only === 'iconos' ? x.events : x.names)))))) {
             if (renew && nView && nView % RENEW_EVERY === 0) { page = await renew(page); await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark); }
             nView++; const t0v = Date.now(); const heap0 = liveMB();
+            // fases: ms desde el inicio de la vista al pasar cada punto; en una vista colgada, la ultima dice donde se quedo.
+            const fases = {}; const fase = (k) => { fases[k] = Date.now() - t0v; };
             // Cada vista, con su limite: si se cuelga (o falla), se anota y se sigue con un navegador nuevo, en vez de parar la serie entera.
             const doView = async (page) => {
                 let idleOk = null;
                 if (v.vp) { await page.setViewportSize({ width: v.vp.width, height: v.vp.height }); await page.waitForTimeout(800); }
                 await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
                 await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
+                fase('vista');
                 if (v.hide) await page.evaluate(() => { if (!BR.off) document.getElementById('btn-borders').click(); });
                 if (v.roads) await page.evaluate(() => { if (!ROADS.on) document.getElementById('btn-roads').click(); });
-                if (v.events) { await page.evaluate(() => { if (!events.open) document.getElementById('btn-events').click(); }); await page.waitForFunction(() => events.shown.length > 0, null, { timeout: 40000 }).catch(() => {}); await page.waitForTimeout(1500); }
+                if (v.events) { await page.evaluate(() => { if (!events.open) document.getElementById('btn-events').click(); }); await page.waitForFunction(() => events.shown.length > 0, null, { timeout: 40000 }).catch(() => {}); fase('sucesos'); await page.waitForTimeout(1500); }
                 let ventana; let barrido; let tiposInfo;
                 if (v.tipos) tiposInfo = await page.evaluate((hid) => { panelsUI.setSettingsOpen(true); typesSet(ChronosEventIcons.hiddenToMask(hid), false); typesRender(); return { mascara: etMask, casilleros: document.querySelectorAll('#st-types input').length, marcados: [...document.querySelectorAll('#st-types input')].filter((c) => c.checked).length }; }, v.tipos);
                 if (v.barrido) {
@@ -319,11 +322,12 @@ async function runSuite(page, out, only, renew) {
                         const imp = events.shown.map((f) => f.properties.importance); const fades = [...new Set([...EV_ENTER.meta.values()].map((m) => m.alpha))].sort();
                         return { avanzoAnios: Math.round((clock.jd - jd0) / 365.25 * 100) / 100, tasaFinal: rates[rates.length - 1], ventana: EV_ENTER.win, dibujados: events.shown.length, impMin: imp.length ? Math.min(...imp) : null, niveles: fades };
                     }, v.yearsPerSec);
-                } else idleOk = await settle(page);
+                } else { fase('prep'); idleOk = await settle(page); }
+                fase('quieto');
                 const name = v.id + (dark ? '-oscuro' : '-claro');
                 const heap1 = liveMB();
                 await page.screenshot({ path: path.join(out, name + '.png') });
-                const heap2 = rawMB();
+                const heap2 = rawMB(); fase('captura');
                 // Que rotulos se dibujan de verdad: por capa de origen y clase (el hecho que importa con las fronteras apagadas; no se deduce de la imagen)
                 const labels = await page.evaluate(() => {
                     const ids = map.getStyle().layers.filter((l) => l.type === 'symbol' && l.id.startsWith('ofm-') && map.getLayoutProperty(l.id, 'visibility') !== 'none').map((l) => l.id);
@@ -350,7 +354,8 @@ async function runSuite(page, out, only, renew) {
                     const cs = getComputedStyle(document.body);
                     return { epoca: document.body.getAttribute('data-era'), insignia: document.getElementById('era-badge').hidden ? null : document.getElementById('era-badge').textContent, acento: cs.getPropertyValue('--accent').trim(), borde: getComputedStyle(document.getElementById('timeline')).borderTopStyle, mar: map.getPaintProperty('ocean', 'background-color'), puntos: map.getLayer('events-dot') ? map.getPaintProperty('events-dot', 'circle-stroke-color') : null, ventana: [innerWidth, innerHeight], cajas: bx, solapes };
                 }) : undefined;
-                rows.push({ name, ms: Date.now() - t0v, heapMB: [heap0, heap1, heap2, liveMB()], navMB: navMB(), pageMB: await page.evaluate(() => (performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : null)), ...(idleOk === false ? { sinQuietud: true } : {}), ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, gapDbg: GAP.dbg || null, sea: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null, seaTiles: typeof SEA !== 'undefined' ? SEA.n : null, seaCpu: typeof SEA !== 'undefined' && SEA.cpu.length ? Math.round(SEA.cpu.reduce((a, b) => a + b, 0) / SEA.cpu.length * 10) / 10 : null, proj: map.getProjection && map.getProjection().type, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, rueda: typeof LGW !== 'undefined' && LG.open ? { n: LG.rows.length, f: Math.round(LGW.f * 100) / 100, filas: LGW.rows.length, elegido: LG.hot, tomada: LGW.engaged, paises: LGW.tree ? LGW.tree.countries.length : 0, ms: Math.round(LG.ms) } : null, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+                fase('medidas');
+                rows.push({ name, ms: Date.now() - t0v, fases, heapMB: [heap0, heap1, heap2, liveMB()], navMB: navMB(), pageMB: await page.evaluate(() => (performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : null)), ...(idleOk === false ? { sinQuietud: true } : {}), ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, gapDbg: GAP.dbg || null, sea: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null, seaTiles: typeof SEA !== 'undefined' ? SEA.n : null, seaCpu: typeof SEA !== 'undefined' && SEA.cpu.length ? Math.round(SEA.cpu.reduce((a, b) => a + b, 0) / SEA.cpu.length * 10) / 10 : null, proj: map.getProjection && map.getProjection().type, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, rueda: typeof LGW !== 'undefined' && LG.open ? { n: LG.rows.length, f: Math.round(LGW.f * 100) / 100, filas: LGW.rows.length, elegido: LG.hot, tomada: LGW.engaged, paises: LGW.tree ? LGW.tree.countries.length : 0, ms: Math.round(LG.ms) } : null, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
                 if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
                 if (v.tipos) await page.evaluate(() => { typesSet(0, false); typesRender(); panelsUI.setSettingsOpen(false); });
                 if (v.abrir) await page.evaluate(() => { panelsUI.setSettingsOpen(false); hideInfo(); menus.closeAll(); if (typeof LG !== 'undefined' && LG.open) lgSet(false, false); });
@@ -363,7 +368,7 @@ async function runSuite(page, out, only, renew) {
             let timer = 0; const res = await Promise.race([job.then(() => 'ok', (e) => 'fallo: ' + String((e && e.message) || e).split('\n')[0].slice(0, 200)), new Promise((r) => { timer = setTimeout(() => r('colgada'), VIEW_MS); })]);
             clearTimeout(timer);
             if (res !== 'ok') {
-                rows.push({ name: v.id + (dark ? '-oscuro' : '-claro'), error: res === 'colgada' ? 'vista colgada (mas de ' + VIEW_MS / 1000 + ' s)' : res, ms: Date.now() - t0v, heapMB: [heap0, liveMB()], navMB: navMB() });
+                rows.push({ name: v.id + (dark ? '-oscuro' : '-claro'), error: res === 'colgada' ? 'vista colgada (mas de ' + VIEW_MS / 1000 + ' s)' : res, ms: Date.now() - t0v, fases, heapMB: [heap0, liveMB()], navMB: navMB() });
                 fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));
                 if (renew) { page = await renew(page); await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark); }
             }
