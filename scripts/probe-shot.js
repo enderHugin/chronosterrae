@@ -211,8 +211,9 @@ async function runZoom(page, out) {
     await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
 }
 
-// La serie habitual moria sin memoria hacia la vista 30 (proceso de la sonda, 4 GB; 2026-11-15/16, sin inundacion de consola): cada
-// RENEW_EVERY vistas se cierra la pagina (y su contexto) y se abre otra limpia.
+// La serie habitual moria sin memoria hacia la vista 30 (proceso de la sonda, 4 GB; 2026-11-15/16, sin inundacion de consola). Renovar
+// solo la pagina la llevo a la 37: lo que crece es la conexion con el navegador. Cada RENEW_EVERY vistas se cierra el NAVEGADOR y se abre
+// otro; y cada vista anota la memoria del proceso (heapMB) para ver si vuelve a crecer.
 const RENEW_EVERY = 8;
 async function runSuite(page, out, only, renew) {
     const rows = []; let nView = 0;
@@ -317,7 +318,7 @@ async function runSuite(page, out, only, renew) {
                 const cs = getComputedStyle(document.body);
                 return { epoca: document.body.getAttribute('data-era'), insignia: document.getElementById('era-badge').hidden ? null : document.getElementById('era-badge').textContent, acento: cs.getPropertyValue('--accent').trim(), borde: getComputedStyle(document.getElementById('timeline')).borderTopStyle, mar: map.getPaintProperty('ocean', 'background-color'), puntos: map.getLayer('events-dot') ? map.getPaintProperty('events-dot', 'circle-stroke-color') : null, ventana: [innerWidth, innerHeight], cajas: bx, solapes };
             }) : undefined;
-            rows.push({ name, ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, gapDbg: GAP.dbg || null, sea: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null, seaTiles: typeof SEA !== 'undefined' ? SEA.n : null, seaCpu: typeof SEA !== 'undefined' && SEA.cpu.length ? Math.round(SEA.cpu.reduce((a, b) => a + b, 0) / SEA.cpu.length * 10) / 10 : null, proj: map.getProjection && map.getProjection().type, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, rueda: typeof LGW !== 'undefined' && LG.open ? { n: LG.rows.length, f: Math.round(LGW.f * 100) / 100, filas: LGW.rows.length, elegido: LG.hot, tomada: LGW.engaged, paises: LGW.tree ? LGW.tree.countries.length : 0, ms: Math.round(LG.ms) } : null, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+            rows.push({ name, heapMB: Math.round(process.memoryUsage().heapUsed / 1048576), ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, gapDbg: GAP.dbg || null, sea: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null, seaTiles: typeof SEA !== 'undefined' ? SEA.n : null, seaCpu: typeof SEA !== 'undefined' && SEA.cpu.length ? Math.round(SEA.cpu.reduce((a, b) => a + b, 0) / SEA.cpu.length * 10) / 10 : null, proj: map.getProjection && map.getProjection().type, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, rueda: typeof LGW !== 'undefined' && LG.open ? { n: LG.rows.length, f: Math.round(LGW.f * 100) / 100, filas: LGW.rows.length, elegido: LG.hot, tomada: LGW.engaged, paises: LGW.tree ? LGW.tree.countries.length : 0, ms: Math.round(LG.ms) } : null, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
             if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
             if (v.tipos) await page.evaluate(() => { typesSet(0, false); typesRender(); panelsUI.setSettingsOpen(false); });
             if (v.abrir) await page.evaluate(() => { panelsUI.setSettingsOpen(false); hideInfo(); menus.closeAll(); if (typeof LG !== 'undefined' && LG.open) lgSet(false, false); });
@@ -349,7 +350,8 @@ async function runSuite(page, out, only, renew) {
     const diag = process.argv.length > 4;
     const [lng, lat, zoom] = [process.argv[4] || -1.35, process.argv[5] || 43.05, process.argv[6] || 11].map(Number);
     fs.mkdirSync(out, { recursive: true });
-    const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'] });
+    const launch = () => chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'] });
+    let browser = await launch();
     // Un mensaje repetido se guarda UNA vez con su recuento: un bucle de errores en la pagina agoto la memoria de este proceso (4 GB) y se perdio toda la captura
     const log = []; const counts = new Map();
     const note = (msg) => { const c = counts.get(msg) || 0; counts.set(msg, c + 1); if (c === 0 && log.length < 300) log.push(msg); };
@@ -372,7 +374,7 @@ async function runSuite(page, out, only, renew) {
         await p.evaluate(() => { if (window.eventIconsAnimate) eventIconsAnimate(false); });   // la animacion de los iconos impide que el mapa llegue a idle: las capturas son de un fotograma fijo
         return p;
     };
-    const renew = async (old) => { try { await old.context().close(); } catch (e) { /* ya cerrada */ } return openPage(); };
+    const renew = async () => { try { await browser.close(); } catch (e) { /* ya cerrado */ } browser = await launch(); return openPage(); };
     const page = await openPage();
     if (process.argv[4] === 'zoom') { await runZoom(page, out); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
     if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos' || process.argv[4] === 'diseno' || process.argv[4] === 'costa' || process.argv[4] === 'leyenda') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : process.argv[4] === 'diseno' ? 'diseno' : process.argv[4] === 'costa' ? 'costa' : process.argv[4] === 'leyenda' ? 'leyenda' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
