@@ -277,7 +277,8 @@ check('pages.yml publica todo recurso local que index.html carga (./map, ./sky, 
 check('index.html centra con doble clic en vez de hacer zoom', () => {
     const html = readIndex();
     // centra en el punto del clic, o en el suceso si el doble clic cae sobre uno
-    return /map\.doubleClickZoom\.disable\(\)/.test(html) && /map\.easeTo\(\{\s*center:\s*ev && ev\.geometry \? ev\.geometry\.coordinates : e\.lngLat/.test(html);
+    // (desde 2026-11-16, con el giro con inercia de map/camera.js: camGlide)
+    return /map\.doubleClickZoom\.disable\(\)/.test(html) && /const at = ev && ev\.geometry \? ev\.geometry\.coordinates : e\.lngLat;[^\n]*\n\s*camGlide\(/.test(html);
 });
 
 check('index.html carga el motor astronomico y el cielo desde el propio repositorio, no desde un CDN', () => {
