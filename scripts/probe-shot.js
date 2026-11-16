@@ -7,6 +7,12 @@
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
+// Memoria VIVA: process.memoryUsage().heapUsed cuenta tambien la basura aun sin recoger (con 8 GB de margen, V8 la deja llegar a varios GB y
+// esas cifras no dicen nada). Se fuerza una recogida antes de medir. 2026-11-16.
+const v8 = require('v8'); const vm = require('vm');
+let gcNow = null; try { v8.setFlagsFromString('--expose_gc'); gcNow = vm.runInNewContext('gc'); } catch (e) { gcNow = null; }
+const liveMB = () => { if (gcNow) gcNow(); return Math.round(process.memoryUsage().heapUsed / 1048576); };
+const rawMB = () => Math.round(process.memoryUsage().heapUsed / 1048576);
 
 // Vistas de la revision rutinaria: las que ya dieron problemas o que protegen lo que mas se mira. Cada una se fotografia en claro y en oscuro.
 const SUITE = [
@@ -88,10 +94,12 @@ const SUITE = [
     { id: 'portatil-1024x768-todo-abierto', diseno: true, events: true, abrir: ['ajustes', 'ficha'], vp: { width: 1024, height: 768 }, year: 1939, lng: 15, lat: 50, zoom: 4 }
 ];
 
+// Devuelve false si el mapa no llego a quieto en 30 s (antes se esperaba sin limite: la serie del 2026-11-16 se quedo dos horas parada).
 async function settle(page) {
     await page.waitForFunction(() => !state.bordersLoading, null, { timeout: 60000 }).catch(() => {});
-    await page.evaluate(() => new Promise((r) => { if (map.loaded()) r(); else map.once('idle', r); }));
+    const idle = await page.evaluate(() => new Promise((r) => { if (map.loaded()) { r(true); return; } const t = setTimeout(() => r(false), 30000); map.once('idle', () => { clearTimeout(t); r(true); }); }));
     await page.waitForTimeout(3500);
+    return idle;
 }
 
 // Tiempos REALES (red de verdad, cache frio) de cambiar de epoca: fronteras historicas (descarga + proceso + imagen del hueco) y costas de Pangea.
@@ -215,119 +223,133 @@ async function runZoom(page, out) {
 // solo la pagina la llevo a la 37: lo que crece es la conexion con el navegador. Cada RENEW_EVERY vistas se cierra el NAVEGADOR y se abre
 // otro; y cada vista anota la memoria del proceso (heapMB) para ver si vuelve a crecer.
 const RENEW_EVERY = 8;
+// heapMB por vista: [viva al empezar, viva antes de la captura, sin recoger tras la captura, viva al acabar]; ms: lo que tardo la vista.
+const VIEW_MS = 240000;
 async function runSuite(page, out, only, renew) {
     const rows = []; let nView = 0;
     for (const dark of [true, false]) {
         await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark);
         for (const v of SUITE.filter((x) => (only === 'diseno' ? x.diseno : only === 'costa' ? x.costa : only === 'leyenda' ? x.leyenda : (!x.diseno && (!only || (only === 'iconos' ? x.events : x.names)))))) {
             if (renew && nView && nView % RENEW_EVERY === 0) { page = await renew(page); await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark); }
-            nView++; const heap0 = Math.round(process.memoryUsage().heapUsed / 1048576);
-            if (v.vp) { await page.setViewportSize({ width: v.vp.width, height: v.vp.height }); await page.waitForTimeout(800); }
-            await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
-            await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
-            if (v.hide) await page.evaluate(() => { if (!BR.off) document.getElementById('btn-borders').click(); });
-            if (v.roads) await page.evaluate(() => { if (!ROADS.on) document.getElementById('btn-roads').click(); });
-            if (v.events) { await page.evaluate(() => { if (!events.open) document.getElementById('btn-events').click(); }); await page.waitForFunction(() => events.shown.length > 0, null, { timeout: 40000 }).catch(() => {}); await page.waitForTimeout(1500); }
-            let ventana; let barrido; let tiposInfo;
-            if (v.tipos) tiposInfo = await page.evaluate((hid) => { panelsUI.setSettingsOpen(true); typesSet(ChronosEventIcons.hiddenToMask(hid), false); typesRender(); return { mascara: etMask, casilleros: document.querySelectorAll('#st-types input').length, marcados: [...document.querySelectorAll('#st-types input')].filter((c) => c.checked).length }; }, v.tipos);
-            if (v.barrido) {
-                await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});
-                const ini = await page.evaluate(() => {
-                    eventIconsAnimate(true); const jd0 = clock.jd; const sel = document.getElementById('key-step'); sel.value = '10y'; sel.dispatchEvent(new Event('change'));
-                    const sl = document.getElementById('slider'); sl.focus(); sl.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }));
-                    return { jd0, activo: glideOn(), destino: glide.target(), anioIni: ChronosSky.jdToCalendar(jd0, 'auto').year };
+            nView++; const t0v = Date.now(); const heap0 = liveMB();
+            // Cada vista, con su limite: si se cuelga (o falla), se anota y se sigue con un navegador nuevo, en vez de parar la serie entera.
+            const doView = async (page) => {
+                let idleOk = null;
+                if (v.vp) { await page.setViewportSize({ width: v.vp.width, height: v.vp.height }); await page.waitForTimeout(800); }
+                await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
+                await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
+                if (v.hide) await page.evaluate(() => { if (!BR.off) document.getElementById('btn-borders').click(); });
+                if (v.roads) await page.evaluate(() => { if (!ROADS.on) document.getElementById('btn-roads').click(); });
+                if (v.events) { await page.evaluate(() => { if (!events.open) document.getElementById('btn-events').click(); }); await page.waitForFunction(() => events.shown.length > 0, null, { timeout: 40000 }).catch(() => {}); await page.waitForTimeout(1500); }
+                let ventana; let barrido; let tiposInfo;
+                if (v.tipos) tiposInfo = await page.evaluate((hid) => { panelsUI.setSettingsOpen(true); typesSet(ChronosEventIcons.hiddenToMask(hid), false); typesRender(); return { mascara: etMask, casilleros: document.querySelectorAll('#st-types input').length, marcados: [...document.querySelectorAll('#st-types input')].filter((c) => c.checked).length }; }, v.tipos);
+                if (v.barrido) {
+                    await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});
+                    const ini = await page.evaluate(() => {
+                        eventIconsAnimate(true); const jd0 = clock.jd; const sel = document.getElementById('key-step'); sel.value = '10y'; sel.dispatchEvent(new Event('change'));
+                        const sl = document.getElementById('slider'); sl.focus(); sl.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }));
+                        return { jd0, activo: glideOn(), destino: glide.target(), anioIni: ChronosSky.jdToCalendar(jd0, 'auto').year };
+                    });
+                    await page.waitForTimeout(1100);
+                    const medio = await page.evaluate(() => ({ jd: clock.jd, activo: glideOn(), mostrados: events.shown.length, ventana: EV_ENTER.win, anio: ChronosSky.jdToCalendar(clock.jd, 'auto').year, toasts: events.toasts.size }));
+                    await page.screenshot({ path: path.join(out, v.id + (dark ? '-oscuro' : '-claro') + '-medio.png') });
+                    const fin = await page.evaluate(async () => { await new Promise((r) => { const iv = setInterval(() => { if (!glideOn()) { clearInterval(iv); r(); } }, 60); setTimeout(() => { clearInterval(iv); r(); }, 8000); }); await new Promise((r) => setTimeout(r, 1800)); return { jd: clock.jd, activo: glideOn(), anio: ChronosSky.jdToCalendar(clock.jd, 'auto').year, mostrados: events.shown.length, ventana: EV_ENTER.win }; });
+                    await page.evaluate(() => eventIconsAnimate(false));
+                    barrido = { ini, medio, fin, llegoExacto: fin.jd === ini.destino };
+                }
+                if (v.abrir) await page.evaluate((a) => {
+                    if (a.includes('ajustes')) panelsUI.setSettingsOpen(true);
+                    if (a.includes('ficha')) showInfo('Ficha de prueba con un titulo largo', Array.from({ length: 10 }, (_, i) => ({ label: 'Campo ' + i, value: 'valor de ejemplo '.repeat(4) })));
+                    if (a.includes('menu-capas')) document.getElementById('menu-layers-btn').click();
+                    if (a.includes('epocas')) document.getElementById('tl-jumps-btn').click();     // saltos de la linea de tiempo, cada uno con su epoca
+                    if (a.includes('info-tl')) document.getElementById('tl-info-btn').click();     // lo que ves ahora + fuentes y licencias
+                    if (a.includes('leyenda')) { if (!LG.open) lgSet(true, false); }                // leyenda viva (puntos de color por defecto)
+                }, v.abrir);
+                if (v.leyenda) await page.evaluate((ancha) => { if (typeof lgWide === 'function' && LG.wide !== !!ancha) lgWide(!!ancha); }, !!v.ancha);
+                if (v.senalar) {        // leyenda: se espera a que tenga filas y se señala la del medio (cable fuerte, anillo, nombre)
+                    await page.waitForFunction(() => LG.open && LG.rows.length > 0, null, { timeout: 30000 }).catch(() => {});
+                    await page.waitForTimeout(1200);
+                    await page.evaluate((desde) => {
+                        evHoverSet(null); buHoverSet(null); lgRender();
+                        if (desde !== 'mapa') { const it = LG.rows[Math.floor(LG.rows.length / 2)]; if (it) lgHot(it.id); return; }
+                        // como el raton sobre el icono del globo: la fila del ultimo tercio (en la lista entera, fuera de la vista: tiene que desplazarse)
+                        const it = LG.rows[Math.floor(LG.rows.length * (LG.wide ? 0.8 : 0.33))];
+                        if (it && it.kind === 'e') evHoverSet(it.f); else if (it) buHoverSet({ properties: it.props, geometry: it.geom });
+                    }, v.senalar);
+                    await page.waitForTimeout(1200);
+                }
+                if (v.girar) {          // rueda: arrastre vertical sobre la lista (px; positivo = hacia arriba) y se suelta con impulso
+                    await page.waitForFunction(() => LG.open && LG.rows.length > 0, null, { timeout: 30000 }).catch(() => {});
+                    await page.waitForTimeout(1500);
+                    const bx = await page.evaluate(() => { const r = document.getElementById('lg-list').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
+                    await page.mouse.move(bx.x, bx.y + v.girar / 2); await page.mouse.down();
+                    for (let i = 1; i <= 8; i++) { await page.mouse.move(bx.x, bx.y + v.girar / 2 - i * v.girar / 8); await page.waitForTimeout(16); }
+                    await page.mouse.up(); await page.waitForTimeout(250);
+                    await page.screenshot({ path: path.join(out, v.id + (dark ? '-oscuro' : '-claro') + '-girando.png') });
+                    await page.waitForTimeout(2500);
+                }
+                if (v.run) await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});   // el cielo (efemerides) carga aparte
+                if (v.run) {   // el reloj avanza por su punto de entrada real (clockSet) a v.yearsPerSec; se mide la ventana y se fotografia sin esperar (al parar, la ventana vuelve a la minima en ~2,5 s)
+                    ventana = await page.evaluate(async (yps) => {
+                        const YEAR = 31557600; let last = performance.now(); const rates = []; const sinReloj = !Number.isFinite(clock.jd);
+                        if (sinReloj) return { sinReloj };
+                        const jd0 = clock.jd;
+                        for (let i = 0; i < 60; i++) {
+                            await new Promise((r) => setTimeout(r, 100)); const now = performance.now(); const dt = (now - last) / 1000; last = now;
+                            clockSet(clock.jd + yps * YEAR * dt / 86400, { tick: true }); rates.push(Math.round(evMotion.rate(performance.now()) / YEAR * 100) / 100);
+                        }
+                        eventsRefresh(); await new Promise((r) => setTimeout(r, 500));
+                        const imp = events.shown.map((f) => f.properties.importance); const fades = [...new Set([...EV_ENTER.meta.values()].map((m) => m.alpha))].sort();
+                        return { avanzoAnios: Math.round((clock.jd - jd0) / 365.25 * 100) / 100, tasaFinal: rates[rates.length - 1], ventana: EV_ENTER.win, dibujados: events.shown.length, impMin: imp.length ? Math.min(...imp) : null, niveles: fades };
+                    }, v.yearsPerSec);
+                } else idleOk = await settle(page);
+                const name = v.id + (dark ? '-oscuro' : '-claro');
+                const heap1 = liveMB();
+                await page.screenshot({ path: path.join(out, name + '.png') });
+                const heap2 = rawMB();
+                // Que rotulos se dibujan de verdad: por capa de origen y clase (el hecho que importa con las fronteras apagadas; no se deduce de la imagen)
+                const labels = await page.evaluate(() => {
+                    const ids = map.getStyle().layers.filter((l) => l.type === 'symbol' && l.id.startsWith('ofm-') && map.getLayoutProperty(l.id, 'visibility') !== 'none').map((l) => l.id);
+                    const by = {}; if (!ids.length) return by;
+                    for (const f of map.queryRenderedFeatures({ layers: ids })) { const k = (f.sourceLayer || '?') + ':' + (f.properties.class || '-'); (by[k] = by[k] || new Set()).add(f.properties['name:latin'] || f.properties.name || '(sin nombre)'); }
+                    return Object.fromEntries(Object.entries(by).map(([k, v]) => [k, { n: v.size, ejemplos: [...v].slice(0, 6) }]));
                 });
-                await page.waitForTimeout(1100);
-                const medio = await page.evaluate(() => ({ jd: clock.jd, activo: glideOn(), mostrados: events.shown.length, ventana: EV_ENTER.win, anio: ChronosSky.jdToCalendar(clock.jd, 'auto').year, toasts: events.toasts.size }));
-                await page.screenshot({ path: path.join(out, v.id + (dark ? '-oscuro' : '-claro') + '-medio.png') });
-                const fin = await page.evaluate(async () => { await new Promise((r) => { const iv = setInterval(() => { if (!glideOn()) { clearInterval(iv); r(); } }, 60); setTimeout(() => { clearInterval(iv); r(); }, 8000); }); await new Promise((r) => setTimeout(r, 1800)); return { jd: clock.jd, activo: glideOn(), anio: ChronosSky.jdToCalendar(clock.jd, 'auto').year, mostrados: events.shown.length, ventana: EV_ENTER.win }; });
-                await page.evaluate(() => eventIconsAnimate(false));
-                barrido = { ini, medio, fin, llegoExacto: fin.jd === ini.destino };
+                const road = await page.evaluate(() => {
+                    const ids = map.getStyle().layers.filter((l) => l.id.startsWith('ofm-') && ['transportation', 'transportation_name'].includes(l['source-layer'])).map((l) => l.id);
+                    const vis = ids.filter((i) => map.getLayoutProperty(i, 'visibility') !== 'none');
+                    return { btnHidden: document.getElementById('btn-roads').hidden, on: ROADS.on, capas: ids.length, visibles: vis.length, dibujados: vis.length ? map.queryRenderedFeatures({ layers: vis }).length : 0 };
+                });
+                const ev = v.events ? await page.evaluate(() => {
+                    const q = (l) => map.queryRenderedFeatures({ layers: [l] });
+                    const feats = [...q('events-icon-bob'), ...q('events-icon-shake')]; const por = {};
+                    feats.forEach((f) => { por[f.properties.icon] = (por[f.properties.icon] || 0) + 1; });
+                    return { dibujados: events.shown.length, iconos: feats.length, por, capas: ['events-dot', 'events-pulse', 'events-icon-bob', 'events-icon-shake', 'events-circle'].map((l) => l + ':' + (map.getLayer(l) ? 'si' : 'NO')).join(' '), animacion: EVA.on };
+                }) : undefined;
+                const diseno = v.diseno ? await page.evaluate(() => {
+                    const sel = ['#topbar', '#events', '#changes', '#sky', '#settings', '#info', '#status', '#space-note', '#timeline', '#toasts .toast', '#menu-layers-pop', '.maplibregl-ctrl-bottom-right'];
+                    const bx = {}; sel.forEach((q) => { const e = document.querySelector(q); if (!e) return; const cs = getComputedStyle(e); const r = e.getBoundingClientRect(); if (cs.display === 'none' || cs.visibility === 'hidden' || r.width < 2 || r.height < 2) return; bx[q] = [Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom)]; });
+                    const nombres = Object.keys(bx); const solapes = [];
+                    for (let i = 0; i < nombres.length; i++) for (let j = i + 1; j < nombres.length; j++) { const a = bx[nombres[i]], b = bx[nombres[j]]; if (nombres[i] === '#menu-layers-pop' || nombres[j] === '#menu-layers-pop') continue; if (Math.min(a[2], b[2]) - Math.max(a[0], b[0]) > 1 && Math.min(a[3], b[3]) - Math.max(a[1], b[1]) > 1) solapes.push(nombres[i] + ' x ' + nombres[j]); }
+                    const cs = getComputedStyle(document.body);
+                    return { epoca: document.body.getAttribute('data-era'), insignia: document.getElementById('era-badge').hidden ? null : document.getElementById('era-badge').textContent, acento: cs.getPropertyValue('--accent').trim(), borde: getComputedStyle(document.getElementById('timeline')).borderTopStyle, mar: map.getPaintProperty('ocean', 'background-color'), puntos: map.getLayer('events-dot') ? map.getPaintProperty('events-dot', 'circle-stroke-color') : null, ventana: [innerWidth, innerHeight], cajas: bx, solapes };
+                }) : undefined;
+                rows.push({ name, ms: Date.now() - t0v, heapMB: [heap0, heap1, heap2, liveMB()], ...(idleOk === false ? { sinQuietud: true } : {}), ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, gapDbg: GAP.dbg || null, sea: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null, seaTiles: typeof SEA !== 'undefined' ? SEA.n : null, seaCpu: typeof SEA !== 'undefined' && SEA.cpu.length ? Math.round(SEA.cpu.reduce((a, b) => a + b, 0) / SEA.cpu.length * 10) / 10 : null, proj: map.getProjection && map.getProjection().type, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, rueda: typeof LGW !== 'undefined' && LG.open ? { n: LG.rows.length, f: Math.round(LGW.f * 100) / 100, filas: LGW.rows.length, elegido: LG.hot, tomada: LGW.engaged, paises: LGW.tree ? LGW.tree.countries.length : 0, ms: Math.round(LG.ms) } : null, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+                if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
+                if (v.tipos) await page.evaluate(() => { typesSet(0, false); typesRender(); panelsUI.setSettingsOpen(false); });
+                if (v.abrir) await page.evaluate(() => { panelsUI.setSettingsOpen(false); hideInfo(); menus.closeAll(); if (typeof LG !== 'undefined' && LG.open) lgSet(false, false); });
+                if (v.vp) { await page.setViewportSize({ width: 1280, height: 800 }); await page.waitForTimeout(500); }
+                if (v.events) await page.evaluate(() => { if (events.open) document.getElementById('btn-events').click(); });
+                fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));   // parcial: si el proceso muere, queda lo medido hasta aqui
+                if (v.hide) await page.evaluate(() => { if (BR.off) document.getElementById('btn-borders').click(); });
+            };
+            const job = doView(page); job.catch(() => { /* se anota abajo */ });
+            let timer = 0; const res = await Promise.race([job.then(() => 'ok', (e) => 'fallo: ' + String((e && e.message) || e).split('\n')[0].slice(0, 200)), new Promise((r) => { timer = setTimeout(() => r('colgada'), VIEW_MS); })]);
+            clearTimeout(timer);
+            if (res !== 'ok') {
+                rows.push({ name: v.id + (dark ? '-oscuro' : '-claro'), error: res === 'colgada' ? 'vista colgada (mas de ' + VIEW_MS / 1000 + ' s)' : res, ms: Date.now() - t0v, heapMB: [heap0, liveMB()] });
+                fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));
+                if (renew) { page = await renew(page); await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark); }
             }
-            if (v.abrir) await page.evaluate((a) => {
-                if (a.includes('ajustes')) panelsUI.setSettingsOpen(true);
-                if (a.includes('ficha')) showInfo('Ficha de prueba con un titulo largo', Array.from({ length: 10 }, (_, i) => ({ label: 'Campo ' + i, value: 'valor de ejemplo '.repeat(4) })));
-                if (a.includes('menu-capas')) document.getElementById('menu-layers-btn').click();
-                if (a.includes('epocas')) document.getElementById('tl-jumps-btn').click();     // saltos de la linea de tiempo, cada uno con su epoca
-                if (a.includes('info-tl')) document.getElementById('tl-info-btn').click();     // lo que ves ahora + fuentes y licencias
-                if (a.includes('leyenda')) { if (!LG.open) lgSet(true, false); }                // leyenda viva (puntos de color por defecto)
-            }, v.abrir);
-            if (v.leyenda) await page.evaluate((ancha) => { if (typeof lgWide === 'function' && LG.wide !== !!ancha) lgWide(!!ancha); }, !!v.ancha);
-            if (v.senalar) {        // leyenda: se espera a que tenga filas y se señala la del medio (cable fuerte, anillo, nombre)
-                await page.waitForFunction(() => LG.open && LG.rows.length > 0, null, { timeout: 30000 }).catch(() => {});
-                await page.waitForTimeout(1200);
-                await page.evaluate((desde) => {
-                    evHoverSet(null); buHoverSet(null); lgRender();
-                    if (desde !== 'mapa') { const it = LG.rows[Math.floor(LG.rows.length / 2)]; if (it) lgHot(it.id); return; }
-                    // como el raton sobre el icono del globo: la fila del ultimo tercio (en la lista entera, fuera de la vista: tiene que desplazarse)
-                    const it = LG.rows[Math.floor(LG.rows.length * (LG.wide ? 0.8 : 0.33))];
-                    if (it && it.kind === 'e') evHoverSet(it.f); else if (it) buHoverSet({ properties: it.props, geometry: it.geom });
-                }, v.senalar);
-                await page.waitForTimeout(1200);
-            }
-            if (v.girar) {          // rueda: arrastre vertical sobre la lista (px; positivo = hacia arriba) y se suelta con impulso
-                await page.waitForFunction(() => LG.open && LG.rows.length > 0, null, { timeout: 30000 }).catch(() => {});
-                await page.waitForTimeout(1500);
-                const bx = await page.evaluate(() => { const r = document.getElementById('lg-list').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; });
-                await page.mouse.move(bx.x, bx.y + v.girar / 2); await page.mouse.down();
-                for (let i = 1; i <= 8; i++) { await page.mouse.move(bx.x, bx.y + v.girar / 2 - i * v.girar / 8); await page.waitForTimeout(16); }
-                await page.mouse.up(); await page.waitForTimeout(250);
-                await page.screenshot({ path: path.join(out, v.id + (dark ? '-oscuro' : '-claro') + '-girando.png') });
-                await page.waitForTimeout(2500);
-            }
-            if (v.run) await page.waitForFunction(() => Number.isFinite(clock.jd), null, { timeout: 30000 }).catch(() => {});   // el cielo (efemerides) carga aparte
-            if (v.run) {   // el reloj avanza por su punto de entrada real (clockSet) a v.yearsPerSec; se mide la ventana y se fotografia sin esperar (al parar, la ventana vuelve a la minima en ~2,5 s)
-                ventana = await page.evaluate(async (yps) => {
-                    const YEAR = 31557600; let last = performance.now(); const rates = []; const sinReloj = !Number.isFinite(clock.jd);
-                    if (sinReloj) return { sinReloj };
-                    const jd0 = clock.jd;
-                    for (let i = 0; i < 60; i++) {
-                        await new Promise((r) => setTimeout(r, 100)); const now = performance.now(); const dt = (now - last) / 1000; last = now;
-                        clockSet(clock.jd + yps * YEAR * dt / 86400, { tick: true }); rates.push(Math.round(evMotion.rate(performance.now()) / YEAR * 100) / 100);
-                    }
-                    eventsRefresh(); await new Promise((r) => setTimeout(r, 500));
-                    const imp = events.shown.map((f) => f.properties.importance); const fades = [...new Set([...EV_ENTER.meta.values()].map((m) => m.alpha))].sort();
-                    return { avanzoAnios: Math.round((clock.jd - jd0) / 365.25 * 100) / 100, tasaFinal: rates[rates.length - 1], ventana: EV_ENTER.win, dibujados: events.shown.length, impMin: imp.length ? Math.min(...imp) : null, niveles: fades };
-                }, v.yearsPerSec);
-            } else await settle(page);
-            const name = v.id + (dark ? '-oscuro' : '-claro');
-            const heap1 = Math.round(process.memoryUsage().heapUsed / 1048576);
-            await page.screenshot({ path: path.join(out, name + '.png') });
-            const heap2 = Math.round(process.memoryUsage().heapUsed / 1048576);
-            // Que rotulos se dibujan de verdad: por capa de origen y clase (el hecho que importa con las fronteras apagadas; no se deduce de la imagen)
-            const labels = await page.evaluate(() => {
-                const ids = map.getStyle().layers.filter((l) => l.type === 'symbol' && l.id.startsWith('ofm-') && map.getLayoutProperty(l.id, 'visibility') !== 'none').map((l) => l.id);
-                const by = {}; if (!ids.length) return by;
-                for (const f of map.queryRenderedFeatures({ layers: ids })) { const k = (f.sourceLayer || '?') + ':' + (f.properties.class || '-'); (by[k] = by[k] || new Set()).add(f.properties['name:latin'] || f.properties.name || '(sin nombre)'); }
-                return Object.fromEntries(Object.entries(by).map(([k, v]) => [k, { n: v.size, ejemplos: [...v].slice(0, 6) }]));
-            });
-            const road = await page.evaluate(() => {
-                const ids = map.getStyle().layers.filter((l) => l.id.startsWith('ofm-') && ['transportation', 'transportation_name'].includes(l['source-layer'])).map((l) => l.id);
-                const vis = ids.filter((i) => map.getLayoutProperty(i, 'visibility') !== 'none');
-                return { btnHidden: document.getElementById('btn-roads').hidden, on: ROADS.on, capas: ids.length, visibles: vis.length, dibujados: vis.length ? map.queryRenderedFeatures({ layers: vis }).length : 0 };
-            });
-            const ev = v.events ? await page.evaluate(() => {
-                const q = (l) => map.queryRenderedFeatures({ layers: [l] });
-                const feats = [...q('events-icon-bob'), ...q('events-icon-shake')]; const por = {};
-                feats.forEach((f) => { por[f.properties.icon] = (por[f.properties.icon] || 0) + 1; });
-                return { dibujados: events.shown.length, iconos: feats.length, por, capas: ['events-dot', 'events-pulse', 'events-icon-bob', 'events-icon-shake', 'events-circle'].map((l) => l + ':' + (map.getLayer(l) ? 'si' : 'NO')).join(' '), animacion: EVA.on };
-            }) : undefined;
-            const diseno = v.diseno ? await page.evaluate(() => {
-                const sel = ['#topbar', '#events', '#changes', '#sky', '#settings', '#info', '#status', '#space-note', '#timeline', '#toasts .toast', '#menu-layers-pop', '.maplibregl-ctrl-bottom-right'];
-                const bx = {}; sel.forEach((q) => { const e = document.querySelector(q); if (!e) return; const cs = getComputedStyle(e); const r = e.getBoundingClientRect(); if (cs.display === 'none' || cs.visibility === 'hidden' || r.width < 2 || r.height < 2) return; bx[q] = [Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom)]; });
-                const nombres = Object.keys(bx); const solapes = [];
-                for (let i = 0; i < nombres.length; i++) for (let j = i + 1; j < nombres.length; j++) { const a = bx[nombres[i]], b = bx[nombres[j]]; if (nombres[i] === '#menu-layers-pop' || nombres[j] === '#menu-layers-pop') continue; if (Math.min(a[2], b[2]) - Math.max(a[0], b[0]) > 1 && Math.min(a[3], b[3]) - Math.max(a[1], b[1]) > 1) solapes.push(nombres[i] + ' x ' + nombres[j]); }
-                const cs = getComputedStyle(document.body);
-                return { epoca: document.body.getAttribute('data-era'), insignia: document.getElementById('era-badge').hidden ? null : document.getElementById('era-badge').textContent, acento: cs.getPropertyValue('--accent').trim(), borde: getComputedStyle(document.getElementById('timeline')).borderTopStyle, mar: map.getPaintProperty('ocean', 'background-color'), puntos: map.getLayer('events-dot') ? map.getPaintProperty('events-dot', 'circle-stroke-color') : null, ventana: [innerWidth, innerHeight], cajas: bx, solapes };
-            }) : undefined;
-            rows.push({ name, heapMB: [heap0, heap1, heap2, Math.round(process.memoryUsage().heapUsed / 1048576)], ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, gapDbg: GAP.dbg || null, sea: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null, seaTiles: typeof SEA !== 'undefined' ? SEA.n : null, seaCpu: typeof SEA !== 'undefined' && SEA.cpu.length ? Math.round(SEA.cpu.reduce((a, b) => a + b, 0) / SEA.cpu.length * 10) / 10 : null, proj: map.getProjection && map.getProjection().type, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, rueda: typeof LGW !== 'undefined' && LG.open ? { n: LG.rows.length, f: Math.round(LGW.f * 100) / 100, filas: LGW.rows.length, elegido: LG.hot, tomada: LGW.engaged, paises: LGW.tree ? LGW.tree.countries.length : 0, ms: Math.round(LG.ms) } : null, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
-            if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
-            if (v.tipos) await page.evaluate(() => { typesSet(0, false); typesRender(); panelsUI.setSettingsOpen(false); });
-            if (v.abrir) await page.evaluate(() => { panelsUI.setSettingsOpen(false); hideInfo(); menus.closeAll(); if (typeof LG !== 'undefined' && LG.open) lgSet(false, false); });
-            if (v.vp) { await page.setViewportSize({ width: 1280, height: 800 }); await page.waitForTimeout(500); }
-            if (v.events) await page.evaluate(() => { if (events.open) document.getElementById('btn-events').click(); });
-            fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));   // parcial: si el proceso muere, queda lo medido hasta aqui
-            if (v.hide) await page.evaluate(() => { if (BR.off) document.getElementById('btn-borders').click(); });
         }
     }
     if (only) { fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2)); return; }   // modos `nombres` e `iconos`: solo esas vistas

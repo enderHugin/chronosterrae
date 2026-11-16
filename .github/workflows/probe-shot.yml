@@ -23,6 +23,9 @@ concurrency:
 jobs:
   shot:
     runs-on: ubuntu-latest
+    # 2026-11-16: una serie se quedo parada dos horas (esperaba sin limite a que el mapa quedara quieto) y bloqueaba las demas sondas.
+    # Cada vista tiene ya su limite (4 min); esto es la red de seguridad. Al cancelar, el paso de publicar corre igual (if: always()).
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
