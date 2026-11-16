@@ -111,6 +111,40 @@ const SUITE = [
     { id: 'portatil-1024x768-todo-abierto', diseno: true, events: true, abrir: ['ajustes', 'ficha'], vp: { width: 1024, height: 768 }, year: 1939, lng: 15, lat: 50, zoom: 4 }
 ];
 
+// JUMP (2026-11-16). NUNCA `page.evaluate(() => map.jumpTo(...))` con cuerpo de expresion: jumpTo devuelve el MAPA, y Playwright intenta
+// copiarlo entero a Node (estilo, teselas, bufferes de la GPU). Esa copia era el fallo de la sonda: la serie moria sin memoria (1-2 GB por vista),
+// las vistas pesadas tardaban 2-4 min en la fase 'vista' y la de iconos de 1939 se colgaba tras las de sin fronteras y carreteras. No era la web.
+// Lo encontro el modo perfil (abajo): el tiempo de esa fase se iba en serialize/jsonValue de Playwright y en getBufferSubData. Entre llaves.
+// Modo perfil: se repiten las vistas lentas, en oscuro, con un perfil de CPU de la pagina en la fase 'vista' (que funciones se llevan el tiempo).
+const PERFIL = ['alpes-2026', 'alpes-2026-sin-fronteras', 'mediterraneo-2026', 'mediterraneo-2026-sin-fronteras', 'islandia-2026-sin-fronteras', 'carreteras-roma-2026', 'carreteras-alpes-2026-sin-fronteras', 'iconos-europa-1939'];
+async function perfilEmpezar(page) {
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Profiler.enable'); await cdp.send('Profiler.setSamplingInterval', { interval: 2000 }); await cdp.send('Profiler.start');
+    return cdp;
+}
+async function perfilGuardar(cdp, out, name, estado, ms) {
+    const file = path.join(out, 'perfil-' + name + '.json');
+    try {
+        const t0 = Date.now();
+        const res = await Promise.race([cdp.send('Profiler.stop'), new Promise((r) => setTimeout(() => r(null), 60000))]);
+        const stopMs = Date.now() - t0;
+        if (!res || !res.profile) { fs.writeFileSync(file, JSON.stringify({ estado, ms, error: 'Profiler.stop no respondio en 60 s (hilo principal bloqueado fuera de JS?)' }, null, 2)); return; }
+        const pr = res.profile; const byId = new Map(pr.nodes.map((n) => [n.id, n])); const parent = new Map();
+        pr.nodes.forEach((n) => (n.children || []).forEach((c) => parent.set(c, n.id)));
+        const key = (n) => { const cf = n.callFrame; return (cf.functionName || '(anonima)') + ' ' + (cf.url ? cf.url.split('/').pop().split('?')[0] : '') + ':' + (cf.lineNumber + 1); };
+        const self = new Map(); const incl = new Map(); let total = 0;
+        for (let i = 0; i < pr.samples.length; i++) {
+            const us = pr.timeDeltas[i + 1] !== undefined ? pr.timeDeltas[i + 1] : 0; if (us <= 0) continue; total += us;
+            const n = byId.get(pr.samples[i]); if (!n) continue;
+            self.set(key(n), (self.get(key(n)) || 0) + us);
+            const seen = new Set(); for (let id = n.id; id !== undefined; id = parent.get(id)) { const k = key(byId.get(id)); if (seen.has(k)) continue; seen.add(k); incl.set(k, (incl.get(k) || 0) + us); }
+        }
+        const top = (m, n) => [...m].sort((a, b) => b[1] - a[1]).slice(0, n).map(([f, us]) => ({ f, ms: Math.round(us / 1000), pct: Math.round(us / total * 1000) / 10 }));
+        fs.writeFileSync(file, JSON.stringify({ estado, ms, stopMs, totalMs: Math.round(total / 1000), propio: top(self, 30), incluido: top(incl, 40) }, null, 2));
+    } catch (e) { fs.writeFileSync(file, JSON.stringify({ estado, ms, error: String(e && e.message || e).slice(0, 300) }, null, 2)); }
+    try { await cdp.detach(); } catch (e) { /* ya cerrada */ }
+}
+
 // Devuelve false si el mapa no llego a quieto en 30 s (antes se esperaba sin limite: la serie del 2026-11-16 se quedo dos horas parada).
 async function settle(page) {
     await page.waitForFunction(() => !state.bordersLoading, null, { timeout: 60000 }).catch(() => {});
@@ -123,7 +157,7 @@ async function settle(page) {
 // Mide por fases desde que se pide el cambio y recoge de cada archivo el tamano transferido (comprimido) y el descomprimido.
 async function runTiming(page, out) {
     const rows = [];
-    await page.evaluate(() => map.jumpTo({ center: [10, 50], zoom: 4.6 }));
+    await page.evaluate(() => { map.jumpTo({ center: [10, 50], zoom: 4.6 }); });
     const one = (label, year, kind) => page.evaluate(async ({ label, year, kind }) => {
         const t0 = performance.now(); const n0 = performance.getEntriesByType('resource').length;
         const prevB = state.borders; const prevL = state.land;
@@ -244,9 +278,9 @@ const RENEW_EVERY = 8;
 const VIEW_MS = 240000;
 async function runSuite(page, out, only, renew) {
     const rows = []; let nView = 0;
-    for (const dark of [true, false]) {
+    for (const dark of (only === 'perfil' ? [true] : [true, false])) {
         await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark);
-        for (const v of SUITE.filter((x) => (only === 'diseno' ? x.diseno : only === 'costa' ? x.costa : only === 'leyenda' ? x.leyenda : (!x.diseno && (!only || (only === 'iconos' ? x.events : x.names)))))) {
+        for (const v of SUITE.filter((x) => (only === 'perfil' ? PERFIL.includes(x.id) : only === 'diseno' ? x.diseno : only === 'costa' ? x.costa : only === 'leyenda' ? x.leyenda : (!x.diseno && (!only || (only === 'iconos' ? x.events : x.names)))))) {
             if (renew && nView && nView % RENEW_EVERY === 0) { page = await renew(page); await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark); }
             nView++; const t0v = Date.now(); const heap0 = liveMB();
             // fases: ms desde el inicio de la vista al pasar cada punto; en una vista colgada, la ultima dice donde se quedo.
@@ -255,8 +289,14 @@ async function runSuite(page, out, only, renew) {
             const doView = async (page) => {
                 let idleOk = null;
                 if (v.vp) { await page.setViewportSize({ width: v.vp.width, height: v.vp.height }); await page.waitForTimeout(800); }
-                await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
-                await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
+                // Modo perfil: perfil de CPU de la pagina mientras cambia de fecha y de sitio (la fase en la que se va casi todo el tiempo).
+                const prof = only === 'perfil' ? await perfilEmpezar(page) : null;
+                const vistaP = (async () => {
+                    await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
+                    await page.evaluate(([a, b, z]) => { map.jumpTo({ center: [a, b], zoom: z }); }, [v.lng, v.lat, v.zoom]);   // sin devolver el mapa (ver JUMP)
+                })();
+                if (prof) { vistaP.catch(() => {}); const r = await Promise.race([vistaP.then(() => 'ok', () => 'fallo'), new Promise((res) => setTimeout(() => res('mas de 200 s'), 200000))]); await perfilGuardar(prof, out, v.id + (dark ? '-oscuro' : '-claro'), r, Date.now() - t0v); }
+                await vistaP;
                 fase('vista');
                 if (v.hide) await page.evaluate(() => { if (!BR.off) document.getElementById('btn-borders').click(); });
                 if (v.roads) await page.evaluate(() => { if (!ROADS.on) document.getElementById('btn-roads').click(); });
@@ -423,10 +463,10 @@ async function runSuite(page, out, only, renew) {
     const renew = async () => { try { await browser.close(); } catch (e) { /* ya cerrado */ } browser = await launch(); return openPage(); };
     const page = await openPage();
     if (process.argv[4] === 'zoom') { await runZoom(page, out); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
-    if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos' || process.argv[4] === 'diseno' || process.argv[4] === 'costa' || process.argv[4] === 'leyenda') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : process.argv[4] === 'diseno' ? 'diseno' : process.argv[4] === 'costa' ? 'costa' : process.argv[4] === 'leyenda' ? 'leyenda' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
+    if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos' || process.argv[4] === 'diseno' || process.argv[4] === 'costa' || process.argv[4] === 'leyenda' || process.argv[4] === 'perfil') { await runSuite(page, out, process.argv[4] === 'perfil' ? 'perfil' : process.argv[4] === 'iconos' ? 'iconos' : process.argv[4] === 'diseno' ? 'diseno' : process.argv[4] === 'costa' ? 'costa' : process.argv[4] === 'leyenda' ? 'leyenda' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
     if (!diag) { await runSuite(page, out, undefined, renew); await browser.close(); return; }
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
-    await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [lng, lat, zoom]);
+    await page.evaluate(([a, b, z]) => { map.jumpTo({ center: [a, b], zoom: z }); }, [lng, lat, zoom]);
     await page.waitForFunction(() => !state.bordersLoading, null, { timeout: 60000 }).catch(() => {});
     await page.waitForTimeout(500);
     await page.evaluate(() => new Promise((r) => { if (map.loaded()) r(); else map.once('idle', r); }));

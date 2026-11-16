@@ -65,7 +65,7 @@ const [url, out] = process.argv.slice(2);
     });
     await page.unroute(IMG_URL, block);
     await step('lista notre-dame con imagenes', async () => {
-        await page.evaluate(() => map.jumpTo({ zoom: 1.3 }));     // muy lejos: sin icono dibujado, la señal del destino debe ir igual
+        await page.evaluate(() => { map.jumpTo({ zoom: 1.3 }); });   // entre llaves: map.jumpTo devuelve el mapa entero y Playwright lo copiaria a Node     // muy lejos: sin icono dibujado, la señal del destino debe ir igual
         await page.fill('#search', ''); await page.click('#search'); await page.keyboard.type('notre-dame de paris', { delay: 40 });
         await page.waitForFunction(() => document.querySelectorAll('#search-list li[role=option]').length > 0, null, { timeout: 60000 });
         await page.keyboard.press('ArrowDown'); await page.waitForTimeout(5000);
