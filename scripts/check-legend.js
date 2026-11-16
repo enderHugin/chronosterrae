@@ -216,5 +216,37 @@ check('rueda, inercia: con destino (toque o globo) llega a el y para; un destino
     check('continentes: rowSeen de un continente si alguno de los suyos se ve', () => { const S = L.buildTree(I.map((x) => ({ ...x, seen: x.id === 'ank' })), tf, ty, of); const oi = S.continents.findIndex((o) => o.key === 'AS'); const oe = S.continents.findIndex((o) => o.key === 'EU'); return L.rowSeen(S, { kind: 'continent', oi }) && !L.rowSeen(S, { kind: 'continent', oi: oe }); });
 }
 
+/* ---------------- orden del recorrido (2026-11-16: «de arriba a abajo, elementos de un país; cuando termina el país, a por otro…») ---------------- */
+{
+    const P = (id, lng, lat, c, o) => ({ id, x: lng, y: -lat, c, o });
+    const tf = (x) => (x.c ? { key: x.c, name: x.c } : null); const of = (x) => (x.o ? { key: x.o, name: x.o, last: x.o === 'sea' } : null);
+    check('recorrido: dentro del pais, de arriba abajo, y a casi la misma altura el mas cercano (sin zigzag de oeste a este)', () => {
+        const T = L.buildTree([P('a', 0, 50, 'X'), P('b', 10, 50, 'X'), P('c', 0.1, 49.95, 'X'), P('d', 10.1, 49.95, 'X'), P('e', 5, 45, 'X')], tf, null, null, { order: 'geo' });
+        const seq = T.seq.map((x) => x.id).join(''); return seq === 'acbde' ? true : seq;
+    });
+    check('recorrido: cada paso esta en la franja de arriba de lo que queda (de arriba abajo)', () => {
+        const its = []; for (let i = 0; i < 60; i++) its.push(P('p' + i, (i * 37) % 13, 40 + ((i * 53) % 17) * 0.6, 'X'));
+        const T = L.buildTree(its, tf, null, null, { order: 'geo' }); const seq = T.seq; const span = Math.max(...seq.map((x) => x.y)) - Math.min(...seq.map((x) => x.y)); const band = Math.max(0.25, 0.12 * span);
+        for (let i = 0; i < seq.length; i++) { const top = Math.min(...seq.slice(i).map((x) => x.y)); if (seq[i].y > top + band + 1e-9) return 'paso ' + i; }
+        return true;
+    });
+    check('recorrido: los elementos de un pais van seguidos; el pais siguiente es el que empieza mas cerca de donde acabo el anterior', () => {
+        // A al norte (acaba en el sur, en 44N 0E); B empieza en 43N 1E (cerca); C empieza mas al norte (49N) pero lejos al este (30E)
+        const T = L.buildTree([P('a1', 0, 50, 'A'), P('a2', 0, 44, 'A'), P('b1', 1, 43, 'B'), P('b2', 1, 40, 'B'), P('c1', 30, 49, 'C'), P('c2', 30, 47, 'C')], tf, null, null, { order: 'geo' });
+        const cs = T.countries.map((c) => c.key).join(''); const seq = T.seq.map((x) => x.id).join(',');
+        return cs === 'ABC' && seq === 'a1,a2,b1,b2,c1,c2' ? true : [cs, seq];
+    });
+    check('recorrido: los continentes van seguidos, encadenados por cercania; el mar al final', () => {
+        const T = L.buildTree([P('ny', -74, 40.7, 'USA', 'NA'), P('lima', -77, -12, 'PE', 'SA'), P('par', 2.35, 48.8, 'FR', 'EU'), P('atl', -40, 60, null, 'sea'), P('osl', 10.7, 59.9, 'NO', 'EU'), P('nuuk', -51.7, 64.2, 'GL', 'NA')], tf, null, of, { order: 'geo' });
+        const os = T.continents.map((o) => o.key).join(','); const seq = T.seq.map((x) => x.id).join(',');
+        return os === 'NA,SA,EU,sea' && seq === 'nuuk,ny,lima,osl,par,atl' ? true : [os, seq];
+    });
+    check('recorrido: sin nivel de tipo no hay filas de tipo; los elementos cuelgan del pais', () => {
+        const T = L.buildTree([P('a', 0, 50, 'A'), P('b', 1, 49, 'A'), P('c', 20, 48, 'B')], tf, null, null, { order: 'geo' });
+        const { rows } = L.wheelRows(T, 0, { above: 2000, below: 2000, h: { item: 26, type: 26, country: 22, continent: 22 } });
+        return !rows.some((r) => r.kind === 'type') && rows.map((r) => r.kind[0] + (r.it ? r.it.id : '')).join(' ') === 'c ia ib c ic' ? true : rows.map((r) => r.key);
+    });
+}
+
 console.log('\nPASS ' + passes.length); passes.forEach((p) => console.log('  ok  ' + p));
 if (fails) { console.log('\nFAIL ' + fails); process.exit(1); } else console.log('\nLeyenda: todo verde.');

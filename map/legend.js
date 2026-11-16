@@ -123,7 +123,42 @@
      * dentro, por altura. Devuelve { countries: [{ key, name, color, n, types: [{ key, name, n, items }] }], seq, at } con seq = elementos en
      * el orden de la rueda y at: Map id -> { c, t, k } (indices de pais, tipo y posicion en seq).
      */
-    function buildTree(items, countryOf, typeOf, continentOf) {
+    /**
+     * ORDEN DEL RECORRIDO (el creador, 2026-11-16: «de arriba a abajo, elementos de un país. Cuando termina el país, a por otro país. Cuando
+     * termina el continente, a otro continente… cumpliendo todo esto previamente, procurar también en general que el siguiente elemento sea
+     * físicamente próximo»). Dentro de un pais, de arriba abajo: entre los que quedan por la franja de arriba (BAND_FRAC de lo que mide el
+     * pais de norte a sur, al menos BAND_MIN grados) se toma el mas cercano al anterior (si no, de este a oeste y vuelta, iria en zigzag).
+     * Los paises de un continente: primero el que llega mas al norte; despues, el que empieza mas cerca de donde acabo el anterior. Igual
+     * los continentes (el mar, al final). Coordenadas: x = longitud, y = -latitud.
+     */
+    const BAND_FRAC = 0.12; const BAND_MIN = 0.25;
+    const geoKm = (a, b) => { const la = -a.y; const lb = -b.y; let dl = Math.abs(a.x - b.x) % 360; if (dl > 180) dl = 360 - dl; const x = dl * Math.cos(((la + lb) / 2) * Math.PI / 180); const y = la - lb; return x * x + y * y; };
+    function sweep(list) {
+        const rem = list.slice().sort((a, b) => a.y - b.y || a.x - b.x || String(a.id).localeCompare(String(b.id)));
+        if (rem.length < 3) return rem;
+        const band = Math.max(BAND_MIN, BAND_FRAC * (rem[rem.length - 1].y - rem[0].y));
+        const out = [rem.shift()];
+        while (rem.length) {
+            const cur = out[out.length - 1]; const top = rem[0].y; let best = 0; let bd = Infinity;
+            for (let i = 0; i < rem.length && rem[i].y <= top + band; i++) { const d = geoKm(cur, rem[i]); if (d < bd) { bd = d; best = i; } }
+            out.push(rem.splice(best, 1)[0]);
+        }
+        return out;
+    }
+    /** Cadena: el primero, el que llega mas al norte; despues, el mas cercano al final del anterior. g: { first, last, top, left, key }. */
+    function chain(groups) {
+        const rem = groups.slice().sort((a, b) => a.top - b.top || a.left - b.left || String(a.key).localeCompare(String(b.key)));
+        const out = rem.length ? [rem.shift()] : [];
+        while (rem.length) {
+            const end = out[out.length - 1].last; let best = 0; let bd = Infinity;
+            rem.forEach((g, i) => { const d = geoKm(end, g.first); if (d < bd) { bd = d; best = i; } });
+            out.push(rem.splice(best, 1)[0]);
+        }
+        return out;
+    }
+
+    function buildTree(items, countryOf, typeOf, continentOf, opts) {
+        const geo = Boolean(opts && opts.order === 'geo');
         // CONTINENTES (el creador, 2026-11-16: «tener en cuenta los continentes como grupos para no saltear países… si no, Estados Unidos
         // aparecería al lado de España»): primer nivel, si se da continentOf. Un pais que abarca dos continentes (el Imperio otomano) sale
         // en los dos, con lo suyo de cada uno. Sin continentOf (o todo en el mismo), un solo continente sin fila.
@@ -138,20 +173,33 @@
             const g = countryOf(it) || null; const ck = g && g.key ? g.key : '';
             if (!co.cs.has(ck)) co.cs.set(ck, { key: ck, name: ck ? g.name || ck : '', color: ck ? g.color || null : null, top: Infinity, left: Infinity, tmap: new Map() });
             const c = co.cs.get(ck); higher(c, it);
-            const ty = typeOf(it) || {}; const tk = ty.key || '?';
+            const ty = (typeOf ? typeOf(it) : { key: '' }) || {}; const tk = typeOf ? ty.key || '?' : '';     // sin typeOf: sin nivel de tipo
             if (!c.tmap.has(tk)) c.tmap.set(tk, { key: tk, name: ty.name || tk, top: Infinity, left: Infinity, items: [] });
             const t = c.tmap.get(tk); higher(t, it); t.items.push(it);
         }
         // de arriba abajo y, a la misma altura, de izquierda a derecha (el creador, 2026-11-16): continentes, paises, tipos y elementos por su
         // elemento mas alto; sin continente (o el mar, last) y sin pais, al final
         const byTop = (a, b) => a.top - b.top || a.left - b.left || String(a.key).localeCompare(String(b.key));
-        const conts = [...os.values()].sort((a, b) => (a.key === '' || a.last) - (b.key === '' || b.last) || byTop(a, b));
+        const endOf = (c) => { const ts = c.types; const l = ts[ts.length - 1].items; return { first: ts[0].items[0], last: l[l.length - 1] }; };
+        const tail = (g) => g.key === '' || g.last === true;
+        let conts = [...os.values()].sort((a, b) => tail(a) - tail(b) || byTop(a, b));
+        const built = new Map();
+        const typesOf = (c) => [...c.tmap.values()].sort(byTop).map((t) => ({ key: t.key, name: t.name, n: t.items.length, items: geo ? sweep(t.items) : t.items.sort((a, b) => a.y - b.y || xOf(a) - xOf(b) || String(a.id).localeCompare(String(b.id))) }));
+        const csOf = (co) => {
+            if (built.has(co)) return built.get(co);
+            let cs = [...co.cs.values()].map((c) => ({ key: c.key, name: c.name, color: c.color, top: c.top, left: c.left, types: typesOf(c) }));
+            if (geo) { cs.forEach((c) => Object.assign(c, endOf(c))); const named = chain(cs.filter((c) => c.key !== '')); cs = named.concat(cs.filter((c) => c.key === '')); }
+            else cs.sort((a, b) => (a.key === '') - (b.key === '') || byTop(a, b));
+            built.set(co, cs); return cs;
+        };
+        if (geo) {
+            const head = conts.filter((g) => !tail(g)); const rest = conts.filter(tail);
+            head.forEach((co) => { const cs = csOf(co); co.first = cs[0].first; co.last = cs[cs.length - 1].last; });
+            conts = chain(head).concat(rest);
+        }
         const countries = []; const continents = [];
         conts.forEach((co, oi) => {
-            const cs = [...co.cs.values()].sort((a, b) => (a.key === '') - (b.key === '') || byTop(a, b)).map((c) => {
-                const types = [...c.tmap.values()].sort(byTop).map((t) => ({ key: t.key, name: t.name, n: t.items.length, items: t.items.sort((a, b) => a.y - b.y || xOf(a) - xOf(b) || String(a.id).localeCompare(String(b.id))) }));
-                return { key: c.key, name: c.name, color: c.color, o: oi, n: types.reduce((s, t) => s + t.n, 0), types };
-            });
+            const cs = csOf(co).map((c) => ({ key: c.key, name: c.name, color: c.color, o: oi, n: c.types.reduce((s, t) => s + t.n, 0), types: c.types }));
             const first = countries.length; cs.forEach((c) => countries.push(c));
             continents.push({ key: co.key, name: co.name, n: cs.reduce((s, c) => s + c.n, 0), cs: cs.map((_, i) => first + i) });
         });
@@ -201,8 +249,9 @@
                 if (!flat) rows.push({ key: 'c:' + ck, kind: 'country', open: copen, oi, ci, n: c.n });
                 if (!copen) return;
                 c.types.forEach((t, ti) => {
-                    const topen = exp.has(ci + '/' + ti);
-                    rows.push({ key: 't:' + ck + '/' + t.key, kind: 'type', open: topen, oi, ci, ti, n: t.n });
+                    const hidden = t.key === '';          // sin nivel de tipo (orden del recorrido): los elementos van directamente bajo el pais
+                    const topen = hidden || exp.has(ci + '/' + ti);
+                    if (!hidden) rows.push({ key: 't:' + ck + '/' + t.key, kind: 'type', open: topen, oi, ci, ti, n: t.n });
                     if (!topen) return;
                     t.items.forEach((it) => { if (it.id === id) anchor = rows.length; rows.push({ key: 'i:' + it.id, kind: 'item', open: false, oi, ci, ti, it, n: 1 }); });
                 });
@@ -235,10 +284,14 @@
         const oOf = (ci) => tree.countries[ci].o || 0;
         // 0) continentes, del mas cercano al mas lejano (su lista de paises)
         const os = (tree.continents || []).map((o, oi) => oi).filter((oi) => oi !== po).sort((x, y) => Math.abs(x - po) - Math.abs(y - po) || y - x);
-        if ((tree.continents || []).length > 1) os.forEach((oi) => { oopen.add(oi); if (!fits(oi < po ? 'above' : 'below')) oopen.delete(oi); });
+        // cada lado deja de probar tras dos que no caben seguidos: los de mas alla tampoco cabrian (y cada prueba coloca todas las filas)
+        const miss = { above: 0, below: 0 }; const tryOpen = (sd, add, del) => { if (miss[sd] >= 2) return; add(); if (fits(sd)) miss[sd] = 0; else { del(); miss[sd]++; } };
+        if ((tree.continents || []).length > 1) os.forEach((oi) => { const sd = oi < po ? 'above' : 'below'; tryOpen(sd, () => oopen.add(oi), () => oopen.delete(oi)); });
+        miss.above = miss.below = 0;
         // 1) paises (de los continentes abiertos), del mas cercano al mas lejano (a igual distancia, primero el de abajo: se lee hacia abajo)
         const cs = tree.countries.map((c, ci) => ci).filter((ci) => ci !== pos.c && oopen.has(oOf(ci))).sort((x, y) => Math.abs(x - pos.c) - Math.abs(y - pos.c) || y - x);
-        if (tree.countries.length > 1) cs.forEach((ci) => { open.add(ci); if (!fits(side(ci, 0))) open.delete(ci); });
+        if (tree.countries.length > 1) cs.forEach((ci) => { const sd = side(ci, 0); tryOpen(sd, () => open.add(ci), () => open.delete(ci)); });
+        miss.above = miss.below = 0;
         // 2) tipos: los del pais del centro por cercania al tipo del centro; despues los de los paises abiertos, por cercania del pais
         const ts = [];
         tree.countries[pos.c].types.forEach((t, ti) => { if (ti !== pos.t) ts.push([pos.c, ti, Math.abs(ti - pos.t)]); });
@@ -247,7 +300,7 @@
             c.types.forEach((t, ti) => ts.push([ci, ti, dc + (ci < pos.c ? c.types.length - 1 - ti : ti)]));      // de su lado mas cercano hacia fuera
         });
         ts.sort((x, y) => x[2] - y[2] || y[0] - x[0]);
-        ts.forEach(([ci, ti]) => { const key = ci + '/' + ti; exp.add(key); if (!fits(side(ci, ti))) exp.delete(key); });
+        ts.forEach(([ci, ti]) => { if (tree.countries[ci].types[ti].key === '') return; const key = ci + '/' + ti; tryOpen(side(ci, ti), () => exp.add(key), () => exp.delete(key)); });
         return { open, exp, oopen };
     }
 
