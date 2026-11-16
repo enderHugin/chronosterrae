@@ -138,5 +138,23 @@ check('pinsToMask/maskToPins: ida y vuelta, y mascaras invalidas dan lista vacia
     return P.maskToPins(m).join() === 'info,solar-note' && P.pinsToMask([]) === 0 && P.maskToPins(31).length === 5 && P.maskToPins(32).length === 0 && P.maskToPins(-1).length === 0 && P.maskToPins(1.5).length === 0 && P.maskToPins('3').length === 0 && P.pinsToMask(['zzz']) === 0 ? true : m;
 });
 
+// ---- 2026-11-16: dentro de la franja libre (no encima de los botones) y tamaño elegido
+check('clampOffsetIn: el recuadro entero queda dentro del area (ni encima de la barra de arriba ni de la linea de tiempo)', () => {
+    const r0 = { left: 800, top: 100, width: 300, height: 200 }; const A = { left: 14, top: 60, right: 1140, bottom: 620 };
+    const up = P.clampOffsetIn(0, -500, r0, A); const dn = P.clampOffsetIn(0, 999, r0, A); const rt = P.clampOffsetIn(999, 0, r0, A); const ok = P.clampOffsetIn(-100, 50, r0, A);
+    return (r0.top + up.dy === 60 && r0.top + dn.dy + 200 === 620 && r0.left + rt.dx + 300 === 1140 && ok.dx === -100 && ok.dy === 50) || [up, dn, rt, ok];
+});
+check('clampOffsetIn: si no cabe, manda la esquina de arriba a la izquierda; sin area valida no rompe', () => {
+    const big = P.clampOffsetIn(0, 300, { left: 100, top: 100, width: 300, height: 900 }, { left: 0, top: 60, right: 1000, bottom: 600 });
+    const bad = P.clampOffsetIn(NaN, 5, { left: 0, top: 0, width: 10, height: 10 }, null);
+    return (big.dy === -40 && Number.isFinite(bad.dx) && bad.dy === 5) || [big, bad];
+});
+check('tamaños: limites (minimo legible, maximo del area) y viaje de ida y vuelta; lo invalido se descarta pieza a pieza', () => {
+    const a = P.clampSize(50, 50); const b = P.clampSize(900, 900, 600, 500); const c = P.clampSize(NaN, 300);
+    const s = P.serializeSizes({ info: { w: 420, h: 300 }, status: { w: 0, h: 10 } }); const back = P.parseSizes(s + ';zzz:300x300;solar-info:10x10;space-note:400x9999');
+    return (a.w === P.MIN_W && a.h === P.MIN_H && b.w === 600 && b.h === 500 && c.w === P.MIN_W && s === 'info:420x300' && Object.keys(back).join() === 'info' && back.info.h === 300
+        && Object.keys(P.parseSizes(42)).length === 0) || [a, b, c, s, back];
+});
+
 console.log(fails ? '\n' + fails + ' FALLO(S)' : '\nTodo en orden (' + 'panels' + ').');
 process.exit(fails ? 1 : 0);

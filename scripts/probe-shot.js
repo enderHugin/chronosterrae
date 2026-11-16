@@ -211,11 +211,16 @@ async function runZoom(page, out) {
     await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
 }
 
-async function runSuite(page, out, only) {
-    const rows = [];
+// La serie habitual moria sin memoria hacia la vista 30 (proceso de la sonda, 4 GB; 2026-11-15/16, sin inundacion de consola): cada
+// RENEW_EVERY vistas se cierra la pagina (y su contexto) y se abre otra limpia.
+const RENEW_EVERY = 8;
+async function runSuite(page, out, only, renew) {
+    const rows = []; let nView = 0;
     for (const dark of [true, false]) {
         await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark);
         for (const v of SUITE.filter((x) => (only === 'diseno' ? x.diseno : only === 'costa' ? x.costa : only === 'leyenda' ? x.leyenda : (!x.diseno && (!only || (only === 'iconos' ? x.events : x.names)))))) {
+            if (renew && nView && nView % RENEW_EVERY === 0) { page = await renew(page); await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark); }
+            nView++;
             if (v.vp) { await page.setViewportSize({ width: v.vp.width, height: v.vp.height }); await page.waitForTimeout(800); }
             await page.evaluate(([y]) => setTime(yearToYbp(y), { immediate: true }), [v.year]);
             await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [v.lng, v.lat, v.zoom]);
@@ -345,27 +350,33 @@ async function runSuite(page, out, only) {
     const [lng, lat, zoom] = [process.argv[4] || -1.35, process.argv[5] || 43.05, process.argv[6] || 11].map(Number);
     fs.mkdirSync(out, { recursive: true });
     const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'] });
-    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
     // Un mensaje repetido se guarda UNA vez con su recuento: un bucle de errores en la pagina agoto la memoria de este proceso (4 GB) y se perdio toda la captura
     const log = []; const counts = new Map();
     const note = (msg) => { const c = counts.get(msg) || 0; counts.set(msg, c + 1); if (c === 0 && log.length < 300) log.push(msg); };
-    page.on('pageerror', (e) => note('PAGEERROR ' + String(e.message).slice(0, 300)));
+
     // Diagnostico: el proceso murio por memoria SIN que el recuento de errores creciera: se cuentan TODOS los mensajes de consola (tipo + texto), se vuelcan a disco cada 3 s
     // (sobrevive a una muerte por memoria) y, si hay una inundacion, se corta con el culpable ya escrito.
     const all = new Map(); let total = 0; const dump = () => { try { fs.writeFileSync(path.join(out, 'console-counts.json'), JSON.stringify({ total, top: [...all].sort((a, b) => b[1] - a[1]).slice(0, 25).map(([m, n]) => ({ n, m })) }, null, 2)); } catch (e) { /* nada */ } };
     setInterval(dump, 3000).unref();
-    page.on('console', (m) => {
-        const k = m.type() + ' ' + m.text().slice(0, 160); total++; if (all.size < 5000 || all.has(k)) all.set(k, (all.get(k) || 0) + 1);
-        if (m.type() === 'error') note('CONSOLE ' + m.text().slice(0, 200));
-        if (total > 300000) { dump(); console.error('INUNDACION de consola: ' + total); process.exit(3); }
-    });
     globalThis.__logCounts = () => [...counts].filter(([, c]) => c > 1).map(([m, c]) => ({ n: c, m }));
-    await page.goto(url, { waitUntil: 'load' });
-    await page.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
-    await page.evaluate(() => { if (window.eventIconsAnimate) eventIconsAnimate(false); });   // la animacion de los iconos impide que el mapa llegue a idle: las capturas son de un fotograma fijo
+    const openPage = async () => {
+        const p = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+        p.on('pageerror', (e) => note('PAGEERROR ' + String(e.message).slice(0, 300)));
+        p.on('console', (m) => {
+            const k = m.type() + ' ' + m.text().slice(0, 160); total++; if (all.size < 5000 || all.has(k)) all.set(k, (all.get(k) || 0) + 1);
+            if (m.type() === 'error') note('CONSOLE ' + m.text().slice(0, 200));
+            if (total > 300000) { dump(); console.error('INUNDACION de consola: ' + total); process.exit(3); }
+        });
+        await p.goto(url, { waitUntil: 'load' });
+        await p.waitForFunction(() => typeof state !== 'undefined' && state.land && typeof map !== 'undefined', null, { timeout: 60000 });
+        await p.evaluate(() => { if (window.eventIconsAnimate) eventIconsAnimate(false); });   // la animacion de los iconos impide que el mapa llegue a idle: las capturas son de un fotograma fijo
+        return p;
+    };
+    const renew = async (old) => { try { await old.context().close(); } catch (e) { /* ya cerrada */ } return openPage(); };
+    const page = await openPage();
     if (process.argv[4] === 'zoom') { await runZoom(page, out); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
     if (process.argv[4] === 'nombres' || process.argv[4] === 'iconos' || process.argv[4] === 'diseno' || process.argv[4] === 'costa' || process.argv[4] === 'leyenda') { await runSuite(page, out, process.argv[4] === 'iconos' ? 'iconos' : process.argv[4] === 'diseno' ? 'diseno' : process.argv[4] === 'costa' ? 'costa' : process.argv[4] === 'leyenda' ? 'leyenda' : true); fs.writeFileSync(path.join(out, 'shot.log.json'), JSON.stringify({ log, repetidos: globalThis.__logCounts() }, null, 2)); await browser.close(); return; }
-    if (!diag) { await runSuite(page, out); await browser.close(); return; }
+    if (!diag) { await runSuite(page, out, undefined, renew); await browser.close(); return; }
     await page.evaluate(() => { if (!state.dark) document.getElementById('btn-theme').click(); setTime(yearToYbp(2026), { immediate: true }); });
     await page.evaluate(([a, b, z]) => map.jumpTo({ center: [a, b], zoom: z }), [lng, lat, zoom]);
     await page.waitForFunction(() => !state.bordersLoading, null, { timeout: 60000 }).catch(() => {});

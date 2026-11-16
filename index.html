@@ -195,19 +195,22 @@
         #status.warn { border-left-color: var(--warn); }
         #status.error { border-left-color: var(--err); }
 
-        #info {
-            position: relative; overflow: auto; padding: 14px 16px; display: none;
-        }
+        /* La ficha es un MARCO que no se desplaza (asas arriba, esquina de tamaño abajo) con el contenido desplazable dentro (#info-scroll):
+           asi la × y las asas quedan siempre a mano y la esquina en su sitio aunque el contenido sea corto o largo (2026-11-16). El codigo
+           la muestra con display:block; aqui se convierte en columna flexible. */
+        #info { position: relative; overflow: hidden; padding: 0; display: none; }
+        #info[style*="display: block"] { display: flex !important; flex-direction: column; }
+        #info-scroll { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 14px 16px; overscroll-behavior: contain; }
         #info h2 { margin: 0 0 6px; font: 700 18px var(--font); color: var(--accent); }
-        /* La × (y las asas de mover, fijar y ocultar) se quedan arriba al desplazar el recuadro (el creador, 2026-11-15: «si navegas abajo en la
-           ventana… la x de cerrar se va hacia arriba impidiendo el acceso a ese control»): flotan a la derecha pegadas arriba (sticky), y con
-           margen inferior negativo no ocupan alto (el texto no se aparta). */
+        /* La × (y las asas) se quedan arriba al desplazar (el creador, 2026-11-15: «si navegas abajo en la ventana… la x de cerrar se va hacia
+           arriba impidiendo el acceso a ese control»): en la ficha, porque el marco no se desplaza; en Sucesos, Cambios, Cielo y Ajustes,
+           porque flotan a la derecha pegadas arriba (sticky) con margen inferior negativo (no ocupan alto). */
         #info .row { margin-top: 7px; font-size: 13px; line-height: 1.4; word-break: break-word; }
         #info .row.row-link { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
         #info .row b { color: var(--accent); }
         #info .row strong { font-weight: 700; color: var(--text); } #info .row em { font-style: italic; }
         #info a { color: var(--accent); }
-        #info > .close { position: sticky; top: 0; float: right; z-index: 4; width: 28px; height: 28px; margin: -10px -12px -28px 6px; padding: 0; border: none; border-radius: 8px; background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
+        #info > .close { position: absolute; top: 4px; right: 4px; z-index: 4; width: 28px; height: 28px; margin: 0; padding: 0; border: none; border-radius: 8px; background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
 
         .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; color: #fff; }
         .badge.measurement, .badge.documentary, .badge.artefact { background: #2e7d32; }
@@ -331,12 +334,12 @@
         @media (pointer: coarse) { #status > .p-tools { margin-bottom: -30px; } }
         /* Ficha: la × va DENTRO de la fila de asas (una sola fila pegada arriba). Con dos flotantes, en el iPad la × y la chincheta se montaban
            (el creador, 2026-11-16). Las asas de mover y fijar solo se ven con el cursor encima (o siempre, en pantallas tactiles). */
-        #info > .p-tools { position: sticky; top: 0; right: auto; float: right; margin: -10px -12px -28px 6px; opacity: 1; align-items: center; gap: 4px; }
+        #info > .p-tools { position: absolute; top: 4px; right: 4px; float: none; margin: 0; opacity: 1; align-items: center; gap: 4px; }
         #info > .p-tools > .p-grip, #info > .p-tools > .p-pin { opacity: 0; transition: opacity 0.15s; }
         #info:hover > .p-tools > .p-grip, #info:hover > .p-tools > .p-pin, #info > .p-tools:focus-within > *, #info > .p-tools > .p-pin[aria-pressed="true"] { opacity: 1; }
         #info > .p-tools > .close { position: static; float: none; flex: none; margin: 0; width: 28px; height: 28px; padding: 0; border: none; border-radius: 8px;
             background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
-        @media (pointer: coarse) { #info > .p-tools { margin: -12px -14px -44px 6px; } #info > .p-tools > .p-grip, #info > .p-tools > .p-pin { opacity: 1; } #info > .p-tools > .close { width: 44px; height: 44px; font-size: 24px; } }
+        @media (pointer: coarse) { #info > .p-tools { top: 0; right: 0; } #info-head { padding-right: 84px; } #info > .p-tools > .p-grip, #info > .p-tools > .p-pin { opacity: 1; } #info > .p-tools > .close { width: 44px; height: 44px; font-size: 24px; } }
         .panel:hover > .p-tools, .p-tools:focus-within, .p-tools:hover { opacity: 1; }
         #space-note > .p-tools, #solar-note > .p-tools { top: -13px; right: 4px; }
         #status > .p-tools { margin-right: -8px; }   /* #status ahora tiene scroll propio: las asas van dentro, no sobre el borde (se recortarian) */   /* recuadros pequenos y sin recorte: las asas van encima del borde, no sobre el texto */
@@ -344,6 +347,16 @@
         @media (pointer: coarse) { .p-tools, #space-note > .p-tools, #solar-note > .p-tools { opacity: 0.85; } .p-tools button { width: 30px; height: 30px; font-size: 16px; } #space-note > .p-tools, #solar-note > .p-tools { top: -17px; } }
         .p-tools button { width: 22px; height: 22px; padding: 0; line-height: 1; border-radius: 11px; border: 1px solid var(--accent); background: var(--panel); color: var(--text); font-size: 12px; cursor: pointer; }
         .p-tools .p-grip { cursor: grab; touch-action: none; }
+        /* Mover: la ficha y la del cuerpo celeste se agarran por su titulo; avisos y notas, por cualquier sitio (sin asa ⠿, 2026-11-16) */
+        .p-grab-head #info-head, #solar-info.p-grab-head h2, .p-grab-all { cursor: grab; }
+        .p-grab-head #info-head, #solar-info.p-grab-head h2, #space-note.p-grab-all, #solar-note.p-grab-all { touch-action: none; user-select: none; -webkit-user-select: none; }
+        body.p-dragging, body.p-dragging * { cursor: grabbing !important; }
+        /* Tamaño: esquina de abajo a la izquierda, pegada abajo aunque se desplace el contenido */
+        #info > .p-size { position: absolute; left: 0; bottom: 0; width: 22px; height: 22px; margin: 0; cursor: nesw-resize; touch-action: none;
+            color: var(--accent); opacity: 0.4; transition: opacity 0.15s; z-index: 4; }
+        #info > .p-size svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+        #info:hover > .p-size, #info > .p-size:active, body.p-dragging #info > .p-size { opacity: 1; }
+        @media (pointer: coarse) { #info > .p-size { width: 30px; height: 30px; opacity: 0.7; } }
         /* Chincheta (el creador, 2026-11-15): fijar desde el propio recuadro que no se oculte solo; vale para todos los de su tipo (lo mismo que
            «Mostrar siempre» en Ajustes). Solo aparece si a ese recuadro le toca ocultarse con el nivel elegido. */
         .p-tools .p-pin { display: flex; align-items: center; justify-content: center; }
@@ -430,7 +443,8 @@
         @media (pointer: coarse) {
             .btn, #search, .menu-pop .btn { min-height: 44px; }
             #presets .btn, #clock-controls .btn, #settings .st-actions .btn, .sky-actions .btn, #solar-chips .btn { min-height: 40px; min-width: 40px; }
-            #info > .close, #events > .close, #changes > .close, #settings > .close, #sky > .close { width: 44px; height: 44px; margin: -12px -14px -44px 6px; font-size: 24px; }
+            #events > .close, #changes > .close, #settings > .close, #sky > .close { width: 44px; height: 44px; margin: -12px -14px -44px 6px; font-size: 24px; }
+            #info > .close { width: 44px; height: 44px; top: 0; right: 0; font-size: 24px; }
             #slider { height: 32px; }
             #key-step, #clock-rate, #time-input, .sky-grid select, .sky-grid input { min-height: 40px; }
             #settings label, #events-verif label, .sky-toggles label { padding: 6px 0; }
@@ -610,6 +624,9 @@
         .lg-ty .lg-ti b { position: absolute; right: -10px; bottom: -5px; min-width: 13px; padding: 0 2px; box-sizing: border-box; border-radius: 7px; background: var(--ty, var(--accent)); color: #fff;
             font: 700 8.5px/13px var(--font-ui); text-align: center; text-shadow: 0 0 2px rgba(0, 0, 0, 0.7); font-variant-numeric: tabular-nums; }
         .lg-h.open .lg-sw, .lg-h.open .lg-ti { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 5px; }
+        /* Columna: una barra del color del tipo une la cabecera abierta con sus elementos (que se vea que el numero son ESOS) */
+        #legend:not(.wide) .lg-it::before, #legend:not(.wide) .lg-ty.open::before { content: ''; position: absolute; left: 1px; top: -1px; bottom: -1px; width: 3px; border-radius: 2px; background: var(--ty, var(--accent)); opacity: 0.85; }
+        #legend:not(.wide) .lg-ty.open::before { top: 50%; }
         .lg-btn { width: 32px; height: calc(var(--lg-row, 26px) - 2px); padding: 0; border: 0; border-radius: 7px; background: transparent; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .lg-btn:hover, .lg-btn:focus-visible, .lg-row.hot .lg-btn { background: color-mix(in srgb, var(--accent) 28%, transparent); outline: none; }
         .lg-ico { width: 20px; height: 20px; display: block; flex: none; pointer-events: none; }
@@ -822,9 +839,9 @@
         </div>
         <div id="info" class="panel" role="region" aria-live="polite">
             <button class="close" id="info-close" type="button" aria-label="Close">×</button>
-            <div id="info-head"><h2 id="info-title"></h2><span id="info-rel"></span><button class="info-i" id="info-more-btn" type="button" aria-expanded="false" aria-controls="info-more" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 10.8v6" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="7.4" r="1.25" fill="currentColor" stroke="none"/></svg></button></div>
+            <div id="info-scroll"><div id="info-head"><h2 id="info-title"></h2><span id="info-rel"></span><button class="info-i" id="info-more-btn" type="button" aria-expanded="false" aria-controls="info-more" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 10.8v6" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="7.4" r="1.25" fill="currentColor" stroke="none"/></svg></button></div>
             <div id="info-body"></div>
-            <div id="info-more" hidden></div>
+            <div id="info-more" hidden></div></div>
         </div>
 
         <div id="space-note" role="status"></div>
@@ -963,6 +980,7 @@ const parsePrefs = (raw) => {
     if (Number.isInteger(p.ah) && p.ah >= 0 && p.ah <= 3) out.ah = p.ah;   // ocultar recuadros informativos solos: nivel 0 (nunca) a 3
     if (Number.isInteger(p.pp) && p.pp >= 0 && p.pp <= 31) out.pp = p.pp;   // recuadros «mostrar siempre» (mascara de bits)
     if (typeof p.pn === 'string' && p.pn.length <= 300 && /^[a-z0-9:,;-]*$/.test(p.pn)) out.pn = p.pn;   // posiciones de los recuadros (se valida pieza a pieza al usarlas)
+    if (typeof p.ps === 'string' && p.ps.length <= 300 && /^[a-z0-9:x;-]*$/.test(p.ps)) out.ps = p.ps;   // tamaños de los recuadros (idem)
     if (Number.isInteger(p.sl) && p.sl >= 0 && p.sl <= 7) out.sl = p.sl;   // capas del cielo: 1 lineas de constelaciones, 2 nombres de estrellas, 4 nombres de constelaciones
     if (p.ea === 0 || p.ea === 1 || p.ea === 2) out.ea = p.ea;   // ambientacion de epoca: 0 sin, 1 sutil, 2 completa (ChronosEras)
     if (p.ia === 0 || p.ia === 1 || p.ia === 2) out.ia = p.ia;   // animacion de iconos y saltos de tiempo: 0 apagada, 1 ahorro, 2 completa (antes 0/1: el 1 antiguo pasa a ahorro)
@@ -992,7 +1010,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined, tl: prefs.tl, pg: prefs.pg || undefined, lg: prefs.lg, lgw: prefs.lgw, lgd: prefs.lgd, lgx: prefs.lgx };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ps: prefs.ps || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined, tl: prefs.tl, pg: prefs.pg || undefined, lg: prefs.lg, lgw: prefs.lgw, lgd: prefs.lgd, lgx: prefs.lgx };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -1109,7 +1127,7 @@ const i18n = {
         },
         menu: { layers: 'Capas', more: 'Más', layersTip: 'Capas del mapa', moreTip: 'Cambios, ajustes, idioma y tema' },
         ui: {
-            button: 'Ajustes', title: 'Ajustes', move: 'Mover', hide: 'Ocultar', pin: 'Fijar: que no se oculte solo (todos los de su tipo)', unpin: 'Fijado: no se oculta solo. Pulsa para que vuelva a ocultarse', undo: 'Deshacer', redo: 'Rehacer', reset: 'Restablecer posiciones', moveHint: 'Arrastra para mover (o usa las flechas)',
+            button: 'Ajustes', title: 'Ajustes', move: 'Mover', hide: 'Ocultar', pin: 'Fijar: que no se oculte solo (todos los de su tipo)', resize: 'Arrastra para cambiar el tamaño', unpin: 'Fijado: no se oculta solo. Pulsa para que vuelva a ocultarse', undo: 'Deshacer', redo: 'Rehacer', reset: 'Restablecer posiciones', moveHint: 'Arrastra para mover (o usa las flechas)',
             autohide: {
                 title: 'Ocultar recuadros informativos solos (2 s)',
                 note: 'Se desvanecen a los 2 s y reaparecen al cambiar su contenido. Con el cursor encima no se ocultan, y los avisos y advertencias nunca se ocultan solos.',
@@ -1333,7 +1351,7 @@ const i18n = {
         },
         menu: { layers: 'Layers', more: 'More', layersTip: 'Map layers', moreTip: 'Changes, settings, language and theme' },
         ui: {
-            button: 'Settings', title: 'Settings', move: 'Move', hide: 'Hide', pin: 'Pin: never auto-hide (all boxes of this kind)', unpin: 'Pinned: never auto-hides. Tap to let it hide again', undo: 'Undo', redo: 'Redo', reset: 'Reset positions', moveHint: 'Drag to move (or use the arrow keys)',
+            button: 'Settings', title: 'Settings', move: 'Move', hide: 'Hide', pin: 'Pin: never auto-hide (all boxes of this kind)', resize: 'Drag to resize', unpin: 'Pinned: never auto-hides. Tap to let it hide again', undo: 'Undo', redo: 'Redo', reset: 'Reset positions', moveHint: 'Drag to move (or use the arrow keys)',
             autohide: {
                 title: 'Auto-hide info boxes (2 s)',
                 note: 'They fade out after 2 s and reappear when their content changes. They stay while the cursor is over them, and warnings and errors never hide by themselves.',
@@ -4045,7 +4063,20 @@ panelsUI = (function () {
         ['redo-btn', 'st-redo'].forEach((id) => { const b = byId(id); if (b) b.disabled = !s.canRedo; });
     }
 
-    function persistLayout() { savePrefs({ pn: P.serializeLayout(offsets) }); }
+    const sizes = P.parseSizes(prefs.ps || '');
+    function persistLayout() { savePrefs({ pn: P.serializeLayout(offsets), ps: P.serializeSizes(sizes) }); }
+    /** Franja donde puede ir un recuadro: la del dock (entre la barra de arriba, la linea de tiempo y la leyenda); fuera del dock, la ventana. */
+    function areaOf(id) {
+        const e = byId(id); const d = byId('dock');
+        if (d && e && d.contains(e)) { const r = d.getBoundingClientRect(); return { left: r.left, top: r.top, right: r.right, bottom: r.bottom }; }
+        return { left: 4, top: 4, right: window.innerWidth - 4, bottom: window.innerHeight - 4 };
+    }
+    function setSize(id, sz, persist) {
+        const e = byId(id); if (!e) return;
+        if (sz && sz.w && sz.h) { sizes[id] = { w: sz.w, h: sz.h }; e.style.width = sz.w + 'px'; e.style.height = sz.h + 'px'; e.style.maxHeight = 'none'; e.style.maxWidth = 'none'; e.setAttribute('data-psized', '1'); }
+        else { delete sizes[id]; e.style.width = e.style.height = e.style.maxHeight = e.style.maxWidth = ''; e.removeAttribute('data-psized'); }
+        if (persist) persistLayout();
+    }
     function setOffset(id, off, persist) {
         const e = byId(id); if (!e) return;
         if (off.dx || off.dy) offsets[id] = { dx: off.dx, dy: off.dy }; else delete offsets[id];
@@ -4059,7 +4090,7 @@ panelsUI = (function () {
     }
     function reclamp(id) {                 // si cambio la ventana (o el recuadro), que no quede fuera de la pantalla
         const e = byId(id); if (!e || !offsets[id] || !e.getClientRects().length) return;
-        const c = offsets[id]; const o = P.clampOffset(c.dx, c.dy, rect0Of(id), window.innerWidth, window.innerHeight);
+        const c = offsets[id]; const o = P.clampOffsetIn(c.dx, c.dy, rect0Of(id), areaOf(id));
         if (o.dx !== c.dx || o.dy !== c.dy) setOffset(id, o, true);
     }
 
@@ -4080,6 +4111,7 @@ panelsUI = (function () {
     }
     function applyAction(a, dir) {
         if (a.type === 'move') { setOffset(a.id, dir === 'undo' ? a.from : a.to, true); reclamp(a.id); return; }
+        if (a.type === 'size') { setSize(a.id, dir === 'undo' ? a.from : a.to, true); reclamp(a.id); return; }
         if (a.id === 'info') {
             if (dir === 'undo' && a.snap) { if (a.snap.info.ev) showEvent(a.snap.info.ev); else showInfo(a.snap.info.title, a.snap.info.rows); if (a.snap.key) setHighlightKey(a.snap.key); } else if (dir === 'redo') hideInfo();
             return;
@@ -4089,8 +4121,79 @@ panelsUI = (function () {
 
     /* ---- Asas: mover y ocultar ---- */
     function nudge(id, dx, dy) {
-        const c = curOffset(id); const o = P.clampOffset(c.dx + dx, c.dy + dy, rect0Of(id), window.innerWidth, window.innerHeight);
+        const c = curOffset(id); const o = P.clampOffsetIn(c.dx + dx, c.dy + dy, rect0Of(id), areaOf(id));
         const from = { dx: c.dx, dy: c.dy }; setOffset(id, o, true); history.push({ type: 'move', id, from, to: o });
+    }
+    // Donde se agarra cada recuadro para moverlo (el creador, 2026-11-16: que el arrastre no sea solo desde el asa ⠿, «sino desde mas
+    // sitios, y ese control quitarlo»): la ficha, por su cabecera (titulo); la del cuerpo celeste, por su titulo; avisos y notas, por
+    // cualquier sitio. Nunca desde un boton, enlace, campo, imagen o fila que se pueda tocar. El arrastre empieza al pasar de 5 px: un
+    // toque o un clic sobre la cabecera sigue siendo un toque.
+    const NO_GRAB = 'button, a, input, select, textarea, label, summary, img, .row-link, [role="button"], .p-size, .p-tools';
+    function grabHit(id, e, target) {
+        if (!target || target.closest(NO_GRAB)) return false;
+        if (id === 'info') return target === e || Boolean(target.closest('#info-head'));
+        if (id === 'solar-info') return target === e || Boolean(target.closest('h2'));
+        return true;
+    }
+    let pend = null;
+    function wireDrag(id, e) {
+        e.addEventListener('pointerdown', (ev) => {
+            if ((ev.button !== undefined && ev.button !== 0) || drag || !grabHit(id, e, ev.target)) return;
+            const c = curOffset(id); pend = { id, sx: ev.clientX, sy: ev.clientY, from: { dx: c.dx, dy: c.dy }, rect0: rect0Of(id), pid: ev.pointerId };
+            try { e.setPointerCapture(ev.pointerId); } catch (err) { /* sin captura: el arrastre sigue mientras el puntero este encima */ }   // ya: el primer movimiento puede salir del recuadro
+        });
+        e.addEventListener('pointermove', (ev) => {
+            if (pend && pend.pid === ev.pointerId && !drag) {
+                if (Math.hypot(ev.clientX - pend.sx, ev.clientY - pend.sy) < 5) return;
+                drag = pend; pend = null; drag.moved = true;
+                document.body.classList.add('p-dragging'); ah.hover(id, true);
+            }
+            if (!drag || drag.pid !== ev.pointerId || drag.id !== id) return;
+            ev.preventDefault();
+            setOffset(id, P.clampOffsetIn(drag.from.dx + ev.clientX - drag.sx, drag.from.dy + ev.clientY - drag.sy, drag.rect0, areaOf(id)), false);
+        });
+        const end = (ev) => {
+            if (pend && pend.pid === ev.pointerId) pend = null;
+            if (!drag || drag.pid !== ev.pointerId || drag.id !== id) return;
+            const d = drag; drag = null; document.body.classList.remove('p-dragging'); persistLayout();
+            history.push({ type: 'move', id, from: d.from, to: curOffset(id) }); ah.hover(id, e.matches(':hover'));
+            const eat = (cev) => { cev.stopPropagation(); cev.preventDefault(); };     // el clic que sigue a un arrastre no cuenta
+            e.addEventListener('click', eat, { capture: true, once: true }); setTimeout(() => e.removeEventListener('click', eat, { capture: true }), 0);
+        };
+        e.addEventListener('pointerup', end); e.addEventListener('pointercancel', end);
+        // teclado: Alt + flechas mueve el recuadro que tiene el foco
+        e.addEventListener('keydown', (ev) => {
+            if (!ev.altKey) return; const k = { ArrowLeft: [-10, 0], ArrowRight: [10, 0], ArrowUp: [0, -10], ArrowDown: [0, 10] }[ev.key];
+            if (k) { ev.preventDefault(); nudge(id, k[0], k[1]); }
+        });
+    }
+    // Tamaño (la ficha; el creador, 2026-11-16: «¿que tal redimensionable?»): esquina de abajo a la IZQUIERDA (la ficha va pegada a la derecha
+    // y crece hacia la izquierda y hacia abajo). Se recuerda; «Restablecer posiciones» lo quita; deshacer lo deshace.
+    const RESIZABLE = new Set(['info']);
+    function wireSize(id, e) {
+        if (!RESIZABLE.has(id) || e.querySelector(':scope > .p-size')) return;
+        const h = document.createElement('div'); h.className = 'p-size'; h.setAttribute('aria-hidden', 'true'); h.title = t('ui.resize');
+        h.innerHTML = '<svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L14 19 M3 13 L9 19 M3 18 L4 19"/></svg>';
+        let rz = null;
+        h.addEventListener('pointerdown', (ev) => {
+            if (ev.button !== undefined && ev.button !== 0) return;
+            ev.preventDefault(); ev.stopPropagation();
+            const r = e.getBoundingClientRect(); rz = { pid: ev.pointerId, x0: ev.clientX, y0: ev.clientY, w0: r.width, h0: r.height, top: r.top, right: r.right, from: sizes[id] ? { ...sizes[id] } : null };
+            try { h.setPointerCapture(ev.pointerId); } catch (err) { /* idem */ }
+            document.body.classList.add('p-dragging'); ah.hover(id, true);
+        });
+        h.addEventListener('pointermove', (ev) => {
+            if (!rz || rz.pid !== ev.pointerId) return;
+            const A = areaOf(id); const sz = P.clampSize(rz.w0 + (rz.x0 - ev.clientX), rz.h0 + (ev.clientY - rz.y0), rz.right - A.left, A.bottom - rz.top);
+            setSize(id, sz, false);
+        });
+        const end = (ev) => {
+            if (!rz || rz.pid !== ev.pointerId) return;
+            const from = rz.from; rz = null; document.body.classList.remove('p-dragging'); persistLayout(); reclamp(id);
+            history.push({ type: 'size', id, from, to: sizes[id] ? { ...sizes[id] } : null }); ah.hover(id, e.matches(':hover'));
+        };
+        h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
+        e.appendChild(h);
     }
     function ensureTools(id) {
         const e = byId(id); if (!e) return;
@@ -4099,32 +4202,12 @@ panelsUI = (function () {
             e.addEventListener('pointerenter', () => ah.hover(id, true)); e.addEventListener('pointerleave', () => { if (!drag) ah.hover(id, false); });
             e.addEventListener('focusin', () => ah.hover(id, true)); e.addEventListener('focusout', () => ah.hover(id, false));
             new MutationObserver(scan).observe(e, { attributes: true, attributeFilter: ['style', 'class', 'hidden'], childList: true, subtree: true, characterData: true });
+            wireDrag(id, e); e.classList.add('p-grab-' + (id === 'info' || id === 'solar-info' ? 'head' : 'all'));
+            if (sizes[id]) setSize(id, sizes[id], false);
         }
+        wireSize(id, e);
         if (e.querySelector(':scope > .p-tools')) return;
         const box = document.createElement('div'); box.className = 'p-tools';
-        const grip = document.createElement('button'); grip.type = 'button'; grip.className = 'p-grip'; grip.textContent = '⠿';
-        grip.addEventListener('pointerdown', (ev) => {
-            if (ev.button !== undefined && ev.button !== 0) return;
-            ev.preventDefault(); const c = curOffset(id);
-            drag = { id, sx: ev.clientX, sy: ev.clientY, from: { dx: c.dx, dy: c.dy }, rect0: rect0Of(id), pid: ev.pointerId };
-            try { grip.setPointerCapture(ev.pointerId); } catch (err) { /* sin captura: el arrastre sigue mientras el puntero este encima */ }
-            document.body.classList.add('p-dragging'); ah.hover(id, true);
-        });
-        grip.addEventListener('pointermove', (ev) => {
-            if (!drag || drag.pid !== ev.pointerId) return;
-            setOffset(id, P.clampOffset(drag.from.dx + ev.clientX - drag.sx, drag.from.dy + ev.clientY - drag.sy, drag.rect0, window.innerWidth, window.innerHeight), false);
-        });
-        const end = (ev) => {
-            if (!drag || drag.pid !== ev.pointerId) return;
-            const d = drag; drag = null; document.body.classList.remove('p-dragging'); persistLayout();
-            history.push({ type: 'move', id, from: d.from, to: curOffset(id) }); ah.hover(id, e.matches(':hover'));
-        };
-        grip.addEventListener('pointerup', end); grip.addEventListener('pointercancel', end);
-        grip.addEventListener('keydown', (ev) => {
-            const k = { ArrowLeft: [-10, 0], ArrowRight: [10, 0], ArrowUp: [0, -10], ArrowDown: [0, 10] }[ev.key];
-            if (k) { ev.preventDefault(); nudge(id, k[0], k[1]); }
-        });
-        box.appendChild(grip);
         const pin = document.createElement('button'); pin.type = 'button'; pin.className = 'p-pin';
         pin.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M9 2h6v2l-1 1v5l3 3v2h-4v6l-1 2-1-2v-6H7v-2l3-3V5L9 4z"/></svg>';
         pin.addEventListener('click', () => { const on = ah.pinned().indexOf(id) < 0; ah.setPinned(id, on); savePrefs({ pp: P.pinsToMask(ah.pinned()) }); pinsSync(); renderSettings(); });
@@ -4144,8 +4227,7 @@ panelsUI = (function () {
     function texts() {
         P.IDS.forEach((id) => {
             const e = byId(id); if (!e) return; const box = e.querySelector(':scope > .p-tools'); if (!box) return;
-            const g = box.querySelector('.p-grip'); const h = box.querySelector('.p-hide'); const pin = box.querySelector('.p-pin');
-            g.title = t('ui.moveHint'); g.setAttribute('aria-label', t('ui.move') + ': ' + t('ui.pins.' + id));
+            const h = box.querySelector('.p-hide'); const pin = box.querySelector('.p-pin');
             if (h) { h.title = t('ui.hide'); h.setAttribute('aria-label', t('ui.hide') + ': ' + t('ui.pins.' + id)); }
             if (pin) {
                 const on = ah.pinned().indexOf(id) >= 0; const lv = ah.level();
@@ -4179,7 +4261,7 @@ panelsUI = (function () {
                 if (gone.has(id) && prev.sig !== null && sig !== prev.sig && sig.trim() && !sticky) setGone(id, false);
                 const shown = e.getClientRects().length > 0 && getComputedStyle(e).visibility !== 'hidden' && sig.trim().length > 0 && !e.hasAttribute('data-pgone');
                 if (sig.trim()) e.removeAttribute('data-pempty'); else e.setAttribute('data-pempty', '1');
-                if (id === 'status') ah.setProtected('status', /\b(warn|error)\b/.test(e.className));
+                if (id === 'status') { ah.setProtected('status', /\b(warn|error)\b/.test(e.className)); e.style.touchAction = e.scrollHeight > e.clientHeight + 2 ? 'pan-y' : 'none'; }   // sin scroll: se arrastra con el dedo
                 if (shown && (!prev.shown || sig !== prev.sig)) { ah.touch(id); reclamp(id); } else if (!shown && prev.shown) ah.release(id);
                 known[id] = { shown, sig };
             });
@@ -4201,8 +4283,11 @@ panelsUI = (function () {
     byId('undo-btn').addEventListener('click', () => history.undo()); byId('redo-btn').addEventListener('click', () => history.redo());
     byId('st-undo').addEventListener('click', () => history.undo()); byId('st-redo').addEventListener('click', () => history.redo());
     byId('st-reset').addEventListener('click', () => {
-        const ids = P.IDS.filter((id) => offsets[id]); if (!ids.length) return;
-        ids.forEach((id) => { const from = curOffset(id); setOffset(id, { dx: 0, dy: 0 }, false); history.push({ type: 'move', id, from: { dx: from.dx, dy: from.dy }, to: { dx: 0, dy: 0 } }); });
+        const ids = P.IDS.filter((id) => offsets[id] || sizes[id]); if (!ids.length) return;
+        ids.forEach((id) => {
+            if (offsets[id]) { const from = curOffset(id); setOffset(id, { dx: 0, dy: 0 }, false); history.push({ type: 'move', id, from: { dx: from.dx, dy: from.dy }, to: { dx: 0, dy: 0 } }); }
+            if (sizes[id]) { const from = { ...sizes[id] }; setSize(id, null, false); history.push({ type: 'size', id, from, to: null }); }
+        });
         persistLayout();
     });
 
@@ -5662,7 +5747,15 @@ function lgWires() {
             if (LG.hot === r.it.id && LGW.engaged && (!touch || LG.touchHot === r.it.id)) { LG.touchHot = null; lgOpen(r.it); return; }
             LG.touchHot = r.it.id; lgSpinTo(r.it.id); return;
         }
-        const c = T.countries[r.ci]; const ty = r.kind === 'type' ? c.types[r.ti] : c.types[0];
+        // Cabecera plegada: gira a su primer elemento. Cabecera ABIERTA (el grupo del centro): recorre sus elementos, uno por toque (el
+        // creador, 2026-11-16: «si clico el elemento que tiene el globo [el numero] no pasa nada»: ya estaba en el primero).
+        const c = T.countries[r.ci];
+        if (r.open && LG.hot && T.at.has(LG.hot)) {
+            const cur = T.at.get(LG.hot);
+            if (r.kind === 'type') { const ty = c.types[r.ti]; const i = ty.items.findIndex((x) => x.id === LG.hot); lgSpinTo(ty.items[(i + 1) % ty.items.length].id); return; }
+            const nt = c.types[(cur.t + 1) % c.types.length]; lgSpinTo(nt.items[0].id); return;     // pais abierto: al tipo siguiente
+        }
+        const ty = r.kind === 'type' ? c.types[r.ti] : c.types[0];
         if (ty && ty.items[0]) lgSpinTo(ty.items[0].id);
     });
     list.addEventListener('keydown', (e) => {

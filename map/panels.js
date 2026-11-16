@@ -122,6 +122,43 @@
         return { dx: cl(dx, Math.min(minDx, maxDx), Math.max(minDx, maxDx)), dy: cl(dy, Math.min(minDy, maxDy), Math.max(minDy, maxDy)) };
     }
 
+    /**
+     * Como clampOffset, pero el recuadro ENTERO queda dentro de `area` ({ left, top, right, bottom }): la franja libre entre la barra de
+     * arriba, la linea de tiempo y la leyenda (el creador, 2026-11-16: la ficha «se puede colocar fuera de control», encima de los botones).
+     * Si no cabe, manda su esquina de arriba a la izquierda (que quede a mano lo de arriba: titulo y ×).
+     */
+    function clampOffsetIn(dx, dy, rect0, area) {
+        const cl = (v, lo, hi) => Math.round(Math.max(lo, Math.min(hi, Number.isFinite(v) ? v : 0)));
+        if (!area || !(area.right > area.left) || !(area.bottom > area.top)) return { dx: cl(dx, -MAX_OFFSET, MAX_OFFSET), dy: cl(dy, -MAX_OFFSET, MAX_OFFSET) };
+        const minDx = area.left - rect0.left; const maxDx = Math.max(minDx, area.right - rect0.width - rect0.left);
+        const minDy = area.top - rect0.top; const maxDy = Math.max(minDy, area.bottom - rect0.height - rect0.top);
+        return { dx: cl(dx, minDx, maxDx), dy: cl(dy, minDy, maxDy) };
+    }
+
+    /* Tamaño elegido por el usuario (el creador, 2026-11-16: «¿qué tal redimensionable?»): { id: { w, h } } <-> "info:420x300". */
+    const MIN_W = 220; const MIN_H = 120; const MAX_WH = 3000;
+    /** Tamaño dentro de limites (minimo legible; maximo, el del area si se da). */
+    function clampSize(w, h, maxW, maxH) {
+        const hiW = Math.max(MIN_W, Number.isFinite(maxW) ? maxW : MAX_WH); const hiH = Math.max(MIN_H, Number.isFinite(maxH) ? maxH : MAX_WH);
+        const cl = (v, lo, hi) => Math.round(Math.max(lo, Math.min(hi, Number.isFinite(v) ? v : lo)));
+        return { w: cl(w, MIN_W, hiW), h: cl(h, MIN_H, hiH) };
+    }
+    function serializeSizes(map) {
+        return IDS.filter((id) => map && map[id] && map[id].w && map[id].h).map((id) => id + ':' + Math.round(map[id].w) + 'x' + Math.round(map[id].h)).join(';');
+    }
+    function parseSizes(str) {
+        const out = {};
+        if (typeof str !== 'string' || str.length > 300) return out;
+        for (const part of str.split(';')) {
+            const m = /^([a-z-]+):(\d{2,4})x(\d{2,4})$/.exec(part);
+            if (!m || !isId(m[1])) continue;
+            const w = parseInt(m[2], 10); const h = parseInt(m[3], 10);
+            if (w < MIN_W || h < MIN_H || w > MAX_WH || h > MAX_WH) continue;
+            out[m[1]] = { w, h };
+        }
+        return out;
+    }
+
     /** { id: {dx,dy} } -> "info:12,-30;status:0,8" (solo ids conocidos y desplazamientos no nulos). */
     function serializeLayout(map) {
         return IDS.filter((id) => map && map[id] && (map[id].dx || map[id].dy)).map((id) => id + ':' + Math.round(map[id].dx) + ',' + Math.round(map[id].dy)).join(';');
@@ -143,5 +180,5 @@
     const pinsToMask = (list) => IDS.reduce((m, id, i) => (list && list.indexOf(id) >= 0 ? m | (1 << i) : m), 0);
     const maskToPins = (m) => (Number.isInteger(m) && m >= 0 && m < (1 << IDS.length) ? IDS.filter((id, i) => m & (1 << i)) : []);
 
-    return { IDS, LEVEL_OF, MAX_LEVEL, DELAY_MS, MAX_OFFSET, autoHides, createAutoHide, createHistory, clampOffset, serializeLayout, parseLayout, pinsToMask, maskToPins, isLevel, isId };
+    return { IDS, LEVEL_OF, MAX_LEVEL, DELAY_MS, MAX_OFFSET, MIN_W, MIN_H, autoHides, createAutoHide, createHistory, clampOffset, clampOffsetIn, clampSize, serializeSizes, parseSizes, serializeLayout, parseLayout, pinsToMask, maskToPins, isLevel, isId };
 });
