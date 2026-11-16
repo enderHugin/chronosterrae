@@ -144,28 +144,72 @@
         return { countries, seq, at };
     }
 
-    /**
-     * Filas de la rueda con el elemento seq[k] desplegado: cada pais es UNA fila salvo el del elemento (su cabecera y sus tipos); cada tipo
-     * es una fila salvo el del elemento (su cabecera y sus elementos). Con un solo pais, o ninguno con nombre, no se pone fila de pais.
-     * Devuelve { rows: [{ key, kind: 'country'|'type'|'item', open, ci, ti, it, n }], anchor } (anchor: fila del elemento k, o -1).
-     */
-    function wheelRows(tree, k) {
-        const rows = []; let anchor = -1; if (!tree || !tree.seq.length) return { rows, anchor };
-        const kk = Math.max(0, Math.min(tree.seq.length - 1, Math.round(k) || 0));
-        const pos = tree.at.get(tree.seq[kk].id);
-        const flat = tree.countries.length === 1;
+    /** Filas para un juego dado de paises abiertos (open: indices) y tipos desplegados (exp: "ci/ti"); anchor: fila de seq[kk]. */
+    function wheelBuild(tree, kk, open, exp) {
+        const rows = []; let anchor = -1; const id = tree.seq[kk].id; const flat = tree.countries.length === 1;
         tree.countries.forEach((c, ci) => {
-            const open = ci === pos.c;
-            if (!flat) rows.push({ key: 'c:' + c.key, kind: 'country', open, ci, n: c.n });
-            if (!open) return;
+            const copen = flat || open.has(ci);
+            if (!flat) rows.push({ key: 'c:' + c.key, kind: 'country', open: copen, ci, n: c.n });
+            if (!copen) return;
             c.types.forEach((t, ti) => {
-                const topen = ti === pos.t;
+                const topen = exp.has(ci + '/' + ti);
                 rows.push({ key: 't:' + c.key + '/' + t.key, kind: 'type', open: topen, ci, ti, n: t.n });
                 if (!topen) return;
-                t.items.forEach((it) => { if (it.id === tree.seq[kk].id) anchor = rows.length; rows.push({ key: 'i:' + it.id, kind: 'item', open: false, ci, ti, it, n: 1 }); });
+                t.items.forEach((it) => { if (it.id === id) anchor = rows.length; rows.push({ key: 'i:' + it.id, kind: 'item', open: false, ci, ti, it, n: 1 }); });
             });
         });
         return { rows, anchor };
+    }
+
+    /**
+     * Que se despliega (el creador, 2026-11-16: «igual aqui no es necesario contraer todo lo que se esta contrayendo… si sobra tanto
+     * espacio… hacia arriba y hacia abajo»). Siempre, la rama del elemento del centro (su pais y su tipo). Con fit = { above, below } (px
+     * libres a cada lado del centro), h = { item, type, country } (alto natural de cada clase de fila) y place (opciones de wheelPlace), lo
+     * que quepa, medido con la colocacion real (las filas lejanas encogen): primero se abren los demas paises (su lista de tipos: la vista
+     * mas amplia por menos sitio), del mas cercano al mas lejano; despues se despliegan los tipos en elementos, primero los del pais del
+     * centro y luego los de los paises mas cercanos. Cada cosa ocupa sitio solo en su lado (arriba lo de antes, abajo lo de despues): lo que
+     * no cabe en su lado se queda plegado, aunque sobre en el otro.
+     */
+    function wheelOpen(tree, kk, fit) {
+        const pos = tree.at.get(tree.seq[kk].id);
+        const open = new Set([pos.c]); const exp = new Set([pos.c + '/' + pos.t]);
+        if (!fit) return { open, exp };
+        const H = fit.h || { item: 26, type: 26, country: 22 };
+        const room = { above: Math.max(0, fit.above || 0), below: Math.max(0, fit.below || 0) };
+        const ext = () => {
+            const { rows, anchor } = wheelBuild(tree, kk, open, exp); const p = wheelPlace(rows.map((r) => H[r.kind] || 0), anchor, 0, 0, fit.place);
+            return { above: -p[0].y, below: p[p.length - 1].y + p[p.length - 1].h };
+        };
+        const side = (ci, ti) => (ci !== pos.c ? (ci < pos.c ? 'above' : 'below') : ti < pos.t ? 'above' : 'below');
+        const fits = (sd) => ext()[sd] <= room[sd] + 0.5;
+        // 1) paises, del mas cercano al mas lejano (a igual distancia, primero el de abajo: se lee hacia abajo)
+        const cs = tree.countries.map((c, ci) => ci).filter((ci) => ci !== pos.c).sort((x, y) => Math.abs(x - pos.c) - Math.abs(y - pos.c) || y - x);
+        if (tree.countries.length > 1) cs.forEach((ci) => { open.add(ci); if (!fits(side(ci, 0))) open.delete(ci); });
+        // 2) tipos: los del pais del centro por cercania al tipo del centro; despues los de los paises abiertos, por cercania del pais
+        const ts = [];
+        tree.countries[pos.c].types.forEach((t, ti) => { if (ti !== pos.t) ts.push([pos.c, ti, Math.abs(ti - pos.t)]); });
+        tree.countries.forEach((c, ci) => {
+            if (ci === pos.c || !open.has(ci)) return; const dc = 1000 * Math.abs(ci - pos.c);
+            c.types.forEach((t, ti) => ts.push([ci, ti, dc + (ci < pos.c ? c.types.length - 1 - ti : ti)]));      // de su lado mas cercano hacia fuera
+        });
+        ts.sort((x, y) => x[2] - y[2] || y[0] - x[0]);
+        ts.forEach(([ci, ti]) => { const key = ci + '/' + ti; exp.add(key); if (!fits(side(ci, ti))) exp.delete(key); });
+        return { open, exp };
+    }
+
+    /**
+     * Filas de la rueda con el elemento seq[k] en el centro. Cada pais cerrado es UNA fila; el abierto, su cabecera y sus tipos; cada tipo
+     * plegado es una fila; el desplegado, su cabecera y sus elementos. Siempre esta abierta la rama del elemento del centro (marcada cur);
+     * con `fit`, ademas lo que quepa (wheelOpen). Con un solo pais no se pone fila de pais.
+     * Devuelve { rows: [{ key, kind: 'country'|'type'|'item', open, cur, ci, ti, it, n }], anchor } (anchor: fila del elemento k, o -1).
+     */
+    function wheelRows(tree, k, fit) {
+        if (!tree || !tree.seq.length) return { rows: [], anchor: -1 };
+        const kk = Math.max(0, Math.min(tree.seq.length - 1, Math.round(k) || 0));
+        const { open, exp } = wheelOpen(tree, kk, fit);
+        const out = wheelBuild(tree, kk, open, exp); const pos = tree.at.get(tree.seq[kk].id);
+        out.rows.forEach((r) => { r.cur = r.kind !== 'item' && r.ci === pos.c && (r.kind === 'country' || r.ti === pos.t); });
+        return out;
     }
 
     /**

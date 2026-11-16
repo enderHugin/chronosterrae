@@ -623,7 +623,7 @@
         .lg-ty .lg-ti .lg-ico { width: 18px; height: 18px; }
         .lg-ty .lg-ti b { position: absolute; right: -10px; bottom: -5px; min-width: 13px; padding: 0 2px; box-sizing: border-box; border-radius: 7px; background: var(--ty, var(--accent)); color: #fff;
             font: 700 8.5px/13px var(--font-ui); text-align: center; text-shadow: 0 0 2px rgba(0, 0, 0, 0.7); font-variant-numeric: tabular-nums; }
-        .lg-h.open .lg-sw, .lg-h.open .lg-ti { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 5px; }
+        .lg-h.cur .lg-sw, .lg-h.cur .lg-ti { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 5px; }
         /* Columna: una barra del color del tipo une la cabecera abierta con sus elementos (que se vea que el numero son ESOS) */
         #legend:not(.wide) .lg-it::before, #legend:not(.wide) .lg-ty.open::before { content: ''; position: absolute; left: 1px; top: -1px; bottom: -1px; width: 3px; border-radius: 2px; background: var(--ty, var(--accent)); opacity: 0.85; }
         #legend:not(.wide) .lg-ty.open::before { top: 50%; }
@@ -5533,13 +5533,16 @@ function lgRender() {
     if (!$('lg-pop').hidden) lgPopRender();
     LG.ms = performance.now() - t0;
 }
-/** Filas para el elemento del centro (solo se despliega su rama); se crean las que faltan y se quitan las que sobran. */
+/** Filas para el elemento del centro: su rama siempre desplegada y, si sobra sitio arriba o abajo, lo demas que quepa (ChronosLegend.wheelOpen);
+ * se crean las que faltan y se quitan las que sobran. */
 function lgWheelRows(force) {
     const T = LGW.tree; const list = $('lg-list'); if (!T) return;
     const k = T.seq.length ? Math.max(0, Math.min(T.seq.length - 1, Math.round(LGW.f))) : -1;
     if (!force && k === LGW.k) return;
     LGW.k = k;
-    const { rows, anchor } = ChronosLegend.wheelRows(T, k); LGW.rows = rows; LGW.anchor = anchor;
+    const H = list.clientHeight; const cy = LGW.cyTo == null ? H / 2 : LGW.cyTo; const m = 4;
+    const fit = H > 0 ? { above: cy - m, below: H - cy - m, h: lgNat() } : null;
+    const { rows, anchor } = ChronosLegend.wheelRows(T, k, fit); LGW.rows = rows; LGW.anchor = anchor;
     const keep = new Set(rows.map((r) => r.key));
     LGW.els.forEach((st, key) => { if (!keep.has(key)) { st.li.remove(); LGW.els.delete(key); } });
     rows.forEach((r) => {
@@ -5549,6 +5552,7 @@ function lgWheelRows(force) {
         } else if (!st) { const li = lgWheelRow(r); list.appendChild(li); st = { li, y: null, s: 1, o: 0 }; LGW.els.set(r.key, st); }
         if (r.kind === 'item') lgPaint(st.li, r.it, r.it.pol);
         st.li.classList.toggle('hot', r.kind === 'item' && r.it.id === LG.hot);
+        st.li.classList.toggle('cur', Boolean(r.cur));
         st.sig = sig; st.r = r;
     });
 }
@@ -5577,7 +5581,9 @@ function lgRowSig(r) {
     if (r.kind === 'country') return [r.open, c.n, c.name, c.color, lang].join('|');
     const ty = c.types[r.ti]; return [r.open, ty.n, ty.name, ty.items[0].id, c.color, lang].join('|');
 }
-const lgRowNat = (r) => (r.kind === 'item' ? LG.rowH : r.kind === 'type' ? (LG.wide ? 26 : 26) : (LG.wide ? 26 : 22));
+/** Alto natural de cada clase de fila (sin encoger): el mismo para colocar y para decidir que cabe. */
+const lgNat = () => ({ item: LG.rowH, type: 26, country: LG.wide ? 26 : 22 });
+const lgRowNat = (r) => lgNat()[r.kind] || 0;
 /** Un fotograma: inercia, filas, colocacion (con muelle para que nada salte), linea central, seleccion y cables. */
 function lgFrame(now) {
     LGW.raf = 0;
@@ -5750,10 +5756,11 @@ function lgWires() {
         // Cabecera plegada: gira a su primer elemento. Cabecera ABIERTA (el grupo del centro): recorre sus elementos, uno por toque (el
         // creador, 2026-11-16: «si clico el elemento que tiene el globo [el numero] no pasa nada»: ya estaba en el primero).
         const c = T.countries[r.ci];
-        if (r.open && LG.hot && T.at.has(LG.hot)) {
-            const cur = T.at.get(LG.hot);
-            if (r.kind === 'type') { const ty = c.types[r.ti]; const i = ty.items.findIndex((x) => x.id === LG.hot); lgSpinTo(ty.items[(i + 1) % ty.items.length].id); return; }
-            const nt = c.types[(cur.t + 1) % c.types.length]; lgSpinTo(nt.items[0].id); return;     // pais abierto: al tipo siguiente
+        // (con sitio de sobra hay otros grupos abiertos: solo el del centro recorre; tocar otro abierto gira a su primero)
+        const cur = LG.hot && T.at.has(LG.hot) ? T.at.get(LG.hot) : null;
+        if (cur && cur.c === r.ci) {
+            if (r.kind === 'type' && cur.t === r.ti) { const ty = c.types[r.ti]; const i = ty.items.findIndex((x) => x.id === LG.hot); lgSpinTo(ty.items[(i + 1) % ty.items.length].id); return; }
+            if (r.kind === 'country') { const nt = c.types[(cur.t + 1) % c.types.length]; lgSpinTo(nt.items[0].id); return; }     // su pais: al tipo siguiente
         }
         const ty = r.kind === 'type' ? c.types[r.ti] : c.types[0];
         if (ty && ty.items[0]) lgSpinTo(ty.items[0].id);

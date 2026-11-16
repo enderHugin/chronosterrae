@@ -123,6 +123,24 @@ check('rueda, filas: con un solo pais no hay fila de pais; el indice se recorta 
     const T = L.buildTree([{ id: 'a', y: 1, t: 'x' }, { id: 'b', y: 2, t: 'y' }], () => ({ key: 'P', name: 'P' }), (x) => ({ key: x.t }));
     const r = L.wheelRows(T, 99); return (r.rows.map((x) => x.kind).join(',') === 'type,type,item' && r.rows[r.anchor].it.id === 'b') || r;
 });
+check('rueda, si sobra sitio: con mucho, todo desplegado; sin sitio, solo la rama del centro', () => {
+    const T = tree(); const H = { item: 26, type: 26, country: 22 };
+    const all = L.wheelRows(T, 4, { above: 5000, below: 5000, h: H }); const none = L.wheelRows(T, 4, { above: 0, below: 0, h: H });
+    const items = (r) => r.rows.filter((x) => x.kind === 'item').map((x) => x.it.id).join(',');
+    return (items(all) === 'fr2,fr1,fr3,es2,es1,es3,mar' && items(none) === 'es2,es1' && all.rows[all.anchor].it.id === 'es1') || [items(all), items(none)];
+});
+check('rueda, si sobra algo: primero se abren los paises (vista amplia), luego los tipos; cada cosa solo en su lado; la rama del centro, cur', () => {
+    const T = tree(); const S = (r) => r.rows.map((x) => x.kind[0] + (x.open ? '+' : '') + (x.cur ? '*' : '') + ':' + (x.it ? x.it.id : x.n)).join(' ');
+    // poco sitio abajo: se abre el pais siguiente (su lista de tipos) antes que desplegar España>guerra en iconos
+    const a = S(L.wheelRows(T, 4, { above: 0, below: 80 }));
+    // algo mas: tambien España>guerra (el tipo del pais del centro va antes que los de otros paises)
+    const b = S(L.wheelRows(T, 4, { above: 0, below: 100 }));
+    // sobra arriba pero no abajo: abajo sigue plegado aunque sobre arriba
+    const c = S(L.wheelRows(T, 4, { above: 500, below: 0 }));
+    const ok = a === 'c:3 c+*:3 t+*:2 i:es2 i:es1 t:1 c+:1 t:1' && b === 'c:3 c+*:3 t+*:2 i:es2 i:es1 t+:1 i:es3 c+:1 t:1'
+        && c === 'c+:3 t+:1 i:fr2 t+:2 i:fr1 i:fr3 c+*:3 t+*:2 i:es2 i:es1 t:1 c:1';
+    return ok || [a, b, c].join(' || ');
+});
 check('rueda, colocacion: el ancla centrada, sin solapes, en orden, y mas pequeña y tenue cuanto mas lejos', () => {
     const hs = Array.from({ length: 11 }, () => 30); const p = L.wheelPlace(hs, 5, 0, 400);
     if (Math.abs(p[5].y + p[5].h / 2 - 400) > 1e-9 || p[5].s !== 1) return 'centro';
