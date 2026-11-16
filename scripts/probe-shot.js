@@ -13,6 +13,23 @@ const v8 = require('v8'); const vm = require('vm');
 let gcNow = null; try { v8.setFlagsFromString('--expose_gc'); gcNow = vm.runInNewContext('gc'); } catch (e) { gcNow = null; }
 const liveMB = () => { if (gcNow) gcNow(); return Math.round(process.memoryUsage().heapUsed / 1048576); };
 const rawMB = () => Math.round(process.memoryUsage().heapUsed / 1048576);
+// Memoria del NAVEGADOR por tipo de proceso (MB de RSS, Linux /proc): la sonda viva no pasa de ~15 MB, pero las vistas se van haciendo lentas
+// dentro de un mismo navegador y alguna se cuelga (2026-11-16). Esto dice si lo que se acumula es la pagina (renderer) o la GPU (gpu-process);
+// pageMB, el JS de la pagina (performance.memory, exacto con --enable-precise-memory-info).
+const navMB = () => {
+    const by = {};
+    try {
+        for (const pid of fs.readdirSync('/proc')) {
+            if (!/^\d+$/.test(pid)) continue;
+            let cmd; try { cmd = fs.readFileSync('/proc/' + pid + '/cmdline', 'utf8'); } catch (e) { continue; }
+            if (!/chrom/i.test(cmd.split('\0')[0])) continue;
+            const ty = (cmd.match(/--type=([\w-]+)/) || [null, 'browser'])[1];
+            let st; try { st = fs.readFileSync('/proc/' + pid + '/status', 'utf8'); } catch (e) { continue; }
+            const m = /VmRSS:\s+(\d+)/.exec(st); if (m) by[ty] = (by[ty] || 0) + Math.round(Number(m[1]) / 1024);
+        }
+    } catch (e) { return null; }
+    return Object.keys(by).length ? by : null;
+};
 
 // Vistas de la revision rutinaria: las que ya dieron problemas o que protegen lo que mas se mira. Cada una se fotografia en claro y en oscuro.
 const SUITE = [
@@ -333,7 +350,7 @@ async function runSuite(page, out, only, renew) {
                     const cs = getComputedStyle(document.body);
                     return { epoca: document.body.getAttribute('data-era'), insignia: document.getElementById('era-badge').hidden ? null : document.getElementById('era-badge').textContent, acento: cs.getPropertyValue('--accent').trim(), borde: getComputedStyle(document.getElementById('timeline')).borderTopStyle, mar: map.getPaintProperty('ocean', 'background-color'), puntos: map.getLayer('events-dot') ? map.getPaintProperty('events-dot', 'circle-stroke-color') : null, ventana: [innerWidth, innerHeight], cajas: bx, solapes };
                 }) : undefined;
-                rows.push({ name, ms: Date.now() - t0v, heapMB: [heap0, heap1, heap2, liveMB()], ...(idleOk === false ? { sinQuietud: true } : {}), ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, gapDbg: GAP.dbg || null, sea: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null, seaTiles: typeof SEA !== 'undefined' ? SEA.n : null, seaCpu: typeof SEA !== 'undefined' && SEA.cpu.length ? Math.round(SEA.cpu.reduce((a, b) => a + b, 0) / SEA.cpu.length * 10) / 10 : null, proj: map.getProjection && map.getProjection().type, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, rueda: typeof LGW !== 'undefined' && LG.open ? { n: LG.rows.length, f: Math.round(LGW.f * 100) / 100, filas: LGW.rows.length, elegido: LG.hot, tomada: LGW.engaged, paises: LGW.tree ? LGW.tree.countries.length : 0, ms: Math.round(LG.ms) } : null, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
+                rows.push({ name, ms: Date.now() - t0v, heapMB: [heap0, heap1, heap2, liveMB()], navMB: navMB(), pageMB: await page.evaluate(() => (performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : null)), ...(idleOk === false ? { sinQuietud: true } : {}), ...(diseno ? { diseno } : {}), labels, road, ...(ev ? { eventos: ev } : {}), ...(ventana ? { ventana } : {}), ...(barrido ? { barrido } : {}), ...(tiposInfo ? { tipos: tiposInfo } : {}), ...(await page.evaluate(() => ({ z: map.getZoom(), detail: DETAIL.shown, gap: GAP.shown, borders: state.borders && state.borders.source, cut: BR.cut, far: BR.far, off: BR.off, natural: NAT.on, natFailed: NAT.failed, gapDbg: GAP.dbg || null, sea: map.getLayer('natural-sea') ? map.getLayoutProperty('natural-sea', 'visibility') : null, seaTiles: typeof SEA !== 'undefined' ? SEA.n : null, seaCpu: typeof SEA !== 'undefined' && SEA.cpu.length ? Math.round(SEA.cpu.reduce((a, b) => a + b, 0) / SEA.cpu.length * 10) / 10 : null, proj: map.getProjection && map.getProjection().type, sphereCover: BR.cover === null ? null : Math.round(BR.cover * 1000) / 1000, rueda: typeof LGW !== 'undefined' && LG.open ? { n: LG.rows.length, f: Math.round(LGW.f * 100) / 100, filas: LGW.rows.length, elegido: LG.hot, tomada: LGW.engaged, paises: LGW.tree ? LGW.tree.countries.length : 0, ms: Math.round(LG.ms) } : null, lbl: LBL.ready ? map.getLayoutProperty('borders-labels', 'visibility') : (LBL.failed ? 'failed' : 'n/a'), lblFont: LBL.font || null, ofmCountryLayers: DETAIL.layers.filter((l) => l.country).length, ofmCountryShown: DETAIL.layers.filter((l) => l.country && map.getLayoutProperty(l.id, 'visibility') === 'visible').length, resKm: BR.resKm, btn: !document.getElementById('btn-borders').hidden, status: document.getElementById('status').textContent.slice(0, 200) }))) });
                 if (v.roads) await page.evaluate(() => { if (ROADS.on) document.getElementById('btn-roads').click(); });
                 if (v.tipos) await page.evaluate(() => { typesSet(0, false); typesRender(); panelsUI.setSettingsOpen(false); });
                 if (v.abrir) await page.evaluate(() => { panelsUI.setSettingsOpen(false); hideInfo(); menus.closeAll(); if (typeof LG !== 'undefined' && LG.open) lgSet(false, false); });
@@ -346,7 +363,7 @@ async function runSuite(page, out, only, renew) {
             let timer = 0; const res = await Promise.race([job.then(() => 'ok', (e) => 'fallo: ' + String((e && e.message) || e).split('\n')[0].slice(0, 200)), new Promise((r) => { timer = setTimeout(() => r('colgada'), VIEW_MS); })]);
             clearTimeout(timer);
             if (res !== 'ok') {
-                rows.push({ name: v.id + (dark ? '-oscuro' : '-claro'), error: res === 'colgada' ? 'vista colgada (mas de ' + VIEW_MS / 1000 + ' s)' : res, ms: Date.now() - t0v, heapMB: [heap0, liveMB()] });
+                rows.push({ name: v.id + (dark ? '-oscuro' : '-claro'), error: res === 'colgada' ? 'vista colgada (mas de ' + VIEW_MS / 1000 + ' s)' : res, ms: Date.now() - t0v, heapMB: [heap0, liveMB()], navMB: navMB() });
                 fs.writeFileSync(path.join(out, 'suite.json'), JSON.stringify(rows, null, 2));
                 if (renew) { page = await renew(page); await page.evaluate((d) => { if (state.dark !== d) document.getElementById('btn-theme').click(); }, dark); }
             }
@@ -374,7 +391,7 @@ async function runSuite(page, out, only, renew) {
     const diag = process.argv.length > 4;
     const [lng, lat, zoom] = [process.argv[4] || -1.35, process.argv[5] || 43.05, process.argv[6] || 11].map(Number);
     fs.mkdirSync(out, { recursive: true });
-    const launch = () => chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'] });
+    const launch = () => chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl', '--enable-precise-memory-info'] });
     let browser = await launch();
     // Un mensaje repetido se guarda UNA vez con su recuento: un bucle de errores en la pagina agoto la memoria de este proceso (4 GB) y se perdio toda la captura
     const log = []; const counts = new Map();
