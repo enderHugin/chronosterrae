@@ -193,6 +193,8 @@ lugar) a visores especializados; reconstruirlos desde cero es un proyecto aparte
 | 8 | Traspasos a escalas extremas; WebXR (VR) | Pendiente |
 | 9 | AR geoespacial | Futuro |
 
+Candidata para las fases 8 y 9 (evaluada el 2026-11-16, a petición del creador): **Atlas, de World Labs** ([anuncio](https://worldlabs.ai/blog/atlas)), un modelo que reconstruye lugares reales en 3D (nubes de puntos, *gaussian splats*) a partir de una o varias fotos y genera panoramas de 360° y vídeo con cámara controlada. Encaja con «ponerse las gafas y mirar cómo se veía ese lugar». Condiciones: lo reconstruido de hoy, con fotos citadas, es reconstrucción; un estado antiguo generado es `speculation` y va en capa aparte, rotulado (regla 3, y no pasa de `community`); para AR hay que anclarlo con posición absoluta, altura y margen de error (principio 10); los formatos que exporta, el precio y las condiciones sobre lo generado están sin verificar; las claves, nunca en la web ni en manos de los agentes (regla 5).
+
 ## 5. Decisiones tomadas
 
 - **Se abandona el «enjambre de IAs con CRDT»** del README original. No existe en el código
