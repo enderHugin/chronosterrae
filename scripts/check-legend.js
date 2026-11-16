@@ -188,5 +188,33 @@ check('rueda, inercia: con destino (toque o globo) llega a el y para; un destino
     check('viewSegments: nada a la vista, ningun recuadro; filas sin colocar no cuentan', () => L.viewSegments([{ y: 0, h: 5 }], () => false).length === 0 && L.viewSegments([null, { y: 3, h: 4 }], () => true).length === 1 && L.viewSegments(null, () => true).length === 0);
 }
 
+/* ---------------- continentes como primer nivel (2026-11-16: «si no, Estados Unidos aparecería al lado de España») ---------------- */
+{
+    const tf = (x) => (x.c ? { key: x.c, name: x.c } : null); const ty = (x) => ({ key: x.t, name: x.t }); const of = (x) => (x.o ? { key: x.o, name: x.o, last: x.o === 'sea' } : null);
+    const I = [{ id: 'ny', y: 10, x: 50, c: 'USA', o: 'NA', t: 'u' }, { id: 'mad', y: 11, x: 900, c: 'ES', o: 'EU', t: 'u' }, { id: 'bos', y: 9, x: 60, c: 'USA', o: 'NA', t: 'u' },
+        { id: 'par', y: 5, x: 950, c: 'FR', o: 'EU', t: 'u' }, { id: 'atl', y: 1, x: 500, c: null, o: 'sea', t: 'u' }, { id: 'ist', y: 12, x: 1100, c: 'OT', o: 'EU', t: 'u' }, { id: 'ank', y: 13, x: 1200, c: 'OT', o: 'AS', t: 'u' }];
+    const T = L.buildTree(I, tf, ty, of);
+    check('continentes: lo de cada continente va junto (Nueva York no cae entre Paris y Madrid)', () => {
+        const seq = T.seq.map((x) => x.id).join(','); const os = T.continents.map((o) => o.key).join(',');
+        return seq === 'par,mad,ist,bos,ny,ank,atl' && os === 'EU,NA,AS,sea' ? true : [seq, os];
+    });
+    check('continentes: el mar al final aunque este mas arriba; un pais en dos continentes sale en los dos', () => T.continents[T.continents.length - 1].key === 'sea' && T.countries.filter((c) => c.key === 'OT').length === 2 && T.countries.every((c) => typeof c.o === 'number'));
+    check('continentes: claves de fila distintas para el mismo pais en dos continentes', () => {
+        const { rows } = L.wheelRows(T, T.at.get('ist').k, { above: 2000, below: 2000, h: { item: 26, type: 26, country: 22, continent: 22 } });
+        const keys = rows.map((r) => r.key); return new Set(keys).size === keys.length && rows.filter((r) => r.kind === 'continent').length === 4 ? true : keys;
+    });
+    check('continentes: sin sitio, solo el continente del centro abierto (y marcado); los demas, una fila cada uno', () => {
+        const { rows } = L.wheelRows(T, T.at.get('ny').k, { above: 0, below: 0 });
+        const co = rows.filter((r) => r.kind === 'continent'); const open = co.filter((r) => r.open);
+        return co.length === 4 && open.length === 1 && open[0].cur && T.continents[open[0].oi].key === 'NA' && rows.some((r) => r.kind === 'item' && r.it.id === 'ny') ? true : rows.map((r) => r.key + (r.open ? '+' : ''));
+    });
+    check('continentes: con sitio se abren los demas, del mas cercano al mas lejano', () => {
+        const { rows } = L.wheelRows(T, T.at.get('ny').k, { above: 2000, below: 2000, h: { item: 26, type: 26, country: 22, continent: 22 } });
+        return rows.filter((r) => r.kind === 'continent').every((r) => r.open) && rows.filter((r) => r.kind === 'item').length === T.seq.length;
+    });
+    check('continentes: sin continentOf, un solo grupo sin fila de continente (como antes)', () => { const U = L.buildTree(I, tf, ty); const { rows } = L.wheelRows(U, 0, null); return U.continents.length === 1 && !rows.some((r) => r.kind === 'continent'); });
+    check('continentes: rowSeen de un continente si alguno de los suyos se ve', () => { const S = L.buildTree(I.map((x) => ({ ...x, seen: x.id === 'ank' })), tf, ty, of); const oi = S.continents.findIndex((o) => o.key === 'AS'); const oe = S.continents.findIndex((o) => o.key === 'EU'); return L.rowSeen(S, { kind: 'continent', oi }) && !L.rowSeen(S, { kind: 'continent', oi: oe }); });
+}
+
 console.log('\nPASS ' + passes.length); passes.forEach((p) => console.log('  ok  ' + p));
 if (fails) { console.log('\nFAIL ' + fails); process.exit(1); } else console.log('\nLeyenda: todo verde.');

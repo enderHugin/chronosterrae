@@ -123,28 +123,41 @@
      * dentro, por altura. Devuelve { countries: [{ key, name, color, n, types: [{ key, name, n, items }] }], seq, at } con seq = elementos en
      * el orden de la rueda y at: Map id -> { c, t, k } (indices de pais, tipo y posicion en seq).
      */
-    function buildTree(items, countryOf, typeOf) {
-        const cs = new Map(); const seen = new Set();
+    function buildTree(items, countryOf, typeOf, continentOf) {
+        // CONTINENTES (el creador, 2026-11-16: «tener en cuenta los continentes como grupos para no saltear países… si no, Estados Unidos
+        // aparecería al lado de España»): primer nivel, si se da continentOf. Un pais que abarca dos continentes (el Imperio otomano) sale
+        // en los dos, con lo suyo de cada uno. Sin continentOf (o todo en el mismo), un solo continente sin fila.
+        const os = new Map(); const seen = new Set();
         const xOf = (it) => (Number.isFinite(it.x) ? it.x : 0);
         const higher = (g, it) => { if (it.y < g.top || (it.y === g.top && xOf(it) < g.left)) { g.top = it.y; g.left = xOf(it); } };
         for (const it of items || []) {
             if (!it || it.id == null || seen.has(it.id) || !Number.isFinite(it.y)) continue; seen.add(it.id);
+            const o = (continentOf && continentOf(it)) || null; const ok = o && o.key ? o.key : '';
+            if (!os.has(ok)) os.set(ok, { key: ok, name: ok ? o.name || ok : '', last: Boolean(o && o.last), top: Infinity, left: Infinity, cs: new Map() });
+            const co = os.get(ok); higher(co, it);
             const g = countryOf(it) || null; const ck = g && g.key ? g.key : '';
-            if (!cs.has(ck)) cs.set(ck, { key: ck, name: ck ? g.name || ck : '', color: ck ? g.color || null : null, top: Infinity, left: Infinity, tmap: new Map() });
-            const c = cs.get(ck); higher(c, it);
+            if (!co.cs.has(ck)) co.cs.set(ck, { key: ck, name: ck ? g.name || ck : '', color: ck ? g.color || null : null, top: Infinity, left: Infinity, tmap: new Map() });
+            const c = co.cs.get(ck); higher(c, it);
             const ty = typeOf(it) || {}; const tk = ty.key || '?';
             if (!c.tmap.has(tk)) c.tmap.set(tk, { key: tk, name: ty.name || tk, top: Infinity, left: Infinity, items: [] });
             const t = c.tmap.get(tk); higher(t, it); t.items.push(it);
         }
-        // de arriba abajo y, a la misma altura, de izquierda a derecha (el creador, 2026-11-16): paises por su elemento mas alto, igual tipos y elementos
+        // de arriba abajo y, a la misma altura, de izquierda a derecha (el creador, 2026-11-16): continentes, paises, tipos y elementos por su
+        // elemento mas alto; sin continente (o el mar, last) y sin pais, al final
         const byTop = (a, b) => a.top - b.top || a.left - b.left || String(a.key).localeCompare(String(b.key));
-        const countries = [...cs.values()].sort((a, b) => (a.key === '') - (b.key === '') || byTop(a, b)).map((c) => {
-            const types = [...c.tmap.values()].sort(byTop).map((t) => ({ key: t.key, name: t.name, n: t.items.length, items: t.items.sort((a, b) => a.y - b.y || xOf(a) - xOf(b) || String(a.id).localeCompare(String(b.id))) }));
-            return { key: c.key, name: c.name, color: c.color, n: types.reduce((s, t) => s + t.n, 0), types };
+        const conts = [...os.values()].sort((a, b) => (a.key === '' || a.last) - (b.key === '' || b.last) || byTop(a, b));
+        const countries = []; const continents = [];
+        conts.forEach((co, oi) => {
+            const cs = [...co.cs.values()].sort((a, b) => (a.key === '') - (b.key === '') || byTop(a, b)).map((c) => {
+                const types = [...c.tmap.values()].sort(byTop).map((t) => ({ key: t.key, name: t.name, n: t.items.length, items: t.items.sort((a, b) => a.y - b.y || xOf(a) - xOf(b) || String(a.id).localeCompare(String(b.id))) }));
+                return { key: c.key, name: c.name, color: c.color, o: oi, n: types.reduce((s, t) => s + t.n, 0), types };
+            });
+            const first = countries.length; cs.forEach((c) => countries.push(c));
+            continents.push({ key: co.key, name: co.name, n: cs.reduce((s, c) => s + c.n, 0), cs: cs.map((_, i) => first + i) });
         });
         const seq = []; const at = new Map();
-        countries.forEach((c, ci) => c.types.forEach((t, ti) => t.items.forEach((it) => { at.set(it.id, { c: ci, t: ti, k: seq.length }); seq.push(it); })));
-        return { countries, seq, at };
+        countries.forEach((c, ci) => c.types.forEach((t, ti) => t.items.forEach((it) => { at.set(it.id, { o: c.o, c: ci, t: ti, k: seq.length }); seq.push(it); })));
+        return { continents, countries, seq, at };
     }
 
     /**
@@ -155,6 +168,7 @@
     function rowSeen(tree, r) {
         if (!tree || !r) return false;
         if (r.kind === 'item') return Boolean(r.it && r.it.seen);
+        if (r.kind === 'continent') { const o = tree.continents && tree.continents[r.oi]; return Boolean(o && o.cs.some((ci) => tree.countries[ci].types.some((t) => t.items.some((it) => it.seen)))); }
         const c = tree.countries[r.ci]; if (!c) return false;
         if (r.kind === 'type') { const t = c.types[r.ti]; return Boolean(t && t.items.some((it) => it.seen)); }
         return c.types.some((t) => t.items.some((it) => it.seen));
@@ -174,17 +188,24 @@
     }
 
     /** Filas para un juego dado de paises abiertos (open: indices) y tipos desplegados (exp: "ci/ti"); anchor: fila de seq[kk]. */
-    function wheelBuild(tree, kk, open, exp) {
+    function wheelBuild(tree, kk, open, exp, oopen) {
         const rows = []; let anchor = -1; const id = tree.seq[kk].id; const flat = tree.countries.length === 1;
-        tree.countries.forEach((c, ci) => {
-            const copen = flat || open.has(ci);
-            if (!flat) rows.push({ key: 'c:' + c.key, kind: 'country', open: copen, ci, n: c.n });
-            if (!copen) return;
-            c.types.forEach((t, ti) => {
-                const topen = exp.has(ci + '/' + ti);
-                rows.push({ key: 't:' + c.key + '/' + t.key, kind: 'type', open: topen, ci, ti, n: t.n });
-                if (!topen) return;
-                t.items.forEach((it) => { if (it.id === id) anchor = rows.length; rows.push({ key: 'i:' + it.id, kind: 'item', open: false, ci, ti, it, n: 1 }); });
+        const conts = tree.continents || [{ key: '', cs: tree.countries.map((_, i) => i), n: tree.seq.length }]; const multi = conts.length > 1;
+        conts.forEach((o, oi) => {
+            const op = !multi || !oopen || oopen.has(oi);
+            if (multi) rows.push({ key: 'o:' + o.key, kind: 'continent', open: op, oi, n: o.n });
+            if (!op) return;
+            o.cs.forEach((ci) => {
+                const c = tree.countries[ci]; const ck = oi + '/' + c.key;      // un pais puede salir en dos continentes: la clave lleva el continente
+                const copen = flat || open.has(ci);
+                if (!flat) rows.push({ key: 'c:' + ck, kind: 'country', open: copen, oi, ci, n: c.n });
+                if (!copen) return;
+                c.types.forEach((t, ti) => {
+                    const topen = exp.has(ci + '/' + ti);
+                    rows.push({ key: 't:' + ck + '/' + t.key, kind: 'type', open: topen, oi, ci, ti, n: t.n });
+                    if (!topen) return;
+                    t.items.forEach((it) => { if (it.id === id) anchor = rows.length; rows.push({ key: 'i:' + it.id, kind: 'item', open: false, oi, ci, ti, it, n: 1 }); });
+                });
             });
         });
         return { rows, anchor };
@@ -200,19 +221,23 @@
      * no cabe en su lado se queda plegado, aunque sobre en el otro.
      */
     function wheelOpen(tree, kk, fit) {
-        const pos = tree.at.get(tree.seq[kk].id);
-        const open = new Set([pos.c]); const exp = new Set([pos.c + '/' + pos.t]);
-        if (!fit) return { open, exp };
-        const H = fit.h || { item: 26, type: 26, country: 22 };
+        const pos = tree.at.get(tree.seq[kk].id); const po = pos.o || 0;
+        const open = new Set([pos.c]); const exp = new Set([pos.c + '/' + pos.t]); const oopen = new Set([po]);
+        if (!fit) return { open, exp, oopen };
+        const H = fit.h || { item: 26, type: 26, country: 22, continent: 22 };
         const room = { above: Math.max(0, fit.above || 0), below: Math.max(0, fit.below || 0) };
         const ext = () => {
-            const { rows, anchor } = wheelBuild(tree, kk, open, exp); const p = wheelPlace(rows.map((r) => H[r.kind] || 0), anchor, 0, 0, fit.place);
+            const { rows, anchor } = wheelBuild(tree, kk, open, exp, oopen); const p = wheelPlace(rows.map((r) => H[r.kind] || 0), anchor, 0, 0, fit.place);
             return { above: -p[0].y, below: p[p.length - 1].y + p[p.length - 1].h };
         };
         const side = (ci, ti) => (ci !== pos.c ? (ci < pos.c ? 'above' : 'below') : ti < pos.t ? 'above' : 'below');
         const fits = (sd) => ext()[sd] <= room[sd] + 0.5;
-        // 1) paises, del mas cercano al mas lejano (a igual distancia, primero el de abajo: se lee hacia abajo)
-        const cs = tree.countries.map((c, ci) => ci).filter((ci) => ci !== pos.c).sort((x, y) => Math.abs(x - pos.c) - Math.abs(y - pos.c) || y - x);
+        const oOf = (ci) => tree.countries[ci].o || 0;
+        // 0) continentes, del mas cercano al mas lejano (su lista de paises)
+        const os = (tree.continents || []).map((o, oi) => oi).filter((oi) => oi !== po).sort((x, y) => Math.abs(x - po) - Math.abs(y - po) || y - x);
+        if ((tree.continents || []).length > 1) os.forEach((oi) => { oopen.add(oi); if (!fits(oi < po ? 'above' : 'below')) oopen.delete(oi); });
+        // 1) paises (de los continentes abiertos), del mas cercano al mas lejano (a igual distancia, primero el de abajo: se lee hacia abajo)
+        const cs = tree.countries.map((c, ci) => ci).filter((ci) => ci !== pos.c && oopen.has(oOf(ci))).sort((x, y) => Math.abs(x - pos.c) - Math.abs(y - pos.c) || y - x);
         if (tree.countries.length > 1) cs.forEach((ci) => { open.add(ci); if (!fits(side(ci, 0))) open.delete(ci); });
         // 2) tipos: los del pais del centro por cercania al tipo del centro; despues los de los paises abiertos, por cercania del pais
         const ts = [];
@@ -223,21 +248,22 @@
         });
         ts.sort((x, y) => x[2] - y[2] || y[0] - x[0]);
         ts.forEach(([ci, ti]) => { const key = ci + '/' + ti; exp.add(key); if (!fits(side(ci, ti))) exp.delete(key); });
-        return { open, exp };
+        return { open, exp, oopen };
     }
 
     /**
-     * Filas de la rueda con el elemento seq[k] en el centro. Cada pais cerrado es UNA fila; el abierto, su cabecera y sus tipos; cada tipo
+     * Filas de la rueda con el elemento seq[k] en el centro. Con mas de un continente, cada continente cerrado es UNA fila y el abierto, su
+     * cabecera y sus paises. Cada pais cerrado es UNA fila; el abierto, su cabecera y sus tipos; cada tipo
      * plegado es una fila; el desplegado, su cabecera y sus elementos. Siempre esta abierta la rama del elemento del centro (marcada cur);
      * con `fit`, ademas lo que quepa (wheelOpen). Con un solo pais no se pone fila de pais.
-     * Devuelve { rows: [{ key, kind: 'country'|'type'|'item', open, cur, ci, ti, it, n }], anchor } (anchor: fila del elemento k, o -1).
+     * Devuelve { rows: [{ key, kind: 'continent'|'country'|'type'|'item', open, cur, oi, ci, ti, it, n }], anchor } (anchor: fila del elemento k, o -1).
      */
     function wheelRows(tree, k, fit) {
         if (!tree || !tree.seq.length) return { rows: [], anchor: -1 };
         const kk = Math.max(0, Math.min(tree.seq.length - 1, Math.round(k) || 0));
-        const { open, exp } = wheelOpen(tree, kk, fit);
-        const out = wheelBuild(tree, kk, open, exp); const pos = tree.at.get(tree.seq[kk].id);
-        out.rows.forEach((r) => { r.cur = r.kind !== 'item' && r.ci === pos.c && (r.kind === 'country' || r.ti === pos.t); });
+        const { open, exp, oopen } = wheelOpen(tree, kk, fit);
+        const out = wheelBuild(tree, kk, open, exp, oopen); const pos = tree.at.get(tree.seq[kk].id);
+        out.rows.forEach((r) => { r.cur = r.kind === 'continent' ? r.oi === (pos.o || 0) : r.kind !== 'item' && r.ci === pos.c && (r.kind === 'country' || r.ti === pos.t); });
         return out;
     }
 

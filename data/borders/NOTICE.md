@@ -18,3 +18,15 @@ el color político contra la costa real cuando se ve la Tierra natural (imagen d
 
 - Transformaciones: simplificación Douglas-Peucker por anillo (0,6 km), coordenadas a 3 decimales (~110 m) y sin anillos de menos de 0,5 km².
 - Reconstruir: `node scripts/build-land-mask.js --src ne_10m_land.geojson --src ne_10m_minor_islands.geojson --commit <sha> --out data/borders`.
+
+# Continentes (Natural Earth)
+
+`continents.json` deriva de **Natural Earth** `ne_10m_geography_regions_polys` (los 7 polígonos de clase «Continent», campo `REGION`) y
+`ne_10m_admin_0_map_units` (campo `CONTINENT`), mismo repositorio y commit que arriba; `sha256` de cada fichero en su `meta`. **Dominio público.**
+No se dibuja: solo dice en qué continente cae un punto, para agrupar la rueda de la leyenda (continente, país, tipo). Se mira primero el
+continente geográfico (Siberia es Asia, Moscú Europa) y, si el punto no cae en ninguno, la unidad con su continente (islas: Islandia, Japón,
+Guayana Francesa); junto a una costa, el más cercano; en alta mar, «mares y océanos» (`map/continents.js`).
+
+- Transformaciones: solo el código de continente; Douglas-Peucker por anillo (4 km los continentes geográficos, 15 km las unidades);
+  coordenadas a 2 decimales (~1 km); sin anillos de menos de 40 km².
+- Reconstruir: `node scripts/build-continents.js --regions ne_10m_geography_regions_polys.geojson --units ne_10m_admin_0_map_units.geojson --commit <sha> --out data/borders`.

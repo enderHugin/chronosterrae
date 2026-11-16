@@ -32,6 +32,11 @@ check('wrapLng y angleDeg: por el camino corto, tambien a traves del antimeridia
 check('metricDelta: la longitud encoge con la latitud', () => { const d = C.metricDelta([0, 60], [2, 60]); const w = C.metricDelta([179, 0], [-179, 0]); return near(d[0], 1, 1e-9) && near(d[1], 0) && near(w[0], 2, 1e-9); });
 check('pxPerDegree: se dobla con cada nivel de zoom', () => near(C.pxPerDegree(5, 0) / C.pxPerDegree(4, 0), 2, 1e-12) && near(C.pxPerDegree(0, 0), 512 / 360, 1e-12));
 
+check('lerp: por el circulo maximo, de a (0) a b (1), tambien a traves del antimeridiano', () => {
+    const m = C.lerp([0, 0], [90, 0], 0.5); const w = C.lerp([179, 10], [-179, 10], 0.5); const e = C.lerp([2, 41], [12, 45], 0);
+    return near(m[0], 45, 1e-9) && near(m[1], 0, 1e-9) && Math.abs(Math.abs(w[0]) - 180) < 1e-6 && w[1] > 10 && near(e[0], 2, 1e-9) && near(e[1], 41, 1e-9) && near(C.angleDeg(C.lerp([2, 41], [12, 45], 0.3), [2, 41]), 0.3 * C.angleDeg([2, 41], [12, 45]), 1e-9);
+});
+
 /* ---------------------------- duracion ---------------------------- */
 const DIAG = Math.hypot(1280, 800);
 check('durationMs: entre 0,7 y 2,4 s, y 0 si no hay que moverse', () => C.durationMs(0, 100, DIAG) === 0 && [[0.01, 1], [3, 4.6], [40, 2], [180, 1.3], [180, 9]].every(([a, z]) => { const m = C.durationMs(a, C.pxPerDegree(z, 0), DIAG); return m >= C.MIN_MS && m <= C.MAX_MS; }));

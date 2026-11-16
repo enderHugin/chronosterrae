@@ -50,6 +50,18 @@
     /** Pixeles de pantalla por grado de arco en el centro de la vista: MapLibre, globo y Mercator (tesela de 512 px). */
     function pxPerDegree(zoom, lat) { return 512 * Math.pow(2, zoom) / 360 / Math.max(0.05, Math.cos(lat * RAD)); }
 
+    /** Punto a la fraccion u del camino corto entre a y b (circulo maximo): el globo, entre dos elementos de la rueda. */
+    function lerp(a, b, u) {
+        const t = Math.max(0, Math.min(1, u));
+        const p1 = a[1] * RAD; const l1 = a[0] * RAD; const p2 = b[1] * RAD; const l2 = b[0] * RAD;
+        const A = [Math.cos(p1) * Math.cos(l1), Math.cos(p1) * Math.sin(l1), Math.sin(p1)]; const B = [Math.cos(p2) * Math.cos(l2), Math.cos(p2) * Math.sin(l2), Math.sin(p2)];
+        const d = Math.acos(Math.max(-1, Math.min(1, A[0] * B[0] + A[1] * B[1] + A[2] * B[2])));
+        if (d < 1e-9) return [a[0], a[1]];
+        const k1 = Math.sin((1 - t) * d) / Math.sin(d); const k2 = Math.sin(t * d) / Math.sin(d);
+        const x = k1 * A[0] + k2 * B[0]; const y = k1 * A[1] + k2 * B[1]; const z = k1 * A[2] + k2 * B[2];
+        return [Math.atan2(y, x) / RAD, Math.atan2(z, Math.hypot(x, y)) / RAD];
+    }
+
     /** Duracion (ms) de un giro de angDeg grados, con pxPerDeg pixeles por grado y una vista de diag pixeles de diagonal. */
     function durationMs(angDeg, pxPerDeg, diag) {
         if (!(angDeg > 0)) return 0;
@@ -105,5 +117,5 @@
         return { ms, m0 };
     }
 
-    return { MIN_MS, MAX_MS, RETARGET_MIN_MS, M0_MAX, M0_MIN, wrapLng, angleDeg, metricDelta, pxPerDegree, durationMs, easing, slope, velocity, plan };
+    return { MIN_MS, MAX_MS, RETARGET_MIN_MS, M0_MAX, M0_MIN, wrapLng, angleDeg, metricDelta, pxPerDegree, lerp, durationMs, easing, slope, velocity, plan };
 });

@@ -631,6 +631,11 @@
         .lg-ty .lg-ti b { position: absolute; right: -10px; bottom: -5px; min-width: 13px; padding: 0 2px; box-sizing: border-box; border-radius: 7px; background: var(--ty, var(--accent)); color: #fff;
             font: 700 8.5px/13px var(--font-ui); text-align: center; text-shadow: 0 0 2px rgba(0, 0, 0, 0.7); font-variant-numeric: tabular-nums; }
         .lg-h.cur .lg-sw, .lg-h.cur .lg-ti { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 5px; }
+        /* Continente (primer nivel; el creador, 2026-11-16): en la columna, su abreviatura en mayusculas pequeñas; en la lista entera, el nombre */
+        .lg-ct .lg-sw { min-width: 28px; height: 14px; padding: 0 2px; box-sizing: border-box; border-radius: 3px; display: flex; align-items: center; justify-content: center;
+            border: 1px solid color-mix(in srgb, var(--text) 45%, transparent); background: color-mix(in srgb, var(--text) 10%, transparent); }
+        .lg-ct .lg-sw b { font: 700 8px/1 var(--font-ui); letter-spacing: 0.02em; color: var(--text); white-space: nowrap; }
+        .lg-ct.cur .lg-sw { outline: 2px solid var(--accent); outline-offset: 1px; }
         /* Columna: una barra del color del tipo une la cabecera abierta con sus elementos (que se vea que el numero son ESOS) */
         #legend:not(.wide) .lg-it::before, #legend:not(.wide) .lg-ty.open::before { content: ''; position: absolute; left: 1px; top: -1px; bottom: -1px; width: 3px; border-radius: 2px; background: var(--ty, var(--accent)); opacity: 0.85; }
         #legend:not(.wide) .lg-ty.open::before { top: 50%; }
@@ -662,6 +667,9 @@
         #legend.wide .lg-h .lg-sn { display: block; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
         #legend.wide .lg-h .lg-sc { display: block; color: var(--muted); font-variant-numeric: tabular-nums; }
         #legend.wide .lg-cn { font-weight: 700; background: color-mix(in srgb, var(--co, transparent) 70%, var(--bg)); }
+        #legend.wide .lg-ct { font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid color-mix(in srgb, var(--text) 30%, transparent); border-radius: 0; }
+        #legend.wide .lg-ct .lg-sw { display: none; }
+        #legend.wide .lg-ct ~ .lg-cn { margin-left: 0; }
         #legend.wide .lg-cn .lg-sw { min-width: 12px; width: 12px; height: 12px; padding: 0; }
         #legend.wide .lg-cn .lg-sw b, #legend.wide .lg-ty .lg-ti b { display: none; }
         #legend.wide .lg-ty { padding-left: 16px; }
@@ -909,6 +917,7 @@
 <script src="./map/panels.js"></script>
 <script src="./map/event-icons.js"></script>
 <script src="./map/legend.js"></script>
+<script src="./map/continents.js"></script>
 <script src="./map/reliability.js"></script>
 <script src="./map/sea-mask.js"></script>
 <script src="./map/built.js"></script>
@@ -3126,7 +3135,7 @@ function spotApply() {
 /** Foco pasajero al pasar el raton por un icono del mapa (o una fila de sucesos): los demas se atenuan igual; al salir, vuelve el de antes. */
 function spotHover(id) {
     id = id || null; if (!SPOT || id === SPOT.hover) return;
-    SPOT.hover = id; spotApply();
+    SPOT.hover = id; spotApply(); spotPickPush();
 }
 // Lo elegido en el buscador (o la ficha abierta desde el) se dibuja SIEMPRE, encima y al 100 %: aunque a esa distancia su capa no lo pinte
 // (las construcciones van por tramos de notoriedad y de lejos solo salen las mas conocidas; sucesos poco notables) o le choque otro icono.
@@ -3135,7 +3144,7 @@ const SPOTPICK = { f: null };
 function spotPickSet(f) { SPOTPICK.f = f || null; spotPickPush(); }
 function spotPickPush() {
     const src = map.getSource && map.getSource('spot-pick'); if (!src) return;
-    const f = SPOTPICK.f && SPOT.id && SPOTPICK.f.properties.id === SPOT.id ? SPOTPICK.f : null;
+    const f = SPOTPICK.f && ((SPOT.id && SPOTPICK.f.properties.id === SPOT.id) || (SPOT.hover && SPOTPICK.f.properties.id === SPOT.hover)) ? SPOTPICK.f : null;   // foco fijo (buscador) o pasajero (rueda)
     if (f && /^evi-/.test(f.properties.img)) evEnsureImage(f.properties.img);
     src.setData(f ? { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: f.geometry, properties: f.properties }] } : emptyFC());
 }
@@ -5430,7 +5439,7 @@ function lgSet(open, persist) {
     document.body.classList.toggle('lg-on', LG.open);
     $('legend').hidden = !LG.open; $('lg-wires').hidden = !LG.open;
     document.body.classList.toggle('lg-wide', LG.open && LG.wide); $('legend').classList.toggle('wide', LG.wide);
-    if (!LG.open) { $('lg-pop').hidden = true; $('lg-head').setAttribute('aria-expanded', 'false'); lgHot(null); LG.sig = ''; }
+    if (!LG.open) { $('lg-pop').hidden = true; $('lg-head').setAttribute('aria-expanded', 'false'); lgHot(null); LG.sig = ''; LG.worldSig = ''; }
     legendControl.texts(); lgDotsApply();
     if (LG.open) lgSchedule(0);
 }
@@ -5454,69 +5463,69 @@ function lgSchedule(ms) {
 // Lo que se ve ahora: sucesos dibujados (en pantalla y en la cara visible del globo) y construcciones que MapLibre ha colocado.
 // Solo lo que se VE: entre la barra de arriba y la linea de tiempo (minY, maxY); lo que queda debajo de ellas no se puede señalar (sonda,
 // 2026-11-15: la rueda elegia el estadio de Mestalla, tapado por la linea de tiempo, y el cable acababa sobre ella).
-function lgCollect(box) {
-    const items = []; const front = (lng, lat) => lgSeenAt(lng, lat, box);
-    if (clockFull()) (events.shown || []).forEach((f) => {
-        if (!f.geometry) return; const p = front(f.geometry.coordinates[0], f.geometry.coordinates[1]); if (!p) return;
-        items.push({ id: f.properties.id, kind: 'e', f, x: p.x, y: p.y, seen: true, importance: f.properties.importance || 0 });
-    });
-    if (BUILT.on) {
-        const layers = ChronosBuilt.LAYER_IDS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, 'visibility') !== 'none');
-        if (layers.length) map.queryRenderedFeatures({ layers }).forEach((h) => {
-            if (!h.geometry || !h.properties || !h.properties.id) return; const p = front(h.geometry.coordinates[0], h.geometry.coordinates[1]); if (!p) return;
-            items.push({ id: h.properties.id, kind: 'b', props: h.properties, geom: h.geometry, x: p.x, y: p.y, seen: true, importance: h.properties.i || 0 });
-        });
-    }
-    return items;
-}
-/**
- * RUEDA LLENA (el creador, 2026-11-16): «alargar la lista de elementos rellenando con elementos que no están a la vista… tantos elementos
- * como para rellenarse, sin dejar espacios vacíos arriba y abajo», lo MAS CERCANO primero (lo eligio el). La lista va de arriba abajo como
- * el mapa, asi que lo que la rellena por arriba es lo que queda justo ENCIMA de la vista y por abajo lo de justo DEBAJO (lo de los lados
- * caeria en medio de la lista y dejaria huecos en los extremos: se probo). En cada lado, lo que llena media rueda. Al llevar la rueda hasta
- * uno de ellos el mapa lo sigue, y al pararse la rueda se rellena otra vez alrededor de la vista nueva: la lista no se acaba mientras haya algo.
- * Los de fuera son los que el mapa dibujaria alli: sucesos de esta fecha y su ventana de tiempo, con la notoriedad de esta distancia y los
- * filtros; construcciones del tramo de esta distancia que ya existen. No entra lo que cae dentro de la vista sin dibujar (el mapa lo aparta
- * por no caber): seria una fila que dice «se ve» sin icono.
+/*
+ * LA RUEDA RECORRE EL GLOBO ENTERO (el creador, 2026-11-16: «si yo me muevo por la rueda debe verse cómo se listan los elementos continente por
+ * continente, país por país, elemento por elemento… debe ser movimiento elegante con animación, no salto… un movimiento mucho más suave,
+ * recorriendo el globo entero»). La rueda lleva TODO lo que el mapa dibujaria en el planeta a esta distancia y en esta fecha (sucesos de la
+ * ventana de tiempo con la notoriedad de esta distancia y los filtros; construcciones del tramo de esta distancia que ya existen), por
+ * continente, pais, tipo y elemento, de norte a sur y, a la misma latitud, de oeste a este. Es la misma lista mientras se recorre: solo se
+ * rehace si cambian la fecha, la distancia (tramo de notoriedad) o los filtros; al moverse el mapa solo cambia el marco de lo que se ve.
+ * (Antes se rellenaba con lo cercano a la vista y se rehacia al parar el mapa: filas que aparecian y desaparecian, «salto».)
  */
-const LG_FILL_SCAN = 4000;     // como mucho se miran en pantalla tantos candidatos por lado, del mas cercano al mas lejano
-/** Candidatos de fuera de la vista, del mas cercano al mas lejano (el lado, arriba o abajo, se mira al tomarlos: lgFillTake). */
-function lgFillPrep(box, have) {
-    const m = map.unproject([(box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2]); const c0 = [m.lng, m.lat];
-    const cand = [];
-    const add = (it, c) => { if (have.has(it.id)) return; cand.push({ d: ChronosCamera.angleDeg(c0, c), c, it }); };
+const LGI = new Map();      // elementos por id, con lo que cuesta calcular (pais y continente por punto) guardado entre una lista y la siguiente
+function lgItemOf(id, kind, make) {
+    let it = LGI.get(id); if (!it || it.kind !== kind) { it = make(); LGI.set(id, it); }
+    return it;
+}
+/** Firma de lo que decide QUE va en la rueda; si no cambia, la lista es la misma. */
+function lgWorldSig() {
+    const win = clockFull() ? evWindow() : null; const z = map.getZoom(); const tier = ChronosBuilt.TIERS.find((tr) => z >= tr.minzoom && z < tr.maxzoom);
+    return [clockFull() ? Math.round(clock.jd) : 'x', win ? Math.round(win.pastDays) + '/' + Math.round(win.futureDays) : '', clockFull() ? ChronosTimed.importanceFloor(viewMeters()).toFixed(3) : '',
+        tier ? tier.id : '', BUILT.on ? 1 : 0, lgObjId(BUILT.fc), lgObjId(events.vis), events.vis.length, vfMask, typeof etMask === 'undefined' ? '' : etMask, lang, state.ybp, lgObjId(state.borders && state.borders.data), CONT.idx ? 1 : 0].join('|');
+}
+const LG_OBJ = new WeakMap(); let LG_OBJN = 0;
+const lgObjId = (o) => { if (!o || typeof o !== 'object') return 0; if (!LG_OBJ.has(o)) LG_OBJ.set(o, ++LG_OBJN); return LG_OBJ.get(o); };
+/** Todo lo que el mapa dibujaria en el planeta ahora mismo (ver arriba). */
+function lgWorldItems() {
+    const out = [];
     if (clockFull() && events.vis.length) {
         const win = evWindow(); const floor = ChronosTimed.importanceFloor(viewMeters());
         for (const f of events.vis) {
             if (!f.geometry || (f.properties.importance || 0) < floor) continue;
             const sp = ChronosTimed.span(f); if (sp.b < clock.jd - win.pastDays || sp.a > clock.jd + win.futureDays) continue;
-            add({ id: f.properties.id, kind: 'e', f, importance: f.properties.importance || 0 }, f.geometry.coordinates);
+            const it = lgItemOf(f.properties.id, 'e', () => ({ id: f.properties.id, kind: 'e', importance: f.properties.importance || 0 }));
+            it.f = f; out.push(it);
         }
     }
     if (BUILT.on && BUILT.fc && map.getLayer('built-icons')) {
         const z = map.getZoom(); const tier = ChronosBuilt.TIERS.find((tr) => z >= tr.minzoom && z < tr.maxzoom);
         if (tier) for (const f of BUILT.fc.features) {
             const p = f.properties; if (!f.geometry || !p || !(p.s >= state.ybp) || (tier.min && !(p.i >= tier.min))) continue;
-            add({ id: p.id, kind: 'b', props: p, geom: f.geometry, importance: p.i || 0 }, f.geometry.coordinates);
+            const it = lgItemOf(p.id, 'b', () => ({ id: p.id, kind: 'b', importance: p.i || 0 }));
+            it.props = p; it.geom = f.geometry; out.push(it);
         }
     }
-    cand.sort((a, b) => a.d - b.d);
-    return { cand, i: 0, up: [], down: [], box, have };
-}
-/** Toma hasta n de los mas cercanos ENCIMA (side 'up') o DEBAJO ('down') de la vista; devuelve los elementos (seen = false). */
-function lgFillTake(F, side, n) {
-    const out = []; const q = F[side];
-    while (out.length < n) {
-        if (q.length) { out.push(q.shift()); continue; }
-        if (F.i >= F.cand.length || F.i >= LG_FILL_SCAN * 2) break;
-        const { c, it } = F.cand[F.i++]; if (F.have.has(it.id)) continue;
-        const p = map.project(c); const r = map.unproject(p);
-        if (Math.abs(r.lat - c[1]) > 0.3 || Math.abs((((r.lng - c[0]) % 360) + 540) % 360 - 180) > 0.3) continue;   // al otro lado del globo
-        const sd = p.y < F.box.y0 ? 'up' : p.y > F.box.y1 ? 'down' : null; if (!sd) continue;                    // dentro, o a un lado
-        F.have.add(it.id); it.x = p.x; it.y = p.y; it.seen = false;
-        if (sd === side) out.push(it); else F[sd].push(it);
-    }
+    // orden de norte a sur y, a la misma latitud, de oeste a este (buildTree ordena por y y despues por x)
+    out.forEach((it) => { const c = lgCoords(it); it.y = -c[1]; it.x = c[0]; });
     return out;
+}
+/** Lo que se ve ahora: cada elemento sabe si cae en la vista (seen) y, si ademas esta dibujado, donde (px, py: de ahi sale su cable). */
+function lgSeenUpdate(items) {
+    const box = lgViewBox(); const cr = map.getContainer().getBoundingClientRect(); const gb = lgViewGeoBox();
+    const drawn = new Set((events.shown || []).map((f) => f.properties.id));
+    if (BUILT.on) { const layers = ChronosBuilt.LAYER_IDS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, 'visibility') !== 'none'); if (layers.length) map.queryRenderedFeatures({ layers }).forEach((h) => { if (h.properties && h.properties.id) drawn.add(h.properties.id); }); }
+    let n = 0;
+    items.forEach((it) => {
+        const c = lgCoords(it); const p = c && !lgFar(c, gb) ? lgSeenAt(c[0], c[1], box) : null; it.seen = Boolean(p); if (p) n++;
+        if (p && (drawn.has(it.id) || it.id === LG.hot)) { it.px = p.x + cr.left; it.py = p.y + cr.top; } else it.px = it.py = null;
+    });
+    return n;
+}
+/** Pais del elemento (fronteras de esta fecha), guardado mientras no cambien las fronteras. */
+function lgPolOf(it) {
+    const key = lgObjId(state.borders && state.borders.data) + '|' + lang;
+    if (it.polKey !== key) { const c = lgCoords(it); it.pol = c ? polityAtLngLat(c[0], c[1]) : null; it.polKey = key; }
+    return it.pol;
 }
 /** Recuadro del mapa donde algo «se ve» (coordenadas del contenedor): entre la barra de arriba y la linea de tiempo, a la izquierda de la rueda.
  *  Lo que queda debajo de ellas no se puede señalar (sonda, 2026-11-15: la rueda elegia el estadio de Mestalla, tapado por la linea de tiempo). */
@@ -5524,11 +5533,29 @@ function lgViewBox() {
     const cr = map.getContainer().getBoundingClientRect(); const br = $('legend').getBoundingClientRect(); const H = map.getContainer().clientHeight;
     return { x0: 0, x1: br.left - cr.left - 4, y0: Math.max(0, br.top - cr.top), y1: Math.min(H, br.bottom - cr.top) };
 }
+/** Caja geografica de la vista con margen, para descartar sin proyectar lo que esta lejos (la rueda lleva todo el planeta: miles de puntos con
+ *  zoom). null si la vista abarca demasiado (el globo entero) y hay que mirarlo todo. */
+function lgViewGeoBox() {
+    if (map.getZoom() < 3) return null;
+    const b = map.getBounds(); const w = b.getWest(); const e = b.getEast(); const s = b.getSouth(); const n = b.getNorth();
+    if (!(e - w < 300)) return null;
+    const m = 2; return { w: w - m, e: e + m, s: s - m, n: n + m };
+}
+const lgFar = (c, gb) => { if (!gb) return false; if (c[1] < gb.s || c[1] > gb.n) return true; let x = c[0]; while (x < gb.w) x += 360; while (x > gb.w + 360) x -= 360; return x > gb.e; };
 /** Donde se ve (lng, lat) en pantalla, si cae en el recuadro y en la cara visible del globo; si no, null. */
 function lgSeenAt(lng, lat, box) {
     const p = map.project([lng, lat]); if (!(p.x >= box.x0 && p.x <= box.x1 && p.y >= box.y0 && p.y <= box.y1)) return null;
     const q = map.unproject(p); if (Math.abs(q.lat - lat) > 0.3 || Math.abs((((q.lng - lng) % 360) + 540) % 360 - 180) > 0.3) return null;   // al otro lado del globo
     return p;
+}
+/** Continentes (map/continents.js, data/borders/continents.json, Natural Earth): se cargan la primera vez que se abre la rueda. */
+const CONT = { idx: null, loading: null, failed: false };
+function contEnsure() {
+    if (CONT.idx || CONT.loading || CONT.failed) return;
+    CONT.loading = fetch('./data/borders/continents.json').then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then((j) => { CONT.idx = ChronosContinents.create(j); if (!CONT.idx) throw new Error('forma inesperada'); lgSchedule(0); })
+        .catch(() => { CONT.failed = true; })     // sin continentes la rueda sigue igual, por paises
+        .then(() => { CONT.loading = null; });
 }
 const lgCoords = (it) => { const g = it.kind === 'e' ? it.f && it.f.geometry : it.geom; return g && g.coordinates ? g.coordinates : null; };
 /** Pais de un punto de fuera de la vista (no hay nada dibujado alli que consultar): punto en poligono con las fronteras de esta fecha. */
@@ -5563,7 +5590,7 @@ function lgText(it) {
 function lgWide(on) {
     LG.wide = !!on; savePrefs({ lgx: LG.wide ? 1 : 0 });
     document.body.classList.toggle('lg-wide', LG.open && LG.wide); $('legend').classList.toggle('wide', LG.wide);
-    $('lg-list').textContent = ''; LGW.els.clear(); LGW.k = -1; LG.sig = '';
+    $('lg-list').textContent = ''; LGW.els.clear(); LGW.k = -1; LG.sig = ''; LG.worldSig = '';
     lgSchedule(0);
 }
 /** Pais del lugar en pantalla (x, y del mapa) segun las fronteras dibujadas: { c: color, name } o null (mar, sin fronteras). */
@@ -5600,49 +5627,36 @@ function lgTypeOf(it) {
 function lgRender() {
     if (!LG.open) return;
     const t0 = performance.now();
-    const box = $('legend'); const list = $('lg-list'); const lr = list.getBoundingClientRect(); const br = box.getBoundingClientRect();
+    const list = $('lg-list'); const lr = list.getBoundingClientRect();
     const rowH = lgRowH(); LG.rowH = rowH; list.style.setProperty('--lg-row', rowH + 'px');
-    const cr = map.getContainer().getBoundingClientRect();
-    const vbox = lgViewBox();
-    const items = lgCollect(vbox);
-    // de los de fuera de la vista no hay punto al que tender un cable (px, py) ni nada dibujado que consultar: su pais, por sus coordenadas
-    const place = (it) => { const c = lgCoords(it); it.yd = it.y + cr.top - lr.top; if (it.seen) { it.px = it.x + cr.left; it.py = it.y + cr.top; it.pol = polityAt(it.x, it.y); } else { it.px = it.py = null; it.pol = c ? polityAtLngLat(c[0], c[1]) : null; } };
+    contEnsure();
+    const sig = lgWorldSig();
+    if (sig === LG.worldSig && LGW.tree) {           // la misma lista: solo lo que se ve, el marco, los cables
+        $('lg-n').textContent = String(lgSeenUpdate(LGW.tree.seq));
+        if (LG.fitKey !== lr.height + '|' + rowH) { LG.fitKey = lr.height + '|' + rowH; LGW.cyTo = lr.height / 2; lgWheelRows(true); lgAnimate(); }      // cambio el alto: lo que cabe
+        lgVpDraw(); lgAnchors(); lgWires(); if (!$('lg-pop').hidden) lgPopRender();
+        LG.ms = performance.now() - t0; return;
+    }
+    LG.worldSig = sig; LG.fitKey = lr.height + '|' + rowH;
+    const items = lgWorldItems();
+    const nSeen = lgSeenUpdate(items);
+    items.forEach(lgPolOf);
+    const contOf = (it) => { if (!CONT.idx) return null; if (it.cont === undefined) { const c = lgCoords(it); it.cont = c ? CONT.idx.at(c[0], c[1]) : null; } return it.cont ? { key: it.cont, name: ChronosContinents.nameOf(it.cont, lang), last: it.cont === 'sea' } : null; };
     const old = LGW.tree && LGW.tree.seq.length ? LGW.tree.seq : null;
     const prevId = old ? old[Math.max(0, Math.min(old.length - 1, Math.round(LGW.f)))].id : null;
-    const prevY = prevId ? (old.find((x) => x.id === prevId) || {}).yd : null;
     const frac = old ? LGW.f - Math.round(LGW.f) : 0; const toId = old && LGW.to != null && old[LGW.to] ? old[LGW.to].id : null;
-    // el elegido de antes no se pierde aunque siga fuera de la vista y ya no sea de los mas cercanos
-    const have = new Set(items.map((it) => it.id));
-    [prevId, LG.hot, toId, LGW.jump].forEach((id) => { if (!id || have.has(id) || !old) return; const it = old.find((x) => x.id === id); const c = it && lgCoords(it); if (!c) return; const p = map.project(c); it.x = p.x; it.y = p.y; it.seen = Boolean(lgSeenAt(c[0], c[1], vbox)); items.push(it); have.add(id); });
-    items.forEach(place);
-    const build = () => ChronosLegend.buildTree(items, (it) => (it.pol && it.pol.name ? { key: it.pol.name, name: it.pol.name, color: it.pol.c } : null), lgTypeOf);
-    // se sigue en el mismo elemento si sigue en la rueda; si no, en el de altura mas parecida (al principio, el del centro del mapa)
-    const anchorOf = (T) => {
-        if (prevId != null && T.at.has(prevId)) return T.at.get(prevId).k;
-        let k = -1; const ref = prevY != null ? prevY : (cr.top + cr.height / 2) - lr.top; let best = Infinity;
-        T.seq.forEach((it, i) => { const d = Math.abs(it.yd - ref) + (prevY == null ? Math.abs(it.x + cr.left - (cr.left + cr.width / 2)) * 0.5 : 0); if (d < best) { best = d; k = i; } });
-        return k;
-    };
-    // RUEDA LLENA: hasta media rueda de elementos antes y despues del de el centro, con lo de justo encima y justo debajo de la vista
-    // (por paises, uno de mas abajo puede caer en un pais de en medio: se sigue tomando de ese lado hasta llenar o acabar)
-    const per = Math.ceil((lr.height || 300) / (rowH * 0.62) / 2);
-    const F = lgFillPrep(vbox, have);
-    LGW.tree = build(); let k = anchorOf(LGW.tree);
-    for (let guard = 0; guard < 24; guard++) {
-        const before = k < 0 ? 0 : k; const after = k < 0 ? 0 : LGW.tree.seq.length - 1 - k;
-        const add = [...(before < per ? lgFillTake(F, 'up', per - before) : []), ...(after < per ? lgFillTake(F, 'down', per - after) : [])];
-        if (!add.length) break;
-        add.forEach((it) => { place(it); items.push(it); });
-        LGW.tree = build(); k = anchorOf(LGW.tree);
-    }
+    LGW.tree = ChronosLegend.buildTree(items, (it) => (it.pol && it.pol.name ? { key: it.pol.name, name: it.pol.name, color: it.pol.c } : null), lgTypeOf, contOf);
     const seq = LGW.tree.seq; LG.rows = seq; LG.extra = 0; LG.groups = LGW.tree.countries;
+    // se sigue en el mismo elemento si sigue en la rueda; si no, en el mas cercano al centro de la vista
+    let k = prevId != null && LGW.tree.at.has(prevId) ? LGW.tree.at.get(prevId).k : -1;
+    if (k < 0 && seq.length) { const vb = lgViewBox(); const m = map.unproject([(vb.x0 + vb.x1) / 2, (vb.y0 + vb.y1) / 2]); let best = Infinity; seq.forEach((it, i) => { const d = ChronosCamera.angleDeg([m.lng, m.lat], lgCoords(it)); if (d < best) { best = d; k = i; } }); }
     // se conserva lo que estuviera haciendo la rueda (posicion entre dos filas, destino)
     LGW.f = Math.max(0, Math.min(Math.max(0, seq.length - 1), Math.max(0, k) + (k >= 0 ? frac : 0))); LGW.k = -1;
     LGW.to = toId && LGW.tree.at.has(toId) ? LGW.tree.at.get(toId).k : LGW.to != null ? Math.round(LGW.f) : null;
     if (LGW.jump && LGW.tree.at.has(LGW.jump)) LGW.to = LGW.tree.at.get(LGW.jump).k; else LGW.jump = null;
     LGW.cyTo = lr.height / 2; if (LGW.cy == null) LGW.cy = LGW.cyTo;      // el centro de la rueda: fijo, a media altura
     if (LG.hot && !LGW.tree.at.has(LG.hot)) LG.hot = null;
-    $('lg-n').textContent = String(items.filter((it) => it.seen).length);     // lo que se ve (la rueda lleva ademas lo cercano de fuera)
+    $('lg-n').textContent = String(nSeen);     // lo que se ve (la rueda lleva todo el planeta)
     const ex = $('lg-extra');
     ex.textContent = LG.wide ? t('lgLess') : seq.length ? t('lgAll') : '';
     ex.title = LG.wide ? t('lgLessTip') : t('lgAllTip');
@@ -5679,6 +5693,12 @@ function lgWheelRows(force) {
 function lgWheelRow(r) {
     const T = LGW.tree; const c = T.countries[r.ci];
     if (r.kind === 'item') { const li = lgRow(r.it); li.dataset.key = r.key; lgPaint(li, r.it, r.it.pol); return li; }
+    if (r.kind === 'continent') {
+        const o = T.continents[r.oi]; const name = ChronosContinents.nameOf(o.key, lang) || t('lgNoCountry');
+        const li = el('li', { class: 'lg-row lg-h lg-ct' + (r.open ? ' open' : '') }); li.dataset.key = r.key; li.setAttribute('aria-expanded', String(r.open)); li.title = name + ' · ' + o.n;
+        li.append(el('span', { class: 'lg-sw', 'aria-hidden': 'true' }, [el('b', { text: ChronosContinents.nameOf(o.key, lang, true) || '·' })]), el('span', { class: 'lg-sn', text: name }), el('span', { class: 'lg-sc', text: String(o.n) }));
+        return li;
+    }
     const li = el('li', { class: 'lg-row lg-h ' + (r.kind === 'country' ? 'lg-cn' : 'lg-ty') + (r.open ? ' open' : '') + (r.kind === 'country' && !c.key ? ' none' : '') });
     li.dataset.key = r.key; li.setAttribute('aria-expanded', String(r.open));
     if (c.color) li.style.setProperty('--co', c.color);
@@ -5697,11 +5717,12 @@ function lgWheelRow(r) {
 function lgRowSig(r) {
     const c = LGW.tree.countries[r.ci];
     if (r.kind === 'item') return 'i';
+    if (r.kind === 'continent') { const o = LGW.tree.continents[r.oi]; return [r.open, o.n, o.key, lang].join('|'); }
     if (r.kind === 'country') return [r.open, c.n, c.name, c.color, lang].join('|');
     const ty = c.types[r.ti]; return [r.open, ty.n, ty.name, ty.items[0].id, c.color, lang].join('|');
 }
 /** Alto natural de cada clase de fila (sin encoger): el mismo para colocar y para decidir que cabe. */
-const lgNat = () => ({ item: LG.rowH, type: 26, country: LG.wide ? 26 : 22 });
+const lgNat = () => ({ item: LG.rowH, type: 26, country: LG.wide ? 26 : 22, continent: LG.wide ? 26 : 20 });
 const lgRowNat = (r) => lgNat()[r.kind] || 0;
 /** Un fotograma: inercia, filas, colocacion (con muelle para que nada salte), linea central, seleccion y cables. */
 function lgFrame(now) {
@@ -5745,15 +5766,26 @@ function lgAnimate() { if (!LGW.raf) { LGW.last = 0; LGW.raf = requestAnimationF
 /** Elegido (el del centro): fila marcada, nombre (columna), cable y anillo. Sin atenuar el globo aun (eso, al parar). */
 function lgSelect(id) {
     LG.hot = id || null;
+    lgPick();
     if (LGW.dimmed && LGW.dimmed !== LG.hot) { LGW.dimmed = null; spotHover(null); }
     LGW.els.forEach((st) => st.li.classList.toggle('hot', !!LG.hot && st.r && st.r.kind === 'item' && st.r.it.id === LG.hot));
     lgBubble();
+}
+/** El elegido de la rueda se dibuja SIEMPRE, encima y al 100 % (como lo elegido en el buscador): la rueda lleva todo el planeta y el mapa, por
+ *  no amontonar, no dibuja todo; al centrarse en uno que no estaba dibujado, aparece. */
+function lgPick() {
+    const T = LGW.tree; const it = LG.hot && T && T.at.has(LG.hot) ? T.seq[T.at.get(LG.hot).k] : null;
+    if (!it) { if (LGW.picked) { LGW.picked = null; spotPickSet(null); } return; }
+    if (LGW.picked === it.id) return; LGW.picked = it.id;
+    const g = { type: 'Point', coordinates: lgCoords(it) };
+    if (it.kind === 'e') { const f = it.f; const dk = evDrawKey(f); evEnsureImage('evi-' + dk); spotPickSet({ geometry: g, properties: { id: it.id, name: evName(f), icon: evIconKey(f), img: 'evi-' + dk, importance: f.properties.importance, size: 1.05 } }); }
+    else { const fam = it.props && ChronosBuilt.IDS.includes(it.props.f) ? it.props.f : 'other'; spotPickSet({ geometry: g, properties: { id: it.id, n: it.props && it.props.n, img: 'bui-' + fam, size: 1.05 } }); }
 }
 /** Toma la rueda (el usuario la mueve o señala algo): desde ahora el del centro es el elegido. */
 function lgEngage() { LGW.engaged = true; }
 /** Suelta la seleccion: sin cable ni atenuado; la rueda se queda donde esta. */
 function lgRelease() {
-    LGW.engaged = false; LGW.jump = null; LG.hot = null; LG.touchHot = null;
+    LGW.engaged = false; LGW.jump = null; LG.hot = null; LG.touchHot = null; lgPick();
     if (LGW.dimmed) { LGW.dimmed = null; spotHover(null); }
     LGW.els.forEach((st) => st.li.classList.remove('hot')); lgBubble(); lgWires();
 }
@@ -5775,11 +5807,22 @@ function lgCenter(id) {
  * por segundo: el globo va al ultimo como mucho cada LG_CENTER_MS (cada destino nuevo sale con la velocidad que llevaba, asi que lo sigue sin
  * tirones). Lo que viene del MAPA no mueve el mapa: señalar o tocar un icono gira la rueda hasta el, nada mas.
  */
-const LG_CENTER_MS = 140;
+const LG_CENTER_MS = 120;
 function lgCenterSoon(id) {
     LGW.centerId = id; if (LGW.centerT) return;
     const wait = Math.max(0, LG_CENTER_MS - (performance.now() - (LGW.centerAt || 0)));
-    LGW.centerT = setTimeout(() => { LGW.centerT = 0; LGW.centerAt = performance.now(); if (LG.open && LGW.centerId && LGW.centerId === LG.hot) lgCenter(LGW.centerId); }, wait);
+    LGW.centerT = setTimeout(() => {
+        LGW.centerT = 0; LGW.centerAt = performance.now(); if (!LG.open || !LGW.centerId || LGW.centerId !== LG.hot) return;
+        // mientras la rueda gira sin destino fijo (arrastre, rueda del raton, inercia), el globo va al punto ENTRE los dos elementos por los
+        // que pasa la rueda (fraccion de la posicion): se desliza de uno a otro en vez de ir a saltos; con destino (toque, flechas), al destino
+        const T = LGW.tree; const n = T ? T.seq.length : 0;
+        if (n > 1 && LGW.to == null && !LGW.jump) {
+            const f = Math.max(0, Math.min(n - 1, LGW.f)); const a = Math.floor(f); const b = Math.min(n - 1, a + 1); const u = f - a;
+            const ca = lgCoords(T.seq[a]); const cb = lgCoords(T.seq[b]);
+            if (ca && cb && u > 0.02 && u < 0.98) { camGlide(ChronosCamera.lerp(ca, cb, u)); if (LGW.drag || LGW.v) lgCenterSoon(LGW.centerId); return; }
+        }
+        lgCenter(LGW.centerId);
+    }, wait);
 }
 /** Marco de lo que se ve (ChronosLegend.viewSegments): recuadros sobre las filas seguidas que se ven, donde estan dibujadas ahora. */
 function lgVpDraw() {
@@ -5795,8 +5838,8 @@ function lgVpDraw() {
 /** Al mover el mapa, cada elemento de la rueda vuelve a mirar si cae en la vista (sin reordenar la lista: eso, al parar). */
 function lgSeenLive() {
     LGW.seenRaf = 0; const T = LGW.tree; if (!LG.open || !T || !T.seq.length) return;
-    const box = lgViewBox(); let changed = false; let n = 0;
-    T.seq.forEach((it) => { const c = lgCoords(it); const s = Boolean(c && lgSeenAt(c[0], c[1], box)); if (s !== it.seen) { it.seen = s; changed = true; } if (s) n++; });
+    const box = lgViewBox(); const gb = lgViewGeoBox(); let changed = false; let n = 0;
+    T.seq.forEach((it) => { const c = lgCoords(it); const s = Boolean(c && !lgFar(c, gb) && lgSeenAt(c[0], c[1], box)); if (s !== it.seen) { it.seen = s; changed = true; } if (s) n++; });
     if (changed) { lgVpDraw(); $('lg-n').textContent = String(n); }
 }
 /** Donde acaba el cable de cada fila de elemento: borde izquierdo de la columna (o de la fila en la lista entera), a la altura de la fila. */
@@ -5912,8 +5955,14 @@ function lgWires() {
         }
         // Cabecera plegada: gira a su primer elemento. Cabecera ABIERTA (el grupo del centro): recorre sus elementos, uno por toque (el
         // creador, 2026-11-16: «si clico el elemento que tiene el globo [el numero] no pasa nada»: ya estaba en el primero).
-        const c = T.countries[r.ci];
         const go = (id) => { lgSpinTo(id); lgCenterSoon(id); };      // la rueda gira hasta el y el globo se centra en el
+        // continente: plegado, a su primer elemento; el del centro (abierto), al pais siguiente de ese continente
+        if (r.kind === 'continent') {
+            const o = T.continents[r.oi]; const curC = LG.hot && T.at.has(LG.hot) ? T.at.get(LG.hot).c : -1;
+            const j = o.cs.indexOf(curC); const ci = j >= 0 ? o.cs[(j + 1) % o.cs.length] : o.cs[0];
+            const first = T.countries[ci] && T.countries[ci].types[0] && T.countries[ci].types[0].items[0]; if (first) go(first.id); return;
+        }
+        const c = T.countries[r.ci];
         // (con sitio de sobra hay otros grupos abiertos: solo el del centro recorre; tocar otro abierto gira a su primero)
         const cur = LG.hot && T.at.has(LG.hot) ? T.at.get(LG.hot) : null;
         if (cur && cur.c === r.ci) {
