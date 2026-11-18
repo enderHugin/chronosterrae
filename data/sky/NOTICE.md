@@ -34,3 +34,13 @@ heliocentricas (km) que calcula **astronomy-engine** (MIT) con los vectores de *
 JPL/Caltech, de la NASA, sin restricciones de uso para este fin), en 16 epocas de -2000 a 3000. No contiene datos de Horizons
 salvo las cifras de error. Los radios de `sky/solar.js` son valores publicados: ficha de planetas de la NASA (NSSDCA,
 https://nssdc.gsfc.nasa.gov/planetary/factsheet/, actualizada el 18-03-2025) y el radio solar nominal de la Resolucion B3 de la IAU 2015.
+
+# Dibujos de constelaciones (`constellation-art.json`)
+
+Anclajes de los dibujos de la cultura del cielo «western» de **Stellarium** (github.com/Stellarium/stellarium-skycultures, `western/index.json`,
+commit y sha256 en su `meta`): para cada constelación, el fichero de su dibujo y tres puntos de la imagen con la estrella (HIP) que cae en cada uno,
+y el significado del nombre (`common_name.english`). Licencia de esos datos: **CC BY-SA** (Stellarium, `western/description.md`); se redistribuyen
+bajo la misma licencia, con atribución a Stellarium.
+
+Los **dibujos** (Johan Meuris, **Free Art License**) NO están en este repositorio: la web los carga en ejecución desde el repositorio de Stellarium
+en ese commit y los acredita. Reconstruir: `node scripts/build-constellation-art.js --skycultures <clon> --commit <sha> --out data/sky`.

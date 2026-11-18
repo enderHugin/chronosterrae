@@ -403,6 +403,16 @@
         #sky h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
         #sky > .close { position: sticky; top: 0; float: right; z-index: 4; width: 28px; height: 28px; margin: -10px -12px -28px 6px; padding: 0; border: none; border-radius: 8px; background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
         #sky-chart { width: 100%; aspect-ratio: 1; display: block; color: var(--text); cursor: crosshair; }
+        /* Historia del nombre de una constelacion: hoja abajo, por encima de la carta y de la vista al apuntar */
+        #con-card { position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 4100; width: min(560px, calc(100vw - 24px)); max-height: min(62vh, 520px);
+            overflow: auto; box-sizing: border-box; padding: 14px 16px 12px; border-radius: 12px; background: var(--panel, #10182a); color: var(--text, #e8eefc);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.45); font: 14px/1.5 var(--font-ui); margin-bottom: env(safe-area-inset-bottom); }
+        #con-card[hidden] { display: none; }
+        #con-card h3 { margin: 0 64px 2px 0; font-size: 18px; }
+        #con-sub { opacity: 0.75; font-size: 13px; margin-bottom: 8px; }
+        #con-text { white-space: pre-line; }
+        #con-src { margin-top: 10px; font-size: 12px; opacity: 0.8; }
+        #con-close { position: absolute; top: 10px; right: 10px; }
         /* Apuntar al cielo: a pantalla completa, por encima de todo */
         #skp { position: fixed; inset: 0; z-index: 4000; background: #03060d; color: #e8eefc; touch-action: none; }
         #skp[hidden] { display: none; }
@@ -727,6 +737,13 @@
     <div id="map"></div>
     <canvas id="era-snap" aria-hidden="true"></canvas>
     <div id="solar" hidden></div>
+    <!-- Historia del nombre de una constelacion (al tocar su dibujo; sky/sky-art.js) -->
+    <div id="con-card" hidden role="dialog" aria-modal="false" aria-labelledby="con-title">
+        <button class="btn" id="con-close" type="button" data-i18n="con.close"></button>
+        <h3 id="con-title"></h3><div id="con-sub"></div>
+        <div id="con-text"></div>
+        <div id="con-src"></div>
+    </div>
     <!-- Apuntar al cielo con el movil (sky/sky-point.js) -->
     <div id="skp" hidden role="dialog" aria-modal="true" aria-labelledby="skp-info">
         <canvas id="skp-canvas"></canvas>
@@ -755,6 +772,7 @@
                     <div class="menu-sep" role="separator"></div>
                     <button class="btn" id="btn-sky-lines" type="button" aria-pressed="true" data-i18n="sky.lines"></button>
                     <button class="btn" id="btn-sky-cnames" type="button" aria-pressed="true" data-i18n="sky.conNames"></button>
+                    <button class="btn" id="btn-sky-art" type="button" aria-pressed="true" data-i18n="sky.art"></button>
                     <button class="btn" id="btn-sky-names" type="button" aria-pressed="true" data-i18n="sky.starNames"></button>
                 </div>
             </div>
@@ -817,12 +835,14 @@
                         <label><input id="sky-t-names" type="checkbox" checked> <span data-i18n="sky.names"></span></label>
                         <label><input id="sky-t-lines" type="checkbox" checked> <span data-i18n="sky.lines"></span></label>
                         <label><input id="sky-t-cnames" type="checkbox" checked> <span data-i18n="sky.conNames"></span></label>
+                        <label><input id="sky-t-art" type="checkbox" checked> <span data-i18n="sky.art"></span></label>
                         <label><input id="sky-t-day" type="checkbox"> <span data-i18n="sky.dayStars"></span></label>
                     </span>
                 </div>
                 <div id="sky-twilight"></div>
                 <table id="sky-list"><thead><tr><th></th><th data-i18n="sky.colAlt"></th><th data-i18n="sky.colAz"></th><th data-i18n="sky.colMag"></th><th></th></tr></thead><tbody id="sky-rows"></tbody></table>
                 <div id="sky-stars-note"></div>
+                <div id="sky-art-credit"></div>
                 <div id="sky-note"><span class="badge model" data-i18n="sky.model"></span> <span data-i18n="sky.note"></span></div>
                 <div id="sky-accuracy"></div>
                 <div id="sky-caption" data-i18n="sky.caption" style="font-size:11px;color:var(--muted);margin-top:6px"></div>
@@ -950,6 +970,7 @@
 <script src="./map/sphere.js"></script>
 <script src="./sky/sky-view.js"></script>
 <script src="./sky/sky-point.js"></script>
+<script src="./sky/sky-art.js"></script>
 <script src="./sky/timestep.js"></script>
 <script src="./sky/solar.js"></script>
 <script src="./sky/planets.js"></script>
@@ -1019,7 +1040,8 @@ const parsePrefs = (raw) => {
     if (Number.isInteger(p.pp) && p.pp >= 0 && p.pp <= 31) out.pp = p.pp;   // recuadros «mostrar siempre» (mascara de bits)
     if (typeof p.pn === 'string' && p.pn.length <= 300 && /^[a-z0-9:,;-]*$/.test(p.pn)) out.pn = p.pn;   // posiciones de los recuadros (se valida pieza a pieza al usarlas)
     if (typeof p.ps === 'string' && p.ps.length <= 300 && /^[a-z0-9:x;-]*$/.test(p.ps)) out.ps = p.ps;   // tamaños de los recuadros (idem)
-    if (Number.isInteger(p.sl) && p.sl >= 0 && p.sl <= 7) out.sl = p.sl;   // capas del cielo: 1 lineas de constelaciones, 2 nombres de estrellas, 4 nombres de constelaciones
+    if (Number.isInteger(p.sl) && p.sl >= 0 && p.sl <= 7) out.sl = p.sl;
+    if (p.sa === 0 || p.sa === 1) out.sa = p.sa === 1;      // dibujos de las constelaciones (2026-11-18)   // capas del cielo: 1 lineas de constelaciones, 2 nombres de estrellas, 4 nombres de constelaciones
     if (p.ea === 0 || p.ea === 1 || p.ea === 2) out.ea = p.ea;   // ambientacion de epoca: 0 sin, 1 sutil, 2 completa (ChronosEras)
     if (p.ia === 0 || p.ia === 1 || p.ia === 2) out.ia = p.ia;   // animacion de iconos y saltos de tiempo: 0 apagada, 1 ahorro, 2 completa (antes 0/1: el 1 antiguo pasa a ahorro)
     if (Number.isInteger(p.et) && p.et >= 0 && p.et <= 16383) out.et = p.et;   // tipos de suceso OCULTOS por el usuario (mascara de bits, un bit por grupo de map/event-icons.js)
@@ -1048,7 +1070,7 @@ let etMask = prefs.et || 0;   // tipos de suceso ocultos por el usuario (mascara
 let evMotion = null;     // medidor de la velocidad a la que fluye el tiempo (sky/timed.js); se crea con los sucesos
 const savePrefs = (patch) => {
     Object.assign(prefs, patch);
-    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ps: prefs.ps || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined, tl: prefs.tl, pg: prefs.pg || undefined, lg: prefs.lg, lgw: prefs.lgw, lgd: prefs.lgd, lgx: prefs.lgx };
+    const raw = { lang: prefs.lang, dark: prefs.dark === undefined ? undefined : (prefs.dark ? 1 : 0), ybp: prefs.ybp, c: prefs.c, z: prefs.z, sp: prefs.sp === undefined ? undefined : (prefs.sp ? 1 : 0), bh: prefs.bh === undefined ? undefined : (prefs.bh ? 1 : 0), rd: prefs.rd === undefined ? undefined : (prefs.rd ? 1 : 0), bu: prefs.bu === undefined ? undefined : (prefs.bu ? 1 : 0), so: prefs.so, cc: prefs.cc === undefined ? undefined : (prefs.cc ? 1 : 0), jd: prefs.jd, vf: prefs.vf, ks: prefs.ks, kp: prefs.kp, sel: prefs.sel || undefined, sl: prefs.sl, sa: prefs.sa === undefined ? undefined : (prefs.sa ? 1 : 0), ah: prefs.ah, pp: prefs.pp, pn: prefs.pn || undefined, ps: prefs.ps || undefined, ia: prefs.ia, ea: prefs.ea, et: prefs.et || undefined, tl: prefs.tl, pg: prefs.pg || undefined, lg: prefs.lg, lgw: prefs.lgw, lgd: prefs.lgd, lgx: prefs.lgx };
     try {
         document.cookie = PREF_COOKIE + '=' + encodeURIComponent(JSON.stringify(raw))
             + '; path=' + location.pathname.replace(/[^/]*$/, '') + '; max-age=31536000; SameSite=Lax'
@@ -1251,6 +1273,10 @@ const i18n = {
             button: 'Estrellas', tip: 'Estrellas, Sol, Luna y planetas tras el globo, en su posición en ese instante, y la noche sobre la Tierra. Es un cálculo; los símbolos no están a escala.',
             outOfRange: 'Sin estrellas ni noche en esta época: el cielo se calcula entre {a} y {b}.'
         },
+        con: {
+            close: 'Cerrar', loading: 'Buscando su historia…', none: 'No se ha encontrado su artículo en Wikipedia.', fail: 'No se pudo cargar (sin conexión o Wikipedia no responde).',
+            latin: 'En latín: {la}', meaning: '«{m}»', from: 'Según Wikipedia, «{title}»{section}', more: 'Seguir leyendo', license: 'Texto: Wikipedia (CC BY-SA 4.0)', tapHint: 'Toca un dibujo para saber de dónde viene su nombre'
+        },
         skp: {
             close: 'Cerrar', align: 'Alinear', aligning: 'Toca en la pantalla el astro que tienes delante del móvil',
             hint: 'Si no coincide con el cielo: apunta a la Luna o a una estrella brillante, pulsa «Alinear» y tócala en la pantalla. Arrastrar de lado también corrige la brújula.',
@@ -1276,6 +1302,7 @@ const i18n = {
             body: { Sun: 'Sol', Moon: 'Luna', Mercury: 'Mercurio', Venus: 'Venus', Mars: 'Marte', Jupiter: 'Júpiter', Saturn: 'Saturno', Uranus: 'Urano', Neptune: 'Neptuno' },
             phase: { new: 'nueva', waxingCrescent: 'creciente', firstQuarter: 'cuarto creciente', waxingGibbous: 'gibosa creciente', full: 'llena', waningGibbous: 'gibosa menguante', lastQuarter: 'cuarto menguante', waningCrescent: 'menguante' },
             cardinals: ['N', 'E', 'S', 'O'], colAlt: 'Alt.', colAz: 'Az.', colMag: 'Mag.',
+            art: 'Dibujos de constelaciones', artCredit: 'Dibujos: Johan Meuris (Free Art License), vía Stellarium',
             point: 'Apuntar al cielo', pointTip: 'Apunta con el móvil: se ven las estrellas, constelaciones y planetas que hay en esa dirección (brújula y giroscopio)',
             model: 'Modelo', note: 'Cálculo, no observación. Posiciones aparentes con refracción normal; sin aberración ni paralaje de las estrellas ni estrellas variables. La rotación de la Tierra (ΔT) antes de ~1600 es una estimación y desplaza el cielo local.',
             noStars: 'El catálogo de estrellas aún no está disponible: solo se muestran el Sol, la Luna y los planetas.',
@@ -1485,6 +1512,10 @@ const i18n = {
             button: 'Stars', tip: 'Stars, Sun, Moon and planets behind the globe, where they are at that instant, and the night over the Earth. A calculation; symbols are not to scale.',
             outOfRange: 'No stars or night in this era: the sky is computed between {a} and {b}.'
         },
+        con: {
+            close: 'Close', loading: 'Looking up its history…', none: 'Its Wikipedia article was not found.', fail: 'Could not load (offline or Wikipedia not responding).',
+            latin: 'Latin: {la}', meaning: '“{m}”', from: 'From Wikipedia, “{title}”{section}', more: 'Read more', license: 'Text: Wikipedia (CC BY-SA 4.0)', tapHint: 'Tap a drawing to learn where its name comes from'
+        },
         skp: {
             close: 'Close', align: 'Align', aligning: 'Tap on screen the object in front of your phone',
             hint: 'If it does not match the sky: point at the Moon or a bright star, press “Align” and tap it on screen. Dragging sideways also corrects the compass.',
@@ -1510,6 +1541,7 @@ const i18n = {
             body: { Sun: 'Sun', Moon: 'Moon', Mercury: 'Mercury', Venus: 'Venus', Mars: 'Mars', Jupiter: 'Jupiter', Saturn: 'Saturn', Uranus: 'Uranus', Neptune: 'Neptune' },
             phase: { new: 'new', waxingCrescent: 'waxing crescent', firstQuarter: 'first quarter', waxingGibbous: 'waxing gibbous', full: 'full', waningGibbous: 'waning gibbous', lastQuarter: 'last quarter', waningCrescent: 'waning crescent' },
             cardinals: ['N', 'E', 'S', 'W'], colAlt: 'Alt.', colAz: 'Az.', colMag: 'Mag.',
+            art: 'Constellation drawings', artCredit: 'Drawings: Johan Meuris (Free Art License), via Stellarium',
             point: 'Point at the sky', pointTip: 'Point your phone: see the stars, constellations and planets in that direction (compass and gyroscope)',
             model: 'Model', note: 'A calculation, not an observation. Apparent positions with standard refraction; no aberration or parallax for stars, no variable stars. Earth\'s rotation (ΔT) before ~1600 is an estimate and shifts the local sky.',
             noStars: 'The star catalogue is not available yet: only the Sun, Moon and planets are shown.',
@@ -4414,7 +4446,7 @@ panelsUI.texts(); panelsUI.scan();
 const sky = {
     open: false, ready: Boolean(window.ChronosSky && window.ChronosSkyView && window.Astronomy),
     month: 1, day: 1, minutes: 720, calendar: 'auto', follow: true, lat: 0, lon: 0,
-    stars: true, names: prefs.sl === undefined ? true : Boolean(prefs.sl & 2), lines: prefs.sl === undefined ? true : Boolean(prefs.sl & 1), conNames: prefs.sl === undefined ? true : Boolean(prefs.sl & 4), dayStars: false,
+    art: prefs.sa !== false, stars: true, names: prefs.sl === undefined ? true : Boolean(prefs.sl & 2), lines: prefs.sl === undefined ? true : Boolean(prefs.sl & 1), conNames: prefs.sl === undefined ? true : Boolean(prefs.sl & 4), dayStars: false,
     catalog: null, catalogState: 'idle', validation: undefined, drawn: [], raf: 0, started: false
 };
 
@@ -4609,8 +4641,9 @@ function updateSky() {
     ChronosSky.BODIES.forEach((id) => { names[id] = t('sky.body.' + id); });
     sky.drawn = ChronosSkyView.draw($('sky-chart'), res, {
         catalog: sky.stars ? sky.catalog : null, names, cardinals: t('sky.cardinals'),
-        showStars: sky.stars, showNames: sky.names, showLines: sky.lines, showConNames: sky.conNames, dayStars: sky.dayStars, lang
+        showStars: sky.stars, showNames: sky.names, showLines: sky.lines, showConNames: sky.conNames, dayStars: sky.dayStars, lang, ...artOpts()
     });
+    $('sky-art-credit').textContent = sky.art && sky.drawn.art && sky.drawn.art.length ? t('sky.artCredit') + ' · ' + t('con.tapHint') : '';
 
     $('sky-twilight').textContent = t('sky.tw.' + res.twilight);
     const rows = $('sky-rows');
@@ -4638,6 +4671,7 @@ function setSkyOpen(open) {
     if (CHG.open) setChangesOpen(false);
     if (PHONE.matches) panelsUI.setSettingsOpen(false);
     if (!sky.ready) { updateSky(); return; }
+    if (sky.art) artEnsure();
     syncPlace();
     sky.started = true;
     skyFieldsFromClock();
@@ -4895,10 +4929,11 @@ async function skpOpen() {
     if (navigator.geolocation) navigator.geolocation.getCurrentPosition((p) => { if (!SKP.open) return; SKP.place = { lat: p.coords.latitude, lon: p.coords.longitude, gps: true }; SKP.resAt = 0; }, () => {}, { maximumAge: 600000, timeout: 15000 });
     if (sky.ready && !clock.live) clockNow();          // el cielo de ahora: es el que hay detras del movil
     if (!sky.catalog) skyLoadCatalog();
+    if (sky.art) artEnsure();
     skpLoop();
 }
 function skpClose() {
-    SKP.open = false; $('skp').hidden = true; cancelAnimationFrame(SKP.raf);
+    SKP.open = false; $('skp').hidden = true; cancelAnimationFrame(SKP.raf); if (!$('con-card').hidden) conClose();
     window.removeEventListener('deviceorientationabsolute', skpOrient); window.removeEventListener('deviceorientation', skpOrient);
 }
 function skpOrient(e) {
@@ -4934,7 +4969,7 @@ function skpLoop() {
         SKP.dirty = false;
         const names = {}; ChronosSky.BODIES.forEach((id) => { names[id] = t('sky.body.' + id); });
         SKP.drawn = ChronosSkyPoint.draw($('skp-canvas'), SKP.res, SKP.fr, { view: ChronosSkyView, fov: SKP.fov, catalog: sky.stars ? sky.catalog : null, names, cardinals: t('skp.cardinals'),
-            showStars: sky.stars, showLines: sky.lines, showNames: sky.names, showConNames: sky.conNames, dayStars: sky.dayStars, lang });
+            showStars: sky.stars, showLines: sky.lines, showNames: sky.names, showConNames: sky.conNames, dayStars: sky.dayStars, lang, ...artOpts(), artCredit: t('sky.artCredit') });
         const v = ChronosSkyPoint.vecAltAz(SKP.fr.look); const dirs = t('skp.cardinals');
         $('skp-info').textContent = t('skp.now') + ' · ' + (SKP.place.gps ? t('skp.here') : t('skp.mapc')) + ' · ' + fmt('skp.looking', { dir: dirs[Math.round(v.az / 45) % 8], az: Math.round(v.az), alt: Math.round(v.alt) });
         $('skp-hint').textContent = SKP.align ? t('skp.aligning') : t('skp.' + SKP.hint);
@@ -4951,6 +4986,8 @@ function skpTap(x, y) {
         if (hit) { SKP.offset += skpDiff(hit.az, ChronosSkyPoint.vecAltAz(SKP.fr.look).az); SKP.dirty = true; tip.textContent = fmt('skp.aligned', { name: hit.label.split('  ')[0] }); tip.style.left = '50%'; tip.style.top = '50%'; tip.hidden = false; setTimeout(() => { tip.hidden = true; }, 1800); }
         return;
     }
+    const iau = SKP.drawn && SKP.drawn.art ? ChronosSkyArt.hit(SKP.drawn.art, x, y) : null;
+    if (iau && (!hit || Math.hypot(hit.x - x, hit.y - y) > 18)) { tip.hidden = true; conOpen(iau); return; }
     if (!hit) { tip.hidden = true; return; }
     tip.textContent = hit.label; tip.style.left = hit.x + 'px'; tip.style.top = hit.y + 'px'; tip.hidden = false;
     clearTimeout(SKP.tipT); SKP.tipT = setTimeout(() => { tip.hidden = true; }, 2600);
@@ -4974,7 +5011,7 @@ function skpTap(x, y) {
     cv.addEventListener('wheel', (e) => { e.preventDefault(); SKP.fov = Math.max(15, Math.min(120, SKP.fov * Math.exp(e.deltaY * 0.001))); SKP.dirty = true; }, { passive: false });
     $('skp-close').addEventListener('click', skpClose);
     $('skp-align').addEventListener('click', () => { SKP.align = !SKP.align; $('skp-align').setAttribute('aria-pressed', String(SKP.align)); SKP.dirty = true; });
-    document.addEventListener('keydown', (e) => { if (SKP.open && e.key === 'Escape') skpClose(); });
+    document.addEventListener('keydown', (e) => { if (SKP.open && e.key === 'Escape' && $('con-card').hidden) skpClose(); });      // con la historia abierta, Esc cierra antes la historia
     window.addEventListener('resize', () => { SKP.dirty = true; });
 })();
 [['sky-t-stars', 'stars'], ['sky-t-day', 'dayStars']].forEach(([id, key]) => {
@@ -4982,14 +5019,15 @@ function skpTap(x, y) {
 });
 /* Capas del cielo (lineas de constelaciones, nombres de estrellas, nombres de constelaciones): casillas del panel del cielo y botones del menu Capas,
    sincronizados y guardados en la cookie (sl). Valen para la carta, el cielo tras el globo y el sistema solar. */
-const SKY_LAYERS = [['lines', 1, 'sky-t-lines', 'btn-sky-lines'], ['names', 2, 'sky-t-names', 'btn-sky-names'], ['conNames', 4, 'sky-t-cnames', 'btn-sky-cnames']];
+const SKY_LAYERS = [['lines', 1, 'sky-t-lines', 'btn-sky-lines'], ['names', 2, 'sky-t-names', 'btn-sky-names'], ['conNames', 4, 'sky-t-cnames', 'btn-sky-cnames'], ['art', 0, 'sky-t-art', 'btn-sky-art']];      // art: su propia preferencia (sa)
 function skyLayersSync() {
     SKY_LAYERS.forEach(([key, , box, btn]) => { $(box).checked = !!sky[key]; $(btn).setAttribute('aria-pressed', String(!!sky[key])); });
 }
 function skyLayerSet(key, on) {
     sky[key] = !!on; skyLayersSync();
-    savePrefs({ sl: SKY_LAYERS.reduce((m, [k, bit]) => m | (sky[k] ? bit : 0), 0) });
-    updateSky(); scheduleSpace(); if (solarView.isOpen) solarView.invalidate();
+    savePrefs({ sl: SKY_LAYERS.reduce((m, [k, bit]) => m | (sky[k] ? bit : 0), 0), sa: sky.art });
+    if (sky.art) artEnsure();
+    updateSky(); scheduleSpace(); if (solarView.isOpen) solarView.invalidate(); SKP.dirty = true;
 }
 SKY_LAYERS.forEach(([key, , box, btn]) => {
     $(box).addEventListener('change', (e) => skyLayerSet(key, e.target.checked));
@@ -5001,8 +5039,95 @@ $('sky-chart').addEventListener('mousemove', (e) => {
     const x = e.clientX - r.left; const y = e.clientY - r.top;
     let best = null;
     sky.drawn.forEach((d) => { const dist = Math.hypot(d.x - x, d.y - y); if (dist < 11 && (!best || dist < best.dist)) best = { dist, label: d.label }; });
-    e.currentTarget.title = best ? best.label : '';
+    const iau = !best && sky.drawn.art ? ChronosSkyArt.hit(sky.drawn.art, x, y) : null; const c = iau && conInfo(iau);
+    e.currentTarget.title = best ? best.label : c ? c.name + ' · ' + t('con.tapHint') : '';
 });
+$('sky-chart').addEventListener('click', (e) => {
+    const r = e.currentTarget.getBoundingClientRect(); const x = e.clientX - r.left; const y = e.clientY - r.top;
+    const near = (sky.drawn || []).some((d) => Math.hypot(d.x - x, d.y - y) < 9);
+    const iau = !near && sky.drawn && sky.drawn.art ? ChronosSkyArt.hit(sky.drawn.art, x, y) : null;
+    if (iau) conOpen(iau);
+});
+/* ------------------------------------------------------------------ */
+/* Dibujos de las constelaciones e historia de su nombre (sky/sky-art.js) */
+/* ------------------------------------------------------------------ */
+// El creador, 2026-11-18: «mete una capa de dibujos que se ajusten al nombre de cada constelación (toggle para enable/disable en config). Si se
+// toca ese dibujo/constelación debe aparecer algo de historia acerca de cómo se llegó a llamar así».
+// - Dibujos: ilustraciones de Johan Meuris para Stellarium (Free Art License), cargadas en ejecucion desde el repositorio de Stellarium en un
+//   commit fijo (no se copian aqui); anclajes en data/sky/constellation-art.json (CC BY-SA, Stellarium). Capa «Dibujos de constelaciones» del
+//   panel del cielo y del menu Capas (preferencia sa). Valen en la carta y al apuntar con el movil.
+// - Historia: el texto NO lo escribe la web: es la seccion de historia o mitologia del articulo de Wikipedia de la constelacion (si no la
+//   tiene, su introduccion), citado con su titulo, enlace y licencia (CC BY-SA). El articulo se busca en la Wikipedia inglesa por su nombre
+//   latino («Antlia constellation»), se exige que su descripcion diga que es una constelacion, y se toma el enlace al español si se lee en
+//   español. Comprobado con la sonda (2026-11-18): CORS abierto, y secciones «Historia», «Mitologías», «History and mythology».
+const ART = { data: null, loading: null, failed: false, imgs: new Map(), redrawT: 0 };
+function artEnsure() {
+    if (ART.data || ART.loading || ART.failed) return;
+    ART.loading = getJSON('./data/sky/constellation-art.json').then((j) => { ART.data = j; artRedraw(); }).catch(() => { ART.failed = true; }).then(() => { ART.loading = null; });
+}
+/** Imagen del dibujo (se pide la primera vez que hace falta; al llegar, se vuelve a dibujar el cielo). */
+function artImg(iau) {
+    if (!ART.data) return null;
+    let e = ART.imgs.get(iau);
+    if (!e) {
+        const a = ART.data.art[iau]; if (!a) return null;
+        const img = new Image(); e = { img, ok: false }; ART.imgs.set(iau, e);
+        img.crossOrigin = 'anonymous'; img.decoding = 'async'; img.onload = () => { e.ok = true; artRedraw(); }; img.src = ART.data.meta.images + a.file;
+    }
+    return e.ok ? e.img : null;
+}
+function artRedraw() { clearTimeout(ART.redrawT); ART.redrawT = setTimeout(() => { if (sky.open) updateSky(); SKP.dirty = true; }, 80); }
+const artOpts = () => (sky.art && ART.data ? { art: ART.data, artImg, artLib: ChronosSkyArt } : {});
+/** Nombres de una constelacion: los del catalogo (latin, español, ingles) y el significado que da Stellarium. */
+function conInfo(iau) {
+    const c = sky.catalog && (sky.catalog.constellations || []).find((x) => x.id === iau); const a = ART.data && ART.data.art[iau];
+    const la = c && c.la; const meaning = lang === 'es' ? (c && c.es) || (a && a.meaning) : (c && c.en) || (a && a.meaning);
+    const name = lang === 'es' ? (c && c.es) || la || iau : la || iau;
+    return { iau, la, name, meaning: meaning && meaning !== la && meaning !== name ? meaning : null };      // sin repetir el titulo («Orión» bajo Orión)
+}
+const CON = { cache: new Map(), seq: 0 };
+const wpApi = (host, p) => 'https://' + host + '.wikipedia.org/w/api.php?' + new URLSearchParams(Object.assign({ action: 'query', format: 'json', origin: '*' }, p));
+const conFold = (x) => String(x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+/** { title, url, section, text, host } del articulo de Wikipedia de la constelacion, o null si no se encuentra. */
+function conHistory(info) {
+    const key = info.iau + '|' + lang; if (CON.cache.has(key)) return CON.cache.get(key);
+    const pr = (async () => {
+        if (!info.la) return null;
+        const s = await getJSON(wpApi('en', { generator: 'search', gsrsearch: info.la + ' constellation', gsrnamespace: 0, gsrlimit: 6, prop: 'description|langlinks|info', inprop: 'url', lllang: 'es' }));
+        const pages = Object.values((s && s.query && s.query.pages) || {}).sort((a, b) => a.index - b.index);
+        const la = conFold(info.la);
+        const pick = pages.find((p) => /constellation/i.test(p.description || '') && !/former|galax|cluster|nebula|asterism|list of/i.test(p.description || '') && conFold(p.title).startsWith(la));
+        if (!pick) return null;
+        let host = 'en'; let title = pick.title;
+        const es = (pick.langlinks || []).find((l) => l.lang === 'es');
+        if (lang === 'es' && es && es['*']) { host = 'es'; title = es['*']; }
+        const x = await getJSON(wpApi(host, { prop: 'extracts|info', inprop: 'url', explaintext: 1, exsectionformat: 'wiki', redirects: 1, titles: title }));
+        const pg = Object.values((x && x.query && x.query.pages) || {})[0];
+        if (!pg || !pg.extract) return null;
+        const sec = ChronosSkyArt.pickSection(pg.extract, 1100);
+        return { host, title: pg.title, url: pg.fullurl || ('https://' + host + '.wikipedia.org/wiki/' + encodeURIComponent(pg.title)), section: sec.section, text: sec.text };
+    })();
+    CON.cache.set(key, pr); pr.catch(() => CON.cache.delete(key));
+    return pr;
+}
+function conOpen(iau) {
+    const info = conInfo(iau); const seq = ++CON.seq;
+    $('con-title').textContent = info.name;
+    $('con-sub').textContent = [info.la && info.la !== info.name ? fmt('con.latin', { la: info.la }) : '', info.meaning ? fmt('con.meaning', { m: info.meaning }) : ''].filter(Boolean).join(' · ');
+    $('con-text').textContent = t('con.loading'); $('con-src').textContent = '';
+    $('con-card').hidden = false;
+    conHistory(info).then((r) => {
+        if (seq !== CON.seq) return;
+        if (!r) { $('con-text').textContent = t('con.none'); return; }
+        $('con-text').textContent = r.text;
+        const src = $('con-src'); src.textContent = fmt('con.from', { title: r.title, section: r.section ? ' · ' + r.section : '' }) + ' · ';
+        const a = el('a', { href: r.url + (r.section ? '#' + encodeURIComponent(r.section.replace(/ /g, '_')) : ''), target: '_blank', rel: 'noopener', text: t('con.more') });
+        src.append(a, document.createTextNode(' · ' + t('con.license') + ' · ' + t('sky.artCredit')));
+    }).catch(() => { if (seq === CON.seq) $('con-text').textContent = t('con.fail'); });
+}
+function conClose() { CON.seq++; $('con-card').hidden = true; }
+$('con-close').addEventListener('click', conClose);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('con-card').hidden) conClose(); });
 
 /* ------------------------------------------------------------------ */
 /* Reloj: el instante exacto (UT) que gobierna el cielo y el fondo      */

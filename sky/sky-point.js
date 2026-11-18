@@ -162,6 +162,12 @@
         const cat = opts.catalog; const st = sky.stars;
         const px = cat ? new Float64Array(cat.n).fill(NaN) : null; const py = cat ? new Float64Array(cat.n).fill(NaN) : null;
         if (cat && st && opts.showStars) for (let i = 0; i < cat.n; i++) { if (st.alt[i] <= 0) continue; const p = P(st.alt[i], st.az[i]); if (inView(p, 40)) { px[i] = p[0]; py[i] = p[1]; } }
+        // dibujos de las constelaciones (sky/sky-art.js), debajo de lineas y estrellas
+        if (cat && st && opts.showStars && opts.art && opts.artLib) {
+            const placed = opts.artLib.place(opts.art, cat, (i) => { const p = P(st.alt[i], st.az[i]); return p ? [p[0], p[1]] : null; }, w, h);
+            opts.artLib.draw(ctx, placed, opts.artImg, 0.6); drawn.art = placed;
+            if (opts.artCredit && placed.length) { ctx.save(); ctx.font = '10px system-ui, sans-serif'; ctx.fillStyle = 'rgba(220,228,255,0.55)'; ctx.textAlign = 'right'; ctx.fillText(opts.artCredit, w - 10, 84);      // arriba, bajo la barra: abajo la tapaba la de los avisos ctx.restore(); }
+        }
         // lineas de constelaciones
         if (cat && st && opts.showStars && opts.showLines) {
             ctx.strokeStyle = 'rgba(160,190,255,0.38)'; ctx.lineWidth = 1.1; ctx.beginPath();

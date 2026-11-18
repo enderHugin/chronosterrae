@@ -75,6 +75,8 @@ Eso es justo lo que pide el creador para las guerras: ver la frontera cambiar fe
 | Smithsonian GVP, volcanes del Holoceno | Volcanes y erupciones con evidencia graduada. v5.3.6 (26-5-2026), [doi:10.5479/si.GVP.VOTW5-2025.5.3](https://doi.org/10.5479/si.GVP.VOTW5-2025.5.3) | La página no dice licencia; pide citar versión y fecha | — | Pendiente (contesta 403 a lectores automáticos) |
 | NASA, eclipses (Espenak) | Eclipses de −1999 a 3000 | Su página de catálogo no dice licencia | — | Pendiente |
 | Seshat | Variables de sociedades históricas | Su portada no dice licencia (sonda 2026-11-14) | — | Pendiente: buscar su página de licencia |
+| Stellarium, cultura del cielo «western» ([stellarium-skycultures](https://github.com/Stellarium/stellarium-skycultures), commit `2d80ce7`) | Dibujos de las 88 constelaciones (85 con dibujo) y las tres estrellas (HIP) de anclaje de cada uno | **Dibujos: Johan Meuris, Free Art License; datos: CC BY-SA**, según `western/description.md` («Illustrations by Johan Meuris… Illustrations: Free Art License… Text and data: CC BY-SA»), leído el 2026-11-18 | Anclajes sí (`data/sky/constellation-art.json`, con aviso); dibujos no: en ejecución desde ese commit, con atribución | En uso (2026-11-18); sonda: CORS abierto, `image/webp` |
+| Wikipedia (es, en), artículo de cada constelación | Historia o mitología del nombre (la sección que lo cuenta, o la introducción) | **CC BY-SA 4.0** | No: en ejecución al tocar un dibujo, citada con título, enlace y licencia | En uso (2026-11-18); sonda: búsqueda y texto por secciones con CORS abierto |
 
 ## Primer contraste: fronteras de la web frente a Cliopatria
 

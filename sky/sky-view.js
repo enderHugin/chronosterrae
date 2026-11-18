@@ -92,6 +92,12 @@
         const cat = opts.catalog;
         const st = sky.stars;
 
+        // Dibujos de las constelaciones (sky/sky-art.js), debajo de lineas y estrellas
+        if (cat && st && opts.showStars && opts.art && opts.artLib) {
+            const placed = opts.artLib.place(opts.art, cat, (i) => (st.alt[i] > -25 ? toXY(st.alt[i], st.az[i]) : null), css, css);
+            opts.artLib.draw(ctx, placed, opts.artImg, 0.55); drawn.art = placed;
+        }
+
         // Constelaciones
         if (cat && st && opts.showStars && opts.showLines) {
             ctx.strokeStyle = 'rgba(160,190,255,0.30)'; ctx.lineWidth = 1;
