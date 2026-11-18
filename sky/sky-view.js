@@ -94,8 +94,11 @@
 
         // Dibujos de las constelaciones (sky/sky-art.js), debajo de lineas y estrellas
         if (cat && st && opts.showStars && opts.art && opts.artLib) {
-            const placed = opts.artLib.place(opts.art, cat, (i) => (st.alt[i] > -25 ? toXY(st.alt[i], st.az[i]) : null), css, css);
-            opts.artLib.draw(ctx, placed, opts.artImg, 0.55); drawn.art = placed;
+            // pegados a la esfera (sky/sky-art.js): direccion de cada estrella (este, norte, arriba) y su sitio en la carta
+            const vec = (alt, az) => { const ca = Math.cos(alt * DEG); return [ca * Math.sin(az * DEG), ca * Math.cos(az * DEG), Math.sin(alt * DEG)]; };
+            const toChart = (v) => { const alt = Math.asin(Math.max(-1, Math.min(1, v[2]))) / DEG; if (alt < -25) return null; return toXY(alt, Math.atan2(v[0], v[1]) / DEG); };
+            const placed = opts.artLib.place(opts.art, cat, (i) => vec(st.alt[i], st.az[i]), toChart, css, css);
+            opts.artLib.draw(ctx, placed, opts.artImg, 0.25, opts.artOff); drawn.art = placed;
         }
 
         // Constelaciones

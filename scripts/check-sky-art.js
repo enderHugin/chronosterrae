@@ -17,20 +17,35 @@ check('affine3: lleva los tres puntos a su sitio; alineados, null', () => {
     return near(p[0], 25) && near(p[1], 5) && near(q[0], 5) && near(q[1], 35) && A.affine3([[0, 0], [1, 1], [2, 2]], [[0, 0], [1, 1], [2, 2]]) === null;
 });
 check('casi todas las estrellas de anclaje estan en nuestro catalogo (las que no, ese dibujo no se pone)', () => { const idx = A.hipIndex(cat); const miss = []; Object.entries(data.art).forEach(([k, v]) => v.anchors.forEach((a) => { if (!idx.has(a[2])) miss.push(k); })); return miss.length <= 2 ? true : miss; });
-// cielo de Madrid una noche de noviembre: los dibujos colocados en la carta y al apuntar no salen volteados (se mira desde dentro de la esfera)
+// cielo de Madrid una noche de noviembre
 const sky = S.skyAt({ jd: 2461362.5 + 0.0, lat: 40.42, lon: -3.7, catalog: cat }); const st = sky.stars;
-check('en la vista al apuntar (al sur, 40 grados) se colocan dibujos y ninguno sale volteado', () => {
-    const fr = SP.frameFromAltAz(40, 180); const P = SP.projector(fr, 70, 400, 800);
-    const pl = A.place(data, cat, (i) => { const p = P(st.alt[i], st.az[i]); return p ? [p[0], p[1]] : null; }, 400, 800);
-    return pl.length >= 3 && pl.every((p) => !p.mirrored) ? true : pl.map((p) => p.iau + (p.mirrored ? '!' : ''));
+const vec = (i) => SP.altAzVec(st.alt[i], st.az[i]);
+check('pegado a la esfera: las tres estrellas de anclaje caen exactamente en su sitio de la imagen', () => {
+    const idx = A.hipIndex(cat); const a = data.art.Ori; const ds = a.anchors.map((x) => vec(idx.get(x[2])));
+    const L = A.sphereMap(a.anchors.map((x) => [x[0], x[1]]), ds);
+    return a.anchors.every((x, k) => { const d = A.dirAt(L, x[0], x[1]); return Math.abs(d[0] - ds[k][0]) < 1e-9 && Math.abs(d[1] - ds[k][1]) < 1e-9 && Math.abs(d[2] - ds[k][2]) < 1e-9; });
 });
-check('en la carta del cenit (norte arriba, este a la izquierda) tampoco salen volteados', () => {
-    const R = 300; const toXY = (alt, az) => { const r = (90 - alt) / 90 * R; return [320 - r * Math.sin(az * Math.PI / 180), 320 - r * Math.cos(az * Math.PI / 180)]; };
-    const pl = A.place(data, cat, (i) => (st.alt[i] > -20 ? toXY(st.alt[i], st.az[i]) : null), 640, 640);
-    return pl.length >= 15 && pl.every((p) => !p.mirrored) ? true : pl.filter((p) => p.mirrored).map((p) => p.iau);
+check('pegado a la esfera: girar el cielo gira el dibujo igual (no cambia de forma respecto a las estrellas al mirarlo desde otro angulo)', () => {
+    const idx = A.hipIndex(cat); const a = data.art.Ori; const ds = a.anchors.map((x) => vec(idx.get(x[2])));
+    const th = 0.7, ph = -0.4; const R = (v) => { const x = v[0] * Math.cos(th) - v[1] * Math.sin(th); const y = v[0] * Math.sin(th) + v[1] * Math.cos(th); return [x, y * Math.cos(ph) - v[2] * Math.sin(ph), y * Math.sin(ph) + v[2] * Math.cos(ph)]; };
+    const L1 = A.sphereMap(a.anchors.map((x) => [x[0], x[1]]), ds); const L2 = A.sphereMap(a.anchors.map((x) => [x[0], x[1]]), ds.map(R));
+    for (const [u, v] of [[0, 0], [256, 256], [512, 100], [40, 480]]) { const p = R(A.dirAt(L1, u, v)); const q = A.dirAt(L2, u, v); if (Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]) > 1e-9) return [u, v]; }
+    return true;
+});
+check('al apuntar (al sur, 40 grados) y en perspectiva: mallas en pantalla para varios dibujos, con las estrellas de anclaje bajo sus puntos', () => {
+    const fr = SP.frameFromAltAz(40, 180); const P = SP.projector(fr, 70, 400, 800);
+    const pl = A.place(data, cat, vec, P.vec, 400, 800, 4); const idx = A.hipIndex(cat);
+    const ori = pl.find((p) => p.iau === 'Ori'); if (pl.length < 3 || !ori) return pl.map((p) => p.iau);
+    const a = data.art.Ori; const tri = A.triangles(ori);
+    return tri.length >= 16 && a.anchors.every((x) => { const d = A.dirAt(ori.L, x[0], x[1]); const s = P.vec(d); const t = P.vec(vec(idx.get(x[2]))); return Math.hypot(s[0] - t[0], s[1] - t[1]) < 1e-6; });
+});
+check('en la carta del cenit tambien se colocan (los que tocan la carta)', () => {
+    const R = 300; const toXY = (v) => { const alt = Math.asin(v[2]) * 180 / Math.PI; if (alt < -25) return null; const az = Math.atan2(v[0], v[1]); const r = (90 - alt) / 90 * R; return [320 - r * Math.sin(az), 320 - r * Math.cos(az)]; };
+    const pl = A.place(data, cat, vec, toXY, 640, 640); return pl.length >= 15 ? true : pl.length;
 });
 check('hit: el toque dentro de un dibujo da su constelacion; fuera de todos, nada', () => {
-    const pl = [{ iau: 'Ori', quad: [[0, 0], [100, 0], [100, 100], [0, 100]] }, { iau: 'Tau', quad: [[80, 0], [200, 0], [200, 100], [80, 100]] }];
+    const mesh = (iau, x0, x1) => ({ iau, w: 10, h: 10, g: 1, pts: [[x0, 0], [x1, 0], [x0, 100], [x1, 100]] });
+    const pl = [mesh('Ori', 0, 100), mesh('Tau', 80, 200)];
     return A.hit(pl, 20, 50) === 'Ori' && A.hit(pl, 150, 50) === 'Tau' && A.hit(pl, 97, 50) === 'Tau' && A.hit(pl, 300, 300) === null;
 });
 check('pickSection: la seccion de historia o mitologia; si no la hay, la introduccion; cortada en un parrafo', () => {

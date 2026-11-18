@@ -4724,7 +4724,7 @@ const solarView = ChronosSolarView.create({
     starRadius: (cat, i, r) => ChronosSkyView.starRadius(cat, i, r),
     skyOptions: () => ({ lines: !!sky.lines, names: !!sky.names, conNames: !!sky.conNames, nameMag: SKY_NAME_MAG }),
     skyLabels: (...a) => ChronosSkyView.drawSkyLabels(...a),
-    skyArt: (ctx, cat, px, py, w, h) => { if (!sky.art) return; artEnsure(); if (!ART.data) return; ChronosSkyArt.draw(ctx, ChronosSkyArt.place(ART.data, cat, (i) => (Number.isNaN(px[i]) ? null : [px[i], py[i]]), w, h), artImg, 0.5); },
+    skyArt: (ctx, cat, dir, proj, w, h) => { if (!sky.art) return; artEnsure(); if (!ART.data) return; ChronosSkyArt.draw(ctx, ChronosSkyArt.place(ART.data, cat, dir, proj, w, h), artImg, 0.25, artOff('solar')); },
     onSkyReady: () => renderCredits(),
     t, fmt, lang: () => lang, nf,
     loadAccuracy: () => {
@@ -4972,7 +4972,7 @@ function skpLoop() {
         SKP.dirty = false;
         const names = {}; ChronosSky.BODIES.forEach((id) => { names[id] = t('sky.body.' + id); });
         SKP.drawn = ChronosSkyPoint.draw($('skp-canvas'), SKP.res, SKP.fr, { view: ChronosSkyView, fov: SKP.fov, catalog: sky.stars ? sky.catalog : null, names, cardinals: t('skp.cardinals'),
-            showStars: sky.stars, showLines: sky.lines, showNames: sky.names, showConNames: sky.conNames, dayStars: sky.dayStars, lang, ...artOpts(), artCredit: t('sky.artCredit') });
+            showStars: sky.stars, showLines: sky.lines, showNames: sky.names, showConNames: sky.conNames, dayStars: sky.dayStars, lang, ...artOpts(), artOff: artOff('point'), artCredit: t('sky.artCredit') });
         const v = ChronosSkyPoint.vecAltAz(SKP.fr.look); const dirs = t('skp.cardinals');
         $('skp-info').textContent = t('skp.now') + ' · ' + (SKP.place.gps ? t('skp.here') : t('skp.mapc')) + ' · ' + fmt('skp.looking', { dir: dirs[Math.round(v.az / 45) % 8], az: Math.round(v.az), alt: Math.round(v.alt) });
         $('skp-hint').textContent = SKP.align ? t('skp.aligning') : t('skp.' + SKP.hint);
@@ -5081,7 +5081,9 @@ function artImg(iau) {
     return e.ok ? e.img : null;
 }
 function artRedraw() { clearTimeout(ART.redrawT); ART.redrawT = setTimeout(() => { if (sky.open) updateSky(); SKP.dirty = true; scheduleSpace(); if (solarView.isOpen) solarView.invalidate(); }, 80); }
-const artOpts = () => (sky.art && ART.data ? { art: ART.data, artImg, artLib: ChronosSkyArt } : {});
+const artOpts = () => (sky.art && ART.data ? { art: ART.data, artImg, artLib: ChronosSkyArt, artOff: artOff('panel') } : {});
+/** Lienzo aparte donde se pinta la malla de los dibujos antes de sumarla al cielo (uno por sitio que dibuja). */
+const artOff = (k) => { ART.off = ART.off || {}; return ART.off[k] || (ART.off[k] = document.createElement('canvas')); };
 /** Nombres de una constelacion: los del catalogo (latin, español, ingles) y el significado que da Stellarium. */
 function conInfo(iau) {
     const c = sky.catalog && (sky.catalog.constellations || []).find((x) => x.id === iau); const a = ART.data && ART.data.art[iau];
@@ -5411,7 +5413,11 @@ function drawSpace() {
         space.art = null;
         if (sky.art) {
             artEnsure();
-            if (ART.data) { space.art = ChronosSkyArt.place(ART.data, cat, (i) => (Number.isNaN(px[i]) ? null : [px[i], py[i]]), w, h); ChronosSkyArt.draw(ctx, space.art, artImg, 0.5); if (space.art.length) note.textContent = (note.textContent ? note.textContent + ' · ' : '') + t('sky.artCredit'); }
+            if (ART.data) {      // pegados a la esfera: direccion de cada estrella y la misma proyeccion que ellas
+                space.art = ChronosSkyArt.place(ART.data, cat, (i) => [space.dirs[3 * i], space.dirs[3 * i + 1], space.dirs[3 * i + 2]], (v) => pr.infinity(v[0], v[1], v[2]), w, h);
+                ChronosSkyArt.draw(ctx, space.art, artImg, 0.25, artOff('space'));
+                if (space.art.length) note.textContent = (note.textContent ? note.textContent + ' · ' : '') + t('sky.artCredit');
+            }
         }
         if (sky.lines && cat.constellations.length) {
             ctx.strokeStyle = 'rgba(160,185,240,0.34)'; ctx.lineWidth = 1; ctx.beginPath();

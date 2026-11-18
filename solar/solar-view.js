@@ -402,7 +402,8 @@
                     if (z <= 0.01) { px[i] = NaN; continue; }
                     px[i] = w / 2 + cam.fpx * (dx * cam.r[0] + dy * cam.r[1] + dz * cam.r[2]) / z; py[i] = h / 2 - cam.fpx * (dx * cam.u[0] + dy * cam.u[1] + dz * cam.u[2]) / z;
                 }
-                if (o.skyArt) o.skyArt(ctxB, S.cat, px, py, w, h);      // dibujos de las constelaciones (si la capa esta encendida), debajo de lineas y estrellas
+                // dibujos de las constelaciones (si la capa esta encendida), pegados a la esfera, debajo de lineas y estrellas
+                if (o.skyArt) o.skyArt(ctxB, S.cat, (i) => [S.dir[3 * i], S.dir[3 * i + 1], S.dir[3 * i + 2]], (v) => { const z = v[0] * cam.f[0] + v[1] * cam.f[1] + v[2] * cam.f[2]; if (z <= 0.01) return null; return [w / 2 + cam.fpx * (v[0] * cam.r[0] + v[1] * cam.r[1] + v[2] * cam.r[2]) / z, h / 2 - cam.fpx * (v[0] * cam.u[0] + v[1] * cam.u[1] + v[2] * cam.u[2]) / z]; }, w, h);
                 if (o.skyOptions().lines && S.cat.constellations && S.cat.constellations.length) {
                     ctxB.strokeStyle = 'rgba(160,185,240,0.34)'; ctxB.lineWidth = 1; ctxB.beginPath();
                     S.cat.constellations.forEach((cn) => cn.lines.forEach(([a, b]) => { if (Number.isNaN(px[a]) || Number.isNaN(px[b])) return; ctxB.moveTo(px[a], py[a]); ctxB.lineTo(px[b], py[b]); }));
