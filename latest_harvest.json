@@ -1,8 +1,8 @@
 {
   "type": "FeatureCollection",
   "metadata": {
-    "harvest_date": "2026-11-15T10:38:37.912Z",
-    "source_date": "2026/11/14",
+    "harvest_date": "2026-11-18T11:27:09.406Z",
+    "source_date": "2026/11/17",
     "node_origin": "ChronosTerrae_Harvester_0.2",
     "total_anomalies_detected": 1,
     "status": "ok"
@@ -11,19 +11,19 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "SS United States",
+        "name": "Crimean Bridge",
         "timestamp": "Indeterminado",
         "date_precision": "unknown",
-        "harvest_date": "2026-11-15T10:38:37.912Z",
-        "source": "Wikidata:Q1545509",
+        "harvest_date": "2026-11-18T11:27:09.406Z",
+        "source": "Wikidata:Q2652980",
         "tier": "Ingesta Cruda (Tier 2)",
         "confidence": 0.6
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -86.77925,
-          30.119138888
+          36.5061,
+          45.3086
         ]
       }
     }
