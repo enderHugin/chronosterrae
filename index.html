@@ -4724,6 +4724,7 @@ const solarView = ChronosSolarView.create({
     starRadius: (cat, i, r) => ChronosSkyView.starRadius(cat, i, r),
     skyOptions: () => ({ lines: !!sky.lines, names: !!sky.names, conNames: !!sky.conNames, nameMag: SKY_NAME_MAG }),
     skyLabels: (...a) => ChronosSkyView.drawSkyLabels(...a),
+    skyArt: (ctx, cat, px, py, w, h) => { if (!sky.art) return; artEnsure(); if (!ART.data) return; ChronosSkyArt.draw(ctx, ChronosSkyArt.place(ART.data, cat, (i) => (Number.isNaN(px[i]) ? null : [px[i], py[i]]), w, h), artImg, 0.5); },
     onSkyReady: () => renderCredits(),
     t, fmt, lang: () => lang, nf,
     loadAccuracy: () => {
@@ -4821,6 +4822,8 @@ function flyToBody(id) {
         const h = hitAt(e); const { x, y } = local(e);
         if (h && h.id) { e.stopPropagation(); e.preventDefault(); flyToBody(h.id); return; }
         if (h && h.star !== undefined) { e.stopPropagation(); e.preventDefault(); clearHighlight(); showStar(h.star); return; }
+        const iau = inSky(x, y) && space.art ? ChronosSkyArt.hit(space.art, x, y) : null;      // un dibujo de constelacion: la historia de su nombre
+        if (iau) { e.stopPropagation(); e.preventDefault(); conOpen(iau); return; }
         if (inSky(x, y)) { e.stopPropagation(); e.preventDefault(); clearHighlight(); hideInfo(); }     // cielo vacio: no es el mapa
     }, true);
     box.addEventListener('dblclick', (e) => { if (!solarView.isOpen && inSky(local(e).x, local(e).y)) { e.stopPropagation(); e.preventDefault(); } }, true);
@@ -5055,7 +5058,8 @@ $('sky-chart').addEventListener('click', (e) => {
 // toca ese dibujo/constelación debe aparecer algo de historia acerca de cómo se llegó a llamar así».
 // - Dibujos: ilustraciones de Johan Meuris para Stellarium (Free Art License), cargadas en ejecucion desde el repositorio de Stellarium en un
 //   commit fijo (no se copian aqui); anclajes en data/sky/constellation-art.json (CC BY-SA, Stellarium). Capa «Dibujos de constelaciones» del
-//   panel del cielo y del menu Capas (preferencia sa). Valen en la carta y al apuntar con el movil.
+//   panel del cielo y del menu Capas (preferencia sa). Valen en el cielo tras el globo, el sistema solar, la carta y al apuntar con el movil (al
+//   principio solo en las dos ultimas: el creador miraba el cielo tras el globo y el boton «no cambia nada», 2026-11-18).
 // - Historia: el texto NO lo escribe la web: es la seccion de historia o mitologia del articulo de Wikipedia de la constelacion (si no la
 //   tiene, su introduccion), citado con su titulo, enlace y licencia (CC BY-SA). El articulo se busca en la Wikipedia inglesa por su nombre
 //   latino («Antlia constellation»), se exige que su descripcion diga que es una constelacion, y se toma el enlace al español si se lee en
@@ -5076,7 +5080,7 @@ function artImg(iau) {
     }
     return e.ok ? e.img : null;
 }
-function artRedraw() { clearTimeout(ART.redrawT); ART.redrawT = setTimeout(() => { if (sky.open) updateSky(); SKP.dirty = true; }, 80); }
+function artRedraw() { clearTimeout(ART.redrawT); ART.redrawT = setTimeout(() => { if (sky.open) updateSky(); SKP.dirty = true; scheduleSpace(); if (solarView.isOpen) solarView.invalidate(); }, 80); }
 const artOpts = () => (sky.art && ART.data ? { art: ART.data, artImg, artLib: ChronosSkyArt } : {});
 /** Nombres de una constelacion: los del catalogo (latin, español, ingles) y el significado que da Stellarium. */
 function conInfo(iau) {
@@ -5403,6 +5407,12 @@ function drawSpace() {
             if (s) { px[i] = s[0]; py[i] = s[1]; } else px[i] = NaN;
         }
         space.stars = { cat, px, py };
+        // dibujos de las constelaciones (sky/sky-art.js), debajo de lineas y estrellas; el globo los tapa (este lienzo va detras del mapa)
+        space.art = null;
+        if (sky.art) {
+            artEnsure();
+            if (ART.data) { space.art = ChronosSkyArt.place(ART.data, cat, (i) => (Number.isNaN(px[i]) ? null : [px[i], py[i]]), w, h); ChronosSkyArt.draw(ctx, space.art, artImg, 0.5); if (space.art.length) note.textContent = (note.textContent ? note.textContent + ' · ' : '') + t('sky.artCredit'); }
+        }
         if (sky.lines && cat.constellations.length) {
             ctx.strokeStyle = 'rgba(160,185,240,0.34)'; ctx.lineWidth = 1; ctx.beginPath();
             cat.constellations.forEach((cn) => cn.lines.forEach(([a, b]) => {
