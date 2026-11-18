@@ -403,6 +403,18 @@
         #sky h2 { margin: 0 0 6px; font: 700 17px var(--font); color: var(--accent); padding-right: 22px; }
         #sky > .close { position: sticky; top: 0; float: right; z-index: 4; width: 28px; height: 28px; margin: -10px -12px -28px 6px; padding: 0; border: none; border-radius: 8px; background: color-mix(in srgb, var(--panel) 82%, transparent); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
         #sky-chart { width: 100%; aspect-ratio: 1; display: block; color: var(--text); cursor: crosshair; }
+        /* Apuntar al cielo: a pantalla completa, por encima de todo */
+        #skp { position: fixed; inset: 0; z-index: 4000; background: #03060d; color: #e8eefc; touch-action: none; }
+        #skp[hidden] { display: none; }
+        #skp-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+        #skp-top, #skp-bottom { position: absolute; left: 0; right: 0; display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+            padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); background: rgba(3,6,13,0.55); font: 13px/1.35 var(--font-ui); }
+        #skp-top { top: 0; padding-top: max(10px, env(safe-area-inset-top)); }
+        #skp-bottom { bottom: 0; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+        #skp-top span, #skp-bottom span { flex: 1; min-width: 0; }
+        #skp .btn { flex: none; }
+        #skp-align[aria-pressed="true"] { outline: 2px solid #ffd27a; }
+        #skp-tip { position: absolute; transform: translate(-50%, -130%); padding: 4px 8px; border-radius: 6px; background: rgba(10,16,30,0.9); font: 600 12px var(--font-ui); pointer-events: none; white-space: nowrap; }
         #sky-when { font-size: 12px; color: var(--muted); margin: 4px 0 8px; line-height: 1.35; }
         #sky-range, #sky-error { font-size: 12px; line-height: 1.4; margin: 6px 0; }
         #sky-error { color: var(--err); }
@@ -715,6 +727,13 @@
     <div id="map"></div>
     <canvas id="era-snap" aria-hidden="true"></canvas>
     <div id="solar" hidden></div>
+    <!-- Apuntar al cielo con el movil (sky/sky-point.js) -->
+    <div id="skp" hidden role="dialog" aria-modal="true" aria-labelledby="skp-info">
+        <canvas id="skp-canvas"></canvas>
+        <div id="skp-top"><span id="skp-info"></span><button class="btn" id="skp-close" type="button" data-i18n="skp.close"></button></div>
+        <div id="skp-tip" hidden></div>
+        <div id="skp-bottom"><span id="skp-hint"></span><button class="btn" id="skp-align" type="button" aria-pressed="false" data-i18n="skp.align"></button></div>
+    </div>
 
     <div id="topbar">
         <div id="top-left">
@@ -792,6 +811,7 @@
                 </div>
                 <div class="sky-actions">
                     <button class="btn" id="sky-now" type="button" data-i18n="sky.now"></button>
+                    <button class="btn" id="sky-point" type="button" data-i18n="sky.point" hidden></button>
                     <span class="sky-toggles">
                         <label><input id="sky-t-stars" type="checkbox" checked> <span data-i18n="sky.stars"></span></label>
                         <label><input id="sky-t-names" type="checkbox" checked> <span data-i18n="sky.names"></span></label>
@@ -929,6 +949,7 @@
 <script src="./map/labels.js"></script>
 <script src="./map/sphere.js"></script>
 <script src="./sky/sky-view.js"></script>
+<script src="./sky/sky-point.js"></script>
 <script src="./sky/timestep.js"></script>
 <script src="./sky/solar.js"></script>
 <script src="./sky/planets.js"></script>
@@ -1230,6 +1251,16 @@ const i18n = {
             button: 'Estrellas', tip: 'Estrellas, Sol, Luna y planetas tras el globo, en su posición en ese instante, y la noche sobre la Tierra. Es un cálculo; los símbolos no están a escala.',
             outOfRange: 'Sin estrellas ni noche en esta época: el cielo se calcula entre {a} y {b}.'
         },
+        skp: {
+            close: 'Cerrar', align: 'Alinear', aligning: 'Toca en la pantalla el astro que tienes delante del móvil',
+            hint: 'Si no coincide con el cielo: apunta a la Luna o a una estrella brillante, pulsa «Alinear» y tócala en la pantalla. Arrastrar de lado también corrige la brújula.',
+            noCompass: 'Este móvil no da el norte: apunta a un astro que reconozcas, pulsa «Alinear» y tócalo.',
+            noSensor: 'No llega la orientación del dispositivo: arrastra para mirar alrededor.',
+            denied: 'Sin permiso para la orientación: arrastra para mirar alrededor.',
+            here: 'tu posición', mapc: 'centro del mapa', now: 'Cielo de ahora',
+            looking: 'Mirando al {dir} · {az}° · {alt}° de altura', aligned: 'Alineado con {name}',
+            cardinals: ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO']
+        },
         sky: {
             button: 'Cielo', title: 'Cielo en este lugar e instante',
             month: 'Mes', day: 'Día', time: 'Hora solar local', calendar: 'Calendario', follow: 'Seguir el centro del mapa',
@@ -1245,6 +1276,7 @@ const i18n = {
             body: { Sun: 'Sol', Moon: 'Luna', Mercury: 'Mercurio', Venus: 'Venus', Mars: 'Marte', Jupiter: 'Júpiter', Saturn: 'Saturno', Uranus: 'Urano', Neptune: 'Neptuno' },
             phase: { new: 'nueva', waxingCrescent: 'creciente', firstQuarter: 'cuarto creciente', waxingGibbous: 'gibosa creciente', full: 'llena', waningGibbous: 'gibosa menguante', lastQuarter: 'cuarto menguante', waningCrescent: 'menguante' },
             cardinals: ['N', 'E', 'S', 'O'], colAlt: 'Alt.', colAz: 'Az.', colMag: 'Mag.',
+            point: 'Apuntar al cielo', pointTip: 'Apunta con el móvil: se ven las estrellas, constelaciones y planetas que hay en esa dirección (brújula y giroscopio)',
             model: 'Modelo', note: 'Cálculo, no observación. Posiciones aparentes con refracción normal; sin aberración ni paralaje de las estrellas ni estrellas variables. La rotación de la Tierra (ΔT) antes de ~1600 es una estimación y desplaza el cielo local.',
             noStars: 'El catálogo de estrellas aún no está disponible: solo se muestran el Sol, la Luna y los planetas.',
             accuracy: 'Frente a JPL Horizons en el año medido más cercano ({y}): Sol {sun}, Luna {moon}, peor planeta {planet}. Solo la efeméride, sin la incertidumbre de ΔT.',
@@ -1453,6 +1485,16 @@ const i18n = {
             button: 'Stars', tip: 'Stars, Sun, Moon and planets behind the globe, where they are at that instant, and the night over the Earth. A calculation; symbols are not to scale.',
             outOfRange: 'No stars or night in this era: the sky is computed between {a} and {b}.'
         },
+        skp: {
+            close: 'Close', align: 'Align', aligning: 'Tap on screen the object in front of your phone',
+            hint: 'If it does not match the sky: point at the Moon or a bright star, press “Align” and tap it on screen. Dragging sideways also corrects the compass.',
+            noCompass: 'This phone does not report north: point at an object you recognise, press “Align” and tap it.',
+            noSensor: 'No device orientation: drag to look around.',
+            denied: 'No permission for orientation: drag to look around.',
+            here: 'your position', mapc: 'map centre', now: 'Sky right now',
+            looking: 'Facing {dir} · {az}° · {alt}° altitude', aligned: 'Aligned with {name}',
+            cardinals: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+        },
         sky: {
             button: 'Sky', title: 'Sky at this place and time',
             month: 'Month', day: 'Day', time: 'Local solar time', calendar: 'Calendar', follow: 'Follow the map centre',
@@ -1468,6 +1510,7 @@ const i18n = {
             body: { Sun: 'Sun', Moon: 'Moon', Mercury: 'Mercury', Venus: 'Venus', Mars: 'Mars', Jupiter: 'Jupiter', Saturn: 'Saturn', Uranus: 'Uranus', Neptune: 'Neptune' },
             phase: { new: 'new', waxingCrescent: 'waxing crescent', firstQuarter: 'first quarter', waxingGibbous: 'waxing gibbous', full: 'full', waningGibbous: 'waning gibbous', lastQuarter: 'last quarter', waningCrescent: 'waning crescent' },
             cardinals: ['N', 'E', 'S', 'W'], colAlt: 'Alt.', colAz: 'Az.', colMag: 'Mag.',
+            point: 'Point at the sky', pointTip: 'Point your phone: see the stars, constellations and planets in that direction (compass and gyroscope)',
             model: 'Model', note: 'A calculation, not an observation. Apparent positions with standard refraction; no aberration or parallax for stars, no variable stars. Earth\'s rotation (ΔT) before ~1600 is an estimate and shifts the local sky.',
             noStars: 'The star catalogue is not available yet: only the Sun, Moon and planets are shown.',
             accuracy: 'Against JPL Horizons in the nearest measured year ({y}): Sun {sun}, Moon {moon}, worst planet {planet}. Ephemeris only, without the ΔT uncertainty.',
@@ -3936,6 +3979,7 @@ function applyStrings() {
     renderCredits();
     skyTexts();
     $('btn-space').title = t('space.tip');
+    $('sky-point').title = t('sky.pointTip');
     $('btn-borders').title = t('borders.tip');
     $('btn-roads').title = t('roads.tip');
     $('btn-built').title = t('built.tip');
@@ -4821,6 +4865,118 @@ const readPlace = () => {
 $('sky-lat').addEventListener('input', readPlace);
 $('sky-lon').addEventListener('input', readPlace);
 $('sky-now').addEventListener('click', () => { if (sky.ready) clockNow(); });
+/* ------------------------------------------------------------------ */
+/* Apuntar al cielo con el movil (sky/sky-point.js)                    */
+/* ------------------------------------------------------------------ */
+// El creador, 2026-11-18: «en dispositivos móviles, ¿se puede hacer que el mapa estelar se vea ajustado a brújula y giroscopio de forma que
+// si lo miro con móvil apunta a las constelaciones?». A pantalla completa: el cielo de AHORA en la direccion a la que apunta la camara de atras.
+// - Orientacion: 'deviceorientationabsolute' (Android: alpha respecto al norte) o 'deviceorientation' con webkitCompassHeading (iOS; pide
+//   permiso dentro del toque). Sin norte, la mirada sigue al movil pero el rumbo hay que alinearlo con un astro.
+// - La brujula da el norte magnetico y puede ir desviada: «Alinear» y tocar el astro que se tiene delante corrige el acimut; arrastrar de
+//   lado, tambien. La correccion solo vive mientras se apunta.
+// - Lugar: la posicion del dispositivo si la da (solo mientras se apunta; no se guarda ni se envia); si no, el centro del mapa.
+// - Sin sensores (o sin permiso): se mira arrastrando. Pellizcar (o la rueda) cambia el campo de vision.
+const SKP = { open: false, fr: null, tgt: null, sensor: false, abs: false, offset: 0, iosOff: null, fov: 60, place: null, res: null, resAt: 0, raf: 0, drawAt: 0, dirty: true, drawn: [], align: false, ptr: new Map(), drag: null, pinch: null, hint: '' };
+const SKP_SENSOR = typeof window !== 'undefined' && 'DeviceOrientationEvent' in window;
+$('sky-point').hidden = !(SKP_SENSOR && matchMedia('(pointer: coarse)').matches);
+$('sky-point').addEventListener('click', () => skpOpen());
+const skpNorm = (a) => ((a % 360) + 360) % 360;
+const skpDiff = (a, b) => ((((a - b) % 360) + 540) % 360) - 180;      // a - b por el camino corto, en (-180, 180]
+async function skpOpen() {
+    // iOS 13+: el permiso de orientacion se pide dentro del toque
+    // (si la peticion falla sin dar respuesta, se escucha igual: si los datos llegan, se usan; el aviso de «sin permiso», solo con un no)
+    let perm = SKP_SENSOR ? 'granted' : 'none';
+    try { if (SKP_SENSOR && typeof DeviceOrientationEvent.requestPermission === 'function') perm = await DeviceOrientationEvent.requestPermission(); } catch (e) { perm = 'unknown'; }
+    Object.assign(SKP, { open: true, fr: null, tgt: ChronosSkyPoint.frameFromAltAz(30, 180), sensor: false, abs: false, offset: 0, iosOff: null, fov: 60, res: null, resAt: 0, dirty: true, align: false });
+    SKP.place = { lat: sky.lat, lon: sky.lon, gps: false };
+    SKP.hint = perm === 'denied' ? 'denied' : 'noSensor';        // hasta que llegue la orientacion
+    $('skp').hidden = false; $('skp-align').setAttribute('aria-pressed', 'false');
+    if (perm !== 'denied' && SKP_SENSOR) { window.addEventListener('deviceorientationabsolute', skpOrient); window.addEventListener('deviceorientation', skpOrient); }
+    if (navigator.geolocation) navigator.geolocation.getCurrentPosition((p) => { if (!SKP.open) return; SKP.place = { lat: p.coords.latitude, lon: p.coords.longitude, gps: true }; SKP.resAt = 0; }, () => {}, { maximumAge: 600000, timeout: 15000 });
+    if (sky.ready && !clock.live) clockNow();          // el cielo de ahora: es el que hay detras del movil
+    if (!sky.catalog) skyLoadCatalog();
+    skpLoop();
+}
+function skpClose() {
+    SKP.open = false; $('skp').hidden = true; cancelAnimationFrame(SKP.raf);
+    window.removeEventListener('deviceorientationabsolute', skpOrient); window.removeEventListener('deviceorientation', skpOrient);
+}
+function skpOrient(e) {
+    if (!SKP.open || e.beta == null || e.alpha == null) return;
+    const ang = screen.orientation && typeof screen.orientation.angle === 'number' ? screen.orientation.angle : (typeof window.orientation === 'number' ? window.orientation : 0);
+    let fr = ChronosSkyPoint.frameFromOrientation(e.alpha, e.beta, e.gamma, ang);
+    if (e.type === 'deviceorientationabsolute' || e.absolute === true) SKP.abs = true;
+    else if (typeof e.webkitCompassHeading === 'number' && e.webkitCompassHeading >= 0) {
+        // iOS: alpha es relativa y webkitCompassHeading es el rumbo (desde el norte, en sentido horario): con el movil de pie, el de la camara;
+        // tumbado, el del borde de arriba. El desfase entre los dos se suaviza (la brujula tiembla).
+        const ref = Math.abs(fr.look[2]) < 0.7 ? ChronosSkyPoint.vecAltAz(fr.look).az : ChronosSkyPoint.vecAltAz(fr.up[2] < 0.7 ? fr.up : [-fr.look[0], -fr.look[1], 0]).az;
+        const off = skpDiff(e.webkitCompassHeading, ref);
+        SKP.iosOff = SKP.iosOff == null ? off : SKP.iosOff + skpDiff(off, SKP.iosOff) * 0.08;
+        fr = ChronosSkyPoint.rotateAz(fr, SKP.iosOff); SKP.abs = true;
+    } else if (SKP.abs) return;                        // ya llega el norte por el otro evento: este, relativo, sobra
+    if (!SKP.sensor) SKP.sensor = true;
+    SKP.hint = SKP.abs ? 'hint' : 'noCompass';
+    SKP.tgt = fr;
+}
+function skpLoop() {
+    cancelAnimationFrame(SKP.raf);
+    const step = () => {
+        if (!SKP.open) return;
+        SKP.raf = requestAnimationFrame(step);
+        const now = performance.now();
+        if (!SKP.res || now - SKP.resAt > 1000) {        // las posiciones cambian despacio: una vez por segundo; la vista, en cada fotograma
+            const jd = clockUsable() ? clock.jd : realNowJD();
+            SKP.res = ChronosSky.skyAt({ jd, lat: SKP.place.lat, lon: SKP.place.lon, catalog: sky.stars ? sky.catalog : null }); SKP.resAt = now; SKP.dirty = true;
+        }
+        const tgt = ChronosSkyPoint.rotateAz(SKP.tgt, SKP.offset);
+        const prev = SKP.fr; SKP.fr = ChronosSkyPoint.smooth(SKP.fr, tgt, SKP.sensor ? 0.22 : 1);
+        if (prev && !SKP.dirty && ChronosSkyPoint.angleBetween(prev, SKP.fr) < 0.005) return;      // quieto: no se redibuja
+        SKP.dirty = false;
+        const names = {}; ChronosSky.BODIES.forEach((id) => { names[id] = t('sky.body.' + id); });
+        SKP.drawn = ChronosSkyPoint.draw($('skp-canvas'), SKP.res, SKP.fr, { view: ChronosSkyView, fov: SKP.fov, catalog: sky.stars ? sky.catalog : null, names, cardinals: t('skp.cardinals'),
+            showStars: sky.stars, showLines: sky.lines, showNames: sky.names, showConNames: sky.conNames, dayStars: sky.dayStars, lang });
+        const v = ChronosSkyPoint.vecAltAz(SKP.fr.look); const dirs = t('skp.cardinals');
+        $('skp-info').textContent = t('skp.now') + ' · ' + (SKP.place.gps ? t('skp.here') : t('skp.mapc')) + ' · ' + fmt('skp.looking', { dir: dirs[Math.round(v.az / 45) % 8], az: Math.round(v.az), alt: Math.round(v.alt) });
+        $('skp-hint').textContent = SKP.align ? t('skp.aligning') : t('skp.' + SKP.hint);
+    };
+    step();
+}
+/** Lo dibujado mas cerca de un punto de la pantalla (a menos de 44 px), o null. */
+function skpNearest(x, y) { let best = null; let bd = 44; (SKP.drawn || []).forEach((d) => { const dd = Math.hypot(d.x - x, d.y - y); if (dd < bd) { bd = dd; best = d; } }); return best; }
+function skpTap(x, y) {
+    const hit = skpNearest(x, y); const tip = $('skp-tip');
+    if (SKP.align) {
+        SKP.align = false; $('skp-align').setAttribute('aria-pressed', 'false');
+        // el astro tocado es el que el usuario tiene delante del movil: se gira el acimut para que quede en el centro
+        if (hit) { SKP.offset += skpDiff(hit.az, ChronosSkyPoint.vecAltAz(SKP.fr.look).az); SKP.dirty = true; tip.textContent = fmt('skp.aligned', { name: hit.label.split('  ')[0] }); tip.style.left = '50%'; tip.style.top = '50%'; tip.hidden = false; setTimeout(() => { tip.hidden = true; }, 1800); }
+        return;
+    }
+    if (!hit) { tip.hidden = true; return; }
+    tip.textContent = hit.label; tip.style.left = hit.x + 'px'; tip.style.top = hit.y + 'px'; tip.hidden = false;
+    clearTimeout(SKP.tipT); SKP.tipT = setTimeout(() => { tip.hidden = true; }, 2600);
+}
+(() => {
+    const cv = $('skp-canvas');
+    const pos = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    cv.addEventListener('pointerdown', (e) => { cv.setPointerCapture(e.pointerId); SKP.ptr.set(e.pointerId, pos(e)); if (SKP.ptr.size === 1) SKP.drag = { start: pos(e), last: pos(e), moved: false }; else { SKP.drag = null; const [a, b] = [...SKP.ptr.values()]; SKP.pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), fov: SKP.fov }; } });
+    cv.addEventListener('pointermove', (e) => {
+        if (!SKP.ptr.has(e.pointerId)) return; const p = pos(e); SKP.ptr.set(e.pointerId, p);
+        if (SKP.pinch && SKP.ptr.size >= 2) { const [a, b] = [...SKP.ptr.values()]; const d = Math.hypot(a[0] - b[0], a[1] - b[1]); SKP.fov = Math.max(15, Math.min(120, SKP.pinch.fov * SKP.pinch.d / Math.max(10, d))); SKP.dirty = true; return; }
+        const g = SKP.drag; if (!g) return; const dx = p[0] - g.last[0]; const dy = p[1] - g.last[1]; g.last = p;
+        if (Math.hypot(p[0] - g.start[0], p[1] - g.start[1]) > 6) g.moved = true;
+        const degPx = SKP.fov / Math.min(cv.clientWidth, cv.clientHeight);
+        if (SKP.sensor) SKP.offset -= dx * degPx;      // con sensores, arrastrar de lado corrige la brujula
+        else { const v = ChronosSkyPoint.vecAltAz(SKP.tgt.look); SKP.tgt = ChronosSkyPoint.frameFromAltAz(Math.max(-85, Math.min(85, v.alt + dy * degPx)), v.az - dx * degPx); }
+        SKP.dirty = true;
+    });
+    const up = (e) => { if (!SKP.ptr.has(e.pointerId)) return; SKP.ptr.delete(e.pointerId); if (SKP.ptr.size < 2) SKP.pinch = null; const g = SKP.drag; if (g && !SKP.ptr.size) { SKP.drag = null; if (!g.moved) skpTap(g.start[0], g.start[1]); } };
+    cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+    cv.addEventListener('wheel', (e) => { e.preventDefault(); SKP.fov = Math.max(15, Math.min(120, SKP.fov * Math.exp(e.deltaY * 0.001))); SKP.dirty = true; }, { passive: false });
+    $('skp-close').addEventListener('click', skpClose);
+    $('skp-align').addEventListener('click', () => { SKP.align = !SKP.align; $('skp-align').setAttribute('aria-pressed', String(SKP.align)); SKP.dirty = true; });
+    document.addEventListener('keydown', (e) => { if (SKP.open && e.key === 'Escape') skpClose(); });
+    window.addEventListener('resize', () => { SKP.dirty = true; });
+})();
 [['sky-t-stars', 'stars'], ['sky-t-day', 'dayStars']].forEach(([id, key]) => {
     $(id).addEventListener('change', (e) => { sky[key] = e.target.checked; updateSky(); });
 });

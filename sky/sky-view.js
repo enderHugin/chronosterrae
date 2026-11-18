@@ -276,5 +276,5 @@
         return out;
     }
 
-    root.ChronosSkyView = { draw, drawMoon, starColor, starStyle, figureMask, starAlpha, starRadius, FIGURE_MIN_ALPHA, FIGURE_MIN_R, OFF_FIGURE_ALPHA, LIMIT_MAG, PLANET_COLOR, constellationAnchors, drawSkyLabels, byMagOrder };
+    root.ChronosSkyView = { SKY_BG, draw, drawMoon, starColor, starStyle, figureMask, starAlpha, starRadius, FIGURE_MIN_ALPHA, FIGURE_MIN_R, OFF_FIGURE_ALPHA, LIMIT_MAG, PLANET_COLOR, constellationAnchors, drawSkyLabels, byMagOrder };
 })(typeof self !== 'undefined' ? self : this);
