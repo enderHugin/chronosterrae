@@ -104,31 +104,45 @@
 
     /**
      * Dibuja las mallas (place) que ya tengan imagen (img(iau) -> imagen o null): cada triangulo de la imagen en su triangulo de pantalla.
-     * Para que no se vean costuras ni se sumen los bordes, la malla se pinta opaca en un lienzo aparte (off, del mismo tamaño que el de
-     * destino) y se suma una sola vez a la luz del cielo (mezcla «screen») con la opacidad alpha.
+     * Para que no se vean costuras ni se sumen los bordes, la malla de cada dibujo se pinta opaca en un lienzo aparte (off, del mismo tamaño
+     * que el de destino) y se suma una sola vez a la luz del cielo (mezcla «screen») con la opacidad alpha, dibujo a dibujo.
      */
     function draw(ctx, placed, img, alpha, off) {
         if (!placed.length) return;
-        const dst = off || null; const c2 = dst ? dst.getContext('2d') : ctx;
-        if (dst) { if (dst.width !== ctx.canvas.width || dst.height !== ctx.canvas.height) { dst.width = ctx.canvas.width; dst.height = ctx.canvas.height; } c2.setTransform(1, 0, 0, 1, 0, 0); c2.clearRect(0, 0, dst.width, dst.height); c2.setTransform(ctx.getTransform()); }
-        else { ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = alpha == null ? 0.25 : alpha; }
-        placed.forEach((p) => {
-            const im = img(p.iau); if (!im) return; const k = (im.naturalWidth || im.width) / p.w;
-            triangles(p).forEach(([s, d]) => {
-                const M = affine3(s, d); if (!M) return;
-                // el triangulo de pantalla, medio pixel mas grande (sin rendijas entre vecinos)
-                const cx = (d[0][0] + d[1][0] + d[2][0]) / 3; const cy = (d[0][1] + d[1][1] + d[2][1]) / 3;
-                const grow = (q) => { const dx = q[0] - cx; const dy = q[1] - cy; const l = Math.hypot(dx, dy) || 1; return [q[0] + dx / l * 0.6, q[1] + dy / l * 0.6]; };
-                const e = d.map(grow);
-                const su = Math.max(0, Math.floor(Math.min(s[0][0], s[1][0], s[2][0]) - 1)); const sv = Math.max(0, Math.floor(Math.min(s[0][1], s[1][1], s[2][1]) - 1));
-                const sw = Math.min(p.w, Math.ceil(Math.max(s[0][0], s[1][0], s[2][0]) + 1)) - su; const sh = Math.min(p.h, Math.ceil(Math.max(s[0][1], s[1][1], s[2][1]) + 1)) - sv;
-                if (!(sw > 0 && sh > 0)) return;
-                c2.save(); c2.beginPath(); c2.moveTo(e[0][0], e[0][1]); c2.lineTo(e[1][0], e[1][1]); c2.lineTo(e[2][0], e[2][1]); c2.closePath(); c2.clip();
-                c2.transform(M[0], M[1], M[2], M[3], M[4], M[5]); c2.drawImage(im, su * k, sv * k, sw * k, sh * k, su, sv, sw, sh); c2.restore();
-            });
+        const a = alpha == null ? 0.25 : alpha;
+        const tri = (c2, im, k, p) => triangles(p).forEach(([s, d]) => {
+            const M = affine3(s, d); if (!M) return;
+            // el triangulo de pantalla, medio pixel mas grande (sin rendijas entre vecinos del mismo dibujo)
+            const cx = (d[0][0] + d[1][0] + d[2][0]) / 3; const cy = (d[0][1] + d[1][1] + d[2][1]) / 3;
+            const grow = (q) => { const dx = q[0] - cx; const dy = q[1] - cy; const l = Math.hypot(dx, dy) || 1; return [q[0] + dx / l * 0.6, q[1] + dy / l * 0.6]; };
+            const e = d.map(grow);
+            const su = Math.max(0, Math.floor(Math.min(s[0][0], s[1][0], s[2][0]) - 1)); const sv = Math.max(0, Math.floor(Math.min(s[0][1], s[1][1], s[2][1]) - 1));
+            const sw = Math.min(p.w, Math.ceil(Math.max(s[0][0], s[1][0], s[2][0]) + 1)) - su; const sh = Math.min(p.h, Math.ceil(Math.max(s[0][1], s[1][1], s[2][1]) + 1)) - sv;
+            if (!(sw > 0 && sh > 0)) return;
+            c2.save(); c2.beginPath(); c2.moveTo(e[0][0], e[0][1]); c2.lineTo(e[1][0], e[1][1]); c2.lineTo(e[2][0], e[2][1]); c2.closePath(); c2.clip();
+            c2.transform(M[0], M[1], M[2], M[3], M[4], M[5]); c2.drawImage(im, su * k, sv * k, sw * k, sh * k, su, sv, sw, sh); c2.restore();
         });
-        if (dst) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = alpha == null ? 0.25 : alpha; ctx.drawImage(dst, 0, 0); ctx.restore(); }
-        else ctx.restore();
+        if (!off) {        // sin lienzo aparte (pruebas): directo, con costuras
+            ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = a;
+            placed.forEach((p) => { const im = img(p.iau); if (im) tri(ctx, im, (im.naturalWidth || im.width) / p.w, p); });
+            ctx.restore(); return;
+        }
+        if (off.width !== ctx.canvas.width || off.height !== ctx.canvas.height) { off.width = ctx.canvas.width; off.height = ctx.canvas.height; }
+        const c2 = off.getContext('2d'); const T = ctx.getTransform(); const W = off.width; const H = off.height;
+        // UNO A UNO (2026-11-18): las imagenes llevan fondo negro opaco; pintadas todas en el mismo lienzo, el negro de una tapaba a la que
+        // quedaba debajo (Capricornio solo asomaba fuera de la malla de Acuario, cortado en recta). Cada dibujo se pinta solo en su recuadro
+        // y se suma al cielo antes del siguiente: los que se solapan se ven los dos.
+        placed.forEach((p) => {
+            const im = img(p.iau); if (!im) return;
+            let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+            p.pts.forEach((q) => { if (!q) return; const X = T.a * q[0] + T.c * q[1] + T.e; const Y = T.b * q[0] + T.d * q[1] + T.f; if (X < x0) x0 = X; if (X > x1) x1 = X; if (Y < y0) y0 = Y; if (Y > y1) y1 = Y; });
+            const bx = Math.max(0, Math.floor(x0) - 2); const by = Math.max(0, Math.floor(y0) - 2); const bw = Math.min(W, Math.ceil(x1) + 2) - bx; const bh = Math.min(H, Math.ceil(y1) + 2) - by;
+            if (!(bw > 0 && bh > 0)) return;
+            c2.setTransform(1, 0, 0, 1, 0, 0); c2.clearRect(bx, by, bw, bh); c2.setTransform(T);
+            tri(c2, im, (im.naturalWidth || im.width) / p.w, p);
+            ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = a;
+            ctx.drawImage(off, bx, by, bw, bh, bx, by, bw, bh); ctx.restore();
+        });
     }
 
     /** Dentro de un triangulo. */
