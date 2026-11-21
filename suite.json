@@ -1,0 +1,7883 @@
+[
+  {
+    "name": "pirineos-2026-oscuro",
+    "ms": 12695,
+    "fases": {
+      "vista": 251,
+      "prep": 251,
+      "quieto": 12276,
+      "captura": 12635,
+      "medidas": 12695
+    },
+    "heapMB": [
+      16,
+      16,
+      17,
+      16
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 101,
+      "gpu-process": 221,
+      "utility": 99,
+      "renderer": 711
+    },
+    "pageMB": 124,
+    "labels": {
+      "place:town": {
+        "n": 1,
+        "ejemplos": [
+          "Elizondo"
+        ]
+      },
+      "place:village": {
+        "n": 19,
+        "ejemplos": [
+          "Urepel",
+          "Aldudes",
+          "Luzaide / Valcarlos",
+          "Arnéguy",
+          "Banca",
+          "Estérençuby"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 11,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 11,
+      "bounds": [
+        -1.57,
+        42.95,
+        -1.13,
+        43.15
+      ],
+      "view": [
+        -2.11,
+        42.43,
+        -0.59,
+        43.67
+      ],
+      "corners": [
+        [
+          -2.19,
+          43.73
+        ],
+        [
+          -0.51,
+          43.73
+        ],
+        [
+          -0.51,
+          42.37
+        ],
+        [
+          -2.19,
+          42.37
+        ]
+      ],
+      "grid": [
+        1000,
+        1100
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 4,
+    "seaCpu": 23.2,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "europa-1606-oscuro",
+    "ms": 10583,
+    "fases": {
+      "vista": 104,
+      "prep": 104,
+      "quieto": 10139,
+      "captura": 10579,
+      "medidas": 10583
+    },
+    "heapMB": [
+      16,
+      16,
+      19,
+      16
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 313,
+      "utility": 108,
+      "renderer": 812
+    },
+    "pageMB": 140,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.3,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.3,
+      "bounds": [
+        -80.52,
+        3.69,
+        100.52,
+        68.81
+      ],
+      "view": [
+        -80.52,
+        3.69,
+        100.52,
+        74.74
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 40,
+    "seaCpu": 6.6,
+    "proj": "globe",
+    "sphereCover": 0.982,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 15.489971096637515,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "leyenda-tableta-1939-oscuro",
+    "ms": 18203,
+    "fases": {
+      "vista": 865,
+      "prep": 6891,
+      "quieto": 12458,
+      "captura": 18198,
+      "medidas": 18203
+    },
+    "heapMB": [
+      16,
+      16,
+      19,
+      16
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 419,
+      "utility": 112,
+      "renderer": 811
+    },
+    "pageMB": 205,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.2,
+      "bounds": [
+        -14,
+        30.21,
+        38,
+        64.26
+      ],
+      "view": [
+        -19.69,
+        26.3,
+        43.69,
+        68.17
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 90,
+    "seaCpu": 5.2,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 550,
+      "f": 178,
+      "filas": 93,
+      "elegido": "wd.q189417.built",
+      "tomada": true,
+      "paises": 63,
+      "ms": 31
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "leyenda-movil-1939-oscuro",
+    "ms": 10864,
+    "fases": {
+      "vista": 3673,
+      "prep": 6371,
+      "quieto": 9877,
+      "captura": 10859,
+      "medidas": 10864
+    },
+    "heapMB": [
+      16,
+      16,
+      17,
+      16
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 101,
+      "gpu-process": 379,
+      "utility": 112,
+      "renderer": 792
+    },
+    "pageMB": 160,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.6,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.6,
+      "bounds": [
+        -7.27,
+        29.72,
+        31.27,
+        65.53
+      ],
+      "view": [
+        -11.62,
+        25.63,
+        35.62,
+        69.62
+      ],
+      "corners": [
+        [
+          -12.96,
+          70.07
+        ],
+        [
+          36.96,
+          70.07
+        ],
+        [
+          36.96,
+          24.43
+        ],
+        [
+          -12.96,
+          24.43
+        ]
+      ],
+      "grid": [
+        365,
+        543
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 90,
+    "seaCpu": 5.2,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 550,
+      "f": 171,
+      "filas": 66,
+      "elegido": "wd.q180212.built",
+      "tomada": true,
+      "paises": 63,
+      "ms": 7
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "leyenda-escritorio-1879-oscuro",
+    "ms": 11907,
+    "fases": {
+      "vista": 370,
+      "prep": 3208,
+      "quieto": 8614,
+      "captura": 11898,
+      "medidas": 11907
+    },
+    "heapMB": [
+      16,
+      16,
+      18,
+      16
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 480,
+      "utility": 113,
+      "renderer": 835
+    },
+    "pageMB": 209,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.6,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.6,
+      "bounds": [
+        -56.57,
+        17.85,
+        80.57,
+        64.54
+      ],
+      "view": [
+        -70.78,
+        12.68,
+        94.78,
+        69.71
+      ],
+      "corners": [
+        [
+          -71.97,
+          70.12
+        ],
+        [
+          95.97,
+          70.12
+        ],
+        [
+          95.97,
+          11.51
+        ],
+        [
+          -71.97,
+          11.51
+        ]
+      ],
+      "grid": [
+        1100,
+        578
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 132,
+    "seaCpu": 5.2,
+    "proj": "globe",
+    "sphereCover": 0.169,
+    "rueda": {
+      "n": 84,
+      "f": 38,
+      "filas": 54,
+      "elegido": "wd.q99309.built",
+      "tomada": true,
+      "paises": 5,
+      "ms": 19
+    },
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.470740711778168,
+    "btn": false,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "leyenda-tableta-1939-mapa-oscuro",
+    "ms": 14503,
+    "fases": {
+      "vista": 952,
+      "prep": 3458,
+      "quieto": 8720,
+      "captura": 14497,
+      "medidas": 14503
+    },
+    "heapMB": [
+      16,
+      16,
+      19,
+      16
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 482,
+      "utility": 113,
+      "renderer": 875
+    },
+    "pageMB": 239,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.2,
+      "bounds": [
+        -14,
+        30.21,
+        38,
+        64.26
+      ],
+      "view": [
+        -19.69,
+        26.3,
+        43.69,
+        68.17
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 134,
+    "seaCpu": 5.2,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 550,
+      "f": 126,
+      "filas": 93,
+      "elegido": "wd.q211818.built",
+      "tomada": true,
+      "paises": 63,
+      "ms": 27
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "leyenda-tableta-1939-lista-oscuro",
+    "ms": 14836,
+    "fases": {
+      "vista": 2119,
+      "prep": 4687,
+      "quieto": 9537,
+      "captura": 14829,
+      "medidas": 14836
+    },
+    "heapMB": [
+      16,
+      16,
+      19,
+      16
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 499,
+      "utility": 113,
+      "renderer": 770
+    },
+    "pageMB": 255,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.2,
+      "bounds": [
+        -14,
+        30.21,
+        38,
+        64.26
+      ],
+      "view": [
+        -19.69,
+        26.3,
+        43.69,
+        68.17
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 134,
+    "seaCpu": 5.2,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 550,
+      "f": 275,
+      "filas": 100,
+      "elegido": "wd.q133682.death",
+      "tomada": true,
+      "paises": 63,
+      "ms": 16
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "leyenda-movil-1964-rueda-oscuro",
+    "ms": 16428,
+    "fases": {
+      "vista": 883,
+      "prep": 12615,
+      "quieto": 16123,
+      "captura": 16423,
+      "medidas": 16428
+    },
+    "heapMB": [
+      16,
+      16,
+      17,
+      16
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 101,
+      "gpu-process": 436,
+      "utility": 114,
+      "renderer": 774
+    },
+    "pageMB": 225,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.399769874415944,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.4,
+      "bounds": [
+        -5.66,
+        30.52,
+        12.01,
+        52.98
+      ],
+      "view": [
+        -7.93,
+        27.77,
+        14.28,
+        55.73
+      ],
+      "corners": [
+        [
+          -9.04,
+          56.35
+        ],
+        [
+          15.39,
+          56.35
+        ],
+        [
+          15.39,
+          26.78
+        ],
+        [
+          -9.04,
+          26.78
+        ]
+      ],
+      "grid": [
+        267,
+        444
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 136,
+    "seaCpu": 5.2,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 633,
+      "f": 367,
+      "filas": 60,
+      "elegido": "wd.q48435.built",
+      "tomada": true,
+      "paises": 72,
+      "ms": 7
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 17.55541462476974,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "leyenda-movil-1964-rueda-lista-oscuro",
+    "ms": 17533,
+    "fases": {
+      "vista": 875,
+      "prep": 13773,
+      "quieto": 17277,
+      "captura": 17531,
+      "medidas": 17533
+    },
+    "heapMB": [
+      16,
+      17,
+      17,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 101,
+      "gpu-process": 226,
+      "utility": 99,
+      "renderer": 396
+    },
+    "pageMB": 93,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.22248734505615,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.22,
+      "bounds": [
+        -8.15,
+        37.41,
+        13.02,
+        59.92
+      ],
+      "view": [
+        -10.77,
+        34.66,
+        15.64,
+        62.67
+      ],
+      "corners": [
+        [
+          -12.09,
+          63.27
+        ],
+        [
+          16.96,
+          63.27
+        ],
+        [
+          16.96,
+          33.57
+        ],
+        [
+          -12.09,
+          33.57
+        ]
+      ],
+      "grid": [
+        291,
+        467
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 10,
+    "seaCpu": 12.3,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 633,
+      "f": 95,
+      "filas": 67,
+      "elegido": "wd.q271639.built",
+      "tomada": true,
+      "paises": 72,
+      "ms": 9
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 17.55541462476974,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "leyenda-escritorio-1939-rueda-lista-oscuro",
+    "ms": 24867,
+    "fases": {
+      "vista": 617,
+      "prep": 20741,
+      "quieto": 24252,
+      "captura": 24857,
+      "medidas": 24867
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 325,
+      "utility": 100,
+      "renderer": 429
+    },
+    "pageMB": 115,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.227480434825186,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.23,
+      "bounds": [
+        -32.31,
+        32.36,
+        36.31,
+        57.63
+      ],
+      "view": [
+        -39.67,
+        29.33,
+        43.67,
+        60.65
+      ],
+      "corners": [
+        [
+          -40.94,
+          61.27
+        ],
+        [
+          44.94,
+          61.27
+        ],
+        [
+          44.94,
+          28.22
+        ],
+        [
+          -40.94,
+          28.22
+        ]
+      ],
+      "grid": [
+        1100,
+        623
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 28,
+    "seaCpu": 10.2,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 505,
+      "f": 211,
+      "filas": 56,
+      "elegido": "wd.q671.discovery",
+      "tomada": true,
+      "paises": 59,
+      "ms": 9
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "costa-natural-iberia-1924-oscuro",
+    "ms": 14676,
+    "fases": {
+      "vista": 199,
+      "prep": 199,
+      "quieto": 13388,
+      "captura": 14670,
+      "medidas": 14676
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 327,
+      "utility": 102,
+      "renderer": 482
+    },
+    "pageMB": 165,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.3,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.3,
+      "bounds": [
+        -29.56,
+        25.11,
+        35.56,
+        51.8
+      ],
+      "view": [
+        -36.57,
+        21.94,
+        42.57,
+        54.97
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 32,
+    "seaCpu": 9.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 13.839389755643003,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "costa-natural-valencia-1924-oscuro",
+    "ms": 15936,
+    "fases": {
+      "vista": 102,
+      "prep": 102,
+      "quieto": 14229,
+      "captura": 15926,
+      "medidas": 15936
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 340,
+      "utility": 101,
+      "renderer": 429
+    },
+    "pageMB": 131,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.55,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.55,
+      "bounds": [
+        -24.05,
+        27.31,
+        27.05,
+        49.16
+      ],
+      "view": [
+        -29.66,
+        24.63,
+        32.66,
+        51.85
+      ],
+      "corners": [
+        [
+          -30.8,
+          52.55
+        ],
+        [
+          33.8,
+          52.55
+        ],
+        [
+          33.8,
+          23.58
+        ],
+        [
+          -30.8,
+          23.58
+        ]
+      ],
+      "grid": [
+        1100,
+        642
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 62,
+    "seaCpu": 8.8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 13.839389755643003,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "costa-2011-iberia-ancho-oscuro",
+    "ms": 14347,
+    "fases": {
+      "vista": 870,
+      "prep": 870,
+      "quieto": 12127,
+      "captura": 14345,
+      "medidas": 14347
+    },
+    "heapMB": [
+      17,
+      17,
+      22,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 398,
+      "utility": 102,
+      "renderer": 506
+    },
+    "pageMB": 152,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.45,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.45,
+      "bounds": [
+        -50.49,
+        18.59,
+        53.49,
+        53.04
+      ],
+      "view": [
+        -61.39,
+        14.64,
+        64.39,
+        56.99
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 72,
+    "seaCpu": 8.1,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "costa-2011-bering-oeste-oscuro",
+    "ms": 14753,
+    "fases": {
+      "vista": 849,
+      "prep": 849,
+      "quieto": 12849,
+      "captura": 14741,
+      "medidas": 14753
+    },
+    "heapMB": [
+      17,
+      17,
+      21,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 466,
+      "utility": 104,
+      "renderer": 491
+    },
+    "pageMB": 152,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.2,
+    "detail": null,
+    "gap": false,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.2,
+      "bounds": [
+        80.68,
+        16.8,
+        273.52,
+        80.34
+      ],
+      "view": [
+        73.42,
+        16.8,
+        280.78,
+        84
+      ],
+      "hidden": "span"
+    },
+    "sea": "visible",
+    "seaTiles": 114,
+    "seaCpu": 7.1,
+    "proj": "globe",
+    "sphereCover": 0.88,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "costa-2011-bering-este-oscuro",
+    "ms": 16496,
+    "fases": {
+      "vista": 828,
+      "prep": 828,
+      "quieto": 14824,
+      "captura": 16493,
+      "medidas": 16496
+    },
+    "heapMB": [
+      17,
+      17,
+      21,
+      17
+    ],
+    "navMB": {
+      "browser": 108,
+      "zygote": 101,
+      "gpu-process": 483,
+      "utility": 104,
+      "renderer": 484
+    },
+    "pageMB": 165,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.2,
+    "detail": null,
+    "gap": false,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.2,
+      "bounds": [
+        -273.72,
+        16.8,
+        -80.88,
+        80.34
+      ],
+      "view": [
+        -280.98,
+        16.8,
+        -73.62,
+        84
+      ],
+      "hidden": "span"
+    },
+    "sea": "visible",
+    "seaTiles": 117,
+    "seaCpu": 7.2,
+    "proj": "globe",
+    "sphereCover": 0.88,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "costa-2021-artico-ipad-oscuro",
+    "ms": 12540,
+    "fases": {
+      "vista": 842,
+      "prep": 842,
+      "quieto": 12144,
+      "captura": 12536,
+      "medidas": 12540
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 108,
+      "zygote": 101,
+      "gpu-process": 467,
+      "utility": 108,
+      "renderer": 895
+    },
+    "pageMB": 359,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.9,
+    "detail": null,
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.9,
+      "bounds": [
+        123.57,
+        62.05,
+        191.43,
+        80.05
+      ],
+      "view": [
+        116.29,
+        59.75,
+        198.71,
+        82.35
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 138,
+    "seaCpu": 6.8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "estrecho-2026-oscuro",
+    "ms": 11856,
+    "fases": {
+      "vista": 438,
+      "prep": 438,
+      "quieto": 11554,
+      "captura": 11829,
+      "medidas": 11856
+    },
+    "heapMB": [
+      17,
+      17,
+      17,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 246,
+      "utility": 100,
+      "renderer": 680
+    },
+    "pageMB": 127,
+    "labels": {
+      "place:city": {
+        "n": 8,
+        "ejemplos": [
+          "Jerez de la Frontera",
+          "Asilah",
+          "Tangier",
+          "Tétouan",
+          "Marbella",
+          "Fuengirola"
+        ]
+      },
+      "place:town": {
+        "n": 13,
+        "ejemplos": [
+          "Rota",
+          "Sanlúcar de Barrameda",
+          "Torremolinos",
+          "Ubrique",
+          "Ronda",
+          "Nerja"
+        ]
+      },
+      "water_name:bay": {
+        "n": 1,
+        "ejemplos": [
+          "Golfo de Cádiz"
+        ]
+      },
+      "water_name:sea": {
+        "n": 1,
+        "ejemplos": [
+          "Alboran Sea"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 8,
+      "bounds": [
+        -7.39,
+        35.09,
+        -3.81,
+        36.89
+      ],
+      "view": [
+        -8.25,
+        34.41,
+        -2.95,
+        37.57
+      ],
+      "corners": [
+        [
+          -8.48,
+          37.75
+        ],
+        [
+          -2.72,
+          37.75
+        ],
+        [
+          -2.72,
+          34.23
+        ],
+        [
+          -8.48,
+          34.23
+        ]
+      ],
+      "grid": [
+        1100,
+        833
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 12,
+    "seaCpu": 9.8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "europa-1945-lejos-oscuro",
+    "ms": 7593,
+    "fases": {
+      "vista": 188,
+      "prep": 188,
+      "quieto": 7129,
+      "captura": 7578,
+      "medidas": 7593
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 102,
+      "gpu-process": 346,
+      "utility": 105,
+      "renderer": 742
+    },
+    "pageMB": 173,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3,
+    "detail": null,
+    "gap": false,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3,
+      "bounds": [
+        -83.04,
+        2.75,
+        107.04,
+        75.23
+      ],
+      "view": [
+        -89,
+        2.75,
+        113,
+        82.09
+      ],
+      "hidden": "span"
+    },
+    "sea": "visible",
+    "seaTiles": 58,
+    "seaCpu": 6.2,
+    "proj": "globe",
+    "sphereCover": 0.894,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "europa-1945-oscuro",
+    "ms": 8732,
+    "fases": {
+      "vista": 16,
+      "prep": 16,
+      "quieto": 8303,
+      "captura": 8720,
+      "medidas": 8732
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 102,
+      "gpu-process": 387,
+      "utility": 105,
+      "renderer": 747
+    },
+    "pageMB": 184,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -30.48,
+        32.81,
+        54.48,
+        61.78
+      ],
+      "view": [
+        -39.47,
+        29.41,
+        63.47,
+        65.18
+      ],
+      "corners": [
+        [
+          -40.8,
+          65.73
+        ],
+        [
+          64.8,
+          65.73
+        ],
+        [
+          64.8,
+          28.25
+        ],
+        [
+          -40.8,
+          28.25
+        ]
+      ],
+      "grid": [
+        1100,
+        611
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 88,
+    "seaCpu": 5.9,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "europa-1945-oculto-oscuro",
+    "ms": 8004,
+    "fases": {
+      "vista": 74,
+      "prep": 98,
+      "quieto": 7204,
+      "captura": 7994,
+      "medidas": 8004
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 102,
+      "gpu-process": 390,
+      "utility": 105,
+      "renderer": 748
+    },
+    "pageMB": 191,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -30.48,
+        32.81,
+        54.48,
+        61.78
+      ],
+      "view": [
+        -39.47,
+        29.41,
+        63.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 88,
+    "seaCpu": 5.9,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "asia-2010-globo-oscuro",
+    "ms": 8374,
+    "fases": {
+      "vista": 167,
+      "prep": 167,
+      "quieto": 7898,
+      "captura": 8368,
+      "medidas": 8374
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 102,
+      "gpu-process": 436,
+      "utility": 108,
+      "renderer": 718
+    },
+    "pageMB": 149,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2.2,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -30.48,
+        32.81,
+        54.48,
+        61.78
+      ],
+      "view": [
+        -39.47,
+        29.41,
+        63.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 118,
+    "seaCpu": 5.1,
+    "proj": "globe",
+    "sphereCover": 0.364,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": false,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "asia-2010-cerca-oscuro",
+    "ms": 14590,
+    "fases": {
+      "vista": 85,
+      "prep": 85,
+      "quieto": 13826,
+      "captura": 14506,
+      "medidas": 14590
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 114,
+      "zygote": 102,
+      "gpu-process": 530,
+      "utility": 119,
+      "renderer": 839
+    },
+    "pageMB": 195,
+    "labels": {
+      "place:city": {
+        "n": 55,
+        "ejemplos": [
+          "Fuzhou",
+          "Changsha",
+          "Nanchang",
+          "Yueyang",
+          "Wuhan",
+          "Hefei"
+        ]
+      },
+      "place:state": {
+        "n": 6,
+        "ejemplos": [
+          "Qinghai Province",
+          "Shanxi Province",
+          "Ningxia Hui Autonomous Region",
+          "Arunachal Pradesh",
+          "Sichuan Province",
+          "Hubei"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5,
+    "detail": "full",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 5,
+      "bounds": [
+        87.91,
+        26.22,
+        122.09,
+        42.38
+      ],
+      "view": [
+        83.99,
+        24.11,
+        126.01,
+        44.49
+      ],
+      "corners": [
+        [
+          82.9,
+          45.26
+        ],
+        [
+          127.1,
+          45.26
+        ],
+        [
+          127.1,
+          23.11
+        ],
+        [
+          82.9,
+          23.11
+        ]
+      ],
+      "grid": [
+        1100,
+        675
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 149,
+    "seaCpu": 4.8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "mediterraneo-9010aC-oscuro",
+    "ms": 7626,
+    "fases": {
+      "vista": 48,
+      "prep": 48,
+      "quieto": 7355,
+      "captura": 7622,
+      "medidas": 7626
+    },
+    "heapMB": [
+      17,
+      17,
+      17,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 528,
+      "utility": 124,
+      "renderer": 842
+    },
+    "pageMB": 210,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5,
+    "detail": "physical",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 5,
+      "bounds": [
+        2.9,
+        29.54,
+        37.1,
+        45.09
+      ],
+      "view": [
+        -1.02,
+        27.49,
+        41.02,
+        47.14
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 149,
+    "seaCpu": 4.8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 17.146826136766148,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "costa-9010aC-zoom-oscuro",
+    "ms": 4847,
+    "fases": {
+      "vista": 46,
+      "prep": 46,
+      "quieto": 4566,
+      "captura": 4844,
+      "medidas": 4847
+    },
+    "heapMB": [
+      17,
+      17,
+      17,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 534,
+      "utility": 124,
+      "renderer": 854
+    },
+    "pageMB": 220,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 9,
+    "detail": "physical",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 9,
+      "bounds": [
+        1.61,
+        40.78,
+        3.39,
+        41.61
+      ],
+      "view": [
+        0.93,
+        40.2,
+        4.07,
+        42.2
+      ],
+      "corners": [
+        [
+          0.78,
+          42.31
+        ],
+        [
+          4.22,
+          42.31
+        ],
+        [
+          4.22,
+          40.08
+        ],
+        [
+          0.78,
+          40.08
+        ]
+      ],
+      "grid": [
+        1100,
+        949
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 149,
+    "seaCpu": 4.8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 17.146826136766148,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "globo-2026-oscuro",
+    "ms": 10482,
+    "fases": {
+      "vista": 73,
+      "prep": 73,
+      "quieto": 10067,
+      "captura": 10478,
+      "medidas": 10482
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 100,
+      "gpu-process": 239,
+      "utility": 93,
+      "renderer": 743
+    },
+    "pageMB": 316,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.4,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": null,
+    "sea": "visible",
+    "seaTiles": 12,
+    "seaCpu": 10.6,
+    "proj": "globe",
+    "sphereCover": 0.116,
+    "rueda": null,
+    "lbl": "n/a",
+    "lblFont": null,
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "africa-2026-lejos-oscuro",
+    "ms": 10931,
+    "fases": {
+      "vista": 28,
+      "prep": 28,
+      "quieto": 10471,
+      "captura": 10926,
+      "medidas": 10931
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 100,
+      "gpu-process": 298,
+      "utility": 94,
+      "renderer": 732
+    },
+    "pageMB": 112,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2.2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": null,
+    "sea": "visible",
+    "seaTiles": 41,
+    "seaCpu": 6.4,
+    "proj": "globe",
+    "sphereCover": 0.266,
+    "rueda": null,
+    "lbl": "n/a",
+    "lblFont": null,
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "africa-2026-cerca-oscuro",
+    "ms": 7359,
+    "fases": {
+      "vista": 57,
+      "prep": 57,
+      "quieto": 6903,
+      "captura": 7351,
+      "medidas": 7359
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 108,
+      "zygote": 100,
+      "gpu-process": 344,
+      "utility": 95,
+      "renderer": 754
+    },
+    "pageMB": 158,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": null,
+    "sea": "visible",
+    "seaTiles": 76,
+    "seaCpu": 4.5,
+    "proj": "globe",
+    "sphereCover": 0.689,
+    "rueda": null,
+    "lbl": "n/a",
+    "lblFont": null,
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "antartida-2026-oscuro",
+    "ms": 10285,
+    "fases": {
+      "vista": 73,
+      "prep": 73,
+      "quieto": 9357,
+      "captura": 10278,
+      "medidas": 10285
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 100,
+      "gpu-process": 370,
+      "utility": 99,
+      "renderer": 743
+    },
+    "pageMB": 105,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 2,
+      "bounds": [
+        -180,
+        -90,
+        180,
+        -22.14
+      ],
+      "view": [
+        -180,
+        -84,
+        180,
+        -16.13
+      ],
+      "hidden": "span"
+    },
+    "sea": "visible",
+    "seaTiles": 89,
+    "seaCpu": 4,
+    "proj": "globe",
+    "sphereCover": 0.993,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "artico-2026-oscuro",
+    "ms": 7323,
+    "fases": {
+      "vista": 45,
+      "prep": 45,
+      "quieto": 5882,
+      "captura": 7320,
+      "medidas": 7323
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 100,
+      "gpu-process": 375,
+      "utility": 100,
+      "renderer": 755
+    },
+    "pageMB": 112,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 2,
+      "bounds": [
+        -180,
+        22.14,
+        180,
+        90
+      ],
+      "view": [
+        -180,
+        16.13,
+        180,
+        84
+      ],
+      "hidden": "span"
+    },
+    "sea": "visible",
+    "seaTiles": 96,
+    "seaCpu": 3.9,
+    "proj": "globe",
+    "sphereCover": 0.993,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "pangea-250Ma-oscuro",
+    "ms": 6200,
+    "fases": {
+      "vista": 32,
+      "prep": 32,
+      "quieto": 5866,
+      "captura": 6189,
+      "medidas": 6200
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 100,
+      "gpu-process": 382,
+      "utility": 100,
+      "renderer": 762
+    },
+    "pageMB": 115,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.4,
+    "detail": null,
+    "gap": false,
+    "borders": null,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 2,
+      "bounds": [
+        -180,
+        22.14,
+        180,
+        90
+      ],
+      "view": [
+        -180,
+        16.13,
+        180,
+        84
+      ],
+      "hidden": "span"
+    },
+    "sea": "none",
+    "seaTiles": 96,
+    "seaCpu": 3.9,
+    "proj": "globe",
+    "sphereCover": 0.993,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "alpes-2026-oscuro",
+    "ms": 12854,
+    "fases": {
+      "vista": 981,
+      "prep": 981,
+      "quieto": 12501,
+      "captura": 12786,
+      "medidas": 12854
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 403,
+      "utility": 102,
+      "renderer": 803
+    },
+    "pageMB": 132,
+    "labels": {
+      "place:city": {
+        "n": 6,
+        "ejemplos": [
+          "Novara",
+          "Lugano",
+          "Annecy",
+          "Vercelli",
+          "Biella",
+          "Aosta - Aoste"
+        ]
+      },
+      "place:town": {
+        "n": 21,
+        "ejemplos": [
+          "Bellinzona",
+          "Oyonnax",
+          "Thonon-les-Bains",
+          "Martigny",
+          "Domodossola",
+          "Visp"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 8,
+      "bounds": [
+        5.4,
+        45.12,
+        9,
+        46.67
+      ],
+      "view": [
+        4.54,
+        44.46,
+        9.86,
+        47.32
+      ],
+      "corners": [
+        [
+          4.29,
+          47.5
+        ],
+        [
+          10.11,
+          47.5
+        ],
+        [
+          10.11,
+          44.28
+        ],
+        [
+          4.29,
+          44.28
+        ]
+      ],
+      "grid": [
+        1100,
+        874
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 105,
+    "seaCpu": 3.9,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "alpes-2026-sin-fronteras-oscuro",
+    "ms": 8717,
+    "fases": {
+      "vista": 66,
+      "prep": 144,
+      "quieto": 8380,
+      "captura": 8681,
+      "medidas": 8717
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 401,
+      "utility": 102,
+      "renderer": 822
+    },
+    "pageMB": 147,
+    "labels": {
+      "mountain_peak:peak": {
+        "n": 41,
+        "ejemplos": [
+          "Mont Chavet",
+          "Le Noirmont",
+          "Grand Cunay",
+          "Crêt de la Goutte",
+          "Le Reculet",
+          "Vanil Blanc"
+        ]
+      },
+      "water_name:lake": {
+        "n": 1,
+        "ejemplos": [
+          "Le Léman"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Le Rhône"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 8,
+      "bounds": [
+        5.4,
+        45.12,
+        9,
+        46.67
+      ],
+      "view": [
+        4.54,
+        44.46,
+        9.86,
+        47.32
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 105,
+    "seaCpu": 3.9,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "mediterraneo-2026-oscuro",
+    "ms": 15894,
+    "fases": {
+      "vista": 64,
+      "prep": 64,
+      "quieto": 15461,
+      "captura": 15792,
+      "medidas": 15894
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 104,
+      "zygote": 101,
+      "gpu-process": 335,
+      "utility": 106,
+      "renderer": 750
+    },
+    "pageMB": 155,
+    "labels": {
+      "place:city": {
+        "n": 29,
+        "ejemplos": [
+          "Tiranë",
+          "Algiers",
+          "Tunis",
+          "Tripoli",
+          "Toulouse",
+          "Burgas"
+        ]
+      },
+      "place:state": {
+        "n": 13,
+        "ejemplos": [
+          "Catalunya",
+          "Molise",
+          "Abruzzo",
+          "Sardigna/Sardegna",
+          "Epirus",
+          "Az Zawiyah"
+        ]
+      },
+      "water_name:sea": {
+        "n": 4,
+        "ejemplos": [
+          "Mar Ligure / Mer Ligure",
+          "Jadransko more / Mare Adriatico / Deti Adriatik",
+          "Mediterranean Sea",
+          "Mar Tirreno / Mer Tyrrhénienne"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5.2,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 5.2,
+      "bounds": [
+        0.54,
+        30.84,
+        29.46,
+        44.15
+      ],
+      "view": [
+        -2.85,
+        29,
+        32.85,
+        45.98
+      ],
+      "corners": [
+        [
+          -3.08,
+          46.14
+        ],
+        [
+          33.08,
+          46.14
+        ],
+        [
+          33.08,
+          28.81
+        ],
+        [
+          -3.08,
+          28.81
+        ]
+      ],
+      "grid": [
+        1100,
+        671
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 22,
+    "seaCpu": 11.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "mediterraneo-2026-sin-fronteras-oscuro",
+    "ms": 7232,
+    "fases": {
+      "vista": 52,
+      "prep": 118,
+      "quieto": 6814,
+      "captura": 7159,
+      "medidas": 7232
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 104,
+      "zygote": 101,
+      "gpu-process": 341,
+      "utility": 106,
+      "renderer": 760
+    },
+    "pageMB": 160,
+    "labels": {
+      "water_name:sea": {
+        "n": 5,
+        "ejemplos": [
+          "Mar Ligure / Mer Ligure",
+          "Jadransko more / Mare Adriatico / Deti Adriatik",
+          "Mediterranean Sea",
+          "Mar Tirreno / Mer Tyrrhénienne",
+          "Sea of Crete"
+        ]
+      },
+      "water_name:bay": {
+        "n": 1,
+        "ejemplos": [
+          "Gulf of Gabès"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5.2,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 5.2,
+      "bounds": [
+        0.54,
+        30.84,
+        29.46,
+        44.15
+      ],
+      "view": [
+        -2.85,
+        29,
+        32.85,
+        45.98
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 22,
+    "seaCpu": 11.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "islandia-2026-sin-fronteras-oscuro",
+    "ms": 8329,
+    "fases": {
+      "vista": 86,
+      "prep": 338,
+      "quieto": 7992,
+      "captura": 8317,
+      "medidas": 8329
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 101,
+      "gpu-process": 354,
+      "utility": 107,
+      "renderer": 773
+    },
+    "pageMB": 175,
+    "labels": {},
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 6.2,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 6.2,
+      "bounds": [
+        -25.62,
+        63.13,
+        -12.38,
+        66.53
+      ],
+      "view": [
+        -27.44,
+        62.29,
+        -10.56,
+        67.37
+      ],
+      "corners": [
+        [
+          -27.86,
+          67.53
+        ],
+        [
+          -10.14,
+          67.53
+        ],
+        [
+          -10.14,
+          62.09
+        ],
+        [
+          -27.86,
+          62.09
+        ]
+      ],
+      "grid": [
+        1100,
+        797
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 22,
+    "seaCpu": 11.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "carreteras-roma-2026-oscuro",
+    "ms": 7736,
+    "fases": {
+      "vista": 59,
+      "prep": 555,
+      "quieto": 7366,
+      "captura": 7668,
+      "medidas": 7736
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 101,
+      "gpu-process": 366,
+      "utility": 108,
+      "renderer": 771
+    },
+    "pageMB": 131,
+    "labels": {
+      "place:town": {
+        "n": 3,
+        "ejemplos": [
+          "Frascati",
+          "Tivoli Terme",
+          "Fonte Nuova"
+        ]
+      },
+      "place:village": {
+        "n": 30,
+        "ejemplos": [
+          "Castel di Guido",
+          "Monte Porzio Catone",
+          "Finocchio",
+          "Prato Fiorito",
+          "Castelverde",
+          "Marco Simone"
+        ]
+      },
+      "transportation_name:motorway": {
+        "n": 4,
+        "ejemplos": [
+          "Strada dei Parchi",
+          "Grande Raccordo Anulare",
+          "Autostrada Roma - aeroporto di Fiumicino",
+          "Diramazione Roma Sud"
+        ]
+      },
+      "transportation_name:trunk": {
+        "n": 2,
+        "ejemplos": [
+          "Via Cassia Veientana",
+          "Via Aurelia"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Tevere"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": true,
+      "capas": 67,
+      "visibles": 67,
+      "dibujados": 524
+    },
+    "z": 11,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 11,
+      "bounds": [
+        12.27,
+        41.8,
+        12.71,
+        42
+      ],
+      "view": [
+        11.73,
+        41.28,
+        13.25,
+        42.52
+      ],
+      "corners": [
+        [
+          11.65,
+          42.58
+        ],
+        [
+          13.33,
+          42.58
+        ],
+        [
+          13.33,
+          41.22
+        ],
+        [
+          11.65,
+          41.22
+        ]
+      ],
+      "grid": [
+        1013,
+        1100
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 22,
+    "seaCpu": 11.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "carreteras-alpes-2026-sin-fronteras-oscuro",
+    "ms": 10256,
+    "fases": {
+      "vista": 150,
+      "prep": 771,
+      "quieto": 9865,
+      "captura": 10176,
+      "medidas": 10256
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 101,
+      "gpu-process": 365,
+      "utility": 110,
+      "renderer": 797
+    },
+    "pageMB": 149,
+    "labels": {
+      "mountain_peak:peak": {
+        "n": 56,
+        "ejemplos": [
+          "Pointe des Brasses",
+          "Mont Forchat",
+          "Pointe de Miribel",
+          "Le Môle",
+          "Pointe de Nyon",
+          "Aiguille de Criou"
+        ]
+      },
+      "transportation_name:motorway": {
+        "n": 3,
+        "ejemplos": [
+          "(sin nombre)",
+          "Autostrada della Valle d'Aosta - Autoroute de la Vallée d'Aoste",
+          "Autostrada della Valle d'Aosta"
+        ]
+      },
+      "transportation_name:trunk": {
+        "n": 3,
+        "ejemplos": [
+          "(sin nombre)",
+          "La Route Blanche",
+          "Tunnel du Mont Blanc"
+        ]
+      },
+      "transportation_name:motorway_construction": {
+        "n": 1,
+        "ejemplos": [
+          "(sin nombre)"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Le Rhône"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": true,
+      "capas": 67,
+      "visibles": 67,
+      "dibujados": 398
+    },
+    "z": 9,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 9,
+      "bounds": [
+        6.31,
+        45.51,
+        8.09,
+        46.28
+      ],
+      "view": [
+        5.63,
+        44.94,
+        8.77,
+        46.86
+      ],
+      "corners": [
+        [
+          5.48,
+          46.97
+        ],
+        [
+          8.92,
+          46.97
+        ],
+        [
+          8.92,
+          44.82
+        ],
+        [
+          5.48,
+          44.82
+        ]
+      ],
+      "grid": [
+        1100,
+        983
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 22,
+    "seaCpu": 11.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "iconos-europa-1939-oscuro",
+    "ms": 13038,
+    "fases": {
+      "vista": 120,
+      "sucesos": 2365,
+      "prep": 3866,
+      "quieto": 12469,
+      "captura": 12994,
+      "medidas": 13038
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 101,
+      "gpu-process": 425,
+      "utility": 116,
+      "renderer": 854
+    },
+    "pageMB": 168,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 15,
+      "iconos": 15,
+      "por": {
+        "event": 3,
+        "birth": 3,
+        "death": 5,
+        "publication": 1,
+        "discovery": 2,
+        "tank": 1
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -27.48,
+        32.81,
+        57.48,
+        61.78
+      ],
+      "view": [
+        -36.47,
+        29.41,
+        66.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 52,
+    "seaCpu": 8.3,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "iconos-europa-1805-oscuro",
+    "ms": 9914,
+    "fases": {
+      "vista": 130,
+      "sucesos": 2561,
+      "prep": 4061,
+      "quieto": 9352,
+      "captura": 9874,
+      "medidas": 9914
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 101,
+      "gpu-process": 448,
+      "utility": 119,
+      "renderer": 844
+    },
+    "pageMB": 277,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 10,
+      "iconos": 10,
+      "por": {
+        "birth": 5,
+        "death": 2,
+        "publication": 1,
+        "musket": 2
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "z": 4.5,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.5,
+      "bounds": [
+        -16.43,
+        36.9,
+        36.43,
+        56.56
+      ],
+      "view": [
+        -22.21,
+        34.43,
+        42.21,
+        59.03
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 74,
+    "seaCpu": 7.8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.476799411042863,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "iconos-inglaterra-1066-oscuro",
+    "ms": 9608,
+    "fases": {
+      "vista": 155,
+      "sucesos": 2460,
+      "prep": 3961,
+      "quieto": 9165,
+      "captura": 9580,
+      "medidas": 9608
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 101,
+      "gpu-process": 463,
+      "utility": 122,
+      "renderer": 828
+    },
+    "pageMB": 190,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 5,
+      "iconos": 5,
+      "por": {
+        "death": 1,
+        "birth": 1,
+        "sword": 3
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "z": 5,
+    "detail": "physical",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 5,
+      "bounds": [
+        -18.03,
+        44.24,
+        16.03,
+        56.63
+      ],
+      "view": [
+        -21.94,
+        42.5,
+        19.94,
+        58.37
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 79,
+    "seaCpu": 7.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.77403996118104,
+    "btn": true,
+    "status": "×Loading plate-model coastlines…"
+  },
+  {
+    "name": "ventana-europa-1936-1-ano-s-oscuro",
+    "ms": 20150,
+    "fases": {
+      "vista": 72,
+      "sucesos": 2677,
+      "quieto": 14393,
+      "captura": 20092,
+      "medidas": 20150
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 101,
+      "gpu-process": 329,
+      "utility": 98,
+      "renderer": 535
+    },
+    "pageMB": 123,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 16,
+      "iconos": 26,
+      "por": {
+        "birth": 9,
+        "death": 11,
+        "publication": 1,
+        "event": 2,
+        "tank": 2,
+        "political": 1
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "ventana": {
+      "avanzoAnios": 9.59,
+      "tasaFinal": 1,
+      "ventana": {
+        "pastDays": 2191.9889714174415,
+        "futureDays": 73.06629904724804,
+        "flowing": true
+      },
+      "dibujados": 56,
+      "impMin": 0.78,
+      "niveles": [
+        0.32,
+        0.55,
+        0.8,
+        1
+      ]
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -27.48,
+        32.81,
+        57.48,
+        61.78
+      ],
+      "view": [
+        -36.47,
+        29.41,
+        66.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 30,
+    "seaCpu": 7.8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "tipos-sin-personas-europa-1939-oscuro",
+    "ms": 9867,
+    "fases": {
+      "vista": 32,
+      "sucesos": 209,
+      "prep": 1739,
+      "quieto": 9241,
+      "captura": 9846,
+      "medidas": 9867
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 101,
+      "gpu-process": 326,
+      "utility": 98,
+      "renderer": 551
+    },
+    "pageMB": 138,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 4,
+      "iconos": 4,
+      "por": {
+        "publication": 1,
+        "event": 1,
+        "treaty": 1,
+        "discovery": 1
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "tipos": {
+      "mascara": 384,
+      "casilleros": 14,
+      "marcados": 12
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -27.48,
+        32.81,
+        57.48,
+        61.78
+      ],
+      "view": [
+        -36.47,
+        29.41,
+        66.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 30,
+    "seaCpu": 7.8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "barrido-europa-1936-10-anos-oscuro",
+    "ms": 18127,
+    "fases": {
+      "vista": 100,
+      "sucesos": 178,
+      "prep": 12708,
+      "quieto": 17564,
+      "captura": 18081,
+      "medidas": 18127
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 101,
+      "gpu-process": 333,
+      "utility": 98,
+      "renderer": 559
+    },
+    "pageMB": 146,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 13,
+      "iconos": 13,
+      "por": {
+        "birth": 7,
+        "death": 4,
+        "publication": 1,
+        "tank": 1
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "barrido": {
+      "ini": {
+        "jd0": 2428344.743275463,
+        "activo": true,
+        "destino": 2431996.743275463,
+        "anioIni": 1936
+      },
+      "medio": {
+        "jd": 2429613.743275463,
+        "activo": true,
+        "mostrados": 47,
+        "ventana": {
+          "pastDays": 1460.8000000000002,
+          "futureDays": 182.60000000000002,
+          "flowing": true
+        },
+        "anio": 1939,
+        "toasts": 0
+      },
+      "fin": {
+        "jd": 2431996.743275463,
+        "activo": false,
+        "anio": 1946,
+        "mostrados": 13,
+        "ventana": {
+          "pastDays": 365,
+          "futureDays": 0,
+          "flowing": false
+        }
+      },
+      "llegoExacto": true
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -27.48,
+        32.81,
+        57.48,
+        61.78
+      ],
+      "view": [
+        -36.47,
+        29.41,
+        66.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 30,
+    "seaCpu": 7.8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "pirineos-2026-claro",
+    "ms": 14306,
+    "fases": {
+      "vista": 110,
+      "prep": 110,
+      "quieto": 14025,
+      "captura": 14284,
+      "medidas": 14306
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 101,
+      "gpu-process": 340,
+      "utility": 104,
+      "renderer": 856
+    },
+    "pageMB": 173,
+    "labels": {
+      "place:town": {
+        "n": 1,
+        "ejemplos": [
+          "Elizondo"
+        ]
+      },
+      "place:village": {
+        "n": 19,
+        "ejemplos": [
+          "Urepel",
+          "Aldudes",
+          "Luzaide / Valcarlos",
+          "Arnéguy",
+          "Banca",
+          "Estérençuby"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 11,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 11,
+      "bounds": [
+        -1.57,
+        42.95,
+        -1.13,
+        43.15
+      ],
+      "view": [
+        -2.11,
+        42.43,
+        -0.59,
+        43.67
+      ],
+      "corners": [
+        [
+          -2.19,
+          43.73
+        ],
+        [
+          -0.51,
+          43.73
+        ],
+        [
+          -0.51,
+          42.37
+        ],
+        [
+          -2.19,
+          42.37
+        ]
+      ],
+      "grid": [
+        1000,
+        1100
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 34,
+    "seaCpu": 8,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "europa-1606-claro",
+    "ms": 8129,
+    "fases": {
+      "vista": 113,
+      "prep": 113,
+      "quieto": 7434,
+      "captura": 8125,
+      "medidas": 8129
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 101,
+      "gpu-process": 366,
+      "utility": 112,
+      "renderer": 876
+    },
+    "pageMB": 178,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.3,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.3,
+      "bounds": [
+        -80.52,
+        3.69,
+        100.52,
+        68.81
+      ],
+      "view": [
+        -80.52,
+        3.69,
+        100.52,
+        74.74
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 70,
+    "seaCpu": 6.3,
+    "proj": "globe",
+    "sphereCover": 0.982,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 15.489971096637515,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "leyenda-tableta-1939-claro",
+    "ms": 17605,
+    "fases": {
+      "vista": 982,
+      "prep": 9552,
+      "quieto": 14873,
+      "captura": 17599,
+      "medidas": 17605
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 101,
+      "gpu-process": 432,
+      "utility": 112,
+      "renderer": 937
+    },
+    "pageMB": 250,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.2,
+      "bounds": [
+        -14,
+        30.21,
+        38,
+        64.26
+      ],
+      "view": [
+        -19.69,
+        26.3,
+        43.69,
+        68.17
+      ],
+      "corners": [
+        [
+          -21.02,
+          68.66
+        ],
+        [
+          45.02,
+          68.66
+        ],
+        [
+          45.02,
+          25.11
+        ],
+        [
+          -21.02,
+          25.11
+        ]
+      ],
+      "grid": [
+        1043,
+        1100
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 100,
+    "seaCpu": 5.3,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 549,
+      "f": 178,
+      "filas": 90,
+      "elegido": "wd.q189417.built",
+      "tomada": true,
+      "paises": 61,
+      "ms": 27
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "leyenda-movil-1939-claro",
+    "ms": 9393,
+    "fases": {
+      "vista": 855,
+      "prep": 3892,
+      "quieto": 8616,
+      "captura": 9388,
+      "medidas": 9393
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 101,
+      "gpu-process": 383,
+      "utility": 112,
+      "renderer": 883
+    },
+    "pageMB": 254,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.6,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.6,
+      "bounds": [
+        -7.27,
+        29.72,
+        31.27,
+        65.53
+      ],
+      "view": [
+        -11.62,
+        25.63,
+        35.62,
+        69.62
+      ],
+      "corners": [
+        [
+          -12.96,
+          70.07
+        ],
+        [
+          36.96,
+          70.07
+        ],
+        [
+          36.96,
+          24.43
+        ],
+        [
+          -12.96,
+          24.43
+        ]
+      ],
+      "grid": [
+        365,
+        543
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 100,
+    "seaCpu": 5.3,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 549,
+      "f": 172,
+      "filas": 63,
+      "elegido": "wd.q10285.built",
+      "tomada": true,
+      "paises": 61,
+      "ms": 9
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "leyenda-escritorio-1879-claro",
+    "ms": 12258,
+    "fases": {
+      "vista": 67,
+      "prep": 2910,
+      "quieto": 9900,
+      "captura": 12254,
+      "medidas": 12258
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 101,
+      "gpu-process": 447,
+      "utility": 115,
+      "renderer": 904
+    },
+    "pageMB": 212,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.6,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.6,
+      "bounds": [
+        -56.57,
+        17.85,
+        80.57,
+        64.54
+      ],
+      "view": [
+        -70.78,
+        12.68,
+        94.78,
+        69.71
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 134,
+    "seaCpu": 5.2,
+    "proj": "globe",
+    "sphereCover": 0.169,
+    "rueda": {
+      "n": 82,
+      "f": 37,
+      "filas": 54,
+      "elegido": "wd.q10285.built",
+      "tomada": true,
+      "paises": 5,
+      "ms": 20
+    },
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.470740711778168,
+    "btn": false,
+    "status": "×"
+  },
+  {
+    "name": "leyenda-tableta-1939-mapa-claro",
+    "ms": 15814,
+    "fases": {
+      "vista": 899,
+      "prep": 6672,
+      "quieto": 15278,
+      "captura": 15809,
+      "medidas": 15814
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 100,
+      "gpu-process": 309,
+      "utility": 98,
+      "renderer": 405
+    },
+    "pageMB": 106,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.2,
+      "bounds": [
+        -14,
+        30.21,
+        38,
+        64.26
+      ],
+      "view": [
+        -19.69,
+        26.3,
+        43.69,
+        68.17
+      ],
+      "corners": [
+        [
+          -21.02,
+          68.66
+        ],
+        [
+          45.02,
+          68.66
+        ],
+        [
+          45.02,
+          25.11
+        ],
+        [
+          -21.02,
+          25.11
+        ]
+      ],
+      "grid": [
+        1043,
+        1100
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 27,
+    "seaCpu": 8.3,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 550,
+      "f": 126,
+      "filas": 93,
+      "elegido": "wd.q211818.built",
+      "tomada": true,
+      "paises": 63,
+      "ms": 13
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "leyenda-tableta-1939-lista-claro",
+    "ms": 14916,
+    "fases": {
+      "vista": 2266,
+      "prep": 4832,
+      "quieto": 10824,
+      "captura": 14912,
+      "medidas": 14916
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 332,
+      "utility": 98,
+      "renderer": 404
+    },
+    "pageMB": 99,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.2,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.2,
+      "bounds": [
+        -14,
+        30.21,
+        38,
+        64.26
+      ],
+      "view": [
+        -19.69,
+        26.3,
+        43.69,
+        68.17
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 27,
+    "seaCpu": 8.3,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 550,
+      "f": 275,
+      "filas": 100,
+      "elegido": "wd.q133682.death",
+      "tomada": true,
+      "paises": 63,
+      "ms": 13
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "leyenda-movil-1964-rueda-claro",
+    "ms": 18070,
+    "fases": {
+      "vista": 3751,
+      "prep": 14260,
+      "quieto": 17765,
+      "captura": 18066,
+      "medidas": 18070
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 290,
+      "utility": 99,
+      "renderer": 455
+    },
+    "pageMB": 144,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.364547125409995,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.36,
+      "bounds": [
+        -3.91,
+        32.03,
+        14.4,
+        54.5
+      ],
+      "view": [
+        -6.25,
+        29.28,
+        16.73,
+        57.25
+      ],
+      "corners": [
+        [
+          -7.39,
+          57.86
+        ],
+        [
+          17.88,
+          57.86
+        ],
+        [
+          17.88,
+          28.27
+        ],
+        [
+          -7.39,
+          28.27
+        ]
+      ],
+      "grid": [
+        272,
+        449
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 27,
+    "seaCpu": 8.3,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 633,
+      "f": 112,
+      "filas": 69,
+      "elegido": "wd.q651190.built",
+      "tomada": true,
+      "paises": 72,
+      "ms": 9
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 17.55541462476974,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "leyenda-movil-1964-rueda-lista-claro",
+    "ms": 14735,
+    "fases": {
+      "vista": 1522,
+      "prep": 10970,
+      "quieto": 14473,
+      "captura": 14733,
+      "medidas": 14735
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 289,
+      "utility": 98,
+      "renderer": 401
+    },
+    "pageMB": 103,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.271241326238949,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.27,
+      "bounds": [
+        -7.67,
+        35.67,
+        12.47,
+        58.17
+      ],
+      "view": [
+        -10.18,
+        32.93,
+        14.98,
+        60.92
+      ],
+      "corners": [
+        [
+          -11.44,
+          61.53
+        ],
+        [
+          16.24,
+          61.53
+        ],
+        [
+          16.24,
+          31.86
+        ],
+        [
+          -11.44,
+          31.86
+        ]
+      ],
+      "grid": [
+        285,
+        461
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 30,
+    "seaCpu": 8.1,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 633,
+      "f": 108,
+      "filas": 67,
+      "elegido": "wd.q207985.built",
+      "tomada": true,
+      "paises": 72,
+      "ms": 5
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 17.55541462476974,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "leyenda-escritorio-1939-rueda-lista-claro",
+    "ms": 21853,
+    "fases": {
+      "vista": 64,
+      "prep": 17596,
+      "quieto": 21102,
+      "captura": 21849,
+      "medidas": 21853
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 334,
+      "utility": 98,
+      "renderer": 449
+    },
+    "pageMB": 117,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.12883186198952,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.13,
+      "bounds": [
+        -31.31,
+        35.52,
+        43.25,
+        61.07
+      ],
+      "view": [
+        -39.26,
+        32.46,
+        51.21,
+        64.12
+      ],
+      "corners": [
+        [
+          -40.61,
+          64.7
+        ],
+        [
+          52.56,
+          64.7
+        ],
+        [
+          52.56,
+          31.32
+        ],
+        [
+          -40.61,
+          31.32
+        ]
+      ],
+      "grid": [
+        1100,
+        622
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 36,
+    "seaCpu": 8.3,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": {
+      "n": 505,
+      "f": 219,
+      "filas": 33,
+      "elegido": "wd.q172851.built",
+      "tomada": true,
+      "paises": 59,
+      "ms": 21
+    },
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "costa-natural-iberia-1924-claro",
+    "ms": 7716,
+    "fases": {
+      "vista": 180,
+      "prep": 180,
+      "quieto": 6970,
+      "captura": 7712,
+      "medidas": 7716
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 328,
+      "utility": 99,
+      "renderer": 476
+    },
+    "pageMB": 163,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.3,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.3,
+      "bounds": [
+        -29.56,
+        25.11,
+        35.56,
+        51.8
+      ],
+      "view": [
+        -36.57,
+        21.94,
+        42.57,
+        54.97
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 38,
+    "seaCpu": 8.1,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 13.839389755643003,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "costa-natural-valencia-1924-claro",
+    "ms": 6468,
+    "fases": {
+      "vista": 89,
+      "prep": 89,
+      "quieto": 6027,
+      "captura": 6456,
+      "medidas": 6468
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 100,
+      "gpu-process": 343,
+      "utility": 100,
+      "renderer": 468
+    },
+    "pageMB": 126,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.55,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.55,
+      "bounds": [
+        -24.05,
+        27.31,
+        27.05,
+        49.16
+      ],
+      "view": [
+        -29.66,
+        24.63,
+        32.66,
+        51.85
+      ],
+      "corners": [
+        [
+          -30.8,
+          52.55
+        ],
+        [
+          33.8,
+          52.55
+        ],
+        [
+          33.8,
+          23.58
+        ],
+        [
+          -30.8,
+          23.58
+        ]
+      ],
+      "grid": [
+        1100,
+        642
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 68,
+    "seaCpu": 7.7,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 13.839389755643003,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "costa-2011-iberia-ancho-claro",
+    "ms": 15108,
+    "fases": {
+      "vista": 899,
+      "prep": 899,
+      "quieto": 12947,
+      "captura": 15105,
+      "medidas": 15108
+    },
+    "heapMB": [
+      17,
+      17,
+      22,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 100,
+      "gpu-process": 423,
+      "utility": 101,
+      "renderer": 500
+    },
+    "pageMB": 225,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4.45,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.45,
+      "bounds": [
+        -50.49,
+        18.59,
+        53.49,
+        53.04
+      ],
+      "view": [
+        -61.39,
+        14.64,
+        64.39,
+        56.99
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 85,
+    "seaCpu": 7.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "costa-2011-bering-oeste-claro",
+    "ms": 11436,
+    "fases": {
+      "vista": 897,
+      "prep": 897,
+      "quieto": 9960,
+      "captura": 11427,
+      "medidas": 11436
+    },
+    "heapMB": [
+      17,
+      17,
+      22,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 102,
+      "gpu-process": 336,
+      "utility": 99,
+      "renderer": 398
+    },
+    "pageMB": 86,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.2,
+    "detail": null,
+    "gap": false,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.2,
+      "bounds": [
+        80.68,
+        16.8,
+        273.52,
+        80.34
+      ],
+      "view": [
+        73.42,
+        16.8,
+        280.78,
+        84
+      ],
+      "hidden": "span"
+    },
+    "sea": "visible",
+    "seaTiles": 42,
+    "seaCpu": 6,
+    "proj": "globe",
+    "sphereCover": 0.88,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "costa-2011-bering-este-claro",
+    "ms": 14569,
+    "fases": {
+      "vista": 847,
+      "prep": 847,
+      "quieto": 12482,
+      "captura": 14564,
+      "medidas": 14569
+    },
+    "heapMB": [
+      17,
+      17,
+      21,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 102,
+      "gpu-process": 365,
+      "utility": 99,
+      "renderer": 406
+    },
+    "pageMB": 91,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.2,
+    "detail": null,
+    "gap": false,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.2,
+      "bounds": [
+        -273.72,
+        16.8,
+        -80.88,
+        80.34
+      ],
+      "view": [
+        -280.98,
+        16.8,
+        -73.62,
+        84
+      ],
+      "hidden": "span"
+    },
+    "sea": "visible",
+    "seaTiles": 45,
+    "seaCpu": 6.3,
+    "proj": "globe",
+    "sphereCover": 0.88,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "costa-2021-artico-ipad-claro",
+    "ms": 15831,
+    "fases": {
+      "vista": 1215,
+      "prep": 1215,
+      "quieto": 14515,
+      "captura": 15828,
+      "medidas": 15831
+    },
+    "heapMB": [
+      17,
+      17,
+      19,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 102,
+      "gpu-process": 385,
+      "utility": 103,
+      "renderer": 860
+    },
+    "pageMB": 349,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.9,
+    "detail": null,
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3.9,
+      "bounds": [
+        123.57,
+        62.05,
+        191.43,
+        80.05
+      ],
+      "view": [
+        116.29,
+        59.75,
+        198.71,
+        82.35
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 66,
+    "seaCpu": 5.4,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "estrecho-2026-claro",
+    "ms": 8430,
+    "fases": {
+      "vista": 84,
+      "prep": 84,
+      "quieto": 7781,
+      "captura": 8379,
+      "medidas": 8430
+    },
+    "heapMB": [
+      17,
+      17,
+      18,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 102,
+      "gpu-process": 411,
+      "utility": 105,
+      "renderer": 827
+    },
+    "pageMB": 150,
+    "labels": {
+      "place:city": {
+        "n": 8,
+        "ejemplos": [
+          "Jerez de la Frontera",
+          "Asilah",
+          "Tangier",
+          "Tétouan",
+          "Marbella",
+          "Fuengirola"
+        ]
+      },
+      "place:town": {
+        "n": 13,
+        "ejemplos": [
+          "Rota",
+          "Sanlúcar de Barrameda",
+          "Torremolinos",
+          "Ubrique",
+          "Ronda",
+          "Nerja"
+        ]
+      },
+      "water_name:bay": {
+        "n": 1,
+        "ejemplos": [
+          "Golfo de Cádiz"
+        ]
+      },
+      "water_name:sea": {
+        "n": 1,
+        "ejemplos": [
+          "Alboran Sea"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 8,
+      "bounds": [
+        -7.39,
+        35.09,
+        -3.81,
+        36.89
+      ],
+      "view": [
+        -8.25,
+        34.41,
+        -2.95,
+        37.57
+      ],
+      "corners": [
+        [
+          -8.48,
+          37.75
+        ],
+        [
+          -2.72,
+          37.75
+        ],
+        [
+          -2.72,
+          34.23
+        ],
+        [
+          -8.48,
+          34.23
+        ]
+      ],
+      "grid": [
+        1100,
+        833
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 85,
+    "seaCpu": 5.7,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "europa-1945-lejos-claro",
+    "ms": 9570,
+    "fases": {
+      "vista": 131,
+      "prep": 131,
+      "quieto": 8345,
+      "captura": 9562,
+      "medidas": 9570
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 102,
+      "gpu-process": 465,
+      "utility": 113,
+      "renderer": 931
+    },
+    "pageMB": 192,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3,
+    "detail": null,
+    "gap": false,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 3,
+      "bounds": [
+        -83.04,
+        2.75,
+        107.04,
+        75.23
+      ],
+      "view": [
+        -89,
+        2.75,
+        113,
+        82.09
+      ],
+      "hidden": "span"
+    },
+    "sea": "visible",
+    "seaTiles": 120,
+    "seaCpu": 5.9,
+    "proj": "globe",
+    "sphereCover": 0.894,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "europa-1945-claro",
+    "ms": 14356,
+    "fases": {
+      "vista": 60,
+      "prep": 60,
+      "quieto": 12378,
+      "captura": 14353,
+      "medidas": 14356
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 102,
+      "gpu-process": 491,
+      "utility": 114,
+      "renderer": 706
+    },
+    "pageMB": 179,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -30.48,
+        32.81,
+        54.48,
+        61.78
+      ],
+      "view": [
+        -39.47,
+        29.41,
+        63.47,
+        65.18
+      ],
+      "corners": [
+        [
+          -40.8,
+          65.73
+        ],
+        [
+          64.8,
+          65.73
+        ],
+        [
+          64.8,
+          28.25
+        ],
+        [
+          -40.8,
+          28.25
+        ]
+      ],
+      "grid": [
+        1100,
+        611
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 150,
+    "seaCpu": 6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "europa-1945-oculto-claro",
+    "ms": 7296,
+    "fases": {
+      "vista": 71,
+      "prep": 119,
+      "quieto": 6831,
+      "captura": 7284,
+      "medidas": 7296
+    },
+    "heapMB": [
+      17,
+      17,
+      21,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 102,
+      "gpu-process": 490,
+      "utility": 114,
+      "renderer": 710
+    },
+    "pageMB": 186,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 4,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -30.48,
+        32.81,
+        54.48,
+        61.78
+      ],
+      "view": [
+        -39.47,
+        29.41,
+        63.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 150,
+    "seaCpu": 6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "asia-2010-globo-claro",
+    "ms": 9101,
+    "fases": {
+      "vista": 358,
+      "prep": 358,
+      "quieto": 8604,
+      "captura": 9096,
+      "medidas": 9101
+    },
+    "heapMB": [
+      17,
+      17,
+      20,
+      17
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 102,
+      "gpu-process": 520,
+      "utility": 114,
+      "renderer": 766
+    },
+    "pageMB": 214,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2.2,
+    "detail": null,
+    "gap": false,
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -30.48,
+        32.81,
+        54.48,
+        61.78
+      ],
+      "view": [
+        -39.47,
+        29.41,
+        63.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 180,
+    "seaCpu": 5.6,
+    "proj": "globe",
+    "sphereCover": 0.364,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": false,
+    "status": "×"
+  },
+  {
+    "name": "asia-2010-cerca-claro",
+    "ms": 16061,
+    "fases": {
+      "vista": 88,
+      "prep": 88,
+      "quieto": 15233,
+      "captura": 15950,
+      "medidas": 16061
+    },
+    "heapMB": [
+      18,
+      18,
+      20,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 98,
+      "gpu-process": 361,
+      "utility": 109,
+      "renderer": 495
+    },
+    "pageMB": 119,
+    "labels": {
+      "place:city": {
+        "n": 55,
+        "ejemplos": [
+          "Fuzhou",
+          "Changsha",
+          "Nanchang",
+          "Yueyang",
+          "Wuhan",
+          "Hefei"
+        ]
+      },
+      "place:state": {
+        "n": 6,
+        "ejemplos": [
+          "Qinghai Province",
+          "Shanxi Province",
+          "Ningxia Hui Autonomous Region",
+          "Arunachal Pradesh",
+          "Sichuan Province",
+          "Hubei"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5,
+    "detail": "full",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 5,
+      "bounds": [
+        87.91,
+        26.22,
+        122.09,
+        42.38
+      ],
+      "view": [
+        83.99,
+        24.11,
+        126.01,
+        44.49
+      ],
+      "corners": [
+        [
+          82.9,
+          45.26
+        ],
+        [
+          127.1,
+          45.26
+        ],
+        [
+          127.1,
+          23.11
+        ],
+        [
+          82.9,
+          23.11
+        ]
+      ],
+      "grid": [
+        1100,
+        675
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 31,
+    "seaCpu": 7.2,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 12.671762553977786,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "mediterraneo-9010aC-claro",
+    "ms": 10114,
+    "fases": {
+      "vista": 56,
+      "prep": 56,
+      "quieto": 9838,
+      "captura": 10105,
+      "medidas": 10114
+    },
+    "heapMB": [
+      18,
+      18,
+      18,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 98,
+      "gpu-process": 376,
+      "utility": 115,
+      "renderer": 554
+    },
+    "pageMB": 136,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5,
+    "detail": "physical",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 5,
+      "bounds": [
+        2.9,
+        29.54,
+        37.1,
+        45.09
+      ],
+      "view": [
+        -1.02,
+        27.49,
+        41.02,
+        47.14
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 31,
+    "seaCpu": 7.2,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 17.146826136766148,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "costa-9010aC-zoom-claro",
+    "ms": 4490,
+    "fases": {
+      "vista": 57,
+      "prep": 57,
+      "quieto": 4215,
+      "captura": 4487,
+      "medidas": 4490
+    },
+    "heapMB": [
+      18,
+      18,
+      18,
+      18
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 98,
+      "gpu-process": 375,
+      "utility": 116,
+      "renderer": 563
+    },
+    "pageMB": 143,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 9,
+    "detail": "physical",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 9,
+      "bounds": [
+        1.61,
+        40.78,
+        3.39,
+        41.61
+      ],
+      "view": [
+        0.93,
+        40.2,
+        4.07,
+        42.2
+      ],
+      "corners": [
+        [
+          0.78,
+          42.31
+        ],
+        [
+          4.22,
+          42.31
+        ],
+        [
+          4.22,
+          40.08
+        ],
+        [
+          0.78,
+          40.08
+        ]
+      ],
+      "grid": [
+        1100,
+        949
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 31,
+    "seaCpu": 7.2,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 17.146826136766148,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "globo-2026-claro",
+    "ms": 9563,
+    "fases": {
+      "vista": 158,
+      "prep": 158,
+      "quieto": 8977,
+      "captura": 9558,
+      "medidas": 9563
+    },
+    "heapMB": [
+      18,
+      18,
+      19,
+      18
+    ],
+    "navMB": {
+      "browser": 108,
+      "zygote": 98,
+      "gpu-process": 404,
+      "utility": 122,
+      "renderer": 931
+    },
+    "pageMB": 255,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.4,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 9,
+      "bounds": [
+        1.61,
+        40.78,
+        3.39,
+        41.61
+      ],
+      "view": [
+        0.93,
+        40.2,
+        4.07,
+        42.2
+      ],
+      "corners": [
+        [
+          0.78,
+          42.31
+        ],
+        [
+          4.22,
+          42.31
+        ],
+        [
+          4.22,
+          40.08
+        ],
+        [
+          0.78,
+          40.08
+        ]
+      ],
+      "grid": [
+        1100,
+        949
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 43,
+    "seaCpu": 8.6,
+    "proj": "globe",
+    "sphereCover": 0.116,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "×"
+  },
+  {
+    "name": "africa-2026-lejos-claro",
+    "ms": 8501,
+    "fases": {
+      "vista": 45,
+      "prep": 46,
+      "quieto": 8031,
+      "captura": 8493,
+      "medidas": 8501
+    },
+    "heapMB": [
+      18,
+      18,
+      20,
+      18
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 98,
+      "gpu-process": 432,
+      "utility": 122,
+      "renderer": 913
+    },
+    "pageMB": 149,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2.2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 9,
+      "bounds": [
+        1.61,
+        40.78,
+        3.39,
+        41.61
+      ],
+      "view": [
+        0.93,
+        40.2,
+        4.07,
+        42.2
+      ],
+      "corners": [
+        [
+          0.78,
+          42.31
+        ],
+        [
+          4.22,
+          42.31
+        ],
+        [
+          4.22,
+          40.08
+        ],
+        [
+          0.78,
+          40.08
+        ]
+      ],
+      "grid": [
+        1100,
+        949
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 72,
+    "seaCpu": 6.1,
+    "proj": "globe",
+    "sphereCover": 0.266,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "×"
+  },
+  {
+    "name": "africa-2026-cerca-claro",
+    "ms": 5635,
+    "fases": {
+      "vista": 24,
+      "prep": 24,
+      "quieto": 5009,
+      "captura": 5622,
+      "medidas": 5635
+    },
+    "heapMB": [
+      18,
+      18,
+      20,
+      18
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 98,
+      "gpu-process": 467,
+      "utility": 122,
+      "renderer": 886
+    },
+    "pageMB": 157,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 3.2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": true,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 9,
+      "bounds": [
+        1.61,
+        40.78,
+        3.39,
+        41.61
+      ],
+      "view": [
+        0.93,
+        40.2,
+        4.07,
+        42.2
+      ],
+      "corners": [
+        [
+          0.78,
+          42.31
+        ],
+        [
+          4.22,
+          42.31
+        ],
+        [
+          4.22,
+          40.08
+        ],
+        [
+          0.78,
+          40.08
+        ]
+      ],
+      "grid": [
+        1100,
+        949
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 107,
+    "seaCpu": 6.4,
+    "proj": "globe",
+    "sphereCover": 0.689,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "×"
+  },
+  {
+    "name": "antartida-2026-claro",
+    "ms": 9379,
+    "fases": {
+      "vista": 128,
+      "prep": 128,
+      "quieto": 7925,
+      "captura": 9366,
+      "medidas": 9379
+    },
+    "heapMB": [
+      18,
+      18,
+      20,
+      18
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 98,
+      "gpu-process": 489,
+      "utility": 122,
+      "renderer": 889
+    },
+    "pageMB": 163,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 2,
+      "bounds": [
+        -180,
+        -90,
+        180,
+        -22.14
+      ],
+      "view": [
+        -180,
+        -84,
+        180,
+        -16.13
+      ],
+      "hidden": "span"
+    },
+    "sea": "visible",
+    "seaTiles": 120,
+    "seaCpu": 5.8,
+    "proj": "globe",
+    "sphereCover": 0.993,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "artico-2026-claro",
+    "ms": 16992,
+    "fases": {
+      "vista": 51,
+      "prep": 51,
+      "quieto": 13940,
+      "captura": 16978,
+      "medidas": 16992
+    },
+    "heapMB": [
+      18,
+      18,
+      20,
+      18
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 98,
+      "gpu-process": 495,
+      "utility": 122,
+      "renderer": 902
+    },
+    "pageMB": 176,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 2,
+    "detail": null,
+    "gap": false,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 2,
+      "bounds": [
+        -180,
+        22.14,
+        180,
+        90
+      ],
+      "view": [
+        -180,
+        16.13,
+        180,
+        84
+      ],
+      "hidden": "span"
+    },
+    "sea": "visible",
+    "seaTiles": 127,
+    "seaCpu": 5.6,
+    "proj": "globe",
+    "sphereCover": 0.993,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "pangea-250Ma-claro",
+    "ms": 7111,
+    "fases": {
+      "vista": 35,
+      "prep": 35,
+      "quieto": 6487,
+      "captura": 7101,
+      "medidas": 7111
+    },
+    "heapMB": [
+      18,
+      18,
+      19,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 177,
+      "utility": 84,
+      "renderer": 260
+    },
+    "pageMB": 50,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 1.4,
+    "detail": null,
+    "gap": false,
+    "borders": null,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": null,
+    "sea": "none",
+    "seaTiles": 0,
+    "seaCpu": null,
+    "proj": "globe",
+    "sphereCover": null,
+    "rueda": null,
+    "lbl": "n/a",
+    "lblFont": null,
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": false,
+    "status": "×"
+  },
+  {
+    "name": "alpes-2026-claro",
+    "ms": 17752,
+    "fases": {
+      "vista": 92,
+      "prep": 92,
+      "quieto": 17412,
+      "captura": 17699,
+      "medidas": 17752
+    },
+    "heapMB": [
+      18,
+      18,
+      19,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 250,
+      "utility": 101,
+      "renderer": 702
+    },
+    "pageMB": 135,
+    "labels": {
+      "place:city": {
+        "n": 6,
+        "ejemplos": [
+          "Novara",
+          "Lugano",
+          "Annecy",
+          "Vercelli",
+          "Biella",
+          "Aosta - Aoste"
+        ]
+      },
+      "place:town": {
+        "n": 21,
+        "ejemplos": [
+          "Bellinzona",
+          "Oyonnax",
+          "Thonon-les-Bains",
+          "Martigny",
+          "Domodossola",
+          "Visp"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 8,
+      "bounds": [
+        5.4,
+        45.12,
+        9,
+        46.67
+      ],
+      "view": [
+        4.54,
+        44.46,
+        9.86,
+        47.32
+      ],
+      "corners": [
+        [
+          4.29,
+          47.5
+        ],
+        [
+          10.11,
+          47.5
+        ],
+        [
+          10.11,
+          44.28
+        ],
+        [
+          4.29,
+          44.28
+        ]
+      ],
+      "grid": [
+        1100,
+        874
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 9,
+    "seaCpu": 16.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "alpes-2026-sin-fronteras-claro",
+    "ms": 6096,
+    "fases": {
+      "vista": 51,
+      "prep": 103,
+      "quieto": 5745,
+      "captura": 6050,
+      "medidas": 6096
+    },
+    "heapMB": [
+      18,
+      18,
+      19,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 268,
+      "utility": 101,
+      "renderer": 686
+    },
+    "pageMB": 115,
+    "labels": {
+      "mountain_peak:peak": {
+        "n": 41,
+        "ejemplos": [
+          "Mont Chavet",
+          "Le Noirmont",
+          "Grand Cunay",
+          "Crêt de la Goutte",
+          "Le Reculet",
+          "Vanil Blanc"
+        ]
+      },
+      "water_name:lake": {
+        "n": 1,
+        "ejemplos": [
+          "Le Léman"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Le Rhône"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 8,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 8,
+      "bounds": [
+        5.4,
+        45.12,
+        9,
+        46.67
+      ],
+      "view": [
+        4.54,
+        44.46,
+        9.86,
+        47.32
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 9,
+    "seaCpu": 16.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "mediterraneo-2026-claro",
+    "ms": 7982,
+    "fases": {
+      "vista": 109,
+      "prep": 109,
+      "quieto": 7549,
+      "captura": 7896,
+      "medidas": 7982
+    },
+    "heapMB": [
+      18,
+      18,
+      19,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 327,
+      "utility": 108,
+      "renderer": 757
+    },
+    "pageMB": 135,
+    "labels": {
+      "place:city": {
+        "n": 29,
+        "ejemplos": [
+          "Tiranë",
+          "Algiers",
+          "Tunis",
+          "Tripoli",
+          "Toulouse",
+          "Burgas"
+        ]
+      },
+      "place:state": {
+        "n": 13,
+        "ejemplos": [
+          "Catalunya",
+          "Molise",
+          "Abruzzo",
+          "Sardigna/Sardegna",
+          "Epirus",
+          "Az Zawiyah"
+        ]
+      },
+      "water_name:sea": {
+        "n": 4,
+        "ejemplos": [
+          "Mar Ligure / Mer Ligure",
+          "Jadransko more / Mare Adriatico / Deti Adriatik",
+          "Mediterranean Sea",
+          "Mar Tirreno / Mer Tyrrhénienne"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5.2,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 5.2,
+      "bounds": [
+        0.54,
+        30.84,
+        29.46,
+        44.15
+      ],
+      "view": [
+        -2.85,
+        29,
+        32.85,
+        45.98
+      ],
+      "corners": [
+        [
+          -3.08,
+          46.14
+        ],
+        [
+          33.08,
+          46.14
+        ],
+        [
+          33.08,
+          28.81
+        ],
+        [
+          -3.08,
+          28.81
+        ]
+      ],
+      "grid": [
+        1100,
+        671
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 9,
+    "seaCpu": 16.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "mediterraneo-2026-sin-fronteras-claro",
+    "ms": 5292,
+    "fases": {
+      "vista": 49,
+      "prep": 82,
+      "quieto": 4888,
+      "captura": 5217,
+      "medidas": 5292
+    },
+    "heapMB": [
+      18,
+      18,
+      19,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 325,
+      "utility": 108,
+      "renderer": 765
+    },
+    "pageMB": 145,
+    "labels": {
+      "water_name:sea": {
+        "n": 5,
+        "ejemplos": [
+          "Mar Ligure / Mer Ligure",
+          "Jadransko more / Mare Adriatico / Deti Adriatik",
+          "Mediterranean Sea",
+          "Mar Tirreno / Mer Tyrrhénienne",
+          "Sea of Crete"
+        ]
+      },
+      "water_name:bay": {
+        "n": 1,
+        "ejemplos": [
+          "Gulf of Gabès"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 5.2,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 5.2,
+      "bounds": [
+        0.54,
+        30.84,
+        29.46,
+        44.15
+      ],
+      "view": [
+        -2.85,
+        29,
+        32.85,
+        45.98
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 9,
+    "seaCpu": 16.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "islandia-2026-sin-fronteras-claro",
+    "ms": 5738,
+    "fases": {
+      "vista": 86,
+      "prep": 370,
+      "quieto": 5406,
+      "captura": 5721,
+      "medidas": 5738
+    },
+    "heapMB": [
+      18,
+      18,
+      19,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 337,
+      "utility": 108,
+      "renderer": 736
+    },
+    "pageMB": 131,
+    "labels": {},
+    "road": {
+      "btnHidden": false,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "z": 6.2,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 6.2,
+      "bounds": [
+        -25.62,
+        63.13,
+        -12.38,
+        66.53
+      ],
+      "view": [
+        -27.44,
+        62.29,
+        -10.56,
+        67.37
+      ],
+      "corners": [
+        [
+          -27.86,
+          67.53
+        ],
+        [
+          -10.14,
+          67.53
+        ],
+        [
+          -10.14,
+          62.09
+        ],
+        [
+          -27.86,
+          62.09
+        ]
+      ],
+      "grid": [
+        1100,
+        797
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 9,
+    "seaCpu": 16.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "carreteras-roma-2026-claro",
+    "ms": 6600,
+    "fases": {
+      "vista": 81,
+      "prep": 595,
+      "quieto": 6214,
+      "captura": 6529,
+      "medidas": 6600
+    },
+    "heapMB": [
+      18,
+      18,
+      20,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 351,
+      "utility": 109,
+      "renderer": 757
+    },
+    "pageMB": 139,
+    "labels": {
+      "place:town": {
+        "n": 3,
+        "ejemplos": [
+          "Frascati",
+          "Tivoli Terme",
+          "Fonte Nuova"
+        ]
+      },
+      "place:village": {
+        "n": 30,
+        "ejemplos": [
+          "Castel di Guido",
+          "Monte Porzio Catone",
+          "Finocchio",
+          "Prato Fiorito",
+          "Castelverde",
+          "Marco Simone"
+        ]
+      },
+      "transportation_name:motorway": {
+        "n": 4,
+        "ejemplos": [
+          "Strada dei Parchi",
+          "Grande Raccordo Anulare",
+          "Autostrada Roma - aeroporto di Fiumicino",
+          "Diramazione Roma Sud"
+        ]
+      },
+      "transportation_name:trunk": {
+        "n": 2,
+        "ejemplos": [
+          "Via Cassia Veientana",
+          "Via Aurelia"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Tevere"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": true,
+      "capas": 67,
+      "visibles": 67,
+      "dibujados": 524
+    },
+    "z": 11,
+    "detail": "full",
+    "gap": true,
+    "borders": "ne",
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 11,
+      "bounds": [
+        12.27,
+        41.8,
+        12.71,
+        42
+      ],
+      "view": [
+        11.73,
+        41.28,
+        13.25,
+        42.52
+      ],
+      "corners": [
+        [
+          11.65,
+          42.58
+        ],
+        [
+          13.33,
+          42.58
+        ],
+        [
+          13.33,
+          41.22
+        ],
+        [
+          11.65,
+          41.22
+        ]
+      ],
+      "grid": [
+        1013,
+        1100
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 9,
+    "seaCpu": 16.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "carreteras-alpes-2026-sin-fronteras-claro",
+    "ms": 10632,
+    "fases": {
+      "vista": 73,
+      "prep": 533,
+      "quieto": 10257,
+      "captura": 10557,
+      "medidas": 10632
+    },
+    "heapMB": [
+      18,
+      18,
+      19,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 102,
+      "gpu-process": 354,
+      "utility": 110,
+      "renderer": 783
+    },
+    "pageMB": 169,
+    "labels": {
+      "mountain_peak:peak": {
+        "n": 56,
+        "ejemplos": [
+          "Pointe des Brasses",
+          "Mont Forchat",
+          "Pointe de Miribel",
+          "Le Môle",
+          "Pointe de Nyon",
+          "Aiguille de Criou"
+        ]
+      },
+      "transportation_name:motorway": {
+        "n": 3,
+        "ejemplos": [
+          "(sin nombre)",
+          "Autostrada della Valle d'Aosta - Autoroute de la Vallée d'Aoste",
+          "Autostrada della Valle d'Aosta"
+        ]
+      },
+      "transportation_name:trunk": {
+        "n": 3,
+        "ejemplos": [
+          "(sin nombre)",
+          "La Route Blanche",
+          "Tunnel du Mont Blanc"
+        ]
+      },
+      "transportation_name:motorway_construction": {
+        "n": 1,
+        "ejemplos": [
+          "(sin nombre)"
+        ]
+      },
+      "waterway:river": {
+        "n": 1,
+        "ejemplos": [
+          "Le Rhône"
+        ]
+      }
+    },
+    "road": {
+      "btnHidden": false,
+      "on": true,
+      "capas": 67,
+      "visibles": 67,
+      "dibujados": 398
+    },
+    "z": 9,
+    "detail": "full",
+    "gap": false,
+    "borders": "ne",
+    "cut": true,
+    "far": false,
+    "off": true,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 9,
+      "bounds": [
+        6.31,
+        45.51,
+        8.09,
+        46.28
+      ],
+      "view": [
+        5.63,
+        44.94,
+        8.77,
+        46.86
+      ],
+      "corners": [
+        [
+          5.48,
+          46.97
+        ],
+        [
+          8.92,
+          46.97
+        ],
+        [
+          8.92,
+          44.82
+        ],
+        [
+          5.48,
+          44.82
+        ]
+      ],
+      "grid": [
+        1100,
+        983
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 9,
+    "seaCpu": 16.6,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "none",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 4,
+    "resKm": null,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "iconos-europa-1939-claro",
+    "ms": 12176,
+    "fases": {
+      "vista": 53,
+      "sucesos": 2987,
+      "prep": 4489,
+      "quieto": 11608,
+      "captura": 12123,
+      "medidas": 12176
+    },
+    "heapMB": [
+      18,
+      18,
+      21,
+      18
+    ],
+    "navMB": {
+      "browser": 106,
+      "zygote": 100,
+      "gpu-process": 297,
+      "utility": 97,
+      "renderer": 389
+    },
+    "pageMB": 92,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 15,
+      "iconos": 15,
+      "por": {
+        "event": 3,
+        "birth": 3,
+        "death": 5,
+        "publication": 1,
+        "discovery": 2,
+        "tank": 1
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -27.48,
+        32.81,
+        57.48,
+        61.78
+      ],
+      "view": [
+        -36.47,
+        29.41,
+        66.47,
+        65.18
+      ],
+      "corners": [
+        [
+          -37.8,
+          65.73
+        ],
+        [
+          67.8,
+          65.73
+        ],
+        [
+          67.8,
+          28.25
+        ],
+        [
+          -37.8,
+          28.25
+        ]
+      ],
+      "grid": [
+        1100,
+        611
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 30,
+    "seaCpu": 6.9,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "iconos-europa-1805-claro",
+    "ms": 10207,
+    "fases": {
+      "vista": 170,
+      "sucesos": 2401,
+      "prep": 3901,
+      "quieto": 9619,
+      "captura": 10152,
+      "medidas": 10207
+    },
+    "heapMB": [
+      18,
+      18,
+      21,
+      18
+    ],
+    "navMB": {
+      "browser": 107,
+      "zygote": 100,
+      "gpu-process": 349,
+      "utility": 102,
+      "renderer": 540
+    },
+    "pageMB": 200,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 0,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 10,
+      "iconos": 10,
+      "por": {
+        "birth": 5,
+        "death": 2,
+        "publication": 1,
+        "musket": 2
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "z": 4.5,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4.5,
+      "bounds": [
+        -16.43,
+        36.9,
+        36.43,
+        56.56
+      ],
+      "view": [
+        -22.21,
+        34.43,
+        42.21,
+        59.03
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 60,
+    "seaCpu": 6.4,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 0,
+    "ofmCountryShown": 0,
+    "resKm": 14.476799411042863,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "iconos-inglaterra-1066-claro",
+    "ms": 10688,
+    "fases": {
+      "vista": 140,
+      "sucesos": 2320,
+      "prep": 3821,
+      "quieto": 9621,
+      "captura": 10656,
+      "medidas": 10688
+    },
+    "heapMB": [
+      18,
+      18,
+      19,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 364,
+      "utility": 105,
+      "renderer": 589
+    },
+    "pageMB": 203,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 5,
+      "iconos": 5,
+      "por": {
+        "death": 1,
+        "birth": 1,
+        "sword": 3
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "z": 5,
+    "detail": "physical",
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": false,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 5,
+      "bounds": [
+        -18.03,
+        44.24,
+        16.03,
+        56.63
+      ],
+      "view": [
+        -21.94,
+        42.5,
+        19.94,
+        58.37
+      ],
+      "corners": [
+        [
+          -23.35,
+          59.1
+        ],
+        [
+          21.35,
+          59.1
+        ],
+        [
+          21.35,
+          41.45
+        ],
+        [
+          -23.35,
+          41.45
+        ]
+      ],
+      "grid": [
+        1100,
+        691
+      ]
+    },
+    "sea": "none",
+    "seaTiles": 65,
+    "seaCpu": 6.5,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.77403996118104,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "ventana-europa-1936-1-ano-s-claro",
+    "ms": 16508,
+    "fases": {
+      "vista": 187,
+      "sucesos": 1090,
+      "quieto": 10438,
+      "captura": 16467,
+      "medidas": 16508
+    },
+    "heapMB": [
+      18,
+      18,
+      20,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 396,
+      "utility": 108,
+      "renderer": 658
+    },
+    "pageMB": 140,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 18,
+      "iconos": 21,
+      "por": {
+        "death": 7,
+        "birth": 11,
+        "publication": 1,
+        "tank": 2
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "ventana": {
+      "avanzoAnios": 7.34,
+      "tasaFinal": 0.99,
+      "ventana": {
+        "pastDays": 2166.7404231989676,
+        "futureDays": 72.22468077329893,
+        "flowing": true
+      },
+      "dibujados": 57,
+      "impMin": 0.78,
+      "niveles": [
+        0.32,
+        0.55,
+        0.8,
+        1
+      ]
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -27.48,
+        32.81,
+        57.48,
+        61.78
+      ],
+      "view": [
+        -36.47,
+        29.41,
+        66.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 65,
+    "seaCpu": 6.5,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "tipos-sin-personas-europa-1939-claro",
+    "ms": 9954,
+    "fases": {
+      "vista": 29,
+      "sucesos": 207,
+      "prep": 1730,
+      "quieto": 9294,
+      "captura": 9914,
+      "medidas": 9954
+    },
+    "heapMB": [
+      18,
+      18,
+      20,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 392,
+      "utility": 108,
+      "renderer": 666
+    },
+    "pageMB": 161,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 4,
+      "iconos": 4,
+      "por": {
+        "publication": 1,
+        "event": 1,
+        "treaty": 1,
+        "discovery": 1
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "tipos": {
+      "mascara": 384,
+      "casilleros": 14,
+      "marcados": 12
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -27.48,
+        32.81,
+        57.48,
+        61.78
+      ],
+      "view": [
+        -36.47,
+        29.41,
+        66.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 65,
+    "seaCpu": 6.5,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 14.183415797035229,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "barrido-europa-1936-10-anos-claro",
+    "ms": 19409,
+    "fases": {
+      "vista": 111,
+      "sucesos": 198,
+      "prep": 12376,
+      "quieto": 18791,
+      "captura": 19376,
+      "medidas": 19409
+    },
+    "heapMB": [
+      18,
+      18,
+      20,
+      18
+    ],
+    "navMB": {
+      "browser": 105,
+      "zygote": 100,
+      "gpu-process": 397,
+      "utility": 108,
+      "renderer": 671
+    },
+    "pageMB": 154,
+    "labels": {},
+    "road": {
+      "btnHidden": true,
+      "on": false,
+      "capas": 67,
+      "visibles": 0,
+      "dibujados": 0
+    },
+    "eventos": {
+      "dibujados": 13,
+      "iconos": 13,
+      "por": {
+        "birth": 7,
+        "death": 5,
+        "publication": 1
+      },
+      "capas": "events-dot:si events-pulse:si events-icon-bob:si events-icon-shake:si events-circle:si",
+      "animacion": false
+    },
+    "barrido": {
+      "ini": {
+        "jd0": 2428252.4980208334,
+        "activo": true,
+        "destino": 2431904.4980208334,
+        "anioIni": 1936
+      },
+      "medio": {
+        "jd": 2428928.4980208334,
+        "activo": true,
+        "mostrados": 38,
+        "ventana": {
+          "pastDays": 1460.8000000000002,
+          "futureDays": 182.60000000000002,
+          "flowing": true
+        },
+        "anio": 1938,
+        "toasts": 0
+      },
+      "fin": {
+        "jd": 2431904.4980208334,
+        "activo": false,
+        "anio": 1946,
+        "mostrados": 13,
+        "ventana": {
+          "pastDays": 365,
+          "futureDays": 0,
+          "flowing": false
+        }
+      },
+      "llegoExacto": true
+    },
+    "z": 4,
+    "detail": null,
+    "gap": true,
+    "cut": false,
+    "far": false,
+    "off": false,
+    "natural": true,
+    "natFailed": false,
+    "gapDbg": {
+      "z": 4,
+      "bounds": [
+        -27.48,
+        32.81,
+        57.48,
+        61.78
+      ],
+      "view": [
+        -36.47,
+        29.41,
+        66.47,
+        65.18
+      ]
+    },
+    "sea": "visible",
+    "seaTiles": 65,
+    "seaCpu": 6.5,
+    "proj": "globe",
+    "sphereCover": 1,
+    "rueda": null,
+    "lbl": "visible",
+    "lblFont": [
+      "Noto Sans Bold"
+    ],
+    "ofmCountryLayers": 4,
+    "ofmCountryShown": 0,
+    "resKm": 16.723882435966203,
+    "btn": true,
+    "status": "×"
+  },
+  {
+    "name": "solar-0-mapa",
+    "open": false,
+    "status": "×← Back to Earth"
+  },
+  {
+    "name": "solar-1-umbral",
+    "open": true,
+    "status": "×\nEarth\nDistance to Earth: 292,619 km\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nThe Earth is the map of this date, oriented with the camera (real sidereal time) and at its true size.\nMeasured error of the position of its centre (JPL Horizons/DE441) in this era (1"
+  },
+  {
+    "name": "solar-2-luna",
+    "open": true,
+    "status": "×\nEarth\nDistance to Earth: 824,712 km\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nThe Earth is the map of this date, oriented with the camera (real sidereal time) and at its true size.\nA dot with a ring is not to scale: the body is smaller than a dot at this distan"
+  },
+  {
+    "name": "solar-3-sol",
+    "open": true,
+    "status": "×\nEarth\nDistance to Earth: 6,550,924 km\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nThe Earth is the map of this date, oriented with the camera (real sidereal time) and at its true size.\nA dot with a ring is not to scale: the body is smaller than a dot at this dist"
+  },
+  {
+    "name": "solar-4-interior",
+    "error": "captura: page.screenshot: Timeout 120000ms exceeded."
+  },
+  {
+    "name": "solar-5-sistema",
+    "open": true,
+    "status": "×\nEarth\nDistance to Earth: 1.7 AU\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nA dot with a ring is not to scale: the body is smaller than a dot at this distance. Discs are.\nMeasured error of the position of its centre (JPL Horizons/DE441) in this era (1700-2200): u"
+  },
+  {
+    "name": "solar-sistema",
+    "open": true,
+    "status": "×\nSun\nDistance to Sun: 75 AU\nRadius: 695,700 km (IAU 2015 B3 (nominal))\nA dot with a ring is not to scale: the body is smaller than a dot at this distance. Discs are.\nThe Sun is the origin of this frame: it has no position error of its own.\n← Back to Earth"
+  },
+  {
+    "name": "solar-jupiter",
+    "open": true,
+    "status": "×\nJupiter\nDistance to Jupiter: 428,952 km\nDistance to the Sun: 5.3 AU · light takes 44.3 min\nRadius: 71,492 km (NASA NSSDCA)\nTexture: cloud tops as seen by Cassini in December 2000 (NASA/JPL/SSI). The bands are stable; the spots change and do not show how it looks today.\nMeasured error of the positi"
+  },
+  {
+    "name": "solar-luna",
+    "open": true,
+    "status": "×\nMoon\nDistance to Moon: 10,425 km\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 1,737.5 km (NASA NSSDCA)\nTexture: LROC WAC colour mosaic (NASA/GSFC/ASU); the poles are filled with LOLA albedo. NASA SVS.\nMeasured error of the position of its centre (JPL Horizons/DE441) in this era (1700-22"
+  },
+  {
+    "name": "solar-sol",
+    "open": true,
+    "status": "×\nSun\nDistance to Sun: 4,174,200 km\nRadius: 695,700 km (IAU 2015 B3 (nominal))\nA dot with a ring is not to scale: the body is smaller than a dot at this distance. Discs are.\nThe Sun is the origin of this frame: it has no position error of its own.\n← Back to Earth"
+  },
+  {
+    "name": "solar-tierra",
+    "open": false,
+    "status": "×EarthDistance to Earth: 39,857 kmDistance to the Sun: 1 AU · light takes 8.2 minRadius: 6,378 km (NASA NSSDCA)Measured error of the position of its centre (JPL Horizons/DE441) in this era (1700-2200): up to 2,492 km.← Back to Earth"
+  },
+  {
+    "name": "solar-1492",
+    "open": true,
+    "status": "×\nEarth\nDistance to Earth: 3,023,285 km\nDistance to the Sun: 1 AU · light takes 8.2 min\nRadius: 6,378 km (NASA NSSDCA)\nThe Earth is the map of this date, oriented with the camera (real sidereal time) and at its true size.\nA dot with a ring is not to scale: the body is smaller than a dot at this dist"
+  }
+]

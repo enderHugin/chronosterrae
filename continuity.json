@@ -1,0 +1,99 @@
+{
+  "W": 1280,
+  "H": 800,
+  "points": 56,
+  "pointsWithPolitics": 49,
+  "basePct": 100,
+  "runs": [
+    {
+      "label": "frio",
+      "year": 1400,
+      "completed": true,
+      "frames": 12,
+      "minPct": 100,
+      "series": [
+        {
+          "t": 278,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1945,
+          "load": true,
+          "swap": false
+        },
+        {
+          "t": 4725,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1400,
+          "load": false,
+          "swap": true
+        },
+        {
+          "t": 5573,
+          "pct": 100,
+          "src": false,
+          "gap": true,
+          "by": 1400,
+          "load": false,
+          "swap": false
+        },
+        {
+          "t": 6284,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1400,
+          "load": false,
+          "swap": false
+        }
+      ]
+    },
+    {
+      "label": "en-memoria",
+      "year": 1945,
+      "completed": true,
+      "frames": 6,
+      "minPct": 100,
+      "series": [
+        {
+          "t": 35,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1400,
+          "load": false,
+          "swap": false
+        },
+        {
+          "t": 432,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1945,
+          "load": false,
+          "swap": true
+        },
+        {
+          "t": 1242,
+          "pct": 100,
+          "src": false,
+          "gap": true,
+          "by": 1945,
+          "load": false,
+          "swap": false
+        },
+        {
+          "t": 1612,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1945,
+          "load": false,
+          "swap": false
+        }
+      ]
+    }
+  ]
+}
