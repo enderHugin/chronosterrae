@@ -145,6 +145,30 @@ const [url, out] = process.argv.slice(2);
         await ctx.close();
         return { notredame: nd, list, einstein: ein };
     });
+    // «Lo que SEA» (el creador, 2026-11-24): paises, rios, especies, estrellas, constelaciones, planetas; con la API de Wikidata de verdad
+    // (imagenes bloqueadas otra vez: no hace falta verlas para comprobar a donde y a cuando se va)
+    await page.route(IMG_URL, block);
+    const anyThing = async (q, pickSrc, file, wait) => {
+        await page.evaluate(() => { if (window.solarView && solarView.isOpen) solarView.close(); });
+        await page.fill('#search', ''); await page.click('#search'); await page.keyboard.type(q, { delay: 50 });
+        await page.waitForFunction(() => (SRCH.items.length && !WD.loading) || (WD.err && !WD.loading), null, { timeout: 60000 }).catch(() => {});
+        await page.waitForTimeout(1500);
+        const list = await page.evaluate(() => ({ err: WD.err, items: SRCH.items.slice(0, 8).map((e) => [e.kind, e.qid || e.id, srchName(e), srchSub(e).slice(0, 90), e.pol ? e.pol.en : null]) }));
+        const i = await page.evaluate((src) => { const f = new Function('e', 'return (' + src + ')(e)'); return SRCH.items.findIndex((e) => f(e)); }, pickSrc);
+        if (i < 0) return { list, picked: null };
+        await page.evaluate((k) => srchCommit(SRCH.items[k]), i); await page.waitForTimeout(wait || 9000);
+        const r = await page.evaluate(() => ({ year: ybpToYear(state.ybp), center: map.getCenter().toArray().map((v) => Math.round(v * 100) / 100), zoom: Math.round(map.getZoom() * 100) / 100,
+            info: $('info').style.display !== 'none' ? $('info-title').textContent + ' · ' + $('info-body').innerText.replace(/\s+/g, ' ').slice(0, 300) : null,
+            con: $('con-card').hidden ? null : $('con-title').textContent + ' · ' + $('con-text').textContent.slice(0, 120), mark: space.mark, solar: solarView.isOpen }));
+        await page.screenshot({ path: path.join(out, file) });
+        return { list, picked: i, r };
+    };
+    await step('lo que sea: España (pais de los mapas de fronteras)', () => anyThing('España', ((e) => e.qid === 'Q29').toString(), '12-espana.png'));
+    await step('lo que sea: Ebro (rio, solo lugar)', () => anyThing('Ebro', ((e) => e.qid === 'Q10965').toString(), '13-ebro.png'));
+    await step('lo que sea: tiranosaurio (especie, solo tiempo)', () => anyThing('tiranosaurio', ((e) => e.qid === 'Q14332').toString(), '14-tiranosaurio.png'));
+    await step('lo que sea: Sirio (estrella, en el cielo)', () => anyThing('Sirio', ((e) => e.qid === 'Q3409' || e.kind === 'star').toString(), '15-sirio.png'));
+    await step('lo que sea: Orión (constelacion)', () => anyThing('Orión', ((e) => e.kind === 'constellation').toString(), '16-orion.png'));
+    await step('lo que sea: Marte (planeta)', () => anyThing('Marte', ((e) => e.kind === 'body').toString(), '17-marte.png', 12000));
     await browser.close();
     fs.writeFileSync(path.join(out, 'search.json'), JSON.stringify(res, null, 1) + '\n');
     console.log(JSON.stringify(res, null, 1));
