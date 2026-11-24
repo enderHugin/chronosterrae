@@ -3658,7 +3658,7 @@ async function wdJSON(p) { const r = await fetch(wdUrl(p), { signal: AbortSignal
 const wdLabel = (x, l) => (x && x.labels && ((x.labels[l] && x.labels[l].value) || (x.labels.mul && x.labels.mul.value))) || null;
 const wdDesc = (x, l) => (x && x.descriptions && x.descriptions[l] && x.descriptions[l].value) || null;
 // Paginas que no son una cosa con sitio ni tiempo (desambiguaciones, nombres de pila, apellidos, categorias): fuera de la lista
-const WD_JUNK = /desambiguaci|disambiguation|nombre (propio|de pila)|given name|family name|surname|apellido|categor(y|ía) de wikimedia|wikimedia (category|list|template|project)|lista de wikimedia|plantilla de wikimedia/i;
+const WD_JUNK = /desambiguaci|disambiguation|nombre (propio|de pila|masculino|femenino|unisex)|given name|family name|surname|apellido|categor(y|ía) de wikimedia|wikimedia (category|list|template|project)|lista de wikimedia|plantilla de wikimedia/i;
 // Un pais o un imperio de los mapas de fronteras (historical-basemaps, por su nombre en ingles): se trata como esa entidad politica
 const WD_POLITY = /\b(pa[ií]s|country|sovereign state|estado soberano|imperio|empire|reino|kingdom|rep[uú]blica|republic|sultanato|sultanate|califato|caliphate|kanato|khanate|ducado|duchy|principado|principality|confederaci[oó]n|confederation)\b/i;
 // Lo mismo que ya da la web (planetas, lunas, estrellas, constelaciones, continentes): si su nombre coincide, sobra el de Wikidata
@@ -3909,11 +3909,14 @@ function skyDirOf(m) {
 /** Centro y zoom con los que m se ve al lado de la Tierra, con el rumbo e inclinacion de ahora; null si no se puede. */
 function skyAim(m) {
     const v = skyDirOf(m); if (!v) return null;
+    const W0 = map.getContainer().clientWidth; const H0 = map.getContainer().clientHeight;
     const box = map.getContainer(); const c = map.getCenter(); const tr = map.transform;
     // lo que tapa el cielo: la barra de arriba, la linea de tiempo y los recuadros abiertos (en el movil lo dejaba debajo de los botones)
     const B = box.getBoundingClientRect(); const R = (el) => { const r = el && el.getBoundingClientRect(); return r && r.width && r.height ? { x0: r.left - B.left, y0: r.top - B.top, x1: r.right - B.left, y1: r.bottom - B.top } : null; };
     const top = R($('topbar')); const tl = R($('timeline'));
     const avoid = ['info', 'con-card', 'events', 'sky', 'changes', 'settings'].map((id) => { const el = $(id); return el && !el.hidden && getComputedStyle(el).display !== 'none' ? R(el) : null; }).filter(Boolean);
+    // una constelacion abre al llegar la historia de su nombre, abajo en el centro (#con-card): su sitio, aunque aun no este abierta
+    if (m.iau) { const cw = Math.min(560, W0 - 24); const ch = Math.min(0.62 * H0, 520); avoid.push({ x0: (W0 - cw) / 2, y0: H0 - 12 - ch, x1: (W0 + cw) / 2, y1: H0 - 12 }); }
     const a = ChronosSpace.aimBeside(v, { lng: c.lng, lat: c.lat, zoom: map.getZoom(), bearing: map.getBearing(), pitch: map.getPitch(), roll: typeof map.getRoll === 'function' ? map.getRoll() : 0,
         fovDeg: tr && typeof tr.fov === 'number' ? tr.fov : undefined, width: box.clientWidth, height: box.clientHeight },
         { minZoom: map.getMinZoom(), inset: { top: top ? Math.max(16, top.y1 + 12) : 16, bottom: tl ? Math.max(16, box.clientHeight - tl.y0 + 12) : 16, left: 16, right: 16 }, avoid,
@@ -4140,14 +4143,15 @@ function srchCommit(e) {
     // ¿ya se fue (o se esta yendo) hacia este al recorrer la lista? Antes bastaba con que estuviera marcado, aunque el giro aun no hubiera
     // salido (se cancelaba aqui mismo): en iPad la Tierra no se movia.
     const w = SRCH.went; const going = !!(w && w.id === e.id && w.seq === SRCH.goSeq);
+    if (e.kind !== 'constellation') conClose();      // la historia de una constelacion elegida antes no se queda encima de lo nuevo
     SRCH.origin = null; SRCH.keepOpen = false; $('search').value = srchName(e); srchClose(true); spotPickSet((srchTarget(e).mark || {}).feature); spotlight(e.id, true); $('search').blur();
     // La ficha, ya en la fecha nueva; SEL.keepYbp: la carga del mapa de esa fecha no debe cerrarla (como con la seleccion recordada)
     const show = () => {
         SEL.keepYbp = state.ybp; spotlight(e.id, true);      // ya en la fecha nueva: que la carga de su mapa no cierre la ficha ni quite el foco
         if (e.kind === 'polity' || e.pol) { selRemember('p', (e.pol || e).en); SEL.keepYbp = state.ybp; return; }
         if (e.kind === 'continent') { hideInfo(); return; }
-        if (e.kind === 'body') { flyToBody(e.body); return; }
-        if (e.kind === 'constellation') { conOpen(e.iau); return; }
+        if (e.kind === 'body') { hideInfo(); flyToBody(e.body); return; }
+        if (e.kind === 'constellation') { hideInfo(); conOpen(e.iau); return; }
         if (e.kind === 'star') { const tryStar = (k) => { const S = space.stars; const i = S ? hipIndex(S.cat, e.hip) : -1; if (i >= 0) showStar(i); else if (k > 0) setTimeout(() => tryStar(k - 1), 150); }; tryStar(12); return; }
         if (e.kind === 'wd') { selRemember(null); SEL.keepYbp = state.ybp; wdDetails(e.qid).then((d) => { wdShow(e, d); SEL.keepYbp = state.ybp; spotlight(e.id, true); }).catch((err) => showInfo(srchName(e), [{ label: t('source'), value: 'Wikidata ' + e.qid + ' · ' + err.message, href: 'https://www.wikidata.org/wiki/' + e.qid }])); return; }   // selRemember borra keepYbp: la carga de la tierra cerraba su ficha
         if (e.kind === 'built') { selRemember('b', e.id); builtFull().then(() => { const f = BUILT.byId && BUILT.byId.get(e.id); if (f) { showBuilt(f); SEL.keepYbp = state.ybp; } }); return; }
