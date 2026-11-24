@@ -3633,7 +3633,9 @@ function srchCompose(tail) {
     // final; y «España» el pais quedaba debajo de diez reyes): los nuestros y, de Wikidata, el pais o imperio de los mapas o su primer resultado
     const q = ChronosSearch.normalize(raw); const exact = (e) => [e.en, e.es].concat(e.alts || []).some((n) => n && ChronosSearch.normalize(n) === q);
     const loc = SRCH.local || []; const imp = (e) => (ChronosSearch.BOOST[e.kind] || 0) + 220 * (typeof e.imp === 'number' ? e.imp : 0.5);   // como puntua query
-    const top = loc.filter(exact).sort((a, b) => imp(b) - imp(a)).concat(wd.filter((e, k) => exact(e) && (e.pol || k === 0)));
+    const lx = loc.filter(exact).sort((a, b) => imp(b) - imp(a)); const wx = wd.filter(exact); const wp = wx.filter((e) => e.pol);
+    // de Wikidata: el pais o imperio de los mapas; si no lo hay y de los nuestros nada se llama asi, el primero que se llame asi («Sirio»)
+    const top = lx.concat(wp.length ? wp : lx.length ? [] : wx.slice(0, 1));
     SRCH.items = top.concat(loc.filter((e) => !top.includes(e)), wd.filter((e) => !top.includes(e)));
     if (cur) { const k = SRCH.items.indexOf(cur); SRCH.active = k; }
     const none = !SRCH.items.length && !(WD.loading && WD.q === raw);

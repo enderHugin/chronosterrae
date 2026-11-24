@@ -75,7 +75,7 @@ check('con el mismo nombre, el continente y el astro van antes que un suceso o u
 check('index.html: lo que se llama EXACTAMENTE como lo escrito va primero aunque se ordene por fecha (srchCompose)', () => {
     const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
     const i = html.indexOf('function srchCompose('); const b = html.slice(i, html.indexOf('\n}\n', i));
-    return /const top = loc\.filter\(exact\)/.test(b) && /SRCH\.items = top\.concat\(/.test(b) && /e\.pol \|\| k === 0/.test(b);
+    return /const lx = loc\.filter\(exact\)/.test(b) && /SRCH\.items = top\.concat\(/.test(b) && /const top = lx\.concat\(wp\.length \? wp : lx\.length \? \[\] : wx\.slice\(0, 1\)\)/.test(b);
 });
 console.log('\nPASS ' + passes.length); passes.forEach((p) => console.log('  ok  ' + p));
 if (fails) { console.log('\nFAIL ' + fails); process.exit(1); } else console.log('\nBuscador: todo verde.');
