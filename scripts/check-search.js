@@ -63,5 +63,19 @@ check('build-search.js corre sin paquetes de npm (lo ejecuta Pages sin npm ci): 
     const deep = own.filter((r) => r.startsWith('../map/')).flatMap((r) => reqs(path.join(__dirname, r)).filter((x) => !/^\.\/[a-z-]+\.js$/.test(x)));
     return (bad.length === 0 && deep.length === 0) || { bad, deep };
 });
+// «Lo que SEA» (el creador, 2026-11-24): continentes, astros, constelaciones y estrellas en el buscador
+check('entry con alts: una constelacion se encuentra por su nombre latino, el español y el ingles comun', () => {
+    const c = S.entry({ id: 'k:Aql', kind: 'constellation', en: 'Aquila', es: 'Águila', alts: ['Eagle'] });
+    return ['aquila', 'aguila', 'eagle'].every((q) => S.query([c], q).length === 1) && c.n.length === 3;
+});
+check('con el mismo nombre, el continente y el astro van antes que un suceso o una construccion («Europa»)', () => {
+    const L = [S.entry({ id: 'e', kind: 'event', es: 'Europa', imp: 0.97 }), S.entry({ id: 'b', kind: 'built', es: 'Europa', imp: 0.9 }), S.entry({ id: 'c:EU', kind: 'continent', es: 'Europa', imp: 0.95 }), S.entry({ id: 'b:Europa', kind: 'body', es: 'Europa', imp: 0.92 })];
+    return S.query(L, 'europa').map((e) => e.id).slice(0, 2).join(',') === 'c:EU,b:Europa';
+});
+check('index.html: lo que se llama EXACTAMENTE como lo escrito va primero aunque se ordene por fecha (srchCompose)', () => {
+    const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+    const i = html.indexOf('function srchCompose('); const b = html.slice(i, html.indexOf('\n}\n', i));
+    return /const top = loc\.filter\(exact\)/.test(b) && /SRCH\.items = top\.concat\(/.test(b) && /e\.pol \|\| k === 0/.test(b);
+});
 console.log('\nPASS ' + passes.length); passes.forEach((p) => console.log('  ok  ' + p));
 if (fails) { console.log('\nFAIL ' + fails); process.exit(1); } else console.log('\nBuscador: todo verde.');

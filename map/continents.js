@@ -82,7 +82,18 @@
             if (cache.size > 20000) cache.clear();
             cache.set(key, k); return k;
         }
-        return { at };
+        /** Centro de un continente (para girar el globo hasta el desde el buscador): media de las direcciones de los vertices de su poligono
+         *  geografico mas grande (el continente propiamente dicho, sin islas). null si no hay ese continente. */
+        function center(k) {
+            let best = null; let n0 = 0;
+            for (const P of geo) if (P.k === k && P.rings[0].length > n0) { n0 = P.rings[0].length; best = P; }
+            if (!best) return null;
+            let x = 0, y = 0, z = 0;
+            for (const c of best.rings[0]) { const la = c[1] * RAD; const lo = c[0] * RAD; x += Math.cos(la) * Math.cos(lo); y += Math.cos(la) * Math.sin(lo); z += Math.sin(la); }
+            const n = Math.hypot(x, y, z) || 1;
+            return [Math.round(Math.atan2(y, x) / RAD * 100) / 100, Math.round(Math.asin(z / n) / RAD * 100) / 100];
+        }
+        return { at, center };
     }
 
     return { NEAR_KM, KEYS, NAMES, nameOf, create };

@@ -62,6 +62,7 @@ Eso es justo lo que pide el creador para las guerras: ver la frontera cambiar fe
 
 | Fuente | Qué da | Licencia | ¿Al repo? | Estado |
 |---|---|---|---|---|
+| Wikidata (en directo, desde el buscador) | Lo que se busca y no está en nuestros datos: lugar (P625), instante (P585), tramo (P580/P571 → P582/P576), tramo de especies por eras (P523/P524), posición en el cielo (P6257/P6258) | CC0 | No hace falta: se consulta al elegir y no se guarda | En uso (sonda `buscador`, 2026-11-24) |
 | Pleiades | Lugares del mundo antiguo, con periodos | **CC BY 3.0**: «Sharing and remixing permitted under terms of the Creative Commons Attribution 3.0 License» ([versión 3.1](https://pleiades.stoa.org/news/blog/now-available-pleiades-datasets-3.1)). El aviso enlaza a la versión de EE. UU. de la licencia; el `LICENSE` de su repo de datos es «Attribution 3.0 Unported» | Sí | **Verificada** |
 | GeoNames | 12 millones de lugares actuales | **CC BY 4.0**: «licensed under a Creative Commons Attribution 4.0 License» ([about](https://www.geonames.org/about.html)) | Sí | **Verificada** |
 | World Historical Gazetteer | Lugares históricos enlazados | Su portada no dice licencia (sonda 2026-11-14) | — | Pendiente: buscar la licencia de cada colección |

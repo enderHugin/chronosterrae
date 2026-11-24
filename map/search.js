@@ -30,9 +30,10 @@
         });
         return out;
     }
-    /** Añade entradas sueltas (p. ej. las entidades politicas, que llegan en ejecucion) con la misma forma. */
+    /** Añade entradas sueltas (p. ej. las entidades politicas, que llegan en ejecucion) con la misma forma. alts: otros nombres por los que
+     *  tambien se encuentra (el latino de una constelacion). */
     function entry(obj) {
-        const e = Object.assign({}, obj); const names = [e.en, e.es].filter(Boolean).map(normalize).filter((x, k, a) => x && a.indexOf(x) === k);
+        const e = Object.assign({}, obj); const names = [e.en, e.es].concat(e.alts || []).filter(Boolean).map(normalize).filter((x, k, a) => x && a.indexOf(x) === k);
         e.n = names; e.w = names.map((x) => x.split(' ')); return e;
     }
 
@@ -55,7 +56,7 @@
         const len = Math.min(...e.n.map((x) => x.length));
         return best + imp * 220 + kindBoost - Math.min(60, len * 0.6);
     }
-    const BOOST = { person: 80, polity: 90, built: 30, event: 0 };
+    const BOOST = { person: 80, polity: 90, built: 30, event: 0, continent: 100, body: 95, constellation: 60, star: 40 };
 
     /** Mejores `limit` entradas para `q` (al menos `min` caracteres). opts: { limit, min, boost: {kind: puntos} }. */
     function query(entries, raw, opts) {

@@ -278,6 +278,62 @@ const D2R = Math.PI / 180;
         const behindGlobe = pr.infinity(0, 0, -1);
         return behindGlobe !== null && Math.abs(behindGlobe[0] - 400) < 1e-6 && Math.abs(behindGlobe[1] - 300) < 1e-6 && pr.infinity(0, 0, 1) === null;
     });
+    // Buscador (el creador, 2026-11-24: «estrellas, planetas, lunas, todo debe estar ahí»): girar el globo para ver una estrella al lado
+    const unit = (ra, dec) => [Math.cos(dec * D2R) * Math.sin(ra * D2R), Math.sin(dec * D2R), Math.cos(dec * D2R) * Math.cos(ra * D2R)];
+    check('espacio: aimAt es la inversa de infinity (la direccion cae en el pixel pedido, con rumbo, inclinacion y giro)', () => {
+        let worst = 0; let n = 0;
+        for (const [ra, dec] of [[10, 5], [200, -40], [300, 70], [45, -80], [120, 0]]) {
+            for (const cam0 of [{ bearing: 0, pitch: 0, roll: 0 }, { bearing: 35, pitch: 20, roll: 0 }, { bearing: -120, pitch: 0, roll: 10 }]) {
+                const cam = Object.assign({ lng: 30, lat: 10, fovDeg: 36.87, width: 1200, height: 800 }, cam0);
+                for (const [px, py] of [[1000, 400], [150, 400], [600, 90], [900, 700]]) {
+                    const at = SP.aimAt(unit(ra, dec), cam, px, py, 89); if (!at) continue;
+                    const pr = SP.makeProjector(Object.assign({}, cam, { lng: at.lng, lat: at.lat, worldSize: 512 * Math.pow(2, 1) }));
+                    const q = pr.infinity(...unit(ra, dec)); if (!q) return false;
+                    worst = Math.max(worst, Math.hypot(q[0] - px, q[1] - py)); n++;
+                }
+            }
+        }
+        return n >= 40 && worst < 1e-6;
+    });
+    check('espacio: aimBeside deja la estrella fuera del disco de la Tierra y dentro de la pantalla; aleja si la Tierra la tapa', () => {
+        const D = (p, a) => { const pr = SP.makeProjector(Object.assign({}, p, { lng: a.lng, lat: a.lat, worldSize: 512 * Math.pow(2, a.zoom) })); return pr; };
+        for (const [w, h] of [[1200, 800], [390, 780]]) {
+            for (const zoom of [0.5, 2.5]) {
+                for (const [ra, dec] of [[88, 7], [101, -17], [37, 89], [280, -60]]) {
+                    const cam = { lng: -3, lat: 40, zoom, bearing: 0, pitch: 0, roll: 0, fovDeg: 36.87, width: w, height: h };
+                    const a = SP.aimBeside(unit(ra, dec), cam, { minZoom: -2 }); if (!a) return false;
+                    const pr = D(cam, a); const q = pr.infinity(...unit(ra, dec)); const d = SP.diskAt(cam, a.lat, a.zoom);
+                    if (!q || q[0] < 0 || q[0] > w || q[1] < 0 || q[1] > h) return false;
+                    if (Math.hypot(q[0] - d.x, q[1] - d.y) < d.r + 30) return false;          // fuera del disco
+                    if (zoom === 0.5 && w === 1200 && Math.abs(dec) < 30 && a.zoom !== zoom) return false;   // con hueco, no aleja (cerca de un polo
+                    // celeste hace falta mirar desde muy al norte o al sur, donde el globo de MapLibre se ve mayor: ahi si puede alejar)
+                }
+            }
+        }
+        return true;
+    });
+    check('espacio: aimBeside respeta lo que tapan las barras (inset) y los recuadros abiertos (avoid); si no hay sitio, lo intenta sin avoid', () => {
+        const cam = { lng: 100, lat: 10, zoom: 1.3, bearing: 0, pitch: 0, roll: 0, fovDeg: 36.87, width: 390, height: 780 };
+        const inset = { top: 130, bottom: 230, left: 16, right: 16 };
+        for (const [ra, dec] of [[88, 7], [101, -17], [200, 40]]) {
+            const a = SP.aimBeside(unit(ra, dec), cam, { minZoom: -2, inset }); if (!a) return false;
+            if (a.y < 130 || a.y > 780 - 230) return false;
+        }
+        const wide = { lng: 0, lat: 20, zoom: 0.6, bearing: 0, pitch: 0, roll: 0, fovDeg: 36.87, width: 1280, height: 800 };
+        const card = { x0: 930, y0: 20, x1: 1270, y1: 700 };
+        const b = SP.aimBeside(unit(60, 10), wide, { minZoom: -2, avoid: [card], sides: ['r', 'l'] });
+        const all = [{ x0: 0, y0: 0, x1: 1280, y1: 800 }];
+        const c = SP.aimBeside(unit(60, 10), wide, { minZoom: -2, avoid: all });
+        return b && b.x < 640 && c !== null;
+    });
+    check('espacio: pointOfDate con la rotacion identidad no cambia el punto; con la de 2000 a. C. lo mueve unos 55° (precesion)', () => {
+        const I = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+        const p = SP.pointOfDate(1.2, 0.3, I);
+        const tm = new (require('astronomy-engine').AstroTime)(-4000 * 365.25);
+        const q = SP.pointOfDate(0, 0, require('astronomy-engine').Rotation_EQJ_EQD(tm).rot);
+        const sep = Math.acos(Math.cos(q.dec) * Math.cos(q.ra)) / D2R;
+        return Math.abs(p.ra - 1.2) < 1e-12 && Math.abs(p.dec - 0.3) < 1e-12 && sep > 50 && sep < 60;
+    });
 }
 
 /* ---------------- Integridad de lo vendorizado y del catalogo ---------------- */

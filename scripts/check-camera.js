@@ -109,7 +109,15 @@ const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const body = (name) => { const i = html.indexOf('function ' + name + '('); if (i < 0) return ''; let d = 0; for (let j = html.indexOf('{', i); j < html.length; j++) { if (html[j] === '{') d++; else if (html[j] === '}' && --d === 0) return html.slice(i, j + 1); } return ''; };
 check('index.html carga map/camera.js', () => /<script src="\.\/map\/camera\.js"><\/script>/.test(html));
 check('camGlide: usa el plan y la curva de camera.js, con un easeId comun (encadenar sin moveend en medio) y essential (el movimiento reducido lo decide la web)', () => {
-    const b = body('camGlide'); return /ChronosCamera\.plan\(/.test(b) && /ChronosCamera\.easing\(/.test(b) && /easeId:\s*CAM\.ID/.test(b) && /essential:\s*true/.test(b) && /SRCH_REDUCED\(\)/.test(b) && !/zoom:/.test(b.replace(/zoom:\s*map\.getZoom\(\)/, ''));
+    const b = body('camGlide'); return /ChronosCamera\.plan\(/.test(b) && /ChronosCamera\.easing\(/.test(b) && /easeId:\s*CAM\.ID/.test(b) && /essential:\s*true/.test(b) && /SRCH_REDUCED\(\)/.test(b) && !/zoom:/.test(b.replace(/zoom:\s*map\.getZoom\(\)/, '').replace(/\{ zoom: z \}/, ''));
+});
+// Centrar no acerca ni aleja (el creador, 2026-11-12). Unica excepcion: ver algo del cielo AL LADO de la Tierra desde el buscador (2026-11-24),
+// que de cerca la Tierra lo tapa: el zoom solo llega a camGlide como tg.zoom, y tg.zoom solo lo pone lo que apunta al cielo (aimBeside).
+check('zoom al centrar: solo lo del cielo (tg.zoom sale de skyAim / skyAimPrep y de nada mas)', () => {
+    const sets = html.match(/tg\.zoom\s*=\s*[^;]+;/g) || [];
+    return sets.length >= 2 && sets.every((x) => /tg\.zoom\s*=\s*a\.zoom;/.test(x)) && /camGlide\(tg\.center, tg\.zoom\)/.test(body('srchGo'))
+        && /aimBeside\(/.test(body('skyAim')) && /skyAim\(m\)/.test(body('skyAimPrep'))
+        && (html.match(/camGlide\([^\n;]*zoom/g) || []).sort().join('|') === 'camGlide(c, zoom|camGlide(tg.center, tg.zoom';
 });
 check('el buscador y la lista de sucesos giran con camGlide (ya no con la curva fija de antes)', () => /camGlide\(tg\.center/.test(body('srchGo')) && !/map\.easeTo\(/.test(body('srchGo')) && /srchGo\(/.test(body('eventFocus')));
 check('la rueda de la leyenda: moverse por ella (arrastre, rueda, flechas, toque) centra el globo; lo que viene del mapa (señalar, tocar un icono), no', () => {

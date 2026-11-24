@@ -15,6 +15,10 @@ const P = { Londres: [-0.13, 51.5, 'EU'], Tokio: [139.7, 35.7, 'AS'], Reikiavik:
 check('lugares conocidos caen en su continente', () => { const bad = Object.entries(P).filter(([, [x, y, k]]) => I.at(x, y) !== k).map(([n, [x, y]]) => n + ':' + I.at(x, y)); return bad.length ? bad : true; });
 check('en mitad del Atlantico o del Pacifico, mar; junto a la costa, el continente de la costa', () => I.at(-40, 35) === 'sea' && I.at(-130, -40) === 'sea' && I.at(-6, 46) === 'EU');
 check('longitudes fuera de [-180, 180] se envuelven; sin coordenadas, null (rechazado, no roto)', () => I.at(360 - 0.13, 51.5) === 'EU' && I.at(NaN, 3) === null && C.create(null) === null && C.create({ geo: [] }) === null);
+check('center: el centro de cada continente cae dentro de el (Europa, Africa, Sudamerica...) y null si no existe', () => {
+    const bad = ['EU', 'AF', 'SA', 'NA', 'AS', 'OC'].filter((k) => { const c = I.center(k); return !c || I.at(c[0], c[1]) !== k; }).map((k) => k + ':' + JSON.stringify(I.center(k)));
+    return bad.length || I.center('xx') !== null ? bad : true;
+});
 check('nombres: largo y corto en los dos idiomas', () => C.nameOf('NA', 'es') === 'América del Norte' && C.nameOf('NA', 'en', true) === 'N.Am' && C.nameOf('sea', 'es') === 'Mares y océanos' && C.nameOf('xx', 'es') === '');
 if (fails) { console.log('\n' + fails + ' prueba(s) fallida(s)'); process.exit(1); }
 console.log('\nContinentes: todo verde.');

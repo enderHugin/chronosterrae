@@ -1090,13 +1090,18 @@ const i18n = {
         donate: 'Apoyar el proyecto', infoImage: 'Imagen', infoMore: 'En qué se basa, estado, fuente y cita', tlJumps: 'Épocas', tlJumpsTip: 'Saltos rápidos a fechas señaladas (cada uno con el aspecto de su época)', tlKeysTip: 'Teclado: cuánto mueven ← → y RePág/AvPág', tlInfoTip: 'Lo que ves ahora; fuentes y licencias', sceneTitle: 'Lo que ves ahora', creditsTitle: 'Fuentes y licencias', creditsPeek: 'Fuentes', notesBack: 'Volver a mostrar las notas que cerraste', searchPlaceholder: 'Buscar persona, suceso, edificio, imperio…',
         search: {
             loading: 'Cargando el índice…', none: 'Nada con «{q}».', fail: 'No se pudo cargar el índice de búsqueda: {err}',
-            kind: { person: 'Persona', event: 'Suceso', built: 'Construcción', polity: 'Entidad política' },
+            kind: { person: 'Persona', event: 'Suceso', built: 'Construcción', polity: 'Entidad política', continent: 'Continente', body: 'Astro del sistema solar', constellation: 'Constelación', star: 'Estrella', wd: 'Wikidata' },
+            skyMag: 'magnitud {m}', bodyOut: 'El sistema solar solo se calcula entre {a} y {b}', inSky: 'en el cielo, junto a la Tierra',
             born: 'n.', died: 'm.', noPlace: 'sin lugar', maps: '{n} mapas', near: 'más cercano: {y}',
             hint: '↑↓ recorre (el mapa va a cada uno) · Intro elige · Esc vuelve',
             hintTouch: 'Toca uno: el mapa va allí · tócalo otra vez para abrirlo',
             altTip: 'Sale porque lo buscado está en su nombre en el otro idioma',
             wdHead: 'En Wikidata (en directo · aún no están en el mapa)', wdLoading: 'Buscando también en Wikidata…', wdFail: 'Wikidata no respondió ({err})',
-            wdNote: 'Consulta en directo a Wikidata: esta persona no está en los datos del mapa. Se enseña tal cual la da la fuente, sin revisar.',
+            wdNote: 'Consulta en directo a Wikidata: no está en los datos del mapa. Se enseña tal cual la da la fuente, sin revisar.',
+            wdFrom: 'Desde', wdUntil: 'Hasta', wdWhen: 'Fecha', wdPlace: 'Lugar', wdSky: 'En el cielo', wdSkyVal: 'AR {ra} · Dec {dec} (J2000)',
+            wdRange: 'Vivió', wdNoDate: 'Wikidata no le da fechas: se muestra en el mapa de hoy', wdKeep: 'La fecha que tenías está dentro de su tiempo: no se cambia',
+            wdEdge: 'Se va al momento más cercano de su tiempo: {y}', wdNoSky: 'El cielo no se calcula en esta fecha', wdNothing: 'Wikidata no le da lugar en la Tierra ni en el cielo, ni fechas: no hay a dónde ir',
+            wdSpan: '{a} – {b}', wdNow: 'hoy', wdGo: 'En el mapa', wdTag: 'Wikidata, en directo',
             wdBorn: 'Nacimiento', wdDied: 'Muerte', wdMany: 'Wikidata da varias fechas: se muestra la preferida o la más precisa', wdStatus: 'Consulta en directo, sin revisar',
             img: 'Imagen: {a} · {l}', imgSrc: 'Wikimedia Commons', imgTip: 'Imagen de Wikimedia Commons; autor y licencia en la ficha',
             sort: { label: 'Orden de los resultados', new: 'Recientes ↓', old: 'Antiguos ↑', rel: 'Relevancia' }
@@ -1329,13 +1334,18 @@ const i18n = {
         donate: 'Support the project', infoImage: 'Image', infoMore: 'What it is based on, status, source and citation', tlJumps: 'Eras', tlJumpsTip: 'Quick jumps to landmark dates (each in the look of its era)', tlKeysTip: 'Keyboard: how far ← → and PgUp/PgDn move', tlInfoTip: 'What you are seeing; sources and licences', sceneTitle: 'What you are seeing', creditsTitle: 'Sources and licences', creditsPeek: 'Sources', notesBack: 'Show again the notes you closed', searchPlaceholder: 'Search a person, event, building, empire…',
         search: {
             loading: 'Loading the index…', none: 'Nothing for “{q}”.', fail: 'Could not load the search index: {err}',
-            kind: { person: 'Person', event: 'Event', built: 'Building', polity: 'Polity' },
+            kind: { person: 'Person', event: 'Event', built: 'Building', polity: 'Polity', continent: 'Continent', body: 'Solar-system body', constellation: 'Constellation', star: 'Star', wd: 'Wikidata' },
+            skyMag: 'magnitude {m}', bodyOut: 'The solar system is only computed between {a} and {b}', inSky: 'in the sky, next to the Earth',
             born: 'b.', died: 'd.', noPlace: 'no place', maps: '{n} maps', near: 'nearest: {y}',
             hint: '↑↓ browse (the map goes to each) · Enter picks · Esc goes back',
             hintTouch: 'Tap one: the map goes there · tap it again to open it',
             altTip: 'It shows up because what you typed is in its name in the other language',
             wdHead: 'On Wikidata (live · not on the map yet)', wdLoading: 'Also searching Wikidata…', wdFail: 'Wikidata did not answer ({err})',
-            wdNote: 'Live query to Wikidata: this person is not in the map data. Shown as the source gives it, unreviewed.',
+            wdNote: 'Live query to Wikidata: not in the map data. Shown as the source gives it, unreviewed.',
+            wdFrom: 'From', wdUntil: 'Until', wdWhen: 'Date', wdPlace: 'Place', wdSky: 'In the sky', wdSkyVal: 'RA {ra} · Dec {dec} (J2000)',
+            wdRange: 'Lived', wdNoDate: 'Wikidata gives it no dates: shown on today\'s map', wdKeep: 'The date you had is within its time: it is not changed',
+            wdEdge: 'Going to the nearest moment of its time: {y}', wdNoSky: 'The sky is not computed at this date', wdNothing: 'Wikidata gives it no place on Earth or in the sky, and no dates: nowhere to go',
+            wdSpan: '{a} – {b}', wdNow: 'today', wdGo: 'On the map', wdTag: 'Wikidata, live',
             wdBorn: 'Birth', wdDied: 'Death', wdMany: 'Wikidata gives several dates: the preferred or most precise one is shown', wdStatus: 'Live query, unreviewed',
             img: 'Image: {a} · {l}', imgSrc: 'Wikimedia Commons', imgTip: 'Image from Wikimedia Commons; author and licence in the panel',
             sort: { label: 'Order of the results', new: 'Newest ↓', old: 'Oldest ↑', rel: 'Relevance' }
@@ -3366,7 +3376,7 @@ map.on('click', (e) => {
     if (typeof lgMapClick === 'function') lgMapClick(near);
     if (bordersStale() && hit && hit.layer.id === 'borders-fill') return;   // se ve el mapa de la instantanea anterior hasta que llegue la nueva
     clearHighlight(); setHoverKey(null);
-    if (!hit) { hideInfo(); selRemember(null); return; }
+    if (!hit) { hideInfo(); selRemember(null); skyMarkOff(); return; }
     if (hit.layer.id === 'events-circle') { const f = events.byId.get(hit.properties.id); if (f) { showEvent(f); selRemember('e', hit.properties.id); } }
     else if (hit.layer.id === 'live-points') { showLive(hit.properties); selRemember(null); }
     else if (ChronosBuilt.LAYER_IDS.includes(hit.layer.id)) {
@@ -3446,9 +3456,27 @@ function srchEnsure() {
         try {
             const pol = await loadPolities(); const years = new Map();
             pol.forEach((p) => p.names.forEach((n) => { if (!n) return; if (!years.has(n)) years.set(n, []); years.get(n).push(p.year); }));
-            years.forEach((ys, n) => SRCH.entries.push(ChronosSearch.entry({ id: 'p:' + n, kind: 'polity', icon: 'political', en: n, years: ys.sort((a, b) => a - b), imp: Math.min(0.9, 0.45 + ys.length / 60) })));
+            SRCH.polBy = new Map();
+            years.forEach((ys, n) => { const p = ChronosSearch.entry({ id: 'p:' + n, kind: 'polity', icon: 'political', en: n, years: ys.sort((a, b) => a - b), imp: Math.min(0.9, 0.45 + ys.length / 60) }); SRCH.entries.push(p); SRCH.polBy.set(n, p); });
             SRCH.polities = true;
         } catch (e) { /* sin indice de fronteras: se busca igual en lo demas */ }
+        // «Lo que SEA» (el creador, 2026-11-24: «ríos, montañas, ciudades, continentes, especies animales… estrellas, planetas, lunas, todo debe
+        // estar ahí»). Lo que la web ya sabe va aqui: continentes, Sol, planetas y lunas de la escena del sistema solar, constelaciones y
+        // estrellas con nombre. Lo demas (rios, montañas, ciudades, paises con su nombre en español, especies) llega de Wikidata en directo.
+        ChronosContinents.KEYS.filter((k) => k !== 'sea').forEach((k) => SRCH.entries.push(ChronosSearch.entry({ id: 'c:' + k, kind: 'continent', ck: k, es: ChronosContinents.nameOf(k, 'es'), en: ChronosContinents.nameOf(k, 'en'), imp: 0.95 })));
+        Object.keys(ChronosSolarView.NAMES.en).filter((id) => id !== 'Earth').forEach((id) => SRCH.entries.push(ChronosSearch.entry({ id: 'b:' + id, kind: 'body', body: id, es: ChronosSolarView.NAMES.es[id], en: ChronosSolarView.NAMES.en[id], imp: 0.92 })));
+        try {
+            if (sky.catalogState === 'idle') await skyLoadCatalog();
+            const cat = sky.catalog;
+            if (cat) {
+                (cat.constellations || []).filter((c, k, a) => a.findIndex((x) => x.id === c.id) === k).forEach((c) => SRCH.entries.push(ChronosSearch.entry({ id: 'k:' + c.id, kind: 'constellation', iau: c.id, la: c.la, es: c.es, en: c.la, alts: [c.en], imp: 0.85 })));
+                const seen = new Set();
+                for (let i = 0; i < cat.n; i++) {
+                    const nm = cat.names[cat.hip[i]]; if (!nm || !nm[0] || seen.has(nm[0])) continue; seen.add(nm[0]);
+                    SRCH.entries.push(ChronosSearch.entry({ id: 's:' + cat.hip[i], kind: 'star', hip: cat.hip[i], en: nm[0], es: nm[1] || undefined, mag: cat.mag[i], imp: Math.max(0.4, Math.min(0.95, 0.85 - 0.08 * cat.mag[i])) }));
+                }
+            }
+        } catch (e) { /* sin catalogo de estrellas: lo demas se busca igual */ }
         SRCH.loading = null; return SRCH.entries;
     })();
     return SRCH.loading;
@@ -3458,9 +3486,14 @@ function srchIsoText(iso) { return String(iso || '').split('/').map((p) => Chron
 function srchNearYear(e) { const here = ybpToYear(state.ybp); return e.years.reduce((a, b) => (Math.abs(a - here) <= Math.abs(b - here) ? a : b)); }
 function srchSub(e) {
     if (e.kind === 'wd') {
+        if (e.pol) return t('search.kind.polity') + ' · ' + fmt('search.near', { y: formatYear(srchNearYear(e.pol)) }) + (e.desc ? ' · ' + e.desc : '');
         const d = wdKnown(e); const parts = [];
         if (d && d.birth) parts.push(t('search.born') + ' ' + srchIsoText(d.birth.iso));
         if (d && d.death) parts.push(t('search.died') + ' ' + srchIsoText(d.death.iso));
+        if (d && !d.human) {
+            if (d.when) parts.push(wdTimeText(d.when));
+            else if (d.start || d.end) parts.push(fmt('search.wdSpan', { a: d.start ? wdTimeText(d.start) : '…', b: d.end ? wdTimeText(d.end) : d.endNone ? t('search.wdNow') : '…' }));
+        }
         if (e.desc) parts.push(e.desc);
         return parts.join(' · ');
     }
@@ -3471,6 +3504,9 @@ function srchSub(e) {
         return parts.join(' · ');
     }
     if (e.kind === 'polity') return k + ' · ' + fmt('search.maps', { n: e.years.length }) + ' · ' + fmt('search.near', { y: formatYear(srchNearYear(e)) });
+    if (e.kind === 'continent' || e.kind === 'body') return k;
+    if (e.kind === 'constellation') return k + (e.la && e.la !== srchName(e) ? ' · ' + e.la : '');
+    if (e.kind === 'star') return k + ' · ' + fmt('search.skyMag', { m: nf().format(Math.round(e.mag * 10) / 10) });
     const fam = e.kind === 'built' ? (ChronosBuilt.FAMILIES.find((x) => x.id === e.icon) || {})[lang] : t('events.kind.' + (e.ek || 'event'));
     return (fam && !/^events\./.test(fam) ? fam : k) + ' · ' + srchIsoText(e.iso) + (e.lng === undefined || e.lng === null ? ' · ' + t('search.noPlace') : '');
 }
@@ -3478,16 +3514,36 @@ function srchSub(e) {
 function srchEra(e) {
     if (!window.ChronosEras) return null;
     const d = e.kind === 'wd' ? wdKnown(e) : null;
-    const y = e.kind === 'polity' ? srchNearYear(e) : e.kind === 'wd' ? (d && (d.birth || d.death) ? (d.birth || d.death).year : NaN) : parseInt(String(e.iso || '').match(/^-?\d+/), 10);
+    const y = e.kind === 'polity' ? srchNearYear(e) : e.kind === 'wd' ? (e.pol ? srchNearYear(e.pol) : d ? wdYearOf(d) : NaN) : parseInt(String(e.iso || '').match(/^-?\d+/), 10);
     return Number.isFinite(y) ? ChronosEras.at(y) : null;
 }
 const builtIcoCache = new Map();
+/** Icono de un glifo en un circulo (astros, constelaciones, continentes, lo que llega de Wikidata). */
+function glyphIcon(key, glyph, bg) {
+    if (!builtIcoCache.has(key)) {
+        const c = document.createElement('canvas'); c.width = c.height = 52; const x = c.getContext('2d');
+        x.fillStyle = bg; x.beginPath(); x.arc(26, 26, 22, 0, 2 * Math.PI); x.fill();
+        x.fillStyle = '#fff'; x.font = '26px system-ui, "Segoe UI Symbol", sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(glyph, 26, 28);
+        builtIcoCache.set(key, c.toDataURL());
+    }
+    return builtIcoCache.get(key);
+}
+const BODY_GLYPH = { Sun: '☉', Mercury: '☿', Venus: '♀', Moon: '☾', Mars: '♂', Jupiter: '♃', Saturn: '♄', Uranus: '♅', Neptune: '♆' };
 function srchIcon(e) {
+    if (e.kind === 'continent') return glyphIcon('g:continent', '◍', '#2f7d5b');
+    if (e.kind === 'body') return glyphIcon('g:' + e.body, BODY_GLYPH[e.body] || '●', '#3b4a8a');
+    if (e.kind === 'constellation') return glyphIcon('g:constellation', '✶', '#2b3566');
+    if (e.kind === 'star') return glyphIcon('g:star', '★', '#2b3566');
     if (e.kind === 'built') {
         if (!builtIcoCache.has(e.icon)) { const c = document.createElement('canvas'); c.width = c.height = 52; ChronosBuilt.draw(c.getContext('2d'), e.icon, 40, { x: 6, y: 6 }); builtIcoCache.set(e.icon, c.toDataURL()); }
         return builtIcoCache.get(e.icon);
     }
-    if (e.kind === 'wd') return evIconUrl('birth');
+    if (e.kind === 'wd') {
+        if (e.pol) return evIconUrl('political');
+        const d = wdKnown(e);
+        if (d ? d.human : e.human) return evIconUrl('birth');
+        return d && d.radec && !d.coord ? glyphIcon('g:star', '★', '#2b3566') : glyphIcon('g:wd', '◆', '#2a6f86');
+    }
     const key = ChronosEventIcons.KEYS.includes(e.icon) ? e.icon : e.kind === 'polity' ? 'political' : 'event';
     if (e.kind === 'person' && e.qid) return evIconUrl(ChronosEventIcons.drawKey(key, PEOPLE.roles.get(e.qid)));   // corona, mitra, pluma... (ver PEOPLE)
     return evIconUrl(ChronosEventIcons.KEYS.includes(key) ? key : 'event');
@@ -3495,14 +3551,19 @@ function srchIcon(e) {
 // onlyTail: llega lo de Wikidata y lo de arriba no ha cambiado: se rehace solo la cola (las filas que el raton tiene debajo no se tocan)
 function srchRender(msg, onlyTail) {
     const ul = $('search-list');
-    const keep = onlyTail && !msg && SRCH.rendered === SRCH.local ? (SRCH.local || []).length : 0;
-    if (keep) { [...ul.children].forEach((li) => { const k = /^sr-(\d+)$/.exec(li.id || ''); if (!k || +k[1] >= keep) li.remove(); }); }
+    // se conservan las filas ya dibujadas que siguen igual al principio (lo de Wikidata que se llama como lo escrito sube arriba: entonces no)
+    const prev = SRCH.renderedList || []; let common = 0;
+    while (common < prev.length && common < SRCH.items.length && prev[common] === SRCH.items[common]) common++;
+    const keep = onlyTail && !msg && SRCH.rendered === SRCH.local ? Math.min(common, (SRCH.local || []).length) : 0;
+    if (keep) { let rm = false; [...ul.children].forEach((li) => { if (rm) li.remove(); else if (li.id === 'sr-' + (keep - 1)) rm = true; }); }
     else ul.textContent = '';
-    SRCH.rendered = SRCH.local;
+    SRCH.rendered = SRCH.local; SRCH.renderedList = SRCH.items.slice();
     if (msg) { ul.appendChild(el('li', { class: 'sr-msg', role: 'presentation', text: msg })); }
+    // la cabecera «En Wikidata» va sobre el bloque del final; uno de Wikidata subido arriba (se llama como lo escrito) lleva su propia marca
+    let tail = SRCH.items.length; while (tail > 0 && SRCH.items[tail - 1].kind === 'wd') tail--;
     SRCH.items.forEach((e, i) => {
         if (i < keep) return;
-        if (e.kind === 'wd' && (i === 0 || SRCH.items[i - 1].kind !== 'wd')) ul.appendChild(el('li', { class: 'sr-head', role: 'presentation', text: t('search.wdHead') }));
+        if (e.kind === 'wd' && i === tail) ul.appendChild(el('li', { class: 'sr-head', role: 'presentation', text: t('search.wdHead') }));
         const li = el('li', { role: 'option', id: 'sr-' + i, 'aria-selected': String(i === SRCH.active) });
         const icon = el('img', { class: 'sr-ico', alt: '', src: srchIcon(e) });
         if (e.img) {
@@ -3527,7 +3588,7 @@ function srchRender(msg, onlyTail) {
             ERA_ITEM_VARS.forEach((k) => { if (v[k]) li.style.setProperty(k, v[k]); });
             row.appendChild(el('span', { class: 'sr-era', text: ChronosEras.labelOf(era, lang) }));
         }
-        txt.appendChild(row); txt.appendChild(el('div', { class: 'sr-sub', text: srchSub(e) }));
+        txt.appendChild(row); txt.appendChild(el('div', { class: 'sr-sub', text: (e.kind === 'wd' && i < tail ? t('search.wdTag') + ' · ' : '') + srchSub(e) }));
         li.appendChild(txt);
         li.addEventListener('mousedown', (ev) => ev.preventDefault());        // no quitar el foco a la caja
         li.addEventListener('pointerdown', (ev) => { SRCH.ptype = ev.pointerType || 'mouse'; });
@@ -3568,37 +3629,73 @@ async function srchRun() {
 function srchCompose(tail) {
     const raw = SRCH.q; const wd = WD.q === raw ? WD.items : [];
     const cur = SRCH.items[SRCH.active];
-    SRCH.items = (SRCH.local || []).concat(wd);
+    // Lo que se llama EXACTAMENTE como lo escrito va primero, se ordene como se ordene (sin fecha, un continente o un planeta se iban al
+    // final; y «España» el pais quedaba debajo de diez reyes): los nuestros y, de Wikidata, el pais o imperio de los mapas o su primer resultado
+    const q = ChronosSearch.normalize(raw); const exact = (e) => [e.en, e.es].concat(e.alts || []).some((n) => n && ChronosSearch.normalize(n) === q);
+    const loc = SRCH.local || []; const imp = (e) => (ChronosSearch.BOOST[e.kind] || 0) + 220 * (typeof e.imp === 'number' ? e.imp : 0.5);   // como puntua query
+    const top = loc.filter(exact).sort((a, b) => imp(b) - imp(a)).concat(wd.filter((e, k) => exact(e) && (e.pol || k === 0)));
+    SRCH.items = top.concat(loc.filter((e) => !top.includes(e)), wd.filter((e) => !top.includes(e)));
     if (cur) { const k = SRCH.items.indexOf(cur); SRCH.active = k; }
     const none = !SRCH.items.length && !(WD.loading && WD.q === raw);
     srchRender(SRCH.items.length || (WD.loading && WD.q === raw) ? null : SRCH.failed ? fmt('search.fail', { err: SRCH.failed }) : none ? fmt('search.none', { q: raw.trim() }) : null, tail && (SRCH.local || []).length > 0);
 }
 
-/* ---- Busqueda en directo en Wikidata: personas que no estan en nuestro indice ----
- * El creador (2026-11-12): «no aparece ninguna coincidencia con "Jaime"; estas fuentes son limitaditas». Nuestro indice son las ~6.400
- * personas dibujadas en el mapa. MEDIDO (sonda live-probe): la API de Wikidata responde al navegador (CORS '*', 150-550 ms); la busqueda con
- * «haswbstatement:P31=Q5» da solo personas (Jaime -> Jaime I de Aragon, Q212052); wbgetentities trae P569/P570 tal como estan guardadas (en
- * su calendario; los años a. C. con numeracion historica, sin año 0: «-0044» = 44 a. C., comprobado con wbformatvalue), P19/P20 y P18; el lugar
- * trae P625. Nada se guarda: se consulta, se enseña marcado como consulta en directo sin revisar, y se olvida. */
+/* ---- Busqueda en directo en Wikidata: lo que no esta en nuestro indice ----
+ * El creador (2026-11-12): «no aparece ninguna coincidencia con "Jaime"; estas fuentes son limitaditas». Y (2026-11-24): «si en la caja de
+ * búsqueda pones un nombre de país, no aparece… ríos, montañas, ciudades, continentes, especies animales… lo que SEA». MEDIDO (sonda): la API
+ * responde al navegador (CORS '*', 150-550 ms). Dos busquedas a la vez:
+ *   - wbsearchentities (la del cuadro de busqueda de Wikidata: por etiqueta y alias en el idioma de la web): «España» -> Q29. list=search sin
+ *     idioma no la ponia entre las 8 primeras (ganaba la Vuelta: sonda del 24-11);
+ *   - list=search con «haswbstatement:P31=Q5»: personas (Jaime -> Jaime I de Aragon, Q212052), como antes.
+ * Al elegir uno, wbgetentities trae lo que tenga: P625 (lugar), P585 (instante), P580/P571 y P582/P576 (tramo), P569/P570 (vida), P523/P524
+ * (tramo de un taxon por eras geologicas), P6257/P6258 (en el cielo). Visto en la sonda: Tyrannosaurus trae P580/P582 (-68 / -66 Ma), el mamut
+ * lanudo tambien, el Ebro y el Everest solo P625, España varias P571 sin preferida, Sirio P6257/P6258 en grados. Nada se guarda: se consulta,
+ * se enseña marcado como consulta en directo sin revisar, y se olvida. */
 const WD = { seq: 0, t: 0, q: '', items: [], loading: false, err: null, ent: new Map() };
 const wdUrl = (p) => 'https://www.wikidata.org/w/api.php?' + new URLSearchParams(Object.assign({ format: 'json', origin: '*' }, p));
 async function wdJSON(p) { const r = await fetch(wdUrl(p), { signal: AbortSignal.timeout(12000) }); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }
-const wdLabel = (x, l) => (x && x.labels && x.labels[l] && x.labels[l].value) || null;
+// 'mul': la etiqueta comun a todos los idiomas (los taxones la llevan ahi: Homo sapiens no tiene etiqueta en es ni en en)
+const wdLabel = (x, l) => (x && x.labels && ((x.labels[l] && x.labels[l].value) || (x.labels.mul && x.labels.mul.value))) || null;
 const wdDesc = (x, l) => (x && x.descriptions && x.descriptions[l] && x.descriptions[l].value) || null;
+// Paginas que no son una cosa con sitio ni tiempo (desambiguaciones, nombres de pila, apellidos, categorias): fuera de la lista
+const WD_JUNK = /desambiguaci|disambiguation|nombre (propio|de pila)|given name|family name|surname|apellido|categor(y|ía) de wikimedia|wikimedia (category|list|template|project)|lista de wikimedia|plantilla de wikimedia/i;
+// Un pais o un imperio de los mapas de fronteras (historical-basemaps, por su nombre en ingles): se trata como esa entidad politica
+const WD_POLITY = /\b(pa[ií]s|country|sovereign state|estado soberano|imperio|empire|reino|kingdom|rep[uú]blica|republic|sultanato|sultanate|califato|caliphate|kanato|khanate|ducado|duchy|principado|principality|confederaci[oó]n|confederation)\b/i;
+// Lo mismo que ya da la web (planetas, lunas, estrellas, constelaciones, continentes): si su nombre coincide, sobra el de Wikidata
+const WD_SKYLIKE = /planeta|planet|sat[eé]lite|satellite|\bluna\b|\bmoon\b|estrella|\bstar\b|constelaci[oó]n|constellation|continente|continent|\bsol\b|\bsun\b/i;
 function wdSchedule(raw) {
     clearTimeout(WD.t); const seq = ++WD.seq;
     if (ChronosSearch.normalize(raw).length < 3) { WD.q = raw; WD.items = []; WD.loading = false; return; }
     WD.q = raw; WD.items = []; WD.loading = true; WD.err = null;
     WD.t = setTimeout(async () => {
         try {
-            const s = await wdJSON({ action: 'query', list: 'search', srsearch: raw.trim() + ' haswbstatement:P31=Q5', srlimit: '10', srnamespace: '0' });
+            const q = raw.trim(); const fail = (err) => ({ err });
+            const [g, p] = await Promise.all([
+                wdJSON({ action: 'wbsearchentities', search: q, language: lang, uselang: lang, type: 'item', limit: '12' }).catch(fail),
+                wdJSON({ action: 'query', list: 'search', srsearch: q + ' haswbstatement:P31=Q5', srlimit: '6', srnamespace: '0' }).catch(fail)
+            ]);
             if (seq !== WD.seq) return;
-            const ids = ((s.query && s.query.search) || []).map((x) => x.title).filter((id) => /^Q\d+$/.test(id) && !(SRCH.qids && SRCH.qids.has(id))).slice(0, 5);
+            if (g.err && p.err) throw g.err;
+            const gen = (g.search || []).filter((x) => /^Q\d+$/.test(x.id || '') && !WD_JUNK.test(x.description || '')).map((x) => x.id);
+            const per = ((p.query && p.query.search) || []).map((x) => x.title).filter((id) => /^Q\d+$/.test(id));
+            const people = new Set(per);
+            const ids = [...new Set(gen.slice(0, 6).concat(per.slice(0, 3)))].filter((id) => !(SRCH.qids && SRCH.qids.has(id))).slice(0, 8);
             if (ids.length) {
-                const e = await wdJSON({ action: 'wbgetentities', ids: ids.join('|'), props: 'labels|descriptions', languages: 'es|en' });
+                const e = await wdJSON({ action: 'wbgetentities', ids: ids.join('|'), props: 'labels|descriptions', languages: 'es|en|mul' });
                 if (seq !== WD.seq) return;
-                WD.items = ids.map((id) => { const x = e.entities && e.entities[id]; return { kind: 'wd', qid: id, id: 'wdlive.' + id.toLowerCase(), es: wdLabel(x, 'es'), en: wdLabel(x, 'en') || wdLabel(x, 'es'), desc: wdDesc(x, lang) || wdDesc(x, lang === 'es' ? 'en' : 'es') }; }).filter((x) => x.en || x.es);
-                WD.items.slice(0, 3).forEach((it) => { if (!(navigator.connection && navigator.connection.saveData)) wdDetails(it.qid).then(() => { if (seq === WD.seq) srchCompose(true); }).catch(() => {}); });
+                const near = new Map(); (SRCH.local || []).forEach((x) => [x.en, x.es].concat(x.alts || []).forEach((n) => { if (n) near.set(ChronosSearch.normalize(n), x.kind); }));
+                WD.items = ids.map((id) => {
+                    const x = e.entities && e.entities[id];
+                    const it = { kind: 'wd', qid: id, id: 'wdlive.' + id.toLowerCase(), es: wdLabel(x, 'es'), en: wdLabel(x, 'en') || wdLabel(x, 'es'), desc: wdDesc(x, lang) || wdDesc(x, lang === 'es' ? 'en' : 'es'), human: people.has(id) };
+                    const both = [it.es, it.en, wdDesc(x, 'es'), wdDesc(x, 'en')].filter(Boolean).join(' · ');
+                    const pol = !it.human && SRCH.polBy && it.en && SRCH.polBy.get(it.en);
+                    if (pol && WD_POLITY.test(both)) it.pol = pol;
+                    // el mismo planeta, estrella, constelacion o continente que ya esta arriba (de los nuestros): no se repite
+                    const twin = [it.es, it.en].map((n) => n && near.get(ChronosSearch.normalize(n))).find(Boolean);
+                    if (twin && (twin === 'polity' ? !!it.pol : ['body', 'star', 'constellation', 'continent'].includes(twin) && WD_SKYLIKE.test(both))) it.dup = true;
+                    return it;
+                }).filter((x) => (x.en || x.es) && !x.dup);
+                WD.items.slice(0, 3).forEach((it) => { if (!it.pol && !(navigator.connection && navigator.connection.saveData)) wdDetails(it.qid).then(() => { if (seq === WD.seq) srchCompose(true); }).catch(() => {}); });
             }
         } catch (err) { if (seq === WD.seq) { WD.items = []; WD.err = err.message; } }
         finally { if (seq === WD.seq) { WD.loading = false; if (SRCH.q === raw) srchCompose(true); } }
@@ -3620,14 +3717,67 @@ function wdBest(claims, p) {
     const pref = cs.filter((c) => c.rank === 'preferred'); const pool = pref.length ? pref : cs;
     return pool.slice().sort((a, b) => (b.mainsnak.datavalue.value.precision || 0) - (a.mainsnak.datavalue.value.precision || 0))[0] || null;
 }
+/** La declaracion que vale de una propiedad que no es una fecha (lugar, coordenadas del cielo): la preferida; si no, la primera. */
+function wdFirst(claims, p) {
+    const cs = ((claims && claims[p]) || []).filter((c) => c.rank !== 'deprecated' && c.mainsnak && c.mainsnak.datavalue);
+    return cs.find((c) => c.rank === 'preferred') || cs[0] || null;
+}
+const wdT = (st) => (st ? wdTime(st.mainsnak.datavalue.value) : null);
+/** Tramo de existencia: desde (la fecha mas antigua de startP) hasta (la mas reciente de endP); si hay preferidas, solo esas. none: Wikidata
+ *  dice expresamente que no tiene final («sin valor», el Holoceno). n: cuantas fechas hay en total (varias = las fuentes no coinciden). */
+function wdSpan(c, startP, endP) {
+    const all = (ps) => { const cs = []; ps.forEach((p) => ((c && c[p]) || []).forEach((st) => { if (st.rank !== 'deprecated' && st.mainsnak) cs.push(st); })); return cs; };
+    const pick = (cs, first) => {
+        const ok = cs.filter((st) => st.mainsnak.datavalue); const pref = ok.filter((st) => st.rank === 'preferred');
+        const ts = (pref.length ? pref : ok).map((st) => wdTime(st.mainsnak.datavalue.value)).filter(Boolean);
+        return ts.length ? ts.reduce((a, b) => ((first ? b.year < a.year : b.year > a.year) ? b : a)) : null;
+    };
+    const S = all(startP); const E = all(endP);
+    return { start: pick(S, true), end: pick(E, false), none: E.length > 0 && E.every((st) => st.mainsnak.snaktype === 'novalue'), n: S.length + E.length };
+}
+/** Fecha de Wikidata para leer: en tiempo profundo, en Ma o ka (como la barra de tiempo); si no, la fecha con su precision. */
+function wdTimeText(tm) {
+    const ybp = yearToYbp(tm.year);
+    if (ybp >= CFG.deepTimeFrom) return nf().format(Math.round(ybp / 1e5) / 10) + ' Ma';
+    if (ybp > 11000) return nf().format(Math.round(ybp / 100) / 10) + ' ka';
+    return srchIsoText(tm.iso);
+}
+const yearText = (y) => (yearToYbp(y) > 11000 ? wdTimeText({ year: y }) : formatYear(y));
+/** Año que representa un resultado de Wikidata (para el color de su epoca): vida, instante o tramo; NaN si no tiene. */
+function wdYearOf(d) {
+    const tm = d.birth || d.death || d.when || d.start || d.end; return tm ? tm.year : NaN;
+}
 async function wdDetails(qid) {
     if (WD.ent.has(qid)) return WD.ent.get(qid);
     const p = (async () => {
-        const j = await wdJSON({ action: 'wbgetentities', ids: qid, props: 'labels|descriptions|claims', languages: 'es|en' });
+        const j = await wdJSON({ action: 'wbgetentities', ids: qid, props: 'labels|descriptions|claims', languages: 'es|en|mul' });
         const x = j.entities && j.entities[qid]; const c = (x && x.claims) || {};
+        const idsOf = (pp) => ((c[pp] || []).filter((st) => st.rank !== 'deprecated' && st.mainsnak && st.mainsnak.datavalue).map((st) => st.mainsnak.datavalue.value && st.mainsnak.datavalue.value.id).filter(Boolean));
         const b = wdBest(c, 'P569'); const d = wdBest(c, 'P570'); const bp = wdBest(c, 'P19'); const dp = wdBest(c, 'P20');
-        const out = { qid, birth: b ? wdTime(b.mainsnak.datavalue.value) : null, death: d ? wdTime(d.mainsnak.datavalue.value) : null, born: null, died: null,
+        const out = { qid, human: idsOf('P31').includes('Q5'), birth: b ? wdTime(b.mainsnak.datavalue.value) : null, death: d ? wdTime(d.mainsnak.datavalue.value) : null, born: null, died: null,
             img: (wdBest(c, 'P18') || { mainsnak: { datavalue: { value: null } } }).mainsnak.datavalue.value, nBirth: (c.P569 || []).length, nDeath: (c.P570 || []).length };
+        if (!out.human && !out.birth && !out.death) {
+            // Lugar en la Tierra (P625; en un rio hay dos, nacimiento y desembocadura: vale la preferida o la primera)
+            const co = wdFirst(c, 'P625'); const v = co && co.mainsnak.datavalue.value;
+            if (v && (!v.globe || /Q2$/.test(v.globe)) && Number.isFinite(v.latitude) && Number.isFinite(v.longitude)) out.coord = [Math.round(v.longitude * 1e5) / 1e5, Math.round(v.latitude * 1e5) / 1e5];
+            // En el cielo: ascension recta (P6257) y declinacion (P6258), en grados (J2000)
+            const num = (st) => (st ? parseFloat(st.mainsnak.datavalue.value.amount) : NaN);
+            const ra = num(wdFirst(c, 'P6257')); const de = num(wdFirst(c, 'P6258'));
+            if (Number.isFinite(ra) && Number.isFinite(de)) out.radec = [ra, de];
+            // Cuando: un instante (P585) o un tramo (desde P580 / P571 fundacion / P1619 inauguracion; hasta P582 / P576 disolucion / P3999 cierre)
+            out.when = wdT(wdBest(c, 'P585'));
+            const sp = wdSpan(c, ['P580', 'P571', 'P1619'], ['P582', 'P576', 'P3999']);
+            out.start = sp.start; out.end = sp.end; out.endNone = sp.none; out.nSpan = sp.n;
+            out.taxon = !!(c.P225 || c.P171);
+            // Un taxon sin P580/P582: el comienzo de la era de P523 y el final de la de P524 (tramo temporal por eras geologicas)
+            const ga = !out.start && idsOf('P523')[0]; const gb = !out.end && idsOf('P524')[0];
+            if (ga || gb) {
+                const gj = await wdJSON({ action: 'wbgetentities', ids: [...new Set([ga, gb].filter(Boolean))].join('|'), props: 'labels|claims', languages: 'es|en|mul' });
+                const ge = (id) => id && gj.entities && gj.entities[id];
+                if (ge(ga)) { out.start = wdT(wdBest(ge(ga).claims, 'P580')); out.startEra = wdLabel(ge(ga), lang) || wdLabel(ge(ga), 'en'); }
+                if (ge(gb)) { out.end = wdT(wdBest(ge(gb).claims, 'P582')); out.endEra = wdLabel(ge(gb), lang) || wdLabel(ge(gb), 'en'); }
+            }
+        }
         const placeIds = [bp, dp].map((s) => s && s.mainsnak.datavalue.value && s.mainsnak.datavalue.value.id).filter(Boolean);
         if (placeIds.length) {
             const pj = await wdJSON({ action: 'wbgetentities', ids: [...new Set(placeIds)].join('|'), props: 'labels|claims', languages: 'es|en' });
@@ -3645,10 +3795,21 @@ function wdKnown(e) { const p = WD.ent.get(e.qid); return p && p._v; }
 function wdShow(e, d) {
     const rows = [{ label: t('evidence'), badge: 'documentary', note: t('search.wdNote') }];
     if (e.desc) rows.push({ label: t('events.note'), value: e.desc });
-    const when = (tm) => (tm ? srchIsoText(tm.iso) + (tm.calendar === 'julian' ? ' (' + t('clock.julian') + ')' : '') + (tm.approx ? ' ≈' : '') : '?');
+    const when = (tm) => (tm ? wdTimeText(tm) + (tm.calendar === 'julian' && yearToYbp(tm.year) <= 11000 ? ' (' + t('clock.julian') + ')' : '') + (tm.approx && yearToYbp(tm.year) <= 11000 ? ' ≈' : '') : '?');
     if (d.birth) rows.push({ label: t('search.wdBorn'), value: when(d.birth) + (d.born ? ' · ' + d.born.label : '') });
     if (d.death) rows.push({ label: t('search.wdDied'), value: when(d.death) + (d.died ? ' · ' + d.died.label : '') });
     if (d.nBirth > 1 || d.nDeath > 1) rows.push({ label: t('events.otherDates'), value: t('search.wdMany') });
+    if (!d.birth && !d.death) {
+        if (d.when) rows.push({ label: t('search.wdWhen'), value: when(d.when) });
+        const eras = [d.startEra, d.endEra].filter(Boolean); const end = d.end ? when(d.end) : d.endNone ? t('search.wdNow') : '…';
+        if (d.taxon && (d.start || d.end)) rows.push({ label: t('search.wdRange'), value: fmt('search.wdSpan', { a: d.start ? when(d.start) : '…', b: end }) + (eras.length ? ' (' + [...new Set(eras)].join(' – ') + ')' : '') });
+        else { if (d.start) rows.push({ label: t('search.wdFrom'), value: when(d.start) }); if (d.end || d.endNone) rows.push({ label: t('search.wdUntil'), value: end }); }
+        if (d.nSpan > 2) rows.push({ label: t('events.otherDates'), value: t('search.wdMany') });
+        if (d.coord) rows.push({ label: t('search.wdPlace'), value: Math.abs(d.coord[1]).toFixed(2) + '° ' + (d.coord[1] >= 0 ? 'N' : 'S') + ', ' + Math.abs(d.coord[0]).toFixed(2) + '° ' + (d.coord[0] >= 0 ? 'E' : (lang === 'es' ? 'O' : 'W')) });
+        if (d.radec) { const h = ((d.radec[0] / 15) % 24 + 24) % 24; const H = Math.floor(h); const M = Math.floor((h - H) * 60); rows.push({ label: t('search.wdSky'), value: fmt('search.wdSkyVal', { ra: H + ' h ' + String(M).padStart(2, '0') + ' m', dec: (d.radec[1] >= 0 ? '+' : '−') + nf().format(Math.round(Math.abs(d.radec[1]) * 10) / 10) + '°' }) }); }
+        if (e._note) rows.push({ label: t('search.wdGo'), value: e._note });
+        else if (!d.coord && !d.radec && !d.when && !d.start && !d.end) rows.push({ label: t('search.wdGo'), value: t('search.wdNothing') });
+    }
     rows.push({ label: t('events.status'), value: t('search.wdStatus') });
     rows.push({ label: t('source'), value: 'Wikidata ' + e.qid, href: 'https://www.wikidata.org/wiki/' + e.qid });
     showInfo(srchName(e), rows); infoImageFor(e.qid, d.img);
@@ -3673,12 +3834,136 @@ $('search-sort').addEventListener('change', () => {
     $('search').focus(); if ($('search').value) srchRun();
 });
 function srchClose(keepSpot) { clearTimeout(SRCH.hoverT); clearTimeout(WD.t); WD.seq++; WD.loading = false; WD.items = []; WD.q = ''; SRCH.local = []; SRCH.keepOpen = false; SRCH.items = []; SRCH.active = -1; srchRender(); if (!keepSpot) spotlight(null); }
-/** Lugar y fecha de un resultado: { center|null, year, apply() }. Sin zoom: centrar no acerca ni aleja (lo pide el creador, 2026-11-12). */
+/**
+ * A donde y a cuando lleva algo de Wikidata que no es una persona (rellena tg y devuelve su sitio, o null). La fecha, «en su espacio en el
+ * tiempo» (el creador, 2026-11-24): un instante (una batalla), a el; un tramo (un imperio, una especie, una era), si la fecha que se tenia ya
+ * esta dentro no se cambia, y si no, al momento mas cercano de su tiempo (un poco hacia dentro: los bordes son imprecisos). Sin fechas y con
+ * lugar (un rio, una montaña), se queda la fecha, salvo en tiempo profundo, donde unas coordenadas de hoy no dicen nada: al mapa de hoy.
+ */
+async function wdPrep(e, d, tg) {
+    const here = ybpToYear(state.ybp); let y; let jd = NaN; e._note = null;
+    const minYear = ybpToYear(CFG.maxYbp); const clampY = (v) => Math.max(minYear, Math.min(CFG.nowYear, Math.round(v)));
+    if (!e.pol && SRCH.polBy && e.en && SRCH.polBy.get(e.en) && [e.desc].concat(d.human ? [] : [e.es, e.en]).some((x) => x && WD_POLITY.test(x))) e.pol = SRCH.polBy.get(e.en);
+    if (e.pol) { const P = srchTarget(e.pol); tg.year = P.year; tg.apply = P.apply; return P.prep(); }
+    if (d.when) { y = clampY(d.when.year); jd = d.when.jd; }
+    else if (d.start || d.end) {
+        const a = d.start ? d.start.year : -Infinity; const b = d.end ? d.end.year : CFG.nowYear;
+        if (here >= a && here <= b) e._note = t('search.wdKeep');
+        else {
+            const pad = Number.isFinite(a) && Number.isFinite(b) ? (b - a) * 0.01 : 0;
+            y = clampY(here < a ? a + pad : b - pad); e._note = fmt('search.wdEdge', { y: yearText(y) });
+        }
+    } else if (d.coord && state.ybp >= CFG.deepTimeFrom) { y = CFG.nowYear; e._note = t('search.wdNoDate'); }
+    if (y !== undefined && y !== here) {
+        tg.year = y;
+        tg.apply = () => { setTime(yearToYbp(y), { immediate: true }); if (Number.isFinite(jd) && clockUsable() && jd >= clockMinJD() && jd <= realNowJD()) clockSet(jd, { user: true }); };
+    } else if (Number.isFinite(jd)) tg.apply = () => { if (clockUsable() && jd >= clockMinJD() && jd <= realNowJD()) clockSet(jd, { user: true }); };
+    if (d.coord) {
+        const feature = { geometry: { type: 'Point', coordinates: d.coord }, properties: { id: e.id, name: srchName(e), icon: 'event', img: 'evi-event', importance: 0.6, size: 1.08 } };
+        tg.mark = { layers: ['events-circle'], id: e.id, at: d.coord, feature }; spotPickSet(feature);
+        return d.coord;
+    }
+    if (d.radec) {     // en el cielo y no en la Tierra (una galaxia, una nebulosa, una estrella que no esta en nuestro catalogo)
+        const m = { ra: d.radec[0], dec: d.radec[1], name: srchName(e) };
+        const a = await skyAimPrep(m); if (!a) { e._note = t('search.wdNoSky'); return null; }
+        tg.sky = m; tg.zoom = a.zoom; return a.center;
+    }
+    return null;
+}
+
+/* ---- El cielo en el buscador: estrellas con nombre, constelaciones y lo que Wikidata pone en el cielo ----
+ * Se gira el globo (y se aleja si la Tierra no deja hueco) para que quede AL LADO de la Tierra, no detras (sky/space.js, aimBeside), y se
+ * señala con un circulo y su nombre en el cielo de detras del globo. */
+const HIPIDX = new WeakMap();
+/** Posicion de una estrella (por su numero HIP) en el catalogo que se esta dibujando; -1 si no esta. */
+function hipIndex(cat, hip) {
+    if (!cat) return -1;
+    let m = cat.index instanceof Map ? cat.index : HIPIDX.get(cat);
+    if (!m) { m = new Map(); for (let i = 0; i < cat.n; i++) m.set(cat.hip[i], i); HIPIDX.set(cat, m); }
+    const i = m.get(hip); return i === undefined ? -1 : i;
+}
+/** Direccion (marco del globo) en el instante del reloj de: una estrella ({ hip }), el centro de una constelacion ({ iau }) o un punto J2000
+ *  en grados ({ ra, dec }). null si el cielo no se calcula en esta fecha o no esta en el catalogo. Lo mismo que dibuja drawSpace. */
+function skyDirOf(m) {
+    if (!m || !clockUsable()) return null;
+    const jd = clock.jd; let cat; let ra; let dec; let gast; let toDate;
+    if (clockStarsOnly()) {
+        const r = preFrame(jd); if (!r || !pre.view) return null;
+        cat = pre.view; ra = r.ra; dec = r.dec; gast = r.era; toDate = (a, b) => ChronosSpace.pointOfDateCio(a, b, pre.inst.frame.frame(r.epj));
+    } else {
+        cat = sky.catalog; if (!cat) return null; const f = spaceFrame(jd); gast = f.gast;
+        if (space.eqCat !== cat || Math.abs(jd - space.eqJD) > 1) { space.eq = ChronosSpace.starsOfDate(cat, f.time); space.eqJD = jd; space.eqCat = cat; space.dirsJD = NaN; }
+        ra = space.eq.ra; dec = space.eq.dec; toDate = (a, b) => ChronosSpace.pointOfDate(a, b, f.rot);
+    }
+    const one = (a, b) => { const o = [0, 0, 0]; ChronosSpace.modelDirection(a, b, gast, o, 0); return o; };
+    if (m.hip !== undefined) { const i = hipIndex(cat, m.hip); return i < 0 ? null : one(ra[i], dec[i]); }
+    if (m.iau) {
+        const cs = (cat.constellations || []).filter((x) => x.id === m.iau); if (!cs.length) return null;     // la Serpiente viene en dos trozos
+        const ids = new Set(); cs.forEach((c) => c.lines.forEach(([a, b]) => { ids.add(a); ids.add(b); }));
+        const v = [0, 0, 0]; ids.forEach((i) => { const o = one(ra[i], dec[i]); v[0] += o[0]; v[1] += o[1]; v[2] += o[2]; });
+        const n = Math.hypot(v[0], v[1], v[2]); return n > 1e-9 ? [v[0] / n, v[1] / n, v[2] / n] : null;
+    }
+    if (Number.isFinite(m.ra) && Number.isFinite(m.dec)) { const q = toDate(m.ra * Math.PI / 180, m.dec * Math.PI / 180); return one(q.ra, q.dec); }
+    return null;
+}
+/** Centro y zoom con los que m se ve al lado de la Tierra, con el rumbo e inclinacion de ahora; null si no se puede. */
+function skyAim(m) {
+    const v = skyDirOf(m); if (!v) return null;
+    const box = map.getContainer(); const c = map.getCenter(); const tr = map.transform;
+    // lo que tapa el cielo: la barra de arriba, la linea de tiempo y los recuadros abiertos (en el movil lo dejaba debajo de los botones)
+    const B = box.getBoundingClientRect(); const R = (el) => { const r = el && el.getBoundingClientRect(); return r && r.width && r.height ? { x0: r.left - B.left, y0: r.top - B.top, x1: r.right - B.left, y1: r.bottom - B.top } : null; };
+    const top = R($('topbar')); const tl = R($('timeline'));
+    const avoid = ['info', 'con-card', 'events', 'sky', 'changes', 'settings'].map((id) => { const el = $(id); return el && !el.hidden && getComputedStyle(el).display !== 'none' ? R(el) : null; }).filter(Boolean);
+    const a = ChronosSpace.aimBeside(v, { lng: c.lng, lat: c.lat, zoom: map.getZoom(), bearing: map.getBearing(), pitch: map.getPitch(), roll: typeof map.getRoll === 'function' ? map.getRoll() : 0,
+        fovDeg: tr && typeof tr.fov === 'number' ? tr.fov : undefined, width: box.clientWidth, height: box.clientHeight },
+        { minZoom: map.getMinZoom(), inset: { top: top ? Math.max(16, top.y1 + 12) : 16, bottom: tl ? Math.max(16, box.clientHeight - tl.y0 + 12) : 16, left: 16, right: 16 }, avoid,
+            // en pantalla ancha, a la izquierda: la ficha que se abre al llegar va a la derecha
+            sides: box.clientWidth >= box.clientHeight ? ['l', 'r', 't', 'b'] : ['t', 'b', 'l', 'r'] });
+    return a ? { center: [a.lng, a.lat], zoom: a.zoom } : null;
+}
+/** Antes de apuntar: el cielo encendido, en una fecha en que se calcula (si no, la mas cercana) y con su catalogo cargado. */
+async function skyAimPrep(m) {
+    if (!space.on) { space.on = true; $('btn-space').setAttribute('aria-pressed', 'true'); savePrefs({ sp: true }); updateNight(true); }
+    const wait = async (busy) => { for (let k = 0; k < 80 && busy(); k++) await new Promise((r) => setTimeout(r, 100)); };
+    if (sky.catalogState === 'idle') skyLoadCatalog();
+    await wait(() => !sky.ready || sky.catalogState === 'loading');
+    if (!clockUsable()) {
+        const W = skyRange(); const here = ybpToYear(state.ybp); const y = Math.min(Math.max(here, W.minYear), Math.min(W.maxYear, CFG.nowYear));
+        if (y !== here) setTime(yearToYbp(y), { immediate: true });
+    }
+    if (clockStarsOnly()) { if (pre.state === 'idle') preLoad(); await wait(() => pre.state === 'loading'); }
+    scheduleSpace();
+    return skyAim(m);
+}
+function srchSkyTarget(e, m) {
+    const tg = { id: e.id, center: null, year: undefined, apply: () => {} };
+    tg.prep = async () => { const a = await skyAimPrep(m); if (!a) return null; tg.sky = m; tg.zoom = a.zoom; return a.center; };
+    return tg;
+}
+/** Lugar y fecha de un resultado: { center|null, year, apply() }. Sin zoom: centrar no acerca ni aleja (lo pide el creador, 2026-11-12); lo
+ *  del cielo si puede alejar (zoom), porque de cerca la Tierra lo tapa todo. */
 function srchTarget(e) {
-    if (e.kind === 'wd') {      // persona de Wikidata en directo: su sitio y su fecha se piden al elegirla (prep), y se gira primero
+    if (e.kind === 'continent') {
+        // los continentes de hoy (Natural Earth): en tiempo profundo estaban en otro sitio, asi que desde alli se va al mapa de hoy
+        const y = state.ybp >= CFG.deepTimeFrom ? CFG.nowYear : undefined;
+        return { id: e.id, center: null, year: y, prep: async () => { contEnsure(); if (CONT.loading) await CONT.loading; return CONT.idx ? CONT.idx.center(e.ck) : null; },
+            apply: () => { if (y !== undefined) setTime(yearToYbp(y), { immediate: true }); } };
+    }
+    if (e.kind === 'body') {
+        // el Sol, los planetas y sus lunas: la escena del sistema solar (se abre al elegirlo, no al pasar por encima). Fuera de los años en
+        // que se calculan sus posiciones, al mas cercano de ellos
+        const W = ChronosSolar.WINDOW; const here = ybpToYear(state.ybp);
+        const y = solarAvailable() ? undefined : Math.min(Math.max(here, W.minYear), Math.min(W.maxYear, CFG.nowYear));
+        return { id: e.id, center: null, year: y === here ? undefined : y, apply: () => { if (y !== undefined && y !== here) setTime(yearToYbp(y), { immediate: true }); } };
+    }
+    if (e.kind === 'star') return srchSkyTarget(e, { hip: e.hip, name: srchName(e) });
+    if (e.kind === 'constellation') return srchSkyTarget(e, { iau: e.iau, name: srchName(e) });
+    if (e.kind === 'wd' && e.pol) { const P = srchTarget(e.pol); P.id = e.id; return P; }   // un pais o un imperio de los mapas de fronteras: como ellos
+    if (e.kind === 'wd') {      // de Wikidata en directo: su sitio y su fecha se piden al elegirlo (prep), y se gira primero
         const tg = { id: e.id, center: null, year: undefined, mark: null, apply: () => {} };
         tg.prep = async () => {
             const d = await wdDetails(e.qid);
+            if (!d.human && !d.birth && !d.death) return wdPrep(e, d, tg);
             const ev = d.birth && d.born && d.born.coord ? ['birth', d.birth, d.born] : d.death && d.died && d.died.coord ? ['death', d.death, d.died] : null;
             const tm = ev ? ev[1] : d.birth || d.death; if (!tm) return null;
             tg.year = tm.year;
@@ -3763,16 +4048,19 @@ function eraVeil(fn) {
 const CAM = { ID: 'chronos-giro', on: false, to: null, samples: [] };
 map.on('move', () => { if (!CAM.on) return; const c = map.getCenter(); CAM.samples.push({ t: performance.now(), lng: c.lng, lat: c.lat }); if (CAM.samples.length > 8) CAM.samples.shift(); });
 map.on('moveend', () => { CAM.on = false; CAM.to = null; CAM.samples = []; });
-/** Centra el globo en c ([lng, lat]) sin cambiar el zoom. true si se mueve (acabara con 'moveend'); false si ya estaba alli. */
-function camGlide(c) {
+/** Centra el globo en c ([lng, lat]); sin zoom, sin acercar ni alejar (zoom: solo para ver algo del cielo al lado de la Tierra). true si se
+ *  mueve (acabara con 'moveend'); false si ya estaba alli. */
+function camGlide(c, zoom) {
     if (!c || !Number.isFinite(c[0]) || !Number.isFinite(c[1])) return false;
     const p0 = map.getCenter(); const from = [p0.lng, p0.lat];
-    if (SRCH_REDUCED()) { if (!(ChronosCamera.angleDeg(from, c) > 1e-6)) return false; map.jumpTo({ center: c }); return true; }
-    if (CAM.on && CAM.to && ChronosCamera.angleDeg(CAM.to, c) < 1e-9) return true;      // ya va hacia alli: no se rehace el giro
+    const z = Number.isFinite(zoom) && Math.abs(zoom - map.getZoom()) > 1e-3 ? zoom : undefined;
+    const opt = (o) => (z === undefined ? o : Object.assign(o, { zoom: z }));
+    if (SRCH_REDUCED()) { if (!(ChronosCamera.angleDeg(from, c) > 1e-6) && z === undefined) return false; map.jumpTo(opt({ center: c })); return true; }
+    if (CAM.on && CAM.to && ChronosCamera.angleDeg(CAM.to, c) < 1e-9 && z === undefined) return true;      // ya va hacia alli: no se rehace el giro
     const box = map.getContainer();
-    const p = ChronosCamera.plan(from, c, { zoom: map.getZoom(), diag: Math.hypot(box.clientWidth, box.clientHeight), v: CAM.on ? ChronosCamera.velocity(CAM.samples) : null });
-    if (!p) return false;
-    map.easeTo({ center: c, duration: p.ms, easing: ChronosCamera.easing(p.m0), easeId: CAM.ID, essential: true });
+    let p = ChronosCamera.plan(from, c, { zoom: map.getZoom(), diag: Math.hypot(box.clientWidth, box.clientHeight), v: CAM.on ? ChronosCamera.velocity(CAM.samples) : null });
+    if (!p) { if (z === undefined) return false; p = { ms: 900, m0: 0 }; }
+    map.easeTo(opt({ center: c, duration: z === undefined ? p.ms : Math.max(900, p.ms), easing: ChronosCamera.easing(p.m0), easeId: CAM.ID, essential: true }));
     // despues de easeTo: si cortaba otro movimiento (el arrastre del usuario), su 'moveend', que limpia esto, ya ha pasado
     CAM.on = true; CAM.to = [c[0], c[1]];
     if (!CAM.samples.length) CAM.samples.push({ t: performance.now(), lng: from[0], lat: from[1] });
@@ -3784,7 +4072,7 @@ function camGlide(c) {
  */
 function srchGo(tg) {
     if (solarView.isOpen) solarView.close();
-    if (!tg.center && tg.prep && !SRCH_REDUCED()) {      // destino que aun no se sabe donde esta (entidad politica): primero averiguarlo
+    if (!tg.center && tg.prep) {      // destino que aun no se sabe donde esta (entidad politica, Wikidata, el cielo): primero averiguarlo
         const seq0 = ++SRCH.goSeq; const prep = tg.prep; tg.prep = null;
         Promise.resolve().then(prep).catch(() => null).then((c) => { if (seq0 !== SRCH.goSeq) return; if (c) tg.center = c; srchGo(tg); });
         return;
@@ -3793,9 +4081,10 @@ function srchGo(tg) {
     // a donde se va DE VERDAD (no basta con que este pedido): elegir un resultado al que ya se esta yendo espera a llegar, no repite ni se lo salta
     const went = SRCH.went = tg.id ? { id: tg.id, seq, arrived: false, after: null } : null;
     const done = () => { if (tg.after) tg.after(); if (went && SRCH.went === went) { went.arrived = true; const a = went.after; went.after = null; if (a) a(); } };
-    const moveTo = (c) => { if (!c) return false; const p = map.getCenter(); return Math.abs(p.lng - c[0]) > 1e-6 || Math.abs(p.lat - c[1]) > 1e-6; };
+    const moveTo = (c) => { if (!c) return false; const p = map.getCenter(); return Math.abs(p.lng - c[0]) > 1e-6 || Math.abs(p.lat - c[1]) > 1e-6 || (Number.isFinite(tg.zoom) && Math.abs(map.getZoom() - tg.zoom) > 1e-3); };
     const moving = moveTo(tg.center);
-    if (SRCH_REDUCED()) { tg.apply(); done(); if (moving) map.jumpTo({ center: tg.center }); if (tg.mark) srchMarkOnLanding(tg.mark, true); return; }
+    if ((space.mark || null) !== (tg.sky || null)) { space.mark = tg.sky || null; scheduleSpace(); }    // el circulo en el cielo: el de este destino o ninguno
+    if (SRCH_REDUCED()) { tg.apply(); done(); if (moving) map.jumpTo(Object.assign({ center: tg.center }, Number.isFinite(tg.zoom) ? { zoom: tg.zoom } : {})); if (tg.mark) srchMarkOnLanding(tg.mark, true); return; }
     // 2) Ya en el sitio: cambiar la fecha. Con otra epoca, fundido cruzado (la foto de antes se desvanece sobre la nueva); en el mismo año, directamente.
     const arrive = () => {
         if (seq !== SRCH.goSeq) return;                         // ya se pidio otro destino
@@ -3805,7 +4094,7 @@ function srchGo(tg) {
     };
     // 1) Primero el giro, VISIBLE y con inercia (camGlide): durante el no se cambia la fecha (cargar fronteras y sucesos de otra epoca
     //    bloquea el hilo y el giro se veria a saltos o de golpe). Dura mas cuanto mas lejos: de 0,7 s (vecinos) a 2,4 s.
-    if (moving && camGlide(tg.center)) map.once('moveend', arrive);   // despues del giro: los giros encadenados no lanzan 'moveend' en medio
+    if (moving && camGlide(tg.center, tg.zoom)) map.once('moveend', arrive);   // despues del giro: los giros encadenados no lanzan 'moveend' en medio
     else arrive();
 }
 // Al llegar, el icono elegido se señala como al pasar el raton (brillo y etiqueta con su nombre): asi se ve cual es entre los demas
@@ -3855,7 +4144,11 @@ function srchCommit(e) {
     // La ficha, ya en la fecha nueva; SEL.keepYbp: la carga del mapa de esa fecha no debe cerrarla (como con la seleccion recordada)
     const show = () => {
         SEL.keepYbp = state.ybp; spotlight(e.id, true);      // ya en la fecha nueva: que la carga de su mapa no cierre la ficha ni quite el foco
-        if (e.kind === 'polity') { selRemember('p', e.en); SEL.keepYbp = state.ybp; return; }
+        if (e.kind === 'polity' || e.pol) { selRemember('p', (e.pol || e).en); SEL.keepYbp = state.ybp; return; }
+        if (e.kind === 'continent') { hideInfo(); return; }
+        if (e.kind === 'body') { flyToBody(e.body); return; }
+        if (e.kind === 'constellation') { conOpen(e.iau); return; }
+        if (e.kind === 'star') { const tryStar = (k) => { const S = space.stars; const i = S ? hipIndex(S.cat, e.hip) : -1; if (i >= 0) showStar(i); else if (k > 0) setTimeout(() => tryStar(k - 1), 150); }; tryStar(12); return; }
         if (e.kind === 'wd') { selRemember(null); SEL.keepYbp = state.ybp; wdDetails(e.qid).then((d) => { wdShow(e, d); SEL.keepYbp = state.ybp; spotlight(e.id, true); }).catch((err) => showInfo(srchName(e), [{ label: t('source'), value: 'Wikidata ' + e.qid + ' · ' + err.message, href: 'https://www.wikidata.org/wiki/' + e.qid }])); return; }   // selRemember borra keepYbp: la carga de la tierra cerraba su ficha
         if (e.kind === 'built') { selRemember('b', e.id); builtFull().then(() => { const f = BUILT.byId && BUILT.byId.get(e.id); if (f) { showBuilt(f); SEL.keepYbp = state.ybp; } }); return; }
         // suceso o persona: la ficha sale cuando llegan los sucesos de esa fecha (mismo mecanismo que la seleccion recordada)
@@ -4824,7 +5117,7 @@ function flyToBody(id) {
         if (h && h.star !== undefined) { e.stopPropagation(); e.preventDefault(); clearHighlight(); showStar(h.star); return; }
         const iau = inSky(x, y) && space.art ? ChronosSkyArt.hit(space.art, x, y) : null;      // un dibujo de constelacion: la historia de su nombre
         if (iau) { e.stopPropagation(); e.preventDefault(); conOpen(iau); return; }
-        if (inSky(x, y)) { e.stopPropagation(); e.preventDefault(); clearHighlight(); hideInfo(); }     // cielo vacio: no es el mapa
+        if (inSky(x, y)) { e.stopPropagation(); e.preventDefault(); clearHighlight(); hideInfo(); skyMarkOff(); }     // cielo vacio: no es el mapa
     }, true);
     box.addEventListener('dblclick', (e) => { if (!solarView.isOpen && inSky(local(e).x, local(e).y)) { e.stopPropagation(); e.preventDefault(); } }, true);
     box.addEventListener('mousemove', (e) => { map.getCanvasContainer().style.cursor = hitAt(e) ? (ERA.pointer || 'pointer') : ''; });
@@ -5132,6 +5425,9 @@ function conOpen(iau) {
     }).catch(() => { if (seq === CON.seq) $('con-text').textContent = t('con.fail'); });
 }
 function conClose() { CON.seq++; $('con-card').hidden = true; }
+/** Quita el circulo que el buscador deja en el cielo. NO se va con la ficha: en el movil la ficha tapa media pantalla y al cerrarla se queria
+ *  ver donde esta. Se va al buscar otra cosa (srchGo) o al tocar el cielo vacio o el mar. */
+function skyMarkOff() { if (space.mark) { space.mark = null; scheduleSpace(); } }
 $('con-close').addEventListener('click', conClose);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('con-card').hidden) conClose(); });
 
@@ -5442,6 +5738,23 @@ function drawSpace() {
         // (sin rotulos encima del globo: la estrella que nombrarian queda detras de la Tierra)
         const gC = pr.near(0, 0, 0); const gR = pr.cameraDistancePx / Math.sqrt(Math.pow((pr.cameraDistancePx + pr.globeRadiusPx) / pr.globeRadiusPx, 2) - 1);
         ChronosSkyView.drawSkyLabels(ctx, cat, px, py, { starNames: sky.names, conNames: sky.conNames, lang, starMag: SKY_NAME_MAG, w, h, avoid: gC && Number.isFinite(gR) ? [{ x: gC.x, y: gC.y, r: gR + 3 }] : [] });
+        // lo elegido en el buscador: una estrella o algo de Wikidata en el cielo, un circulo; una constelacion, sus lineas en dorado (es grande:
+        // un circulo que la abarcara llenaba la pantalla del movil). Y su nombre.
+        if (space.mark) {
+            const v = skyDirOf(space.mark); const q = v && pr.infinity(v[0], v[1], v[2]);
+            if (q) {
+                const gold = 'rgba(255,214,120,0.95)'; let r = 12;
+                ctx.save(); ctx.strokeStyle = gold;
+                if (space.mark.iau) {
+                    const cn = (cat.constellations || []).filter((x) => x.id === space.mark.iau); r = 6;
+                    ctx.lineWidth = 2.2; ctx.beginPath();
+                    cn.forEach((c) => c.lines.forEach(([a, b]) => { if (Number.isNaN(px[a]) || Number.isNaN(px[b])) return; ctx.moveTo(px[a], py[a]); ctx.lineTo(px[b], py[b]); }));
+                    ctx.stroke();
+                } else { ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(q[0], q[1], r, 0, 2 * Math.PI); ctx.stroke(); }
+                ctx.restore();
+                ctx.fillStyle = 'rgba(255,226,160,0.98)'; ctx.font = '600 12px system-ui, sans-serif'; ctx.fillText(space.mark.name || '', q[0] + r * 0.72 + 6, q[1] - r * 0.72 - 4);
+            }
+        }
     }
 
     if (!frame.bodies.length) return;     // prehistoria: solo estrellas
