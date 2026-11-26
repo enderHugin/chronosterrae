@@ -1,0 +1,14 @@
+{
+  "head" : {
+    "vars" : [ "b" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "b" : {
+        "datatype" : "http://www.w3.org/2001/XMLSchema#dateTime",
+        "type" : "literal",
+        "value" : "1756-01-27T00:00:00Z"
+      }
+    } ]
+  }
+}

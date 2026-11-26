@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="icon" type="image/png" sizes="32x32" href="//static.zgo.at/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="//static.zgo.at/favicon/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="//static.zgo.at/favicon/apple-touch-icon.png">
+<link rel="mask-icon" href="//static.zgo.at/favicon/safari-pinned-tab.svg" color="#9a15a4">
+<meta name="msapplication-TileColor" content="#9f00a7">
+<meta name="theme-color" content="#ffffff">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>enderhugin – GoatCounter</title>
+	
+		<link rel="stylesheet" href="//static.zgo.at/vars.css?v=2c9b43be">
+		<link rel="stylesheet" href="//static.zgo.at/dark.css?v=2c9b43be" media="(prefers-color-scheme: dark)">
+	
+	<style>
+		@font-face {
+			font-family: 'Lato'; font-style: normal; font-weight: 400; font-display: fallback;
+			src: local('Lato'), local('Lato Regular'),
+				url('//static.zgo.at/fonts/latolatin.woff2') format('woff2');
+		}
+		@font-face {
+			font-family: 'Lato'; font-style: normal; font-weight: 700; font-display: fallback;
+			src: local('Lato Bold'), local('Lato Bold'),
+				url('//static.zgo.at/fonts/latolatin-bold.woff2') format('woff2');
+		}
+		@font-face {
+			font-family: 'Lato'; font-style: italic; font-weight: 400; font-display: fallback;
+			src: local('Lato Italic'), local('Lato Italic'),
+				url('//static.zgo.at/fonts/latolatin-italic.woff2') format('woff2');
+		}
+	</style>
+	<link rel="stylesheet" href="//static.zgo.at/shared.css?v=2c9b43be">
+	<link rel="stylesheet" href="//static.zgo.at/pikaday.css?v=2c9b43be">
+	<link rel="stylesheet" href="//static.zgo.at/backend.css?v=2c9b43be">
+	<style>.logged-in { display: none !important; }</style>
+</head>
+
+<body id="page-user-new">
+	<noscript>
+		<p>GoatCounter requires JavaScript enabled to function well; please allow JavaScript to run from static.zgo.at.</p>
+		
+	</noscript>
+
+	<nav class="center"></nav>
+
+	<div class="page">
+
+
+<h1>Sign in at enderhugin.goatcounter.com</h1>
+<form method="post" action="/user/requestlogin" class="vertical">
+	<label for="email">Email address</label>
+	<input type="email" name="email" id="email" value="" autofocus required><br>
+
+	<label for="password">Password</label>
+	<input type="password" name="password" id="password" required autocomplete="current-password"><br>
+	<button>Sign in</button>
+</form>
+
+<p><a href="/user/forgot">Forgot password?</a></p>
+
+
+	</div>
+
+	
+		<footer class="center cbox">
+	<div>
+		<a target="_blank" rel="noopener" href="https://www.goatcounter.com">Home</a><span> |</span>
+		<a href="/contact"   >Contact</a><span> |</span>
+		<a href="/help"      >Documentation</a><span> |</span>
+		<a href="/contribute">Contribute</a>
+	</div>
+	<div>
+		<a href="https://github.com/arp242/goatcounter"                target="_blank" rel="noopener">Source code</a><span> |</span>
+		<a href="https://nlnet.nl/project/GoatCounter/"                target="_blank" rel="noopener">NLnet NGI0</a><span> |</span>
+		<a href="https://github.com/sponsors/arp242"                   target="_blank" rel="noopener">GitHub sponsors</a><span> |</span>
+		<a href="https://www.producthunt.com/posts/goatcounter"        target="_blank" rel="noopener">Product Hunt</a><span> |</span>
+		<a href="https://alternativeto.net/software/goatcounter/about" target="_blank" rel="noopener">AlternativeTo</a>
+	</div>
+</footer>
+
+	
+
+	<span id="js-settings"
+		data-offset="60"
+		data-first-hit-at="1794084693"
+		data-websocket="true"
+		data-goatcounter-com="true"
+		data-dev="false"
+		
+		
+	>{&#34;twenty_four_hours&#34;:true,&#34;sunday_starts_week&#34;:false,&#34;language&#34;:&#34;en-GB&#34;,&#34;date_format&#34;:&#34;2 Jan ’06&#34;,&#34;number_format&#34;:8239,&#34;timezone&#34;:&#34;ES.Europe/Madrid&#34;,&#34;widgets&#34;:[{&#34;n&#34;:&#34;pages&#34;,&#34;s&#34;:{&#34;limit_pages&#34;:10,&#34;limit_refs&#34;:10,&#34;style&#34;:&#34;line&#34;}},{&#34;n&#34;:&#34;totalpages&#34;,&#34;s&#34;:{&#34;align&#34;:false,&#34;no-events&#34;:false,&#34;style&#34;:&#34;line&#34;}},{&#34;n&#34;:&#34;toprefs&#34;,&#34;s&#34;:{&#34;key&#34;:null,&#34;limit&#34;:6}},{&#34;n&#34;:&#34;campaigns&#34;,&#34;s&#34;:{&#34;key&#34;:null,&#34;limit&#34;:6}},{&#34;n&#34;:&#34;browsers&#34;,&#34;s&#34;:{&#34;key&#34;:null,&#34;limit&#34;:6}},{&#34;n&#34;:&#34;systems&#34;,&#34;s&#34;:{&#34;key&#34;:null,&#34;limit&#34;:6}},{&#34;n&#34;:&#34;locations&#34;,&#34;s&#34;:{&#34;key&#34;:&#34;&#34;,&#34;limit&#34;:6}},{&#34;n&#34;:&#34;languages&#34;,&#34;s&#34;:{&#34;limit&#34;:6}},{&#34;n&#34;:&#34;sizes&#34;,&#34;s&#34;:{&#34;key&#34;:null,&#34;sort-count&#34;:false}}],&#34;views&#34;:[{&#34;name&#34;:&#34;default&#34;,&#34;filter&#34;:&#34;&#34;,&#34;group&#34;:0,&#34;period&#34;:&#34;week&#34;}],&#34;email_reports&#34;:0,&#34;fewer_numbers&#34;:false,&#34;fewer_numbers_lock_until&#34;:&#34;0001-01-01T00:00:00Z&#34;,&#34;theme&#34;:&#34;&#34;,&#34;datepicker&#34;:true}</span>
+	<span id="js-i18n">{&#34;dashboard/tooltip-event&#34;:&#34;%(unique) clicks; %(clicks) total clicks&#34;,&#34;dashboard/totals/num-visits&#34;:&#34;%(num-visits) visits&#34;,&#34;datepicker/keyboard&#34;:&#34;Use the arrow keys to pick a date&#34;,&#34;datepicker/month-next&#34;:&#34;Next month&#34;,&#34;datepicker/month-prev&#34;:&#34;Previous month&#34;,&#34;error/date-future&#34;:&#34;That would be in the future&#34;,&#34;error/date-mismatch&#34;:&#34;end date is before start date&#34;,&#34;error/date-past&#34;:&#34;That would be before the site’s creation&#34;,&#34;error/load-url&#34;:&#34;Could not load %(url): %(error)&#34;,&#34;nav-dash/filter-more-help&#34;:&#34;More help&#34;,&#34;nav-fash/filter-less-help&#34;:&#34;Less help&#34;,&#34;notify/saved&#34;:&#34;Saved!&#34;}</span>
+
+	<script crossorigin="anonymous" src="//static.zgo.at/jquery.js?v=2c9b43be"></script>
+	<script crossorigin="anonymous" src="//static.zgo.at/pikaday.js?v=2c9b43be"></script>
+	<script crossorigin="anonymous" src="//static.zgo.at/charty.js?v=2c9b43be"></script>
+	<script crossorigin="anonymous" src="//static.zgo.at/helper.js?v=2c9b43be"></script>
+	<script crossorigin="anonymous" src="//static.zgo.at/dashboard.js?v=2c9b43be"></script>
+	<script crossorigin="anonymous" src="//static.zgo.at/backend.js?v=2c9b43be"></script>
+</body>
+</html>
+

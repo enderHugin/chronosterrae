@@ -1,0 +1,41 @@
+{
+	"title": "EONET Events",
+	"description": "Natural events from EONET.",
+	"link": "https://eonet.gsfc.nasa.gov/api/v3/events",
+	"events": [
+		{
+			"id": "EONET_26661",
+			"title": "Wildfire Little Ridge, Highland, Virginia",
+            "description": "12 Miles SW from Monterey, VA",
+			"link": "https://eonet.gsfc.nasa.gov/api/v3/events/EONET_26661",
+			"closed": null,
+				"categories": [
+					{
+					"id": "wildfires",
+					"title": "Wildfires"
+				}
+
+	    				],
+    			"sources": [
+					{
+					"id": "IRWIN",
+					"url": "https://irwin.doi.gov/observer/incidents/2026-VAVAF-260139"
+				}
+
+						
+			],
+					"geometry": [
+					{
+							"magnitudeValue": 900.00,
+					"magnitudeUnit": "acres",
+					"date": "2026-11-21T23:15:00Z",
+					"type": "Point", 
+							"coordinates": [ -79.791367, 38.313617 ]
+							}
+
+						
+			]
+		}
+
+		]
+}
