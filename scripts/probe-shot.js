@@ -437,7 +437,7 @@ async function runSuite(page, out, only, renew) {
     const diag = process.argv.length > 4;
     const [lng, lat, zoom] = [process.argv[4] || -1.35, process.argv[5] || 43.05, process.argv[6] || 11].map(Number);
     fs.mkdirSync(out, { recursive: true });
-    const launch = () => chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl', '--enable-precise-memory-info'] });
+    const launch = () => chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl', '--enable-precise-memory-info', '--host-resolver-rules=MAP gc.zgo.at ~NOTFOUND, MAP *.goatcounter.com ~NOTFOUND'] });   // sin contar visitas en GoatCounter
     let browser = await launch();
     // Un mensaje repetido se guarda UNA vez con su recuento: un bucle de errores en la pagina agoto la memoria de este proceso (4 GB) y se perdio toda la captura
     const log = []; const counts = new Map();

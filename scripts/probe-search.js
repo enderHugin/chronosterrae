@@ -12,7 +12,7 @@ const [url, out] = process.argv.slice(2);
 (async () => {
     fs.mkdirSync(out, { recursive: true });
     const res = { url, steps: [], errors: [] };
-    const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'] });
+    const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl', '--host-resolver-rules=MAP gc.zgo.at ~NOTFOUND, MAP *.goatcounter.com ~NOTFOUND'] });   // sin contar visitas en GoatCounter
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, locale: 'es-ES' });
     page.on('pageerror', (e) => res.errors.push(String(e.message || e)));
     // Solo se interceptan las URL de imagenes (miniaturas y Special:FilePath): interceptar tambien la API de Commons hace fallar su CORS

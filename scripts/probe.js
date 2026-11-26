@@ -114,6 +114,9 @@ const targets = [
     // Lo que vio la sonda del 24-11: list=search sin idioma no pone «España» (Q29) entre los 8 primeros (gana la Vuelta). Se prueba la API de
     // autocompletado de Wikidata (wbsearchentities, por etiqueta y alias en el idioma pedido) y list=search con uselang=es; y si 'mul' trae la
     // etiqueta de los taxones que no la tienen en es/en (Homo sapiens).
+    // Contador de visitas (2026-11-26): que el script de GoatCounter se sirve y que el panel del sitio existe (sin enviar ninguna visita)
+    { id: 'goatcounter-script', area: 'visitas', url: 'https://gc.zgo.at/count.js', expect: (t) => /goatcounter/.test(t) },
+    { id: 'goatcounter-sitio', area: 'visitas', url: 'https://enderhugin.goatcounter.com/', expect: (t) => /goatcounter/i.test(t) },
     { id: 'wikidata-wbsearch-espana', area: 'buscador', url: 'https://www.wikidata.org/w/api.php?format=json&origin=*&action=wbsearchentities&type=item&limit=10&language=es&uselang=es&search=' + encodeURIComponent('España'), full: true, expect: (t) => /"search"/.test(t) },
     { id: 'wikidata-wbsearch-tiranosaurio', area: 'buscador', url: 'https://www.wikidata.org/w/api.php?format=json&origin=*&action=wbsearchentities&type=item&limit=10&language=es&uselang=es&search=' + encodeURIComponent('tiranosaurio'), full: true, expect: (t) => /"search"/.test(t) },
     { id: 'wikidata-wbsearch-everest-en', area: 'buscador', url: 'https://www.wikidata.org/w/api.php?format=json&origin=*&action=wbsearchentities&type=item&limit=10&language=en&uselang=en&search=' + encodeURIComponent('Everest'), full: true, expect: (t) => /"search"/.test(t) },
