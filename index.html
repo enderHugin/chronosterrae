@@ -5023,7 +5023,7 @@ const solarView = ChronosSolarView.create({
     starRadius: (cat, i, r) => ChronosSkyView.starRadius(cat, i, r),
     skyOptions: () => ({ lines: !!sky.lines, names: !!sky.names, conNames: !!sky.conNames, nameMag: SKY_NAME_MAG }),
     skyLabels: (...a) => ChronosSkyView.drawSkyLabels(...a),
-    skyArt: (ctx, cat, dir, proj, w, h) => { if (!sky.art) return; artEnsure(); if (!ART.data) return; ChronosSkyArt.draw(ctx, ChronosSkyArt.place(ART.data, cat, dir, proj, w, h), artImg, 0.25, artOff('solar')); },
+    skyArt: (ctx, cat, dir, proj, w, h) => { if (!sky.art) return; artEnsure(); if (!ART.data) return; ChronosSkyArt.draw(ctx, ChronosSkyArt.place(ART.data, cat, dir, proj, w, h), artImg, ChronosSkyArt.ALPHA, artOff('solar')); },
     onSkyReady: () => renderCredits(),
     t, fmt, lang: () => lang, nf,
     loadAccuracy: () => {
@@ -5375,7 +5375,18 @@ function artImg(iau) {
     if (!e) {
         const a = ART.data.art[iau]; if (!a) return null;
         const img = new Image(); e = { img, ok: false }; ART.imgs.set(iau, e);
-        img.crossOrigin = 'anonymous'; img.decoding = 'async'; img.onload = () => { e.ok = true; artRedraw(); }; img.src = ART.data.meta.images + a.file;
+        img.crossOrigin = 'anonymous'; img.decoding = 'async';
+        img.onload = () => {
+            // con mas contraste (ChronosSkyArt.toneImage; el creador, 2026-11-26): una vez por imagen, en un lienzo que la sustituye. Si el navegador
+            // no deja leer los pixeles, la imagen tal cual
+            try {
+                const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight; const x = c.getContext('2d');
+                x.drawImage(img, 0, 0); const d = x.getImageData(0, 0, c.width, c.height);
+                ChronosSkyArt.toneImage(d.data, c.width, c.height); x.putImageData(d, 0, 0); e.img = c;
+            } catch (err) { /* sin contraste */ }
+            e.ok = true; artRedraw();
+        };
+        img.src = ART.data.meta.images + a.file;
     }
     return e.ok ? e.img : null;
 }
@@ -5717,7 +5728,7 @@ function drawSpace() {
             artEnsure();
             if (ART.data) {      // pegados a la esfera: direccion de cada estrella y la misma proyeccion que ellas
                 space.art = ChronosSkyArt.place(ART.data, cat, (i) => [space.dirs[3 * i], space.dirs[3 * i + 1], space.dirs[3 * i + 2]], (v) => pr.infinity(v[0], v[1], v[2]), w, h);
-                ChronosSkyArt.draw(ctx, space.art, artImg, 0.25, artOff('space'));
+                ChronosSkyArt.draw(ctx, space.art, artImg, ChronosSkyArt.ALPHA, artOff('space'));
                 if (space.art.length) note.textContent = (note.textContent ? note.textContent + ' · ' : '') + t('sky.artCredit');
             }
         }

@@ -165,7 +165,7 @@
         // dibujos de las constelaciones (sky/sky-art.js), debajo de lineas y estrellas
         if (cat && st && opts.showStars && opts.art && opts.artLib) {
             const placed = opts.artLib.place(opts.art, cat, (i) => altAzVec(st.alt[i], st.az[i]), P.vec, w, h);      // pegados a la esfera
-            opts.artLib.draw(ctx, placed, opts.artImg, 0.28, opts.artOff); drawn.art = placed;
+            opts.artLib.draw(ctx, placed, opts.artImg, opts.artLib.ALPHA * 1.12, opts.artOff);   // al apuntar, algo mas (era 0,28 frente a 0,25) drawn.art = placed;
             if (opts.artCredit && placed.length) { ctx.save(); ctx.font = '10px system-ui, sans-serif'; ctx.fillStyle = 'rgba(220,228,255,0.55)'; ctx.textAlign = 'right'; ctx.fillText(opts.artCredit, w - 10, 84); ctx.restore(); }      // arriba, bajo la barra: abajo la tapaba la de los avisos
         }
         // lineas de constelaciones

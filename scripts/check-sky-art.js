@@ -55,5 +55,29 @@ check('pickSection: la seccion de historia o mitologia; si no la hay, la introdu
 });
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 check('index.html: carga sky/sky-art.js, la capa se enciende y apaga (y se guarda), y el texto viene de Wikipedia con su enlace y licencia', () => /<script src="\.\/sky\/sky-art\.js"><\/script>/.test(html) && /\['art', 0, 'sky-t-art', 'btn-sky-art'\]/.test(html) && /out\.sa = p\.sa === 1/.test(html) && /wikipedia\.org\/w\/api\.php/.test(html) && /CC BY-SA/.test(html) && /Johan Meuris/.test(html));
+// «Que se vean menos y algo más contrastadas» (el creador, 2026-11-26)
+const fig = () => {        // una figura como las de Stellarium: gris 98 sobre negro, con una sombra (56) y un trazo negro dentro
+    const w = 128; const h = 128; const d = new Uint8ClampedArray(w * h * 4);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        let v = 0; if (x >= 16 && x < 112 && y >= 16 && y < 112) v = 98; if (x >= 80 && x < 104 && y >= 24 && y < 104) v = 56; if (x >= 60 && x <= 62 && y >= 24 && y < 104) v = 0;
+        const i = 4 * (y * w + x); d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
+    }
+    return { d, w, h, at: (x, y) => d[4 * (y * w + x)] };
+};
+check('tono: el negro sigue negro, el trazo sigue negro y el alfa no se toca', () => {
+    const f = fig(); A.toneImage(f.d, f.w, f.h); return f.at(2, 2) === 0 && f.at(61, 64) === 0 && f.d[3] === 255 && f.d[4 * (64 * 128 + 61) + 3] === 255;
+});
+check('tono: junto al trazo el relleno queda mas claro que en mitad del relleno (el trazo resalta)', () => {
+    const f = fig(); A.toneImage(f.d, f.w, f.h); return f.at(58, 64) > f.at(36, 64) + 15 && f.at(65, 64) > f.at(36, 64) + 15;
+});
+check('tono: se ven menos (en mitad del relleno y la sombra suman al cielo menos que antes, al 25 %) y la diferencia relleno/sombra crece', () => {
+    const f = fig(); A.toneImage(f.d, f.w, f.h); const fill = f.at(36, 64) * A.ALPHA; const shade = f.at(92, 64) * A.ALPHA;
+    return fill < 98 * 0.25 * 0.75 && shade < 56 * 0.25 * 0.6 && fill / Math.max(shade, 1) > 98 / 56;
+});
+check('tono: una sola opacidad para todos los sitios que dibujan (ALPHA; al apuntar con el movil, algo mas)', () => {
+    const sv = fs.readFileSync(path.join(__dirname, '..', 'sky', 'sky-view.js'), 'utf8'); const sp = fs.readFileSync(path.join(__dirname, '..', 'sky', 'sky-point.js'), 'utf8');
+    return /artLib\.draw\(ctx, placed, opts\.artImg, opts\.artLib\.ALPHA, opts\.artOff\)/.test(sv) && /opts\.artLib\.ALPHA \* 1\.12/.test(sp)
+        && (html.match(/ChronosSkyArt\.draw\([^;]*ChronosSkyArt\.ALPHA/g) || []).length === 2 && !/ChronosSkyArt\.draw\([^;]*0\.2\d/.test(html) && /ChronosSkyArt\.toneImage\(/.test(html);
+});
 if (fails) { console.log('\n' + fails + ' prueba(s) fallida(s)'); process.exit(1); }
 console.log('\nDibujos de constelaciones: todo verde.');

@@ -6,7 +6,8 @@
  * Stellarium (no estan copiadas aqui). Cada una trae tres estrellas de anclaje (data/sky/constellation-art.json, CC BY-SA): el pixel de la
  * imagen que cae sobre cada estrella. Con las tres posiciones en pantalla queda fijada la transformacion afin de la imagen; vale para
  * cualquier proyeccion (la carta del cenit, la vista al apuntar con el movil) porque una constelacion es pequeña frente a la esfera.
- * Las imagenes son dibujo gris sobre negro: se suman a la luz del cielo (mezcla «screen»), el negro no tapa nada.
+ * Las imagenes son dibujo gris sobre negro: se suman a la luz del cielo (mezcla «screen»), el negro no tapa nada. Al cargarlas se les sube el
+ * contraste (toneImage: enfoque y curva) y se suman con poca opacidad (ALPHA).
  * PURO salvo draw (canvas); la geometria se prueba en Node (scripts/check-sky-art.js).
  */
 (function (root, factory) {
@@ -107,9 +108,57 @@
      * Para que no se vean costuras ni se sumen los bordes, la malla de cada dibujo se pinta opaca en un lienzo aparte (off, del mismo tamaño
      * que el de destino) y se suma una sola vez a la luz del cielo (mezcla «screen») con la opacidad alpha, dibujo a dibujo.
      */
+    /*
+     * Tono de los dibujos (el creador, 2026-11-26: «que las figuras de las constelaciones se vean menos y algo más contrastadas»). Las
+     * ilustraciones son gris plano (~98 de 255) con sombras (~56) y trazos negros, sobre negro: sumadas al cielo al 25 % quedaban como manchas
+     * grises lavadas. Bajar solo la opacidad las apagaba sin hacerlas mas nitidas (probado). Ahora, una vez por imagen al cargarla (toneImage):
+     *   1) mascara de enfoque (unsharp mask, sigma TONE.sigma px en una imagen de 512, fuerza TONE.k): junto a los trazos el relleno se aclara
+     *      y el trazo se queda negro, el interior liso no cambia: los trazos y los contornos resaltan;
+     *   2) curva (TONE.lo .. TONE.hi -> 0 .. 255): lo oscuro a negro;
+     * y se suman al cielo con menos opacidad (ALPHA, antes 0,25). Medido en la Osa Mayor, en luz sumada al cielo: el interior pasa de ~24 a ~14
+     * (de 255) y la luz total baja ~38 %; los bordes junto a los trazos quedan como antes o algo por encima. Se ven menos y se leen mejor.
+     */
+    const TONE = { lo: 30, hi: 180, sigma: 6, k: 1.5 };
+    const ALPHA = 0.12;
+    /** Tabla de 256 valores con la curva: (v - lo) / (hi - lo), recortada a [0, 1], por 255. */
+    function toneLut(o) {
+        const t = Object.assign({}, TONE, o || {}); const lut = new Uint8ClampedArray(256);
+        for (let v = 0; v < 256; v++) lut[v] = Math.round(255 * Math.max(0, Math.min(1, (v - t.lo) / (t.hi - t.lo))));
+        return lut;
+    }
+    /** Desenfoque casi gaussiano (tres pasadas de caja, horizontal y vertical) de una imagen gris w x h (Float32Array). */
+    function blur(src, w, h, sigma) {
+        const r = Math.max(1, Math.round(Math.sqrt(12 * sigma * sigma / 3 + 1) / 2));
+        let a = Float32Array.from(src); let b = new Float32Array(src.length); const n = 2 * r + 1;
+        const pass = (from, to, len, count, step, stride) => {
+            for (let c = 0; c < count; c++) {
+                const o = c * stride; let sum = 0;
+                for (let i = -r; i <= r; i++) sum += from[o + Math.min(len - 1, Math.max(0, i)) * step];
+                for (let i = 0; i < len; i++) {
+                    to[o + i * step] = sum / n;
+                    sum += from[o + Math.min(len - 1, i + r + 1) * step] - from[o + Math.max(0, i - r) * step];
+                }
+            }
+        };
+        for (let k = 0; k < 3; k++) { pass(a, b, w, h, 1, w); [a, b] = [b, a]; pass(a, b, h, w, w, 1); [a, b] = [b, a]; }
+        return a;
+    }
+    /** Contraste a unos pixeles RGBA (ImageData.data) de w x h: enfoque y curva; el resultado es gris (las ilustraciones ya lo son). Devuelve
+     *  los mismos pixeles. */
+    function toneImage(data, w, h, o) {
+        const t = Object.assign({}, TONE, o || {}); const lut = toneLut(t); const g = new Float32Array(w * h);
+        for (let i = 0; i < g.length; i++) g[i] = (data[4 * i] + data[4 * i + 1] + data[4 * i + 2]) / 3;
+        const bl = blur(g, w, h, t.sigma * Math.max(w, h) / 512);
+        for (let i = 0; i < g.length; i++) {
+            const v = lut[Math.max(0, Math.min(255, Math.round(g[i] + t.k * (g[i] - bl[i]))))];
+            data[4 * i] = v; data[4 * i + 1] = v; data[4 * i + 2] = v;
+        }
+        return data;
+    }
+
     function draw(ctx, placed, img, alpha, off) {
         if (!placed.length) return;
-        const a = alpha == null ? 0.25 : alpha;
+        const a = alpha == null ? ALPHA : alpha;
         const tri = (c2, im, k, p) => triangles(p).forEach(([s, d]) => {
             const M = affine3(s, d); if (!M) return;
             // el triangulo de pantalla, medio pixel mas grande (sin rendijas entre vecinos del mismo dibujo)
@@ -190,5 +239,5 @@
         return { section: title, text: (at > lim * 0.5 ? cut.slice(0, at + 1) : cut).trim() + ' …' };
     }
 
-    return { affine3, hipIndex, sphereMap, dirAt, place, triangles, draw, inQuad, hit, pickSection };
+    return { affine3, hipIndex, sphereMap, dirAt, place, triangles, draw, inQuad, hit, pickSection, TONE, ALPHA, toneLut, blur, toneImage };
 });
