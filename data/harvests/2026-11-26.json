@@ -1,0 +1,31 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "harvest_date": "2026-11-26T12:10:14.577Z",
+    "source_date": "2026/11/25",
+    "node_origin": "ChronosTerrae_Harvester_0.2",
+    "total_anomalies_detected": 1,
+    "status": "ok"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Iowa lead azide detonation",
+        "timestamp": "2026-11-25T00:00:00Z",
+        "date_precision": "day",
+        "harvest_date": "2026-11-26T12:10:14.577Z",
+        "source": "Wikidata:Q142278417",
+        "tier": "Ingesta Cruda (Tier 2)",
+        "confidence": 0.6
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -91.244722,
+          40.790556
+        ]
+      }
+    }
+  ]
+}
