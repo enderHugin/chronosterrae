@@ -72,12 +72,29 @@ check('tono: junto al trazo el relleno queda mas claro que en mitad del relleno 
 });
 check('tono: se ven menos (en mitad del relleno y la sombra suman al cielo menos que antes, al 25 %) y la diferencia relleno/sombra crece', () => {
     const f = fig(); A.toneImage(f.d, f.w, f.h); const fill = f.at(36, 64) * A.ALPHA; const shade = f.at(92, 64) * A.ALPHA;
-    return fill < 98 * 0.25 * 0.75 && shade < 56 * 0.25 * 0.6 && fill / Math.max(shade, 1) > 98 / 56;
+    return fill < 98 * 0.25 * 0.75 && shade < 56 * 0.25 * 0.6 && fill / Math.max(shade, 0.5) > 98 / 56;
 });
-check('tono: una sola opacidad para todos los sitios que dibujan (ALPHA; al apuntar con el movil, algo mas)', () => {
+check('tono: una sola opacidad (ALPHA; al apuntar con el movil, algo mas) y en todos los sitios solo el dibujo del centro (focus)', () => {
     const sv = fs.readFileSync(path.join(__dirname, '..', 'sky', 'sky-view.js'), 'utf8'); const sp = fs.readFileSync(path.join(__dirname, '..', 'sky', 'sky-point.js'), 'utf8');
-    return /artLib\.draw\(ctx, placed, opts\.artImg, opts\.artLib\.ALPHA, opts\.artOff\)/.test(sv) && /opts\.artLib\.ALPHA \* 1\.12/.test(sp)
-        && (html.match(/ChronosSkyArt\.draw\([^;]*ChronosSkyArt\.ALPHA/g) || []).length === 2 && !/ChronosSkyArt\.draw\([^;]*0\.2\d/.test(html) && /ChronosSkyArt\.toneImage\(/.test(html);
+    return /artLib\.draw\(ctx, placed, opts\.artImg, opts\.artLib\.focus\(placed, css \/ 2, css \/ 2, css\), opts\.artOff\); drawn\.art = placed;/.test(sv)
+        && /artLib\.focus\(placed, w \/ 2, h \/ 2, Math\.min\(w, h\), opts\.artLib\.ALPHA \* 1\.12\), opts\.artOff\); drawn\.art = placed;/.test(sp)
+        && (html.match(/ChronosSkyArt\.draw\([^;]*ChronosSkyArt\.focus\([^;]*w \/ 2, h \/ 2, Math\.min\(w, h\)\)/g) || []).length === 2 && !/ChronosSkyArt\.draw\([^;]*0\.2\d/.test(html) && /ChronosSkyArt\.toneImage\(/.test(html);
+});
+// «Que a medida que se aproxima al centro se vaya viendo la constelación central, y las demás desaparezcan» (2026-11-26, 3:20)
+const at = (iau, x, y) => ({ iau, w: 10, h: 10, g: 1, pts: [[x - 20, y - 20], [x + 20, y - 20], [x - 20, y + 20], [x + 20, y + 20]] });
+check('focus: solo el del centro de la pantalla se ve entero; el resto, apagado', () => {
+    const P = [at('Ori', 410, 300), at('Tau', 250, 250), at('Gem', 600, 120), at('CMa', 380, 520)];
+    const a = A.focus(P, 400, 300, 600);
+    return near(a[0], A.ALPHA, 1e-12) && a.slice(1).every((x) => x === 0) && P[0].wt === 1 && P[1].wt === 0;
+});
+check('focus: se va viendo a medida que se acerca al centro (sin saltos), y lejos no se ve ninguno', () => {
+    const ws = [400, 330, 280, 230, 180, 120, 80, 40, 0].map((dx) => A.focus([at('Ori', 400 + dx, 300)], 400, 300, 600)[0] / A.ALPHA);
+    return ws[0] === 0 && ws[ws.length - 1] === 1 && ws.every((w, k) => k === 0 || w >= ws[k - 1]) && ws.some((w) => w > 0.1 && w < 0.9);
+});
+check('focus: al cruzarse dos casi igual de cerca, se reparten sin saltos; el apagado no responde al toque', () => {
+    const P = [at('Ori', 430, 300), at('Tau', 368, 300)]; const a = A.focus(P, 400, 300, 600);
+    const Q = [at('Ori', 470, 300), at('Tau', 300, 300)]; A.focus(Q, 400, 300, 600);
+    return a[0] > 0 && a[1] > 0 && Q[0].wt > 0.5 && Q[1].wt < 0.25 && A.hit(Q, 300, 300) === null && A.hit(Q, 470, 300) === 'Ori';
 });
 if (fails) { console.log('\n' + fails + ' prueba(s) fallida(s)'); process.exit(1); }
 console.log('\nDibujos de constelaciones: todo verde.');

@@ -119,7 +119,36 @@
      * (de 255) y la luz total baja ~38 %; los bordes junto a los trazos quedan como antes o algo por encima. Se ven menos y se leen mejor.
      */
     const TONE = { lo: 30, hi: 180, sigma: 6, k: 1.5 };
-    const ALPHA = 0.12;
+    // 0,12 el 26-11 a las 3:00; a las 3:20, con solo el dibujo del centro: «y no tanto. menos»
+    const ALPHA = 0.085;
+
+    /*
+     * Solo el dibujo del centro (el creador, 2026-11-26: «haz que a medida que se aproxima al centro, se vaya viendo la constelación central, y
+     * las demás desaparezcan… me refiero solo al dibujo», «cuando se ve el cielo solo se vea la central»). Peso de cada dibujo segun la
+     * distancia en pantalla de su centro al centro de la vista (R = medio lado menor):
+     *   - se va viendo al acercarse: 0 a mas de FOCUS.far R, entero a menos de FOCUS.near R;
+     *   - solo el central: el que no es el mas cercano se apaga en cuanto esta FOCUS.band R mas lejos que el (cuando dos estan casi igual de
+     *     cerca, se cruzan sin saltos).
+     * Las lineas y los nombres de las constelaciones no cambian.
+     */
+    const FOCUS = { near: 0.2, far: 0.9, band: 0.12 };
+    const smooth = (e0, e1, x) => { const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
+    /** Centro en pantalla de un dibujo colocado (media de los puntos de su malla). */
+    function centerOf(p) {
+        let x = 0, y = 0, n = 0; (p.pts || p.quad || []).forEach((q) => { if (q) { x += q[0]; y += q[1]; n++; } });
+        return n ? [x / n, y / n] : null;
+    }
+    /** Pesos (0..1) de los dibujos con la vista centrada en (cx, cy) y lado menor m; los deja tambien en p.wt (hit no ve los apagados).
+     *  Devuelve la opacidad de cada uno: peso x alpha (ALPHA si no se da). */
+    function focus(placed, cx, cy, m, alpha) {
+        const R = 0.5 * m; const a = alpha == null ? ALPHA : alpha;
+        const d = placed.map((p) => { const c = centerOf(p); return c ? Math.hypot(c[0] - cx, c[1] - cy) : Infinity; });
+        const dmin = Math.min(Infinity, ...d);
+        return placed.map((p, k) => {
+            p.wt = Number.isFinite(d[k]) ? (1 - smooth(FOCUS.near * R, FOCUS.far * R, d[k])) * (1 - smooth(0, FOCUS.band * R, d[k] - dmin)) : 0;
+            return p.wt * a;
+        });
+    }
     /** Tabla de 256 valores con la curva: (v - lo) / (hi - lo), recortada a [0, 1], por 255. */
     function toneLut(o) {
         const t = Object.assign({}, TONE, o || {}); const lut = new Uint8ClampedArray(256);
@@ -156,9 +185,10 @@
         return data;
     }
 
+    /** alpha: un numero para todos, o uno por dibujo (focus). Los que quedan casi a 0 no se pintan (ni se pide su imagen). */
     function draw(ctx, placed, img, alpha, off) {
         if (!placed.length) return;
-        const a = alpha == null ? ALPHA : alpha;
+        const al = (k) => (Array.isArray(alpha) ? alpha[k] : alpha == null ? ALPHA : alpha);
         const tri = (c2, im, k, p) => triangles(p).forEach(([s, d]) => {
             const M = affine3(s, d); if (!M) return;
             // el triangulo de pantalla, medio pixel mas grande (sin rendijas entre vecinos del mismo dibujo)
@@ -172,8 +202,8 @@
             c2.transform(M[0], M[1], M[2], M[3], M[4], M[5]); c2.drawImage(im, su * k, sv * k, sw * k, sh * k, su, sv, sw, sh); c2.restore();
         });
         if (!off) {        // sin lienzo aparte (pruebas): directo, con costuras
-            ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = a;
-            placed.forEach((p) => { const im = img(p.iau); if (im) tri(ctx, im, (im.naturalWidth || im.width) / p.w, p); });
+            ctx.save(); ctx.globalCompositeOperation = 'screen';
+            placed.forEach((p, k) => { if (!(al(k) > 0.002)) return; const im = img(p.iau); if (im) { ctx.globalAlpha = al(k); tri(ctx, im, (im.naturalWidth || im.width) / p.w, p); } });
             ctx.restore(); return;
         }
         if (off.width !== ctx.canvas.width || off.height !== ctx.canvas.height) { off.width = ctx.canvas.width; off.height = ctx.canvas.height; }
@@ -181,7 +211,8 @@
         // UNO A UNO (2026-11-18): las imagenes llevan fondo negro opaco; pintadas todas en el mismo lienzo, el negro de una tapaba a la que
         // quedaba debajo (Capricornio solo asomaba fuera de la malla de Acuario, cortado en recta). Cada dibujo se pinta solo en su recuadro
         // y se suma al cielo antes del siguiente: los que se solapan se ven los dos.
-        placed.forEach((p) => {
+        placed.forEach((p, k) => {
+            const a = al(k); if (!(a > 0.002)) return;
             const im = img(p.iau); if (!im) return;
             let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
             p.pts.forEach((q) => { if (!q) return; const X = T.a * q[0] + T.c * q[1] + T.e; const Y = T.b * q[0] + T.d * q[1] + T.f; if (X < x0) x0 = X; if (X > x1) x1 = X; if (Y < y0) y0 = Y; if (Y > y1) y1 = Y; });
@@ -206,6 +237,7 @@
     function hit(placed, x, y) {
         let best = null; let bd = Infinity;
         (placed || []).forEach((p) => {
+            if (p.wt !== undefined && p.wt < 0.25) return;      // apagado (focus): no se toca
             const tris = p.pts ? triangles(p).map((t) => t[1]) : [[p.quad[0], p.quad[1], p.quad[2]], [p.quad[0], p.quad[2], p.quad[3]]];
             if (!tris.some((t) => inTri(t, x, y))) return;
             const pts = tris.flat(); const cx = pts.reduce((s, q) => s + q[0], 0) / pts.length; const cy = pts.reduce((s, q) => s + q[1], 0) / pts.length; const d = Math.hypot(cx - x, cy - y);
@@ -239,5 +271,5 @@
         return { section: title, text: (at > lim * 0.5 ? cut.slice(0, at + 1) : cut).trim() + ' …' };
     }
 
-    return { affine3, hipIndex, sphereMap, dirAt, place, triangles, draw, inQuad, hit, pickSection, TONE, ALPHA, toneLut, blur, toneImage };
+    return { affine3, hipIndex, sphereMap, dirAt, place, triangles, draw, inQuad, hit, pickSection, TONE, ALPHA, toneLut, blur, toneImage, FOCUS, focus, centerOf };
 });

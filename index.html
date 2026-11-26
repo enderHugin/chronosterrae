@@ -5029,7 +5029,7 @@ const solarView = ChronosSolarView.create({
     starRadius: (cat, i, r) => ChronosSkyView.starRadius(cat, i, r),
     skyOptions: () => ({ lines: !!sky.lines, names: !!sky.names, conNames: !!sky.conNames, nameMag: SKY_NAME_MAG }),
     skyLabels: (...a) => ChronosSkyView.drawSkyLabels(...a),
-    skyArt: (ctx, cat, dir, proj, w, h) => { if (!sky.art) return; artEnsure(); if (!ART.data) return; ChronosSkyArt.draw(ctx, ChronosSkyArt.place(ART.data, cat, dir, proj, w, h), artImg, ChronosSkyArt.ALPHA, artOff('solar')); },
+    skyArt: (ctx, cat, dir, proj, w, h) => { if (!sky.art) return; artEnsure(); if (!ART.data) return; const pl = ChronosSkyArt.place(ART.data, cat, dir, proj, w, h); ChronosSkyArt.draw(ctx, pl, artImg, ChronosSkyArt.focus(pl, w / 2, h / 2, Math.min(w, h)), artOff('solar')); },
     onSkyReady: () => renderCredits(),
     t, fmt, lang: () => lang, nf,
     loadAccuracy: () => {
@@ -5734,7 +5734,7 @@ function drawSpace() {
             artEnsure();
             if (ART.data) {      // pegados a la esfera: direccion de cada estrella y la misma proyeccion que ellas
                 space.art = ChronosSkyArt.place(ART.data, cat, (i) => [space.dirs[3 * i], space.dirs[3 * i + 1], space.dirs[3 * i + 2]], (v) => pr.infinity(v[0], v[1], v[2]), w, h);
-                ChronosSkyArt.draw(ctx, space.art, artImg, ChronosSkyArt.ALPHA, artOff('space'));
+                ChronosSkyArt.draw(ctx, space.art, artImg, ChronosSkyArt.focus(space.art, w / 2, h / 2, Math.min(w, h)), artOff('space'));      // solo el del centro
                 if (space.art.length) note.textContent = (note.textContent ? note.textContent + ' · ' : '') + t('sky.artCredit');
             }
         }

@@ -98,7 +98,7 @@
             const vec = (alt, az) => { const ca = Math.cos(alt * DEG); return [ca * Math.sin(az * DEG), ca * Math.cos(az * DEG), Math.sin(alt * DEG)]; };
             const toChart = (v) => { const alt = Math.asin(Math.max(-1, Math.min(1, v[2]))) / DEG; if (alt < -25) return null; return toXY(alt, Math.atan2(v[0], v[1]) / DEG); };
             const placed = opts.artLib.place(opts.art, cat, (i) => vec(st.alt[i], st.az[i]), toChart, css, css);
-            opts.artLib.draw(ctx, placed, opts.artImg, opts.artLib.ALPHA, opts.artOff); drawn.art = placed;
+            opts.artLib.draw(ctx, placed, opts.artImg, opts.artLib.focus(placed, css / 2, css / 2, css), opts.artOff); drawn.art = placed;      // solo el del centro (el cenit)
         }
 
         // Constelaciones
