@@ -138,17 +138,38 @@
         let x = 0, y = 0, n = 0; (p.pts || p.quad || []).forEach((q) => { if (q) { x += q[0]; y += q[1]; n++; } });
         return n ? [x / n, y / n] : null;
     }
-    /** Pesos (0..1) de los dibujos con la vista centrada en (cx, cy) y lado menor m; los deja tambien en p.wt (hit no ve los apagados).
-     *  Devuelve la opacidad de cada uno: peso x alpha (ALPHA si no se da). */
-    function focus(placed, cx, cy, m, alpha) {
-        const R = 0.5 * m; const a = alpha == null ? ALPHA : alpha;
+    /** Pesos (0..1) de los dibujos con la vista centrada en (cx, cy) y lado menor m, por level (0..1, el de motion; 1 si no se da); los deja
+     *  tambien en p.wt (hit no ve los apagados). Devuelve la opacidad de cada uno: peso x alpha (ALPHA si no se da). */
+    function focus(placed, cx, cy, m, alpha, level) {
+        const R = 0.5 * m; const a = alpha == null ? ALPHA : alpha; const lv = level == null ? 1 : Math.max(0, Math.min(1, level));
         const d = placed.map((p) => { const c = centerOf(p); return c ? Math.hypot(c[0] - cx, c[1] - cy) : Infinity; });
         const dmin = Math.min(Infinity, ...d);
         return placed.map((p, k) => {
-            p.wt = Number.isFinite(d[k]) ? (1 - smooth(FOCUS.near * R, FOCUS.far * R, d[k])) * (1 - smooth(0, FOCUS.band * R, d[k] - dmin)) : 0;
+            p.wt = Number.isFinite(d[k]) ? lv * (1 - smooth(FOCUS.near * R, FOCUS.far * R, d[k])) * (1 - smooth(0, FOCUS.band * R, d[k] - dmin)) : 0;
             return p.wt * a;
         });
     }
+
+    /*
+     * Solo mientras se mueve (el creador, 2026-11-26, 3:36: «haz que si se suelta el arrastre, o se deja de mover, la imagen de la constelación
+     * desaparezca lentamente»). Un nivel 0..1 por vista: al moverse sube en MOTION.fadeIn ms; al soltar el arrastre (stop) o tras MOTION.hold
+     * ms sin moverse, baja a 0 en MOTION.fadeOut ms. Sin saltos: cada cambio parte del nivel que habia. PURO: el tiempo lo da quien llama.
+     */
+    const MOTION = { fadeIn: 300, hold: 200, fadeOut: 2600 };
+    function motion() { return { on: false, last: -Infinity, t0: -Infinity, from: 0 }; }
+    function motionRaw(m, now) {
+        const e = smooth(0, 1, (now - m.t0) / (m.on ? MOTION.fadeIn : MOTION.fadeOut));
+        return m.on ? m.from + (1 - m.from) * e : m.from * (1 - e);
+    }
+    function motionTick(m, now) { if (m.on && now - m.last > MOTION.hold) { const t = m.last + MOTION.hold; m.from = motionRaw(m, t); m.on = false; m.t0 = t; } }
+    /** Nivel ahora. */
+    function motionLevel(m, now) { motionTick(m, now); return motionRaw(m, now); }
+    /** Se ha movido ahora. */
+    function motionMove(m, now) { motionTick(m, now); if (!m.on) { m.from = motionRaw(m, now); m.on = true; m.t0 = now; } m.last = now; }
+    /** Se ha soltado el arrastre: empieza a desaparecer ya (aunque el globo siga girando por inercia). */
+    function motionStop(m, now) { motionTick(m, now); if (m.on) { m.from = motionRaw(m, now); m.on = false; m.t0 = now; } }
+    /** Si aun hay que redibujar (subiendo, quieto en alto mientras se mueve, o bajando). */
+    function motionBusy(m, now) { return m.on || motionLevel(m, now) > 0.002; }
     /** Tabla de 256 valores con la curva: (v - lo) / (hi - lo), recortada a [0, 1], por 255. */
     function toneLut(o) {
         const t = Object.assign({}, TONE, o || {}); const lut = new Uint8ClampedArray(256);
@@ -271,5 +292,5 @@
         return { section: title, text: (at > lim * 0.5 ? cut.slice(0, at + 1) : cut).trim() + ' …' };
     }
 
-    return { affine3, hipIndex, sphereMap, dirAt, place, triangles, draw, inQuad, hit, pickSection, TONE, ALPHA, toneLut, blur, toneImage, FOCUS, focus, centerOf };
+    return { affine3, hipIndex, sphereMap, dirAt, place, triangles, draw, inQuad, hit, pickSection, TONE, ALPHA, toneLut, blur, toneImage, FOCUS, focus, centerOf, MOTION, motion, motionLevel, motionMove, motionStop, motionBusy };
 });

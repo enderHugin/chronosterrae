@@ -5029,7 +5029,11 @@ const solarView = ChronosSolarView.create({
     starRadius: (cat, i, r) => ChronosSkyView.starRadius(cat, i, r),
     skyOptions: () => ({ lines: !!sky.lines, names: !!sky.names, conNames: !!sky.conNames, nameMag: SKY_NAME_MAG }),
     skyLabels: (...a) => ChronosSkyView.drawSkyLabels(...a),
-    skyArt: (ctx, cat, dir, proj, w, h) => { if (!sky.art) return; artEnsure(); if (!ART.data) return; const pl = ChronosSkyArt.place(ART.data, cat, dir, proj, w, h); ChronosSkyArt.draw(ctx, pl, artImg, ChronosSkyArt.focus(pl, w / 2, h / 2, Math.min(w, h)), artOff('solar')); },
+    skyArt: (ctx, cat, dir, proj, w, h) => { if (!sky.art) return; artEnsure(); if (!ART.data) return; const pl = ChronosSkyArt.place(ART.data, cat, dir, proj, w, h);
+        // ¿se ha movido la vista? (lo que se ve del cielo cambia de sitio en pantalla)
+        const sig = [[1, 0, 0], [0, 1, 0], [0, 0, 1]].map(proj).map((q) => (q ? Math.round(q[0] * 2) + ',' + Math.round(q[1] * 2) : '-')).join(' ') + ' ' + w + 'x' + h;
+        if (ART.solarSig !== undefined && sig !== ART.solarSig) artMoved('solar'); ART.solarSig = sig;
+        ChronosSkyArt.draw(ctx, pl, artImg, ChronosSkyArt.focus(pl, w / 2, h / 2, Math.min(w, h), null, artLevel('solar')), artOff('solar')); },
     onSkyReady: () => renderCredits(),
     t, fmt, lang: () => lang, nf,
     loadAccuracy: () => {
@@ -5273,11 +5277,13 @@ function skpLoop() {
         }
         const tgt = ChronosSkyPoint.rotateAz(SKP.tgt, SKP.offset);
         const prev = SKP.fr; SKP.fr = ChronosSkyPoint.smooth(SKP.fr, tgt, SKP.sensor ? 0.22 : 1);
+        // los dibujos, solo mientras se mueve el movil (o se arrastra, o se acerca): menos de ~5°/s no cuenta (el pulso de la mano)
+        if ((prev && ChronosSkyPoint.angleBetween(prev, SKP.fr) > 0.0015) || SKP.fov !== SKP.artFov) { if (SKP.artFov !== undefined) artMoved('point'); SKP.artFov = SKP.fov; }
         if (prev && !SKP.dirty && ChronosSkyPoint.angleBetween(prev, SKP.fr) < 0.005) return;      // quieto: no se redibuja
         SKP.dirty = false;
         const names = {}; ChronosSky.BODIES.forEach((id) => { names[id] = t('sky.body.' + id); });
         SKP.drawn = ChronosSkyPoint.draw($('skp-canvas'), SKP.res, SKP.fr, { view: ChronosSkyView, fov: SKP.fov, catalog: sky.stars ? sky.catalog : null, names, cardinals: t('skp.cardinals'),
-            showStars: sky.stars, showLines: sky.lines, showNames: sky.names, showConNames: sky.conNames, dayStars: sky.dayStars, lang, ...artOpts(), artOff: artOff('point'), artCredit: t('sky.artCredit') });
+            showStars: sky.stars, showLines: sky.lines, showNames: sky.names, showConNames: sky.conNames, dayStars: sky.dayStars, lang, ...artOpts(), artOff: artOff('point'), artLevel: artLevel('point'), artCredit: t('sky.artCredit') });
         const v = ChronosSkyPoint.vecAltAz(SKP.fr.look); const dirs = t('skp.cardinals');
         $('skp-info').textContent = t('skp.now') + ' · ' + (SKP.place.gps ? t('skp.here') : t('skp.mapc')) + ' · ' + fmt('skp.looking', { dir: dirs[Math.round(v.az / 45) % 8], az: Math.round(v.az), alt: Math.round(v.alt) });
         $('skp-hint').textContent = SKP.align ? t('skp.aligning') : t('skp.' + SKP.hint);
@@ -5369,7 +5375,34 @@ $('sky-chart').addEventListener('click', (e) => {
 //   tiene, su introduccion), citado con su titulo, enlace y licencia (CC BY-SA). El articulo se busca en la Wikipedia inglesa por su nombre
 //   latino («Antlia constellation»), se exige que su descripcion diga que es una constelacion, y se toma el enlace al español si se lee en
 //   español. Comprobado con la sonda (2026-11-18): CORS abierto, y secciones «Historia», «Mitologías», «History and mythology».
-const ART = { data: null, loading: null, failed: false, imgs: new Map(), redrawT: 0 };
+const ART = { data: null, loading: null, failed: false, imgs: new Map(), redrawT: 0, raf: 0 };
+// Los dibujos solo mientras se mueve la vista (ChronosSkyArt.motion; el creador, 2026-11-26): un nivel por vista. La carta no se mueve: alli no.
+ART.mot = { space: ChronosSkyArt.motion(), point: ChronosSkyArt.motion(), solar: ChronosSkyArt.motion() };
+const artLevel = (k) => ChronosSkyArt.motionLevel(ART.mot[k], performance.now());
+/** Mientras algun nivel cambia (aparece, o desaparece despacio tras soltar), redibuja esa vista en cada fotograma; quieto y apagado, nada. */
+function artAnimate() {
+    if (ART.raf) return;
+    const step = () => {
+        ART.raf = 0; const now = performance.now(); let busy = false;
+        for (const k of Object.keys(ART.mot)) {
+            if (!ChronosSkyArt.motionBusy(ART.mot[k], now) && !(ART.lv && ART.lv[k] > 0)) continue;
+            busy = true; ART.lv = ART.lv || {}; const l = ChronosSkyArt.motionLevel(ART.mot[k], now);
+            if (Math.abs(l - (ART.lv[k] || 0)) > 0.002 || (l === 0 && ART.lv[k] > 0)) {
+                ART.lv[k] = l;
+                if (k === 'space') scheduleSpace(); else if (k === 'point') SKP.dirty = true; else if (k === 'solar' && solarView.isOpen) solarView.invalidate();
+            }
+        }
+        if (busy) ART.raf = requestAnimationFrame(step);
+    };
+    ART.raf = requestAnimationFrame(step);
+}
+function artMoved(k) { ChronosSkyArt.motionMove(ART.mot[k], performance.now()); artAnimate(); }
+function artReleased(k) { ChronosSkyArt.motionStop(ART.mot[k], performance.now()); artAnimate(); }
+// el cielo tras el globo: se mueve al girar, acercar o volar (buscador) el globo; al soltar el arrastre empieza a irse aunque siga la inercia
+map.on('dragstart', () => { ART.released = false; artMoved('space'); });
+map.on('move', () => { if (!ART.released) artMoved('space'); });
+map.on('dragend', () => { ART.released = true; artReleased('space'); });
+map.on('moveend', () => { ART.released = false; });
 function artEnsure() {
     if (ART.data || ART.loading || ART.failed) return;
     ART.loading = getJSON('./data/sky/constellation-art.json').then((j) => { ART.data = j; artRedraw(); }).catch(() => { ART.failed = true; }).then(() => { ART.loading = null; });
@@ -5734,7 +5767,7 @@ function drawSpace() {
             artEnsure();
             if (ART.data) {      // pegados a la esfera: direccion de cada estrella y la misma proyeccion que ellas
                 space.art = ChronosSkyArt.place(ART.data, cat, (i) => [space.dirs[3 * i], space.dirs[3 * i + 1], space.dirs[3 * i + 2]], (v) => pr.infinity(v[0], v[1], v[2]), w, h);
-                ChronosSkyArt.draw(ctx, space.art, artImg, ChronosSkyArt.focus(space.art, w / 2, h / 2, Math.min(w, h)), artOff('space'));      // solo el del centro
+                ChronosSkyArt.draw(ctx, space.art, artImg, ChronosSkyArt.focus(space.art, w / 2, h / 2, Math.min(w, h), null, artLevel('space')), artOff('space'));      // solo el del centro, y mientras se mueve
                 if (space.art.length) note.textContent = (note.textContent ? note.textContent + ' · ' : '') + t('sky.artCredit');
             }
         }

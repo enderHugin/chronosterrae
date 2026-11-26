@@ -77,8 +77,8 @@ check('tono: se ven menos (en mitad del relleno y la sombra suman al cielo menos
 check('tono: una sola opacidad (ALPHA; al apuntar con el movil, algo mas) y en todos los sitios solo el dibujo del centro (focus)', () => {
     const sv = fs.readFileSync(path.join(__dirname, '..', 'sky', 'sky-view.js'), 'utf8'); const sp = fs.readFileSync(path.join(__dirname, '..', 'sky', 'sky-point.js'), 'utf8');
     return /artLib\.draw\(ctx, placed, opts\.artImg, opts\.artLib\.focus\(placed, css \/ 2, css \/ 2, css\), opts\.artOff\); drawn\.art = placed;/.test(sv)
-        && /artLib\.focus\(placed, w \/ 2, h \/ 2, Math\.min\(w, h\), opts\.artLib\.ALPHA \* 1\.12\), opts\.artOff\); drawn\.art = placed;/.test(sp)
-        && (html.match(/ChronosSkyArt\.draw\([^;]*ChronosSkyArt\.focus\([^;]*w \/ 2, h \/ 2, Math\.min\(w, h\)\)/g) || []).length === 2 && !/ChronosSkyArt\.draw\([^;]*0\.2\d/.test(html) && /ChronosSkyArt\.toneImage\(/.test(html);
+        && /artLib\.focus\(placed, w \/ 2, h \/ 2, Math\.min\(w, h\), opts\.artLib\.ALPHA \* 1\.12, opts\.artLevel\), opts\.artOff\); drawn\.art = placed;/.test(sp)
+        && (html.match(/ChronosSkyArt\.draw\([^;]*ChronosSkyArt\.focus\([^;]*w \/ 2, h \/ 2, Math\.min\(w, h\), null, artLevel\('(space|solar)'\)\)/g) || []).length === 2 && !/ChronosSkyArt\.draw\([^;]*0\.2\d/.test(html) && /ChronosSkyArt\.toneImage\(/.test(html);
 });
 // «Que a medida que se aproxima al centro se vaya viendo la constelación central, y las demás desaparezcan» (2026-11-26, 3:20)
 const at = (iau, x, y) => ({ iau, w: 10, h: 10, g: 1, pts: [[x - 20, y - 20], [x + 20, y - 20], [x - 20, y + 20], [x + 20, y + 20]] });
@@ -95,6 +95,29 @@ check('focus: al cruzarse dos casi igual de cerca, se reparten sin saltos; el ap
     const P = [at('Ori', 430, 300), at('Tau', 368, 300)]; const a = A.focus(P, 400, 300, 600);
     const Q = [at('Ori', 470, 300), at('Tau', 300, 300)]; A.focus(Q, 400, 300, 600);
     return a[0] > 0 && a[1] > 0 && Q[0].wt > 0.5 && Q[1].wt < 0.25 && A.hit(Q, 300, 300) === null && A.hit(Q, 470, 300) === 'Ori';
+});
+// «Si se suelta el arrastre, o se deja de mover, la imagen de la constelación desaparezca lentamente» (2026-11-26, 3:36)
+check('motion: al moverse aparece (en MOTION.fadeIn ms), quieto se queda mientras dura el movimiento, y sin moverse se va despacio', () => {
+    const m = A.motion(); const M = A.MOTION;
+    if (A.motionLevel(m, 0) !== 0) return 'empieza a 0';
+    for (let t = 0; t <= 1000; t += 16) A.motionMove(m, t);
+    const up = A.motionLevel(m, 1000);
+    const half = A.motionLevel(m, 1000 + M.hold + M.fadeOut / 2); const end = A.motionLevel(m, 1000 + M.hold + M.fadeOut + 1);
+    const early = A.motionLevel(m, 1000 + M.hold + 300);
+    return up === 1 && half > 0.3 && half < 0.7 && end === 0 && early > 0.9 && M.fadeOut >= 2000;
+});
+check('motion: al soltar el arrastre empieza a irse ya; si se vuelve a mover a medias, sube desde donde estaba (sin saltos)', () => {
+    const m = A.motion(); for (let t = 0; t <= 600; t += 16) A.motionMove(m, t);
+    A.motionStop(m, 600); const a = A.motionLevel(m, 600); const b = A.motionLevel(m, 600 + A.MOTION.fadeOut / 2);
+    const t1 = 600 + A.MOTION.fadeOut / 2; A.motionMove(m, t1); const c = A.motionLevel(m, t1 + 1);
+    for (let t = t1; t <= t1 + 400; t += 16) A.motionMove(m, t);
+    return a === 1 && b < 0.7 && Math.abs(c - b) < 0.02 && A.motionLevel(m, t1 + 400) === 1;
+});
+check('motion: con el nivel a 0 los dibujos no se pintan ni responden al toque; las vistas que se mueven lo usan, la carta no', () => {
+    const P = [at('Ori', 400, 300)]; const a = A.focus(P, 400, 300, 600, null, 0);
+    const sv = fs.readFileSync(path.join(__dirname, '..', 'sky', 'sky-view.js'), 'utf8'); const sp = fs.readFileSync(path.join(__dirname, '..', 'sky', 'sky-point.js'), 'utf8');
+    return a[0] === 0 && A.hit(P, 400, 300) === null && /opts\.artLevel\)/.test(sp) && !/artLevel/.test(sv)
+        && /artLevel\('space'\)/.test(html) && /artLevel\('solar'\)/.test(html) && /artLevel: artLevel\('point'\)/.test(html) && /map\.on\('dragend', \(\) => \{ ART\.released = true; artReleased\('space'\); \}\)/.test(html);
 });
 if (fails) { console.log('\n' + fails + ' prueba(s) fallida(s)'); process.exit(1); }
 console.log('\nDibujos de constelaciones: todo verde.');

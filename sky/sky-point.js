@@ -166,7 +166,7 @@
         if (cat && st && opts.showStars && opts.art && opts.artLib) {
             const placed = opts.artLib.place(opts.art, cat, (i) => altAzVec(st.alt[i], st.az[i]), P.vec, w, h);      // pegados a la esfera
             // solo el dibujo de hacia donde apunta el movil (centro de la pantalla); al apuntar, algo mas de opacidad (era 0,28 frente a 0,25)
-            opts.artLib.draw(ctx, placed, opts.artImg, opts.artLib.focus(placed, w / 2, h / 2, Math.min(w, h), opts.artLib.ALPHA * 1.12), opts.artOff); drawn.art = placed;
+            opts.artLib.draw(ctx, placed, opts.artImg, opts.artLib.focus(placed, w / 2, h / 2, Math.min(w, h), opts.artLib.ALPHA * 1.12, opts.artLevel), opts.artOff); drawn.art = placed;
             if (opts.artCredit && placed.length) { ctx.save(); ctx.font = '10px system-ui, sans-serif'; ctx.fillStyle = 'rgba(220,228,255,0.55)'; ctx.textAlign = 'right'; ctx.fillText(opts.artCredit, w - 10, 84); ctx.restore(); }      // arriba, bajo la barra: abajo la tapaba la de los avisos
         }
         // lineas de constelaciones
