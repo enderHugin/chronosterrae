@@ -56,7 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p _site/data
-          cp index.html latest_harvest.json _site/
+          cp index.html latest_harvest.json sitemap.xml _site/
           cp -r data/paleocoastlines _site/data/paleocoastlines
           cp -r sky map vendor solar _site/
           # Cada publicacion pide SUS scripts (?v=commit). GitHub Pages los sirve con 10 min de cache: tras publicar, el navegador traia el

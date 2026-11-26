@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- sitemap.xml: la web es una sola pagina; se publica con ella (pages.yml) y se dio de alta en Google Search Console (2026-11-26) -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://enderhugin.github.io/chronosterrae/</loc></url>
+</urlset>
