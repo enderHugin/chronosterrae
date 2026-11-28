@@ -1,0 +1,108 @@
+{
+  "W": 1280,
+  "H": 800,
+  "points": 56,
+  "pointsWithPolitics": 49,
+  "basePct": 100,
+  "runs": [
+    {
+      "label": "frio",
+      "year": 1400,
+      "completed": true,
+      "frames": 16,
+      "minPct": 98,
+      "series": [
+        {
+          "t": 118,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1945,
+          "load": true,
+          "swap": false
+        },
+        {
+          "t": 3012,
+          "pct": 98,
+          "src": true,
+          "gap": true,
+          "by": 1945,
+          "load": true,
+          "swap": false
+        },
+        {
+          "t": 3244,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1400,
+          "load": false,
+          "swap": true
+        },
+        {
+          "t": 3698,
+          "pct": 100,
+          "src": false,
+          "gap": true,
+          "by": 1400,
+          "load": false,
+          "swap": false
+        },
+        {
+          "t": 4079,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1400,
+          "load": false,
+          "swap": false
+        }
+      ]
+    },
+    {
+      "label": "en-memoria",
+      "year": 1945,
+      "completed": true,
+      "frames": 9,
+      "minPct": 100,
+      "series": [
+        {
+          "t": 10,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1400,
+          "load": false,
+          "swap": false
+        },
+        {
+          "t": 509,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1945,
+          "load": false,
+          "swap": true
+        },
+        {
+          "t": 783,
+          "pct": 100,
+          "src": false,
+          "gap": true,
+          "by": 1945,
+          "load": false,
+          "swap": false
+        },
+        {
+          "t": 1932,
+          "pct": 100,
+          "src": true,
+          "gap": true,
+          "by": 1945,
+          "load": false,
+          "swap": false
+        }
+      ]
+    }
+  ]
+}

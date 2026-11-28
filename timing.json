@@ -1,0 +1,107 @@
+[
+  {
+    "label": "frio",
+    "year": 1914,
+    "kind": "borders",
+    "msBordersApplied": 1349,
+    "msGapImage": 1349,
+    "gapPhases": {
+      "cached": false,
+      "classifyMs": 101,
+      "paintMs": 9,
+      "cells": 724900,
+      "polities": 26
+    },
+    "files": []
+  },
+  {
+    "label": "frio",
+    "year": 1880,
+    "kind": "borders",
+    "msBordersApplied": 56,
+    "msGapImage": 564,
+    "gapPhases": {
+      "cached": false,
+      "classifyMs": 103,
+      "paintMs": 24,
+      "cells": 724900,
+      "polities": 22
+    },
+    "files": []
+  },
+  {
+    "label": "frio",
+    "year": 1815,
+    "kind": "borders",
+    "msBordersApplied": 12,
+    "msGapImage": 1229,
+    "gapPhases": {
+      "cached": false,
+      "classifyMs": 132,
+      "paintMs": 9,
+      "cells": 724900,
+      "polities": 52
+    },
+    "files": []
+  },
+  {
+    "label": "frio",
+    "year": 1783,
+    "kind": "borders",
+    "msBordersApplied": 14,
+    "msGapImage": 599,
+    "gapPhases": {
+      "cached": false,
+      "classifyMs": 167,
+      "paintMs": 14,
+      "cells": 724900,
+      "polities": 53
+    },
+    "files": []
+  },
+  {
+    "label": "en-memoria",
+    "year": 1914,
+    "kind": "borders",
+    "msBordersApplied": 54,
+    "msGapImage": 325,
+    "gapPhases": {
+      "cached": true,
+      "total": 4
+    },
+    "files": []
+  },
+  {
+    "label": "en-memoria",
+    "year": 1880,
+    "kind": "borders",
+    "msBordersApplied": 13,
+    "msGapImage": 296,
+    "gapPhases": {
+      "cached": true,
+      "total": 12
+    },
+    "files": []
+  },
+  {
+    "label": "pangea",
+    "year": -249998000,
+    "kind": "land",
+    "msLandApplied": 12,
+    "files": []
+  },
+  {
+    "label": "pangea-otro",
+    "year": -119998000,
+    "kind": "land",
+    "msLandApplied": 147,
+    "files": []
+  },
+  {
+    "label": "pangea-otro",
+    "year": -65998000,
+    "kind": "land",
+    "msLandApplied": 26,
+    "files": []
+  }
+]

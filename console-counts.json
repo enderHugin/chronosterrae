@@ -1,0 +1,13 @@
+{
+  "total": 23,
+  "top": [
+    {
+      "n": 12,
+      "m": "warning Expected value to be of type number, but found null instead."
+    },
+    {
+      "n": 11,
+      "m": "error Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+    }
+  ]
+}
